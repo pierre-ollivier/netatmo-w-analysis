@@ -6,19 +6,20 @@
 
 void tryDatabase() {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "connection_name");
-    db.setDatabaseName("test_sqlite.db");
+    db.setDatabaseName("../netatmo-w-analysis/test_sqlite.db");
     if (!db.open()) {
         qDebug() << "Database open error";
     }
     if (!db.isOpen() ) {
         qDebug() << "Database is not open";
     }
+    qDebug() << db.tables();
     QSqlQuery query(db);
-    // qDebug() << query.;
-    query.exec("SELECT first_name, last_name FROM actor;");
+    query.exec("SELECT first_name, last_name FROM actor");
+    qDebug() << query.next();
 
     while (query.next()) {
-        qDebug() << query.value(1).toString() << "\n";
+        qDebug() << query.value(1).toString();
     }
 
     qDebug() << "End";
