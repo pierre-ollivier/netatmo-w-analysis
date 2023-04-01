@@ -1,4 +1,5 @@
 QT += widgets
+QT += network
 QT += sql
 
 include (types/types.pri)
