@@ -12,7 +12,7 @@ class NetatmoAPIHandler
 {
 public:
     NetatmoAPIHandler();
-    void sendTokensRequest();
+    void postTokensRequest();
 
 private:
     QNetworkAccessManager *tokensManager;

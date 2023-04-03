@@ -6,7 +6,7 @@ NetatmoAPIHandler::NetatmoAPIHandler()
 
 }
 
-void NetatmoAPIHandler::sendTokensRequest() {
+void NetatmoAPIHandler::postTokensRequest() {
 
     QUrl url("https://api.netatmo.com/oauth2/token");
     QNetworkRequest request(url);
