@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QLabel>
 #include <QGridLayout>
+#include "backend/NetatmoAPIHandler.h"
 
 
 class MainWindow : public QWidget
@@ -23,6 +24,9 @@ private:
 
     //layouts
     QGridLayout *mainLayout;
+
+    //other (provisional)
+    NetatmoAPIHandler *apiHandler;
 };
 
 #endif // MAINWINDOW_H

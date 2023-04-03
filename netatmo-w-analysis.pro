@@ -7,4 +7,5 @@ include (frontend/frontend.pri)
 include (backend/backend.pri)
 
 SOURCES += \
+    credentials.cpp \
     main.cpp
