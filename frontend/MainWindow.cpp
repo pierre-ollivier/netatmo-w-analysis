@@ -3,9 +3,10 @@
 MainWindow::MainWindow()
 {
     buildWindow();
-    // The two following lines are tests
+    // The following lines are tests
     apiHandler = new NetatmoAPIHandler();
-    apiHandler->sendTokensRequest();
+    apiHandler->postTokensRequest();
+    apiHandler->postCurrentConditionsRequest();
 
 }
 
