@@ -14,10 +14,12 @@ public:
     NetatmoAPIHandler();
     void postTokensRequest();
     void postCurrentConditionsRequest();
+    void postDailyRequest(int dateBegin, QString scale, QString accessToken);
 
 private:
     QNetworkAccessManager *tokensManager;
     QNetworkAccessManager *currentConditionsManager;
+    QNetworkAccessManager *dailyRequestManager;
     QString accessToken;
 
 };
