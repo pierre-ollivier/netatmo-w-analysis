@@ -1,10 +1,12 @@
 #include "NetatmoAPIHandler.h"
+#include <QJsonDocument>
 
 NetatmoAPIHandler::NetatmoAPIHandler()
 {
     tokensManager = new QNetworkAccessManager();
     currentConditionsManager = new QNetworkAccessManager();
     dailyRequestManager = new QNetworkAccessManager();
+    connect(tokensManager, SIGNAL(finished(QNetworkReply *)), this, SLOT(retrieveTokens(QNetworkReply *)));
 
 }
 
@@ -65,4 +67,22 @@ void NetatmoAPIHandler::postDailyRequest(int date_begin, QString scale, QString 
     params.addQueryItem("real_time", "true");
     dailyRequestManager->post(request, params.query().toUtf8());
 
+}
+
+void NetatmoAPIHandler::retrieveTokens(QNetworkReply *reply) {
+    QByteArray bytes = reply->readAll();
+    if (bytes.contains("error")) {
+        qDebug() << "ERROR with tokens" << bytes;
+    }
+    else if (bytes.size() >= 1) {
+        QJsonDocument js = QJsonDocument::fromJson(bytes);
+        accessToken = js["access_token"].toString();
+        emit accessTokenChanged(accessToken);
+        refreshToken = js["refresh_token"].toString();
+        emit refreshTokenChanged(refreshToken);
+    }
+    else {
+        qDebug() << "ERROR with network"
+                 << "Impossible de recevoir le token. Vérifier la connexion et redémarrer le programme.";
+    }
 }

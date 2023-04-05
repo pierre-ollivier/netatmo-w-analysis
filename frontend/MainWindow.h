@@ -9,11 +9,16 @@
 
 class MainWindow : public QWidget
 {
+    Q_OBJECT
+
 public:
     MainWindow();
     void buildWindow();
     void buildLabels();
     void buildLayouts();
+
+public slots:
+    void logToken(QString token); // provisional of course
 
 private:
     // labels
