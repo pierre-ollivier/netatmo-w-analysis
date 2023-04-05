@@ -7,6 +7,8 @@ MainWindow::MainWindow()
     apiHandler = new NetatmoAPIHandler();
     apiHandler->postTokensRequest();
     apiHandler->postCurrentConditionsRequest();
+    connect(apiHandler, SIGNAL(accessTokenChanged(QString)), this, SLOT(logToken(QString)));
+    connect(apiHandler, SIGNAL(refreshTokenChanged(QString)), this, SLOT(logToken(QString)));
 
 }
 
@@ -50,4 +52,8 @@ void MainWindow::buildLayouts() {
 
     // set window's layout
     setLayout(mainLayout);
+}
+
+void MainWindow::logToken(QString token) {
+    qDebug() << "TOKEN: " << token;
 }
