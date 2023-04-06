@@ -12,6 +12,7 @@ MainWindow::MainWindow()
     connect(apiHandler, SIGNAL(accessTokenChanged(QString)),
             apiHandler, SLOT(postCurrentConditionsRequest(QString)));
     connect(apiHandler, SIGNAL(extTemperatureChanged(double)), this,  SLOT(updateCurrentExtTemperature(double)));
+    connect(apiHandler, SIGNAL(intTemperatureChanged(double)), this,  SLOT(updateCurrentIntTemperature(double)));
 
 }
 
@@ -29,8 +30,8 @@ void MainWindow::buildLabels() {
     labelDailyTmin->setFont(QFont("Arial", 13));
     labelDailyTmax->setFont(QFont("Arial", 13));
 
-    labelCurrentTemp = new QLabel();
-    labelCurrentTemp->setFont(QFont("Arial", 32));
+    labelCurrentTempExt = new QLabel();
+    labelCurrentTempExt->setFont(QFont("Arial", 32));
     labelCurrentTempInt = new QLabel();
     labelCurrentTempInt->setFont(QFont("Arial", 32));
     labelDailyTminInt = new QLabel("<font color=\"#0010ff\">↓</font> -,- °C (--:--)");
@@ -41,7 +42,7 @@ void MainWindow::buildLabels() {
 
 void MainWindow::buildLayouts() {
     mainLayout = new QGridLayout();
-    mainLayout->addWidget(labelCurrentTemp, 1, 0, 2, 1);
+    mainLayout->addWidget(labelCurrentTempExt, 1, 0, 2, 1);
     mainLayout->addWidget(labelStatus, 0, 0);
 //    mainLayout->addWidget(labelExtremes, 0, 1, 1, 2);
 //    mainLayout->addWidget(boutonActualisation, 0, 3);
@@ -62,6 +63,11 @@ void MainWindow::logToken(QString token) {
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
-    labelCurrentTemp->setText(QString::number(currentTemperature) + "<font color=\"#606060\"> °C</font>");
+    labelCurrentTempExt->setText(QString::number(currentTemperature) + "<font color=\"#606060\"> °C</font>");
     qDebug() << "EXT TEMPERATURE: " << currentTemperature;
+}
+
+void MainWindow::updateCurrentIntTemperature(double currentTemperature) {
+    labelCurrentTempInt->setText(QString::number(currentTemperature) + "<font color=\"#606060\"> °C</font>");
+    qDebug() << "INT TEMPERATURE: " << currentTemperature;
 }
