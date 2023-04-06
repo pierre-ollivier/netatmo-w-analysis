@@ -11,7 +11,7 @@ MainWindow::MainWindow()
     connect(apiHandler, SIGNAL(refreshTokenChanged(QString)), this, SLOT(logToken(QString)));
     connect(apiHandler, SIGNAL(accessTokenChanged(QString)),
             apiHandler, SLOT(postCurrentConditionsRequest(QString)));
-    connect(apiHandler, SIGNAL(temperatureChanged(double)), this,  SLOT(updateCurrentTemperature(double)));
+    connect(apiHandler, SIGNAL(extTemperatureChanged(double)), this,  SLOT(updateCurrentExtTemperature(double)));
 
 }
 
@@ -61,7 +61,7 @@ void MainWindow::logToken(QString token) {
     qDebug() << "TOKEN: " << token;
 }
 
-void MainWindow::updateCurrentTemperature(double currentTemperature) {
+void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
     labelCurrentTemp->setText(QString::number(currentTemperature) + "<font color=\"#606060\"> °C</font>");
     qDebug() << "EXT TEMPERATURE: " << currentTemperature;
 }
