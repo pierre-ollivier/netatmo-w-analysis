@@ -20,10 +20,11 @@ public:
 public slots:
     void logToken(QString token); // provisional of course
     void updateCurrentExtTemperature(double currentTemperature);
+    void updateCurrentIntTemperature(double currentTemperature);
 
 private:
     // labels
-    QLabel *labelCurrentTemp, *labelCurrentTempInt;
+    QLabel *labelCurrentTempExt, *labelCurrentTempInt;
     QLabel *labelStatus;
     QLabel *labelDailyTmin, *labelDailyTmax;
     QLabel *labelDailyTminInt, *labelDailyTmaxInt;

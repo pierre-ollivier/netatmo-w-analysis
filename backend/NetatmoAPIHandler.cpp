@@ -107,6 +107,14 @@ void NetatmoAPIHandler::retrieveCurrentConditions(QNetworkReply *reply) {
         extCurrentMinTemperatureTime = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["date_min_temp"].toInt();
         extCurrentMaxTemperatureTime = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["date_max_temp"].toInt();
 
+        intCurrentTemperature = js["body"]["devices"][0]["dashboard_data"]["Temperature"].toDouble();
+        intCurrentMinTemperature = js["body"]["devices"][0]["dashboard_data"]["min_temp"].toDouble();
+        intCurrentMaxTemperature = js["body"]["devices"][0]["dashboard_data"]["max_temp"].toDouble();
+        intCurrentHumidity = js["body"]["devices"][0]["dashboard_data"]["Humidity"].toInt();
+        intCurrentUTCTime = js["body"]["devices"][0]["dashboard_data"]["time_utc"].toInt();
+        intCurrentMinTemperatureTime = js["body"]["devices"][0]["dashboard_data"]["date_min_temp"].toInt();
+        intCurrentMaxTemperatureTime = js["body"]["devices"][0]["dashboard_data"]["date_max_temp"].toInt();
+
         emit extTemperatureChanged(extCurrentTemperature);
         emit extMinTemperatureChanged(extCurrentMinTemperature);
         emit extMaxTemperatureChanged(extCurrentMaxTemperature);
@@ -114,6 +122,14 @@ void NetatmoAPIHandler::retrieveCurrentConditions(QNetworkReply *reply) {
         emit extUTCTimeChanged(extCurrentUTCTime);
         emit extMinTemperatureTimeChanged(extCurrentMinTemperatureTime);
         emit extMaxTemperatureTimeChanged(extCurrentMaxTemperatureTime);
+
+        emit intTemperatureChanged(intCurrentTemperature);
+        emit intMinTemperatureChanged(intCurrentMinTemperature);
+        emit intMaxTemperatureChanged(intCurrentMaxTemperature);
+        emit intHumidityChanged(intCurrentHumidity);
+        emit intUTCTimeChanged(intCurrentUTCTime);
+        emit intMinTemperatureTimeChanged(intCurrentMinTemperatureTime);
+        emit intMaxTemperatureTimeChanged(intCurrentMaxTemperatureTime);
 
     }
     else {
