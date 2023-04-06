@@ -19,7 +19,7 @@ public:
 
 public slots:
     void logToken(QString token); // provisional of course
-    void updateCurrentTemperature(double currentTemperature);
+    void updateCurrentExtTemperature(double currentTemperature);
 
 private:
     // labels

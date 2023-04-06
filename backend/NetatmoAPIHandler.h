@@ -25,18 +25,41 @@ public slots:
     void retrieveCurrentConditions(QNetworkReply*);
 
 signals:
+    // TOKENS
     void accessTokenChanged(QString);
     void refreshTokenChanged(QString);
 
-    void temperatureChanged(double);
-    void minTemperatureChanged(double);
-    void maxTemperatureChanged(double);
+    // EXT TEMPERATURE
 
-    void humidityChanged(int);
+    void extTemperatureChanged(double);
+    void extMinTemperatureChanged(double);
+    void extMaxTemperatureChanged(double);
 
-    void utcTimeChanged(int);
-    void minTemperatureTimeChanged(int);
-    void maxTemperatureTimeChanged(int);
+    // EXT HUMIDITY
+
+    void extHumidityChanged(int);
+
+    // EXT TIMES
+
+    void extUTCTimeChanged(int);
+    void extMinTemperatureTimeChanged(int);
+    void extMaxTemperatureTimeChanged(int);
+
+    // INT TEMPERATURE
+
+    void intTemperatureChanged(double);
+    void intMinTemperatureChanged(double);
+    void intMaxTemperatureChanged(double);
+
+    // INT HUMIDITY
+
+    void intHumidityChanged(int);
+
+    // INT TIMES
+
+    void intUTCTimeChanged(int);
+    void intMinTemperatureTimeChanged(int);
+    void intMaxTemperatureTimeChanged(int);
 
 private:
     QNetworkAccessManager *tokensManager;
@@ -54,6 +77,16 @@ private:
     int extCurrentUTCTime = 0;
     int extCurrentMinTemperatureTime = 0;
     int extCurrentMaxTemperatureTime = 0;
+
+    double intCurrentTemperature = 0.0;
+    double intCurrentMinTemperature = 0.0;
+    double intCurrentMaxTemperature = 0.0;
+
+    int intCurrentHumidity = 0;
+
+    int intCurrentUTCTime = 0;
+    int intCurrentMinTemperatureTime = 0;
+    int intCurrentMaxTemperatureTime = 0;
 
 };
 
