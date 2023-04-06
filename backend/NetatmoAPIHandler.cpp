@@ -7,6 +7,8 @@ NetatmoAPIHandler::NetatmoAPIHandler()
     currentConditionsManager = new QNetworkAccessManager();
     dailyRequestManager = new QNetworkAccessManager();
     connect(tokensManager, SIGNAL(finished(QNetworkReply *)), this, SLOT(retrieveTokens(QNetworkReply *)));
+    connect(currentConditionsManager, SIGNAL(finished(QNetworkReply *)),
+            this, SLOT(retrieveCurrentConditions(QNetworkReply *)));
 
 }
 
@@ -32,7 +34,7 @@ void NetatmoAPIHandler::postTokensRequest() {
     tokensManager->post(request, params.query().toUtf8());
 }
 
-void NetatmoAPIHandler::postCurrentConditionsRequest() {
+void NetatmoAPIHandler::postCurrentConditionsRequest(QString accessToken) {
 
     extern const QString mainDeviceId;
 
@@ -76,10 +78,43 @@ void NetatmoAPIHandler::retrieveTokens(QNetworkReply *reply) {
     }
     else if (bytes.size() >= 1) {
         QJsonDocument js = QJsonDocument::fromJson(bytes);
+
         accessToken = js["access_token"].toString();
-        emit accessTokenChanged(accessToken);
         refreshToken = js["refresh_token"].toString();
+
+        emit accessTokenChanged(accessToken);
         emit refreshTokenChanged(refreshToken);
+    }
+    else {
+        qDebug() << "ERROR with network"
+                 << "Impossible de recevoir le token. Vérifier la connexion et redémarrer le programme.";
+    }
+}
+
+void NetatmoAPIHandler::retrieveCurrentConditions(QNetworkReply *reply) {
+    QByteArray bytes = reply->readAll();
+    if (bytes.contains("error")) {
+        qDebug() << "ERROR with current conditions" << bytes;
+    }
+    else if (bytes.size() >= 1) {
+        QJsonDocument js = QJsonDocument::fromJson(bytes);
+
+        currentTemperature = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["Temperature"].toDouble();
+        currentMinTemperature = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["min_temp"].toDouble();
+        currentMaxTemperature = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["max_temp"].toDouble();
+        currentHumidity = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["Humidity"].toInt();
+        currentUTCTime = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["time_utc"].toInt();
+        currentMinTemperatureTime = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["date_min_temp"].toInt();
+        currentMaxTemperatureTime = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["date_max_temp"].toInt();
+
+        emit temperatureChanged(currentTemperature);
+        emit minTemperatureChanged(currentMinTemperature);
+        emit maxTemperatureChanged(currentMaxTemperature);
+        emit humidityChanged(currentHumidity);
+        emit utcTimeChanged(currentUTCTime);
+        emit minTemperatureTimeChanged(currentMinTemperatureTime);
+        emit maxTemperatureTimeChanged(currentMaxTemperatureTime);
+
     }
     else {
         qDebug() << "ERROR with network"
