@@ -6,9 +6,12 @@ MainWindow::MainWindow()
     // The following lines are tests
     apiHandler = new NetatmoAPIHandler();
     apiHandler->postTokensRequest();
-    apiHandler->postCurrentConditionsRequest();
+//    apiHandler->postCurrentConditionsRequest();
     connect(apiHandler, SIGNAL(accessTokenChanged(QString)), this, SLOT(logToken(QString)));
     connect(apiHandler, SIGNAL(refreshTokenChanged(QString)), this, SLOT(logToken(QString)));
+    connect(apiHandler, SIGNAL(accessTokenChanged(QString)),
+            apiHandler, SLOT(postCurrentConditionsRequest(QString)));
+    connect(apiHandler, SIGNAL(temperatureChanged(double)), this,  SLOT(updateCurrentTemperature(double)));
 
 }
 
@@ -56,4 +59,9 @@ void MainWindow::buildLayouts() {
 
 void MainWindow::logToken(QString token) {
     qDebug() << "TOKEN: " << token;
+}
+
+void MainWindow::updateCurrentTemperature(double currentTemperature) {
+    labelCurrentTemp->setText(QString::number(currentTemperature) + "<font color=\"#606060\"> °C</font>");
+    qDebug() << "EXT TEMPERATURE: " << currentTemperature;
 }

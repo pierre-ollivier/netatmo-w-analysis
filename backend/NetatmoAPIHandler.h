@@ -18,14 +18,25 @@ public:
 
 public slots:
     void postTokensRequest();
-    void postCurrentConditionsRequest();
+    void postCurrentConditionsRequest(QString accessToken);
     void postDailyRequest(int dateBegin, QString scale, QString accessToken);
 
     void retrieveTokens(QNetworkReply*);
+    void retrieveCurrentConditions(QNetworkReply*);
 
 signals:
     void accessTokenChanged(QString);
     void refreshTokenChanged(QString);
+
+    void temperatureChanged(double);
+    void minTemperatureChanged(double);
+    void maxTemperatureChanged(double);
+
+    void humidityChanged(int);
+
+    void utcTimeChanged(int);
+    void minTemperatureTimeChanged(int);
+    void maxTemperatureTimeChanged(int);
 
 private:
     QNetworkAccessManager *tokensManager;
@@ -33,6 +44,16 @@ private:
     QNetworkAccessManager *dailyRequestManager;
     QString accessToken = "";
     QString refreshToken = "";
+
+    double currentTemperature = 0.0;
+    double currentMinTemperature = 0.0;
+    double currentMaxTemperature = 0.0;
+
+    int currentHumidity = 0;
+
+    int currentUTCTime = 0;
+    int currentMinTemperatureTime = 0;
+    int currentMaxTemperatureTime = 0;
 
 };
 
