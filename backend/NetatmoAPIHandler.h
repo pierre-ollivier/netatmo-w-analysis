@@ -45,15 +45,15 @@ private:
     QString accessToken = "";
     QString refreshToken = "";
 
-    double currentTemperature = 0.0;
-    double currentMinTemperature = 0.0;
-    double currentMaxTemperature = 0.0;
+    double extCurrentTemperature = 0.0;
+    double extCurrentMinTemperature = 0.0;
+    double extCurrentMaxTemperature = 0.0;
 
-    int currentHumidity = 0;
+    int extCurrentHumidity = 0;
 
-    int currentUTCTime = 0;
-    int currentMinTemperatureTime = 0;
-    int currentMaxTemperatureTime = 0;
+    int extCurrentUTCTime = 0;
+    int extCurrentMinTemperatureTime = 0;
+    int extCurrentMaxTemperatureTime = 0;
 
 };
 

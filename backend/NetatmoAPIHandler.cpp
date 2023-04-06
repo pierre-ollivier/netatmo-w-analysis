@@ -99,21 +99,21 @@ void NetatmoAPIHandler::retrieveCurrentConditions(QNetworkReply *reply) {
     else if (bytes.size() >= 1) {
         QJsonDocument js = QJsonDocument::fromJson(bytes);
 
-        currentTemperature = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["Temperature"].toDouble();
-        currentMinTemperature = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["min_temp"].toDouble();
-        currentMaxTemperature = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["max_temp"].toDouble();
-        currentHumidity = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["Humidity"].toInt();
-        currentUTCTime = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["time_utc"].toInt();
-        currentMinTemperatureTime = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["date_min_temp"].toInt();
-        currentMaxTemperatureTime = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["date_max_temp"].toInt();
+        extCurrentTemperature = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["Temperature"].toDouble();
+        extCurrentMinTemperature = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["min_temp"].toDouble();
+        extCurrentMaxTemperature = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["max_temp"].toDouble();
+        extCurrentHumidity = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["Humidity"].toInt();
+        extCurrentUTCTime = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["time_utc"].toInt();
+        extCurrentMinTemperatureTime = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["date_min_temp"].toInt();
+        extCurrentMaxTemperatureTime = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["date_max_temp"].toInt();
 
-        emit temperatureChanged(currentTemperature);
-        emit minTemperatureChanged(currentMinTemperature);
-        emit maxTemperatureChanged(currentMaxTemperature);
-        emit humidityChanged(currentHumidity);
-        emit utcTimeChanged(currentUTCTime);
-        emit minTemperatureTimeChanged(currentMinTemperatureTime);
-        emit maxTemperatureTimeChanged(currentMaxTemperatureTime);
+        emit temperatureChanged(extCurrentTemperature);
+        emit minTemperatureChanged(extCurrentMinTemperature);
+        emit maxTemperatureChanged(extCurrentMaxTemperature);
+        emit humidityChanged(extCurrentHumidity);
+        emit utcTimeChanged(extCurrentUTCTime);
+        emit minTemperatureTimeChanged(extCurrentMinTemperatureTime);
+        emit maxTemperatureTimeChanged(extCurrentMaxTemperatureTime);
 
     }
     else {
