@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include <QDateTime>
 
 MainWindow::MainWindow()
 {
@@ -11,8 +12,9 @@ MainWindow::MainWindow()
     connect(apiHandler, SIGNAL(refreshTokenChanged(QString)), this, SLOT(logToken(QString)));
     connect(apiHandler, SIGNAL(accessTokenChanged(QString)),
             apiHandler, SLOT(postCurrentConditionsRequest(QString)));
-    connect(apiHandler, SIGNAL(extTemperatureChanged(double)), this,  SLOT(updateCurrentExtTemperature(double)));
-    connect(apiHandler, SIGNAL(intTemperatureChanged(double)), this,  SLOT(updateCurrentIntTemperature(double)));
+    connect(apiHandler, SIGNAL(extTemperatureChanged(double)), this, SLOT(updateCurrentExtTemperature(double)));
+    connect(apiHandler, SIGNAL(intTemperatureChanged(double)), this, SLOT(updateCurrentIntTemperature(double)));
+    connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), this, SLOT(updateLastMeasurementDate(int)));
 
 }
 
@@ -70,4 +72,11 @@ void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
 void MainWindow::updateCurrentIntTemperature(double currentTemperature) {
     labelCurrentTempInt->setText(QString::number(currentTemperature) + "<font color=\"#606060\"> °C</font>");
     qDebug() << "INT TEMPERATURE: " << currentTemperature;
+}
+
+void MainWindow::updateLastMeasurementDate(int timestamp) {
+    QDateTime dt = QDateTime();
+    dt.setSecsSinceEpoch(timestamp);
+    labelStatus->setText("Mesure : " + dt.toString("dd/MM/yyyy hh:mm:ss")
+                         + "\nActualisation : " + "--/--/---- --:--:--");
 }
