@@ -19,6 +19,7 @@ public:
 
 public slots:
     void postTokensRequest();
+    void postCurrentConditionsRequest();
     void postCurrentConditionsRequest(QString accessToken);
     void postDailyRequest(int dateBegin, QString scale, QString accessToken);
 

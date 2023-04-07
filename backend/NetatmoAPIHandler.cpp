@@ -35,7 +35,6 @@ void NetatmoAPIHandler::postTokensRequest() {
 }
 
 void NetatmoAPIHandler::postCurrentConditionsRequest(QString accessToken) {
-
     extern const QString mainDeviceId;
 
     QUrl url("https://api.netatmo.com/api/getstationsdata?");
@@ -46,8 +45,19 @@ void NetatmoAPIHandler::postCurrentConditionsRequest(QString accessToken) {
     params.addQueryItem("device_id", mainDeviceId);
     params.addQueryItem("get_favorites", "false");
     currentConditionsManager->post(request, params.query().toUtf8());
-//    timerActualisation->start(delaiActualisation);
+}
 
+void NetatmoAPIHandler::postCurrentConditionsRequest() {
+    extern const QString mainDeviceId;
+
+    QUrl url("https://api.netatmo.com/api/getstationsdata?");
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    QUrlQuery params;
+    params.addQueryItem("access_token", accessToken.toUtf8());
+    params.addQueryItem("device_id", mainDeviceId);
+    params.addQueryItem("get_favorites", "false");
+    currentConditionsManager->post(request, params.query().toUtf8());
 }
 
 void NetatmoAPIHandler::postDailyRequest(int date_begin, QString scale, QString accessToken) {
