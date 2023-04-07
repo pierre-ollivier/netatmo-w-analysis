@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QLabel>
+#include <QPushButton>
 #include <QGridLayout>
 #include "backend/NetatmoAPIHandler.h"
 
@@ -15,6 +16,7 @@ public:
     MainWindow();
     void buildWindow();
     void buildLabels();
+    void buildButtons();
     void buildLayouts();
 
 public slots:
@@ -30,6 +32,9 @@ private:
     QLabel *labelStatus;
     QLabel *labelDailyTmin, *labelDailyTmax;
     QLabel *labelDailyTminInt, *labelDailyTmaxInt;
+
+    // buttons
+    QPushButton *actualisationButton;
 
     //layouts
     QGridLayout *mainLayout;

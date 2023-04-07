@@ -22,6 +22,7 @@ MainWindow::MainWindow()
 void MainWindow::buildWindow() {
 
     buildLabels();
+    buildButtons();
     buildLayouts();
 
 }
@@ -43,12 +44,18 @@ void MainWindow::buildLabels() {
     labelDailyTmaxInt->setFont(QFont("Arial", 13));
 }
 
+void MainWindow::buildButtons() {
+    actualisationButton = new QPushButton("Actualiser");
+    actualisationButton->setFont(QFont("Verdana", 14));
+//    boutonActualisation->setIcon()
+}
+
 void MainWindow::buildLayouts() {
     mainLayout = new QGridLayout();
     mainLayout->addWidget(labelCurrentTempExt, 1, 0, 2, 1);
     mainLayout->addWidget(labelStatus, 0, 0);
 //    mainLayout->addWidget(labelExtremes, 0, 1, 1, 2);
-//    mainLayout->addWidget(boutonActualisation, 0, 3);
+    mainLayout->addWidget(actualisationButton, 0, 3);
 //    mainLayout->addWidget(vuegp, 1, 1, 2, 2);
     mainLayout->addWidget(labelDailyTmax, 1, 3);
     mainLayout->addWidget(labelDailyTmin, 2, 3);
