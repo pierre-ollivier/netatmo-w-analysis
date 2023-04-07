@@ -2,12 +2,10 @@
 #include <QDateTime>
 
 MainWindow::MainWindow()
-{
-    buildWindow();
+{ 
     // The following lines are tests
     apiHandler = new NetatmoAPIHandler();
     apiHandler->postTokensRequest();
-//    apiHandler->postCurrentConditionsRequest();
     connect(apiHandler, SIGNAL(accessTokenChanged(QString)), this, SLOT(logToken(QString)));
     connect(apiHandler, SIGNAL(refreshTokenChanged(QString)), this, SLOT(logToken(QString)));
     connect(apiHandler, SIGNAL(accessTokenChanged(QString)),
@@ -16,6 +14,7 @@ MainWindow::MainWindow()
     connect(apiHandler, SIGNAL(intTemperatureChanged(double)), this, SLOT(updateCurrentIntTemperature(double)));
     connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), this, SLOT(updateLastMeasurementDate(int)));
     connect(apiHandler, SIGNAL(currentTimeChanged(QDateTime)), this, SLOT(updateActualisationDate(QDateTime)));
+    buildWindow();
 
 }
 
@@ -48,6 +47,8 @@ void MainWindow::buildButtons() {
     actualisationButton = new QPushButton("Actualiser");
     actualisationButton->setFont(QFont("Verdana", 14));
 //    boutonActualisation->setIcon()
+    connect(actualisationButton, SIGNAL(pressed()),
+            apiHandler, SLOT(postCurrentConditionsRequest()));
 }
 
 void MainWindow::buildLayouts() {
