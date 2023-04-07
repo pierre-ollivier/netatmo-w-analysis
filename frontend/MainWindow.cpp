@@ -77,6 +77,5 @@ void MainWindow::updateCurrentIntTemperature(double currentTemperature) {
 void MainWindow::updateLastMeasurementDate(int timestamp) {
     QDateTime dt = QDateTime();
     dt.setSecsSinceEpoch(timestamp);
-    labelStatus->setText("Mesure : " + dt.toString("dd/MM/yyyy hh:mm:ss")
-                         + "\nActualisation : " + "--/--/---- --:--:--");
+    labelStatus->setText(labelStatus->text().replace(9, 19, dt.toString("dd/MM/yyyy hh:mm:ss")));
 }
