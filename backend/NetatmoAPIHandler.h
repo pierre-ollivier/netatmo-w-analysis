@@ -7,6 +7,7 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
+#include <QDateTime>
 
 
 class NetatmoAPIHandler: public QObject
@@ -60,6 +61,10 @@ signals:
     void intUTCTimeChanged(int);
     void intMinTemperatureTimeChanged(int);
     void intMaxTemperatureTimeChanged(int);
+
+    // OTHER
+
+    void currentTimeChanged(QDateTime);
 
 private:
     QNetworkAccessManager *tokensManager;

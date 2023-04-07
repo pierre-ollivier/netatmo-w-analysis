@@ -15,6 +15,7 @@ MainWindow::MainWindow()
     connect(apiHandler, SIGNAL(extTemperatureChanged(double)), this, SLOT(updateCurrentExtTemperature(double)));
     connect(apiHandler, SIGNAL(intTemperatureChanged(double)), this, SLOT(updateCurrentIntTemperature(double)));
     connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), this, SLOT(updateLastMeasurementDate(int)));
+    connect(apiHandler, SIGNAL(currentTimeChanged(QDateTime)), this, SLOT(updateActualisationDate(QDateTime)));
 
 }
 
@@ -78,4 +79,8 @@ void MainWindow::updateLastMeasurementDate(int timestamp) {
     QDateTime dt = QDateTime();
     dt.setSecsSinceEpoch(timestamp);
     labelStatus->setText(labelStatus->text().replace(9, 19, dt.toString("dd/MM/yyyy hh:mm:ss")));
+}
+
+void MainWindow::updateActualisationDate(QDateTime timestamp) {
+    labelStatus->setText(labelStatus->text().replace(45, 19, timestamp.toString("dd/MM/yyyy hh:mm:ss")));
 }

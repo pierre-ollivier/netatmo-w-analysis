@@ -22,6 +22,7 @@ public slots:
     void updateCurrentExtTemperature(double currentTemperature);
     void updateCurrentIntTemperature(double currentTemperature);
     void updateLastMeasurementDate(int timestamp);
+    void updateActualisationDate(QDateTime timestamp);
 
 private:
     // labels

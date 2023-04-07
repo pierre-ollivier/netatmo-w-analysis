@@ -131,6 +131,8 @@ void NetatmoAPIHandler::retrieveCurrentConditions(QNetworkReply *reply) {
         emit intMinTemperatureTimeChanged(intCurrentMinTemperatureTime);
         emit intMaxTemperatureTimeChanged(intCurrentMaxTemperatureTime);
 
+        emit currentTimeChanged(QDateTime::currentDateTime());
+
     }
     else {
         qDebug() << "ERROR with network"
