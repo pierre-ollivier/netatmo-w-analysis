@@ -21,6 +21,7 @@ public slots:
     void logToken(QString token); // provisional of course
     void updateCurrentExtTemperature(double currentTemperature);
     void updateCurrentIntTemperature(double currentTemperature);
+    void updateLastMeasurementDate(int timestamp);
 
 private:
     // labels
