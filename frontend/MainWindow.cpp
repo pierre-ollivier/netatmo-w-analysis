@@ -3,7 +3,17 @@
 
 MainWindow::MainWindow()
 { 
-    // The following lines are tests
+    buildWindow();
+}
+
+void MainWindow::buildWindow() {
+    buildAPIHandler();
+    buildLabels();
+    buildButtons();
+    buildLayouts();
+}
+
+void MainWindow::buildAPIHandler() {
     apiHandler = new NetatmoAPIHandler();
     apiHandler->postTokensRequest();
     connect(apiHandler, SIGNAL(accessTokenChanged(QString)), this, SLOT(logToken(QString)));
@@ -14,16 +24,6 @@ MainWindow::MainWindow()
     connect(apiHandler, SIGNAL(intTemperatureChanged(double)), this, SLOT(updateCurrentIntTemperature(double)));
     connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), this, SLOT(updateLastMeasurementDate(int)));
     connect(apiHandler, SIGNAL(currentTimeChanged(QDateTime)), this, SLOT(updateActualisationDate(QDateTime)));
-    buildWindow();
-
-}
-
-void MainWindow::buildWindow() {
-
-    buildLabels();
-    buildButtons();
-    buildLayouts();
-
 }
 
 void MainWindow::buildLabels() {
@@ -46,7 +46,7 @@ void MainWindow::buildLabels() {
 void MainWindow::buildButtons() {
     actualisationButton = new QPushButton("Actualiser");
     actualisationButton->setFont(QFont("Verdana", 14));
-//    boutonActualisation->setIcon()
+//    boutonActualisation->setIcon() // TODO
     connect(actualisationButton, SIGNAL(pressed()),
             apiHandler, SLOT(postCurrentConditionsRequest()));
 }

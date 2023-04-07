@@ -15,6 +15,7 @@ class MainWindow : public QWidget
 public:
     MainWindow();
     void buildWindow();
+    void buildAPIHandler();
     void buildLabels();
     void buildButtons();
     void buildLayouts();
