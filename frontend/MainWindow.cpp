@@ -30,6 +30,12 @@ void MainWindow::buildAPIHandler() {
             this, SLOT(updateMinExtTemperatureTime(int)));
     connect(apiHandler, SIGNAL(extMaxTemperatureTimeChanged(int)),
             this, SLOT(updateMaxExtTemperatureTime(int)));
+    connect(apiHandler, SIGNAL(intMinTemperatureChanged(double)), this, SLOT(updateMinIntTemperature(double)));
+    connect(apiHandler, SIGNAL(intMaxTemperatureChanged(double)), this, SLOT(updateMaxIntTemperature(double)));
+    connect(apiHandler, SIGNAL(intMinTemperatureTimeChanged(int)),
+            this, SLOT(updateMinIntTemperatureTime(int)));
+    connect(apiHandler, SIGNAL(intMaxTemperatureTimeChanged(int)),
+            this, SLOT(updateMaxIntTemperatureTime(int)));
 }
 
 void MainWindow::buildLabels() {
@@ -127,6 +133,38 @@ void MainWindow::updateMaxExtTemperatureTime(int timestamp) {
     dt.setSecsSinceEpoch(timestamp);
     const int positionToReplace = labelDailyTmax->text().length() - 7;
     labelDailyTmax->setText(labelDailyTmax->text().replace(positionToReplace,
+                                                           7,
+                                                           dt.toString("(hh:mm)")));
+}
+
+void MainWindow::updateMinIntTemperature(double minTemperature) {
+    const int lenToReplace = labelDailyTminInt->text().length() - 42;
+    labelDailyTminInt->setText(labelDailyTminInt->text().replace(31,  // the blue arrow and the HTML tags take space
+                                                           lenToReplace,
+                                                           QString::number(minTemperature)));
+}
+
+void MainWindow::updateMaxIntTemperature(double maxTemperature) {
+    const int lenToReplace = labelDailyTmaxInt->text().length() - 42;
+    labelDailyTmaxInt->setText(labelDailyTmaxInt->text().replace(31,  // the red arrow and the HTML tags take space
+                                                           lenToReplace,
+                                                           QString::number(maxTemperature)));
+}
+
+void MainWindow::updateMinIntTemperatureTime(int timestamp) {
+    QDateTime dt = QDateTime();
+    dt.setSecsSinceEpoch(timestamp);
+    const int positionToReplace = labelDailyTminInt->text().length() - 7;
+    labelDailyTminInt->setText(labelDailyTminInt->text().replace(positionToReplace,
+                                                           7,
+                                                           dt.toString("(hh:mm)")));
+}
+
+void MainWindow::updateMaxIntTemperatureTime(int timestamp) {
+    QDateTime dt = QDateTime();
+    dt.setSecsSinceEpoch(timestamp);
+    const int positionToReplace = labelDailyTmaxInt->text().length() - 7;
+    labelDailyTmaxInt->setText(labelDailyTmaxInt->text().replace(positionToReplace,
                                                            7,
                                                            dt.toString("(hh:mm)")));
 }
