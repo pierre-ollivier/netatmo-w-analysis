@@ -27,7 +27,13 @@ public slots:
     void updateMaxExtTemperature(double maxTemperature);
     void updateMinExtTemperatureTime(int timestamp);
     void updateMaxExtTemperatureTime(int timestamp);
+
     void updateCurrentIntTemperature(double currentTemperature);
+    void updateMinIntTemperature(double minTemperature);
+    void updateMaxIntTemperature(double maxTemperature);
+    void updateMinIntTemperatureTime(int timestamp);
+    void updateMaxIntTemperatureTime(int timestamp);
+
     void updateLastMeasurementDate(int timestamp);
     void updateActualisationDate(QDateTime timestamp);
 
