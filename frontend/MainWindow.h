@@ -39,10 +39,10 @@ public slots:
 
 private:
     // labels
-    QLabel *labelCurrentTempExt, *labelCurrentTempInt;
-    QLabel *labelStatus;
-    QLabel *labelDailyTmin, *labelDailyTmax;
-    QLabel *labelDailyTminInt, *labelDailyTmaxInt;
+    QLabel *currentExtTempLabel, *currentIntTempLabel;
+    QLabel *statusLabel;
+    QLabel *currentMinExtTempLabel, *currentMaxExtTempLabel;
+    QLabel *currentMinIntTempLabel, *currentMaxIntTempLabel;
 
     // buttons
     QPushButton *actualisationButton;

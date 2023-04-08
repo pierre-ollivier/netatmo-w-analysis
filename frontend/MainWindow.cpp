@@ -39,20 +39,20 @@ void MainWindow::buildAPIHandler() {
 }
 
 void MainWindow::buildLabels() {
-    labelStatus = new QLabel("Mesure : --/--/---- --:--:--\nActualisation : --/--/---- --:--:--");
-    labelDailyTmin = new QLabel("<font color=\"#0010ff\">↓</font> -,- °C (--:--)");
-    labelDailyTmax = new QLabel("<font color=\"#ff1000\">↑</font> -,- °C (--:--)");
-    labelDailyTmin->setFont(QFont("Arial", 13));
-    labelDailyTmax->setFont(QFont("Arial", 13));
+    statusLabel = new QLabel("Mesure : --/--/---- --:--:--\nActualisation : --/--/---- --:--:--");
+    currentMinExtTempLabel = new QLabel("<font color=\"#0010ff\">↓</font> -,- °C (--:--)");
+    currentMaxExtTempLabel = new QLabel("<font color=\"#ff1000\">↑</font> -,- °C (--:--)");
+    currentMinExtTempLabel->setFont(QFont("Arial", 13));
+    currentMaxExtTempLabel->setFont(QFont("Arial", 13));
 
-    labelCurrentTempExt = new QLabel();
-    labelCurrentTempExt->setFont(QFont("Arial", 32));
-    labelCurrentTempInt = new QLabel();
-    labelCurrentTempInt->setFont(QFont("Arial", 32));
-    labelDailyTminInt = new QLabel("<font color=\"#0010ff\">↓</font> -,- °C (--:--)");
-    labelDailyTmaxInt = new QLabel("<font color=\"#ff1000\">↑</font> -,- °C (--:--)");
-    labelDailyTminInt->setFont(QFont("Arial", 13));
-    labelDailyTmaxInt->setFont(QFont("Arial", 13));
+    currentExtTempLabel = new QLabel();
+    currentExtTempLabel->setFont(QFont("Arial", 32));
+    currentIntTempLabel = new QLabel();
+    currentIntTempLabel->setFont(QFont("Arial", 32));
+    currentMinIntTempLabel = new QLabel("<font color=\"#0010ff\">↓</font> -,- °C (--:--)");
+    currentMaxIntTempLabel = new QLabel("<font color=\"#ff1000\">↑</font> -,- °C (--:--)");
+    currentMinIntTempLabel->setFont(QFont("Arial", 13));
+    currentMaxIntTempLabel->setFont(QFont("Arial", 13));
 }
 
 void MainWindow::buildButtons() {
@@ -65,16 +65,16 @@ void MainWindow::buildButtons() {
 
 void MainWindow::buildLayouts() {
     mainLayout = new QGridLayout();
-    mainLayout->addWidget(labelCurrentTempExt, 1, 0, 2, 1);
-    mainLayout->addWidget(labelStatus, 0, 0);
+    mainLayout->addWidget(currentExtTempLabel, 1, 0, 2, 1);
+    mainLayout->addWidget(statusLabel, 0, 0);
 //    mainLayout->addWidget(labelExtremes, 0, 1, 1, 2);
     mainLayout->addWidget(actualisationButton, 0, 3);
 //    mainLayout->addWidget(vuegp, 1, 1, 2, 2);
-    mainLayout->addWidget(labelDailyTmax, 1, 3);
-    mainLayout->addWidget(labelDailyTmin, 2, 3);
-    mainLayout->addWidget(labelCurrentTempInt, 3, 0, 2, 1);
-    mainLayout->addWidget(labelDailyTmaxInt, 3, 3);
-    mainLayout->addWidget(labelDailyTminInt, 4, 3);
+    mainLayout->addWidget(currentMaxExtTempLabel, 1, 3);
+    mainLayout->addWidget(currentMinExtTempLabel, 2, 3);
+    mainLayout->addWidget(currentIntTempLabel, 3, 0, 2, 1);
+    mainLayout->addWidget(currentMaxIntTempLabel, 3, 3);
+    mainLayout->addWidget(currentMinIntTempLabel, 4, 3);
 //    mainLayout->addWidget(vuegpint, 3, 1, 2, 2);
 
     // set window's layout
@@ -86,35 +86,35 @@ void MainWindow::logToken(QString token) {
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
-    labelCurrentTempExt->setText(QString::number(currentTemperature) + "<font color=\"#606060\"> °C</font>");
+    currentExtTempLabel->setText(QString::number(currentTemperature) + "<font color=\"#606060\"> °C</font>");
     qDebug() << "EXT TEMPERATURE: " << currentTemperature;
 }
 
 void MainWindow::updateCurrentIntTemperature(double currentTemperature) {
-    labelCurrentTempInt->setText(QString::number(currentTemperature) + "<font color=\"#606060\"> °C</font>");
+    currentIntTempLabel->setText(QString::number(currentTemperature) + "<font color=\"#606060\"> °C</font>");
     qDebug() << "INT TEMPERATURE: " << currentTemperature;
 }
 
 void MainWindow::updateLastMeasurementDate(int timestamp) {
     QDateTime dt = QDateTime();
     dt.setSecsSinceEpoch(timestamp);
-    labelStatus->setText(labelStatus->text().replace(9, 19, dt.toString("dd/MM/yyyy hh:mm:ss")));
+    statusLabel->setText(statusLabel->text().replace(9, 19, dt.toString("dd/MM/yyyy hh:mm:ss")));
 }
 
 void MainWindow::updateActualisationDate(QDateTime timestamp) {
-    labelStatus->setText(labelStatus->text().replace(45, 19, timestamp.toString("dd/MM/yyyy hh:mm:ss")));
+    statusLabel->setText(statusLabel->text().replace(45, 19, timestamp.toString("dd/MM/yyyy hh:mm:ss")));
 }
 
 void MainWindow::updateMinExtTemperature(double minTemperature) {
-    const int lenToReplace = labelDailyTmin->text().length() - 42;
-    labelDailyTmin->setText(labelDailyTmin->text().replace(31,  // the blue arrow and the HTML tags take space
+    const int lenToReplace = currentMinExtTempLabel->text().length() - 42;
+    currentMinExtTempLabel->setText(currentMinExtTempLabel->text().replace(31,  // the blue arrow and the HTML tags take space
                                                            lenToReplace,
                                                            QString::number(minTemperature)));
 }
 
 void MainWindow::updateMaxExtTemperature(double maxTemperature) {
-    const int lenToReplace = labelDailyTmax->text().length() - 42;
-    labelDailyTmax->setText(labelDailyTmax->text().replace(31,  // the red arrow and the HTML tags take space
+    const int lenToReplace = currentMaxExtTempLabel->text().length() - 42;
+    currentMaxExtTempLabel->setText(currentMaxExtTempLabel->text().replace(31,  // the red arrow and the HTML tags take space
                                                            lenToReplace,
                                                            QString::number(maxTemperature)));
 }
@@ -122,8 +122,8 @@ void MainWindow::updateMaxExtTemperature(double maxTemperature) {
 void MainWindow::updateMinExtTemperatureTime(int timestamp) {
     QDateTime dt = QDateTime();
     dt.setSecsSinceEpoch(timestamp);
-    const int positionToReplace = labelDailyTmin->text().length() - 7;
-    labelDailyTmin->setText(labelDailyTmin->text().replace(positionToReplace,
+    const int positionToReplace = currentMinExtTempLabel->text().length() - 7;
+    currentMinExtTempLabel->setText(currentMinExtTempLabel->text().replace(positionToReplace,
                                                            7,
                                                            dt.toString("(hh:mm)")));
 }
@@ -131,22 +131,22 @@ void MainWindow::updateMinExtTemperatureTime(int timestamp) {
 void MainWindow::updateMaxExtTemperatureTime(int timestamp) {
     QDateTime dt = QDateTime();
     dt.setSecsSinceEpoch(timestamp);
-    const int positionToReplace = labelDailyTmax->text().length() - 7;
-    labelDailyTmax->setText(labelDailyTmax->text().replace(positionToReplace,
+    const int positionToReplace = currentMaxExtTempLabel->text().length() - 7;
+    currentMaxExtTempLabel->setText(currentMaxExtTempLabel->text().replace(positionToReplace,
                                                            7,
                                                            dt.toString("(hh:mm)")));
 }
 
 void MainWindow::updateMinIntTemperature(double minTemperature) {
-    const int lenToReplace = labelDailyTminInt->text().length() - 42;
-    labelDailyTminInt->setText(labelDailyTminInt->text().replace(31,  // the blue arrow and the HTML tags take space
+    const int lenToReplace = currentMinIntTempLabel->text().length() - 42;
+    currentMinIntTempLabel->setText(currentMinIntTempLabel->text().replace(31,  // the blue arrow and the HTML tags take space
                                                            lenToReplace,
                                                            QString::number(minTemperature)));
 }
 
 void MainWindow::updateMaxIntTemperature(double maxTemperature) {
-    const int lenToReplace = labelDailyTmaxInt->text().length() - 42;
-    labelDailyTmaxInt->setText(labelDailyTmaxInt->text().replace(31,  // the red arrow and the HTML tags take space
+    const int lenToReplace = currentMaxIntTempLabel->text().length() - 42;
+    currentMaxIntTempLabel->setText(currentMaxIntTempLabel->text().replace(31,  // the red arrow and the HTML tags take space
                                                            lenToReplace,
                                                            QString::number(maxTemperature)));
 }
@@ -154,8 +154,8 @@ void MainWindow::updateMaxIntTemperature(double maxTemperature) {
 void MainWindow::updateMinIntTemperatureTime(int timestamp) {
     QDateTime dt = QDateTime();
     dt.setSecsSinceEpoch(timestamp);
-    const int positionToReplace = labelDailyTminInt->text().length() - 7;
-    labelDailyTminInt->setText(labelDailyTminInt->text().replace(positionToReplace,
+    const int positionToReplace = currentMinIntTempLabel->text().length() - 7;
+    currentMinIntTempLabel->setText(currentMinIntTempLabel->text().replace(positionToReplace,
                                                            7,
                                                            dt.toString("(hh:mm)")));
 }
@@ -163,8 +163,8 @@ void MainWindow::updateMinIntTemperatureTime(int timestamp) {
 void MainWindow::updateMaxIntTemperatureTime(int timestamp) {
     QDateTime dt = QDateTime();
     dt.setSecsSinceEpoch(timestamp);
-    const int positionToReplace = labelDailyTmaxInt->text().length() - 7;
-    labelDailyTmaxInt->setText(labelDailyTmaxInt->text().replace(positionToReplace,
+    const int positionToReplace = currentMaxIntTempLabel->text().length() - 7;
+    currentMaxIntTempLabel->setText(currentMaxIntTempLabel->text().replace(positionToReplace,
                                                            7,
                                                            dt.toString("(hh:mm)")));
 }
