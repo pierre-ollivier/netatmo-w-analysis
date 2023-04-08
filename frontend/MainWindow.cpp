@@ -26,6 +26,10 @@ void MainWindow::buildAPIHandler() {
     connect(apiHandler, SIGNAL(currentTimeChanged(QDateTime)), this, SLOT(updateActualisationDate(QDateTime)));
     connect(apiHandler, SIGNAL(extMinTemperatureChanged(double)), this, SLOT(updateMinExtTemperature(double)));
     connect(apiHandler, SIGNAL(extMaxTemperatureChanged(double)), this, SLOT(updateMaxExtTemperature(double)));
+    connect(apiHandler, SIGNAL(extMinTemperatureTimeChanged(int)),
+            this, SLOT(updateMinExtTemperatureTime(int)));
+    connect(apiHandler, SIGNAL(extMaxTemperatureTimeChanged(int)),
+            this, SLOT(updateMaxExtTemperatureTime(int)));
 }
 
 void MainWindow::buildLabels() {
@@ -107,4 +111,22 @@ void MainWindow::updateMaxExtTemperature(double maxTemperature) {
     labelDailyTmax->setText(labelDailyTmax->text().replace(31,  // the red arrow and the HTML tags take space
                                                            lenToReplace,
                                                            QString::number(maxTemperature)));
+}
+
+void MainWindow::updateMinExtTemperatureTime(int timestamp) {
+    QDateTime dt = QDateTime();
+    dt.setSecsSinceEpoch(timestamp);
+    const int positionToReplace = labelDailyTmin->text().length() - 7;
+    labelDailyTmin->setText(labelDailyTmin->text().replace(positionToReplace,
+                                                           7,
+                                                           dt.toString("(hh:mm)")));
+}
+
+void MainWindow::updateMaxExtTemperatureTime(int timestamp) {
+    QDateTime dt = QDateTime();
+    dt.setSecsSinceEpoch(timestamp);
+    const int positionToReplace = labelDailyTmax->text().length() - 7;
+    labelDailyTmax->setText(labelDailyTmax->text().replace(positionToReplace,
+                                                           7,
+                                                           dt.toString("(hh:mm)")));
 }
