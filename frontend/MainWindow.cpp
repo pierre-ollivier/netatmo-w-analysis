@@ -81,12 +81,10 @@ void MainWindow::buildLayouts() {
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
     currentExtTempLabel->setText(QString::number(currentTemperature) + "<font color=\"#606060\"> °C</font>");
-    qDebug() << "EXT TEMPERATURE: " << currentTemperature;
 }
 
 void MainWindow::updateCurrentIntTemperature(double currentTemperature) {
     currentIntTempLabel->setText(QString::number(currentTemperature) + "<font color=\"#606060\"> °C</font>");
-    qDebug() << "INT TEMPERATURE: " << currentTemperature;
 }
 
 void MainWindow::updateLastMeasurementDate(int timestamp) {
