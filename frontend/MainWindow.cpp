@@ -24,6 +24,8 @@ void MainWindow::buildAPIHandler() {
     connect(apiHandler, SIGNAL(intTemperatureChanged(double)), this, SLOT(updateCurrentIntTemperature(double)));
     connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), this, SLOT(updateLastMeasurementDate(int)));
     connect(apiHandler, SIGNAL(currentTimeChanged(QDateTime)), this, SLOT(updateActualisationDate(QDateTime)));
+    connect(apiHandler, SIGNAL(extMinTemperatureChanged(double)), this, SLOT(updateMinExtTemperature(double)));
+    connect(apiHandler, SIGNAL(extMaxTemperatureChanged(double)), this, SLOT(updateMaxExtTemperature(double)));
 }
 
 void MainWindow::buildLabels() {
@@ -91,4 +93,18 @@ void MainWindow::updateLastMeasurementDate(int timestamp) {
 
 void MainWindow::updateActualisationDate(QDateTime timestamp) {
     labelStatus->setText(labelStatus->text().replace(45, 19, timestamp.toString("dd/MM/yyyy hh:mm:ss")));
+}
+
+void MainWindow::updateMinExtTemperature(double minTemperature) {
+    const int lenToReplace = labelDailyTmin->text().length() - 42;
+    labelDailyTmin->setText(labelDailyTmin->text().replace(31,  // the blue arrow and the HTML tags take space
+                                                           lenToReplace,
+                                                           QString::number(minTemperature)));
+}
+
+void MainWindow::updateMaxExtTemperature(double maxTemperature) {
+    const int lenToReplace = labelDailyTmax->text().length() - 42;
+    labelDailyTmax->setText(labelDailyTmax->text().replace(31,  // the red arrow and the HTML tags take space
+                                                           lenToReplace,
+                                                           QString::number(maxTemperature)));
 }
