@@ -16,8 +16,6 @@ void MainWindow::buildWindow() {
 void MainWindow::buildAPIHandler() {
     apiHandler = new NetatmoAPIHandler();
     apiHandler->postTokensRequest();
-    connect(apiHandler, SIGNAL(accessTokenChanged(QString)), this, SLOT(logToken(QString)));
-    connect(apiHandler, SIGNAL(refreshTokenChanged(QString)), this, SLOT(logToken(QString)));
     connect(apiHandler, SIGNAL(accessTokenChanged(QString)),
             apiHandler, SLOT(postCurrentConditionsRequest(QString)));
     connect(apiHandler, SIGNAL(extTemperatureChanged(double)), this, SLOT(updateCurrentExtTemperature(double)));
@@ -79,10 +77,6 @@ void MainWindow::buildLayouts() {
 
     // set window's layout
     setLayout(mainLayout);
-}
-
-void MainWindow::logToken(QString token) {
-    qDebug() << "TOKEN: " << token;
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
