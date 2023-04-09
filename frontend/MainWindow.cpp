@@ -82,11 +82,13 @@ void MainWindow::buildLayouts() {
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
-    currentExtTempLabel->setText(QString::number(currentTemperature) + "<font color=\"#606060\"> °C</font>");
+    currentExtTempLabel->setText(QString::number(currentTemperature, 'f', 1)
+                                 + "<font color=\"#606060\"> °C</font>");
 }
 
 void MainWindow::updateCurrentIntTemperature(double currentTemperature) {
-    currentIntTempLabel->setText(QString::number(currentTemperature) + "<font color=\"#606060\"> °C</font>");
+    currentIntTempLabel->setText(QString::number(currentTemperature, 'f', 1)
+                                 + "<font color=\"#606060\"> °C</font>");
 }
 
 void MainWindow::updateLastMeasurementDate(int timestamp) {
@@ -135,14 +137,14 @@ void MainWindow::updateMinIntTemperature(double minTemperature) {
     const int lenToReplace = currentMinIntTempLabel->text().length() - 42;
     currentMinIntTempLabel->setText(currentMinIntTempLabel->text().replace(31,  // the blue arrow and the HTML tags take space
                                                            lenToReplace,
-                                                           QString::number(minTemperature)));
+                                                           QString::number(minTemperature, 'f', 1)));
 }
 
 void MainWindow::updateMaxIntTemperature(double maxTemperature) {
     const int lenToReplace = currentMaxIntTempLabel->text().length() - 42;
     currentMaxIntTempLabel->setText(currentMaxIntTempLabel->text().replace(31,  // the red arrow and the HTML tags take space
                                                            lenToReplace,
-                                                           QString::number(maxTemperature)));
+                                                           QString::number(maxTemperature, 'f', 1)));
 }
 
 void MainWindow::updateMinIntTemperatureTime(int timestamp) {
