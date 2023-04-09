@@ -54,6 +54,7 @@ private:
 
     //other (provisional)
     QString accessToken = "";
+    QLocale *deviceLocale;
 };
 
 #endif // MAINWINDOW_H

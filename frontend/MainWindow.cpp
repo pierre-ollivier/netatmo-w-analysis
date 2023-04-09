@@ -3,6 +3,7 @@
 
 MainWindow::MainWindow()
 { 
+    deviceLocale = new QLocale();
     buildWindow();
 }
 
@@ -82,12 +83,12 @@ void MainWindow::buildLayouts() {
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
-    currentExtTempLabel->setText(QString::number(currentTemperature, 'f', 1)
+    currentExtTempLabel->setText(deviceLocale->toString(currentTemperature, 'f', 1)
                                  + "<font color=\"#606060\"> °C</font>");
 }
 
 void MainWindow::updateCurrentIntTemperature(double currentTemperature) {
-    currentIntTempLabel->setText(QString::number(currentTemperature, 'f', 1)
+    currentIntTempLabel->setText(deviceLocale->toString(currentTemperature, 'f', 1)
                                  + "<font color=\"#606060\"> °C</font>");
 }
 
@@ -105,14 +106,14 @@ void MainWindow::updateMinExtTemperature(double minTemperature) {
     const int lenToReplace = currentMinExtTempLabel->text().length() - 42;
     currentMinExtTempLabel->setText(currentMinExtTempLabel->text().replace(31,  // the blue arrow and the HTML tags take space
                                                            lenToReplace,
-                                                           QString::number(minTemperature)));
+                                                           deviceLocale->toString(minTemperature, 'f', 1)));
 }
 
 void MainWindow::updateMaxExtTemperature(double maxTemperature) {
     const int lenToReplace = currentMaxExtTempLabel->text().length() - 42;
     currentMaxExtTempLabel->setText(currentMaxExtTempLabel->text().replace(31,  // the red arrow and the HTML tags take space
                                                            lenToReplace,
-                                                           QString::number(maxTemperature)));
+                                                           deviceLocale->toString(maxTemperature, 'f', 1)));
 }
 
 void MainWindow::updateMinExtTemperatureTime(int timestamp) {
@@ -137,14 +138,14 @@ void MainWindow::updateMinIntTemperature(double minTemperature) {
     const int lenToReplace = currentMinIntTempLabel->text().length() - 42;
     currentMinIntTempLabel->setText(currentMinIntTempLabel->text().replace(31,  // the blue arrow and the HTML tags take space
                                                            lenToReplace,
-                                                           QString::number(minTemperature, 'f', 1)));
+                                                           deviceLocale->toString(minTemperature, 'f', 1)));
 }
 
 void MainWindow::updateMaxIntTemperature(double maxTemperature) {
     const int lenToReplace = currentMaxIntTempLabel->text().length() - 42;
     currentMaxIntTempLabel->setText(currentMaxIntTempLabel->text().replace(31,  // the red arrow and the HTML tags take space
                                                            lenToReplace,
-                                                           QString::number(maxTemperature, 'f', 1)));
+                                                           deviceLocale->toString(maxTemperature, 'f', 1)));
 }
 
 void MainWindow::updateMinIntTemperatureTime(int timestamp) {
