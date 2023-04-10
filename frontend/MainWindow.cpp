@@ -15,7 +15,7 @@ void MainWindow::buildWindow() {
 }
 
 void MainWindow::buildAPIHandler() {
-    apiHandler = new NetatmoAPIHandler();
+    apiHandler = new NetatmoAPIHandler(20000);
     apiHandler->postTokensRequest();
     connect(apiHandler, SIGNAL(accessTokenChanged(QString)),
             apiHandler, SLOT(postCurrentConditionsRequest(QString)));

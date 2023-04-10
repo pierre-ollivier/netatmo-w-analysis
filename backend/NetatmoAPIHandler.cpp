@@ -1,7 +1,7 @@
 #include "NetatmoAPIHandler.h"
 #include <QJsonDocument>
 
-NetatmoAPIHandler::NetatmoAPIHandler()
+NetatmoAPIHandler::NetatmoAPIHandler(int timeBetweenRequests)
 {
     tokensManager = new QNetworkAccessManager();
     currentConditionsManager = new QNetworkAccessManager();
@@ -9,6 +9,12 @@ NetatmoAPIHandler::NetatmoAPIHandler()
     connect(tokensManager, SIGNAL(finished(QNetworkReply *)), this, SLOT(retrieveTokens(QNetworkReply *)));
     connect(currentConditionsManager, SIGNAL(finished(QNetworkReply *)),
             this, SLOT(retrieveCurrentConditions(QNetworkReply *)));
+
+    currentConditionsTimer = new QTimer();
+    if (timeBetweenRequests > 0) {
+        currentConditionsTimer->start(timeBetweenRequests);
+    }
+    connect(currentConditionsTimer, SIGNAL(timeout()), this, SLOT(postCurrentConditionsRequest()));
 
 }
 
