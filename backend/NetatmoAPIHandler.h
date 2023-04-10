@@ -8,6 +8,7 @@
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
 #include <QDateTime>
+#include <QTimer>
 
 
 class NetatmoAPIHandler: public QObject
@@ -15,7 +16,7 @@ class NetatmoAPIHandler: public QObject
     Q_OBJECT
 
 public:
-    NetatmoAPIHandler();
+    NetatmoAPIHandler(int timeBetweenRequests = -1);
 
 public slots:
     void postTokensRequest();
@@ -73,6 +74,8 @@ private:
     QNetworkAccessManager *dailyRequestManager;
     QString accessToken = "";
     QString refreshToken = "";
+
+    QTimer *currentConditionsTimer;
 
     double extCurrentTemperature = 0.0;
     double extCurrentMinTemperature = 0.0;
