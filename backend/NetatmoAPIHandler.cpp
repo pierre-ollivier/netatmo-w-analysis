@@ -1,13 +1,13 @@
 #include "NetatmoAPIHandler.h"
 #include <QJsonDocument>
 
-NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor monitor, int timeBetweenRequests)
+NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequests)
 {
     tokensManager = new QNetworkAccessManager();
     currentConditionsManager = new QNetworkAccessManager();
     dailyRequestManager = new QNetworkAccessManager();
 
-    apiMonitor = new APIMonitor(monitor);
+    apiMonitor = monitor;
 
     connect(tokensManager, SIGNAL(finished(QNetworkReply *)), this, SLOT(retrieveTokens(QNetworkReply *)));
     connect(currentConditionsManager, SIGNAL(finished(QNetworkReply *)),

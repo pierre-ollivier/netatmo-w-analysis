@@ -17,7 +17,7 @@ class NetatmoAPIHandler: public QObject
     Q_OBJECT
 
 public:
-    NetatmoAPIHandler(APIMonitor monitor, int timeBetweenRequests = -1);
+    NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequests = -1);
 
 public slots:
     void postTokensRequest();
