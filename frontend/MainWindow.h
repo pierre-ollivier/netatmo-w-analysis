@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include <QGridLayout>
 #include "backend/NetatmoAPIHandler.h"
+#include "backend/APIMonitor.h"
 
 
 class MainWindow : public QWidget
@@ -55,6 +56,7 @@ private:
     //other (provisional)
     QString accessToken = "";
     QLocale *deviceLocale;
+    APIMonitor *apiMonitor;
 };
 
 #endif // MAINWINDOW_H
