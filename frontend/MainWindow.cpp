@@ -9,7 +9,7 @@ MainWindow::MainWindow()
     apiMonitor = new APIMonitor();
     buildWindow();
     QTimer *testMonitorTimer = new QTimer();
-    testMonitorTimer->start(2000);
+    testMonitorTimer->start(10000);
     connect(testMonitorTimer, SIGNAL(timeout()), apiMonitor, SLOT(printRequestsCounts()));
 }
 
