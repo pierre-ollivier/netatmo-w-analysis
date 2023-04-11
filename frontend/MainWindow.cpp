@@ -4,12 +4,12 @@
 #include <QTimer>
 
 MainWindow::MainWindow()
-{ 
+{
     deviceLocale = new QLocale();
     apiMonitor = new APIMonitor();
     buildWindow();
     QTimer *testMonitorTimer = new QTimer();
-    testMonitorTimer->start(15000);
+    testMonitorTimer->start(2000);
     connect(testMonitorTimer, SIGNAL(timeout()), apiMonitor, SLOT(printRequestsCounts()));
 }
 
@@ -21,7 +21,7 @@ void MainWindow::buildWindow() {
 }
 
 void MainWindow::buildAPIHandler() {
-    apiHandler = new NetatmoAPIHandler(*apiMonitor, 20000);
+    apiHandler = new NetatmoAPIHandler(apiMonitor, 20000);
     apiHandler->postTokensRequest();
     connect(apiHandler, SIGNAL(accessTokenChanged(QString)),
             apiHandler, SLOT(postCurrentConditionsRequest(QString)));
