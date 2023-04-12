@@ -9,8 +9,8 @@ MainWindow::MainWindow()
     apiMonitor = new APIMonitor();
     buildWindow();
     QTimer *testMonitorTimer = new QTimer();
-    testMonitorTimer->start(10000);
-    connect(testMonitorTimer, SIGNAL(timeout()), apiMonitor, SLOT(printRequestsCounts()));
+    testMonitorTimer->start(500);
+    connect(testMonitorTimer, SIGNAL(timeout()), this, SLOT(updateRequestCounts()));
 }
 
 void MainWindow::buildWindow() {
@@ -58,6 +58,7 @@ void MainWindow::buildLabels() {
     currentMaxIntTempLabel = new QLabel("<font color=\"#ff1000\">↑</font> -,- °C (--:--)");
     currentMinIntTempLabel->setFont(QFont("Arial", 13));
     currentMaxIntTempLabel->setFont(QFont("Arial", 13));
+    currentRequestStatus = new QLabel("Requêtes restantes : 50 / 10 secondes, 500 / 1 heure");
 }
 
 void MainWindow::buildButtons() {
@@ -83,6 +84,7 @@ void MainWindow::buildLayouts() {
     mainLayout->addWidget(currentMaxIntTempLabel, 3, 3);
     mainLayout->addWidget(currentMinIntTempLabel, 4, 3);
 //    mainLayout->addWidget(vuegpint, 3, 1, 2, 2);
+    mainLayout->addWidget(currentRequestStatus, 5, 0, 1, 4);
 
     // set window's layout
     setLayout(mainLayout);
@@ -170,4 +172,12 @@ void MainWindow::updateMaxIntTemperatureTime(int timestamp) {
     currentMaxIntTempLabel->setText(currentMaxIntTempLabel->text().replace(positionToReplace,
                                                            7,
                                                            dt.toString("(hh:mm)")));
+}
+
+void MainWindow::updateRequestCounts() {
+    int remainingRequests10s = 50 - apiMonitor->requestsCountLast10s();
+    int remainingRequests1h = 500 - apiMonitor->requestsCountLasth();
+    currentRequestStatus->setText("Requêtes restantes : " + QString::number(remainingRequests10s)
+                                  + " / 10 secondes, " + QString::number(remainingRequests1h)
+                                  + " / 1 heure");
 }

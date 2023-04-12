@@ -36,6 +36,7 @@ public slots:
 
     void updateLastMeasurementDate(int timestamp);
     void updateActualisationDate(QDateTime timestamp);
+    void updateRequestCounts();
 
 private:
     // labels
@@ -43,6 +44,7 @@ private:
     QLabel *statusLabel;
     QLabel *currentMinExtTempLabel, *currentMaxExtTempLabel;
     QLabel *currentMinIntTempLabel, *currentMaxIntTempLabel;
+    QLabel *currentRequestStatus;
 
     // buttons
     QPushButton *actualisationButton;
