@@ -2,14 +2,16 @@
 #define MAINWINDOW_H
 
 #include <QWidget>
+#include <QMainWindow>
 #include <QLabel>
 #include <QPushButton>
 #include <QGridLayout>
+#include <QMenuBar>
 #include "backend/NetatmoAPIHandler.h"
 #include "backend/APIMonitor.h"
 
 
-class MainWindow : public QWidget
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
@@ -20,6 +22,8 @@ public:
     void buildLabels();
     void buildButtons();
     void buildLayouts();
+    void createMenus();
+    void createActions();
 
 public slots:
     void updateCurrentExtTemperature(double currentTemperature);
@@ -44,7 +48,9 @@ private:
     QLabel *statusLabel;
     QLabel *currentMinExtTempLabel, *currentMaxExtTempLabel;
     QLabel *currentMinIntTempLabel, *currentMaxIntTempLabel;
-    QLabel *currentRequestStatus;
+
+    QWidget *mainWidget;
+    QMenuBar *menuBar;
 
     // buttons
     QPushButton *actualisationButton;
@@ -59,6 +65,9 @@ private:
     QString accessToken = "";
     QLocale *deviceLocale;
     APIMonitor *apiMonitor;
+
+    //actions
+    QAction *requestCountsAction;
 };
 
 #endif // MAINWINDOW_H
