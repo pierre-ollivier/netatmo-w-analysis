@@ -1,11 +1,14 @@
 #include "NetatmoAPIHandler.h"
 #include <QJsonDocument>
 
-NetatmoAPIHandler::NetatmoAPIHandler(int timeBetweenRequests)
+NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequests)
 {
     tokensManager = new QNetworkAccessManager();
     currentConditionsManager = new QNetworkAccessManager();
     dailyRequestManager = new QNetworkAccessManager();
+
+    apiMonitor = monitor;
+
     connect(tokensManager, SIGNAL(finished(QNetworkReply *)), this, SLOT(retrieveTokens(QNetworkReply *)));
     connect(currentConditionsManager, SIGNAL(finished(QNetworkReply *)),
             this, SLOT(retrieveCurrentConditions(QNetworkReply *)));
@@ -38,6 +41,7 @@ void NetatmoAPIHandler::postTokensRequest() {
     params.addQueryItem("password", password);
     params.addQueryItem("scope", "read_station");
     tokensManager->post(request, params.query().toUtf8());
+    apiMonitor->addTimestamp();
 }
 
 void NetatmoAPIHandler::postCurrentConditionsRequest(QString accessToken) {
@@ -51,6 +55,7 @@ void NetatmoAPIHandler::postCurrentConditionsRequest(QString accessToken) {
     params.addQueryItem("device_id", mainDeviceId);
     params.addQueryItem("get_favorites", "false");
     currentConditionsManager->post(request, params.query().toUtf8());
+    apiMonitor->addTimestamp();
 }
 
 void NetatmoAPIHandler::postCurrentConditionsRequest() {
@@ -64,6 +69,7 @@ void NetatmoAPIHandler::postCurrentConditionsRequest() {
     params.addQueryItem("device_id", mainDeviceId);
     params.addQueryItem("get_favorites", "false");
     currentConditionsManager->post(request, params.query().toUtf8());
+    apiMonitor->addTimestamp();
 }
 
 void NetatmoAPIHandler::postDailyRequest(int date_begin, QString scale, QString accessToken) {
@@ -84,6 +90,7 @@ void NetatmoAPIHandler::postDailyRequest(int date_begin, QString scale, QString 
     params.addQueryItem("optimize", "false");
     params.addQueryItem("real_time", "true");
     dailyRequestManager->post(request, params.query().toUtf8());
+    apiMonitor->addTimestamp();
 
 }
 

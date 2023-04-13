@@ -9,6 +9,7 @@
 #include <QNetworkAccessManager>
 #include <QDateTime>
 #include <QTimer>
+#include "APIMonitor.h"
 
 
 class NetatmoAPIHandler: public QObject
@@ -16,7 +17,7 @@ class NetatmoAPIHandler: public QObject
     Q_OBJECT
 
 public:
-    NetatmoAPIHandler(int timeBetweenRequests = -1);
+    NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequests = -1);
 
 public slots:
     void postTokensRequest();
@@ -72,6 +73,9 @@ private:
     QNetworkAccessManager *tokensManager;
     QNetworkAccessManager *currentConditionsManager;
     QNetworkAccessManager *dailyRequestManager;
+
+    APIMonitor *apiMonitor;
+
     QString accessToken = "";
     QString refreshToken = "";
 
