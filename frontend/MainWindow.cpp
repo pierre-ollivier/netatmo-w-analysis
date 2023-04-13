@@ -2,7 +2,6 @@
 #include <QDateTime>
 #include <QMessageBox>
 #include "backend/APIMonitor.h"
-#include <QTimer>
 
 MainWindow::MainWindow()
 {
@@ -13,9 +12,6 @@ MainWindow::MainWindow()
     deviceLocale = new QLocale();
     apiMonitor = new APIMonitor();
     buildWindow();
-    QTimer *testMonitorTimer = new QTimer();
-    testMonitorTimer->start(50000);
-    connect(testMonitorTimer, SIGNAL(timeout()), this, SLOT(updateRequestCounts()));
 }
 
 void MainWindow::buildWindow() {
@@ -195,6 +191,7 @@ void MainWindow::updateRequestCounts() {
     int remainingRequests10s = 50 - apiMonitor->requestsCountLast10s();
     int remainingRequests1h = 500 - apiMonitor->requestsCountLasth();
     QMessageBox::information(this, "Rapport réseau",
-                             "Requêtes restantes : \n<b>" + QString::number(remainingRequests10s) + "</b> / 10 secondes\n"
+                             "Requêtes restantes : <br><b>"
+                             + QString::number(remainingRequests10s) + "</b> / 10 secondes<br>"
                              + "<b>" + QString::number(remainingRequests1h) + "</b> / 1 heure");
 }
