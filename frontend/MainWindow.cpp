@@ -7,6 +7,8 @@ MainWindow::MainWindow()
 {
     mainWidget = new QWidget();
     setCentralWidget(mainWidget);
+    menuBar = new QMenuBar();
+    setMenuBar(menuBar);
     deviceLocale = new QLocale();
     apiMonitor = new APIMonitor();
     buildWindow();
@@ -20,6 +22,8 @@ void MainWindow::buildWindow() {
     buildLabels();
     buildButtons();
     buildLayouts();
+    createActions();
+    createMenus();
 }
 
 void MainWindow::buildAPIHandler() {
@@ -90,6 +94,16 @@ void MainWindow::buildLayouts() {
 
     // set window's layout
     mainWidget->setLayout(mainLayout);
+}
+
+void MainWindow::createMenus() {
+    QMenu *networkMenu = menuBar->addMenu(tr("&Réseau"));
+    networkMenu->addAction(requestCountsAction);
+}
+
+void MainWindow::createActions() {
+    requestCountsAction = new QAction("Rapport réseau...");
+    connect(requestCountsAction, SIGNAL(triggered()), this, SLOT(updateRequestCounts()));
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
