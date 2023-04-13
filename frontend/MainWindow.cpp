@@ -1,16 +1,17 @@
 #include "MainWindow.h"
 #include <QDateTime>
+#include <QMessageBox>
 #include "backend/APIMonitor.h"
-#include <QTimer>
 
 MainWindow::MainWindow()
 {
+    mainWidget = new QWidget();
+    setCentralWidget(mainWidget);
+    menuBar = new QMenuBar();
+    setMenuBar(menuBar);
     deviceLocale = new QLocale();
     apiMonitor = new APIMonitor();
     buildWindow();
-    QTimer *testMonitorTimer = new QTimer();
-    testMonitorTimer->start(500);
-    connect(testMonitorTimer, SIGNAL(timeout()), this, SLOT(updateRequestCounts()));
 }
 
 void MainWindow::buildWindow() {
@@ -18,6 +19,8 @@ void MainWindow::buildWindow() {
     buildLabels();
     buildButtons();
     buildLayouts();
+    createActions();
+    createMenus();
 }
 
 void MainWindow::buildAPIHandler() {
@@ -58,7 +61,6 @@ void MainWindow::buildLabels() {
     currentMaxIntTempLabel = new QLabel("<font color=\"#ff1000\">↑</font> -,- °C (--:--)");
     currentMinIntTempLabel->setFont(QFont("Arial", 13));
     currentMaxIntTempLabel->setFont(QFont("Arial", 13));
-    currentRequestStatus = new QLabel("Requêtes restantes : 50 / 10 secondes, 500 / 1 heure");
 }
 
 void MainWindow::buildButtons() {
@@ -84,10 +86,19 @@ void MainWindow::buildLayouts() {
     mainLayout->addWidget(currentMaxIntTempLabel, 3, 3);
     mainLayout->addWidget(currentMinIntTempLabel, 4, 3);
 //    mainLayout->addWidget(vuegpint, 3, 1, 2, 2);
-    mainLayout->addWidget(currentRequestStatus, 5, 0, 1, 4);
 
     // set window's layout
-    setLayout(mainLayout);
+    mainWidget->setLayout(mainLayout);
+}
+
+void MainWindow::createMenus() {
+    QMenu *networkMenu = menuBar->addMenu(tr("&Réseau"));
+    networkMenu->addAction(requestCountsAction);
+}
+
+void MainWindow::createActions() {
+    requestCountsAction = new QAction("Rapport réseau...");
+    connect(requestCountsAction, SIGNAL(triggered()), this, SLOT(updateRequestCounts()));
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
@@ -177,7 +188,8 @@ void MainWindow::updateMaxIntTemperatureTime(int timestamp) {
 void MainWindow::updateRequestCounts() {
     int remainingRequests10s = 50 - apiMonitor->requestsCountLast10s();
     int remainingRequests1h = 500 - apiMonitor->requestsCountLasth();
-    currentRequestStatus->setText("Requêtes restantes : " + QString::number(remainingRequests10s)
-                                  + " / 10 secondes, " + QString::number(remainingRequests1h)
-                                  + " / 1 heure");
+    QMessageBox::information(this, "Rapport réseau",
+                             "Requêtes restantes : <br><b>"
+                             + QString::number(remainingRequests10s) + "</b> / 10 secondes<br>"
+                             + "<b>" + QString::number(remainingRequests1h) + "</b> / 1 heure");
 }
