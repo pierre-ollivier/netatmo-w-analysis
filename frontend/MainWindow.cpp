@@ -5,6 +5,8 @@
 
 MainWindow::MainWindow()
 {
+    mainWidget = new QWidget();
+    setCentralWidget(mainWidget);
     deviceLocale = new QLocale();
     apiMonitor = new APIMonitor();
     buildWindow();
@@ -87,7 +89,7 @@ void MainWindow::buildLayouts() {
     mainLayout->addWidget(currentRequestStatus, 5, 0, 1, 4);
 
     // set window's layout
-    setLayout(mainLayout);
+    mainWidget->setLayout(mainLayout);
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {

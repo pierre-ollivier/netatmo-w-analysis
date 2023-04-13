@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QWidget>
+#include <QMainWindow>
 #include <QLabel>
 #include <QPushButton>
 #include <QGridLayout>
@@ -9,7 +10,7 @@
 #include "backend/APIMonitor.h"
 
 
-class MainWindow : public QWidget
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
@@ -45,6 +46,8 @@ private:
     QLabel *currentMinExtTempLabel, *currentMaxExtTempLabel;
     QLabel *currentMinIntTempLabel, *currentMaxIntTempLabel;
     QLabel *currentRequestStatus;
+
+    QWidget *mainWidget;
 
     // buttons
     QPushButton *actualisationButton;
