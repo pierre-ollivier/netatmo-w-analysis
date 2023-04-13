@@ -61,7 +61,6 @@ void MainWindow::buildLabels() {
     currentMaxIntTempLabel = new QLabel("<font color=\"#ff1000\">↑</font> -,- °C (--:--)");
     currentMinIntTempLabel->setFont(QFont("Arial", 13));
     currentMaxIntTempLabel->setFont(QFont("Arial", 13));
-    currentRequestStatus = new QLabel("Requêtes restantes : 50 / 10 secondes, 500 / 1 heure");
 }
 
 void MainWindow::buildButtons() {
@@ -87,7 +86,6 @@ void MainWindow::buildLayouts() {
     mainLayout->addWidget(currentMaxIntTempLabel, 3, 3);
     mainLayout->addWidget(currentMinIntTempLabel, 4, 3);
 //    mainLayout->addWidget(vuegpint, 3, 1, 2, 2);
-    mainLayout->addWidget(currentRequestStatus, 5, 0, 1, 4);
 
     // set window's layout
     mainWidget->setLayout(mainLayout);

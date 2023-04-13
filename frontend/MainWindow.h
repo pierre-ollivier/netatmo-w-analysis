@@ -48,7 +48,6 @@ private:
     QLabel *statusLabel;
     QLabel *currentMinExtTempLabel, *currentMaxExtTempLabel;
     QLabel *currentMinIntTempLabel, *currentMaxIntTempLabel;
-    QLabel *currentRequestStatus;
 
     QWidget *mainWidget;
     QMenuBar *menuBar;
