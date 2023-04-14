@@ -32,10 +32,10 @@ double DailyRecord::avgTemperature() {
     return _avgTemperature;
 }
 
-double DailyRecord::maxHumidity() {
+int DailyRecord::maxHumidity() {
     return _maxHumidity;
 }
-double DailyRecord::minHumidity() {
+int DailyRecord::minHumidity() {
     return _minHumidity;
 }
 double DailyRecord::avgHumidity() {
@@ -69,7 +69,4 @@ QTime DailyRecord::maxHumidityTime() {
 }
 QTime DailyRecord::minHumidityTime() {
     return timestampToTime(_minHumidityTimestamp);
-}
-
-
-
+};

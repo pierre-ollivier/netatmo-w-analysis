@@ -19,8 +19,8 @@ public:
     double minTemperature();
     double avgTemperature();
 
-    double maxHumidity();
-    double minHumidity();
+    int maxHumidity();
+    int minHumidity();
     double avgHumidity();
 
     int maxTemperatureTimestamp();
@@ -42,8 +42,8 @@ private:
     double _minTemperature;
     double _avgTemperature;
 
-    double _maxHumidity;
-    double _minHumidity;
+    int _maxHumidity;
+    int _minHumidity;
     double _avgHumidity;
 
     int _maxTemperatureTimestamp;
