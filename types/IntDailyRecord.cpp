@@ -1,11 +1,6 @@
 #include "IntDailyRecord.h"
+#include "DailyRecord.cpp"
 #include <QDateTime>
-
-QTime timestampToTime(int timestampInms) {
-    QDateTime dt;
-    dt.setMSecsSinceEpoch(timestampInms);
-    return dt.time();
-}
 
 IntDailyRecord::IntDailyRecord() : DailyRecord() // put here the transmitted parameters
 {
