@@ -8,25 +8,29 @@
 #include <QNetworkRequest>
 #include <QNetworkAccessManager>
 #include "frontend/MainWindow.h"
+#include "backend/DatabaseHandler.h"
+#include "types/DailyRecord.h"
 
 
 void tryDatabase2() {
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "connection_name");
-    db.setDatabaseName("../netatmo-w-analysis/netatmo_analysis.db");
-    if (!db.open()) {
-        qDebug() << "Database open error";
-    }
-    if (!db.isOpen() ) {
-        qDebug() << "Database is not open";
-    }
-    qDebug() << db.tables();
+    DatabaseHandler dbHandler("netatmo_analysis.db");
+    dbHandler.postDailyRecord(
+                DailyRecord(
+                    QDate(2023, 4, 14),
+                    9.7,
+                    6.3,
+                    8.3,
+                    93,
+                    68,
+                    81.2,
+                    1681471380000,
+                    1681450020000,
+                    1681487760000,
+                    1681423440000
+                    ));
 
-    QSqlQuery query(db);
-    query.prepare("INSERT INTO DailyRecords(Date,Tx,Tn) VALUES (?,?,?);");
-    query.addBindValue(1678791600);
-    query.addBindValue(13.8);
-    query.addBindValue(5.1);
-    query.exec();
+    QSqlDatabase::removeDatabase("connection_name");
+
 }
 
 int main(int argc, char *argv[]) {
