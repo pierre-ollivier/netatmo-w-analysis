@@ -1,15 +1,41 @@
 #include "DailyRecord.h"
 #include <QDateTime>
 
-QTime timestampToTime(int timestampInms) {
+QTime timestampToTime(long long timestampInms) {
     QDateTime dt;
     dt.setMSecsSinceEpoch(timestampInms);
     return dt.time();
 }
 
-DailyRecord::DailyRecord()
+DailyRecord::DailyRecord(
+        QDate date,
+        double maxTemperature,
+        double minTemperature,
+        double avgTemperature,
+        int maxHumidity,
+        int minHumidity,
+        double avgHumidity,
+        long long maxTemperatureTimestamp,
+        long long minTemperatureTimestamp,
+        long long maxHumidityTimestamp,
+        long long minHumidityTimestamp
+        )
 {
+    _date = date;
+    _maxTemperature = maxTemperature;
+    _minTemperature = minTemperature;
+    _avgTemperature = avgTemperature;
+    _maxHumidity = maxHumidity;
+    _minHumidity = minHumidity;
+    _avgHumidity = avgHumidity;
+    _maxTemperatureTimestamp = maxTemperatureTimestamp;
+    _minTemperatureTimestamp = minTemperatureTimestamp;
+    _maxHumidityTimestamp = maxHumidityTimestamp;
+    _minHumidityTimestamp = minHumidityTimestamp;
+}
 
+QDate DailyRecord::date() {
+    return _date;
 }
 
 int DailyRecord::year() {
@@ -21,7 +47,7 @@ int DailyRecord::month() {
 int DailyRecord::day() {
     return _date.day();
 }
-int DailyRecord::timestamp() {
+long long DailyRecord::timestamp() {
     QDateTime dt(_date);
     dt.setTime(QTime(12, 0));
     return dt.toMSecsSinceEpoch();
@@ -47,17 +73,17 @@ double DailyRecord::avgHumidity() {
     return _avgHumidity;
 }
 
-int DailyRecord::maxTemperatureTimestamp() {
+long long DailyRecord::maxTemperatureTimestamp() {
     return _maxTemperatureTimestamp;
 }
-int DailyRecord::minTemperatureTimestamp() {
+long long DailyRecord::minTemperatureTimestamp() {
     return _minTemperatureTimestamp;
 }
 
-int DailyRecord::maxHumidityTimestamp() {
+long long DailyRecord::maxHumidityTimestamp() {
     return _maxHumidityTimestamp;
 }
-int DailyRecord::minHumidityTimestamp() {
+long long DailyRecord::minHumidityTimestamp() {
     return _minHumidityTimestamp;
 }
 

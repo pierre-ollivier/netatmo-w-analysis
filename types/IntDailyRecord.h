@@ -6,14 +6,26 @@
 class IntDailyRecord : public DailyRecord
 {
 public:
-    IntDailyRecord();
+    IntDailyRecord(
+            QDate date,
+            double maxTemperature,
+            double minTemperature,
+            double avgTemperature,
+            int maxHumidity,
+            int minHumidity,
+            double avgHumidity,
+            long long maxTemperatureTimestamp,
+            long long minTemperatureTimestamp,
+            long long maxHumidityTimestamp,
+            long long minHumidityTimestamp
+            );
 
     double maxPressure();
     double minPressure();
     double avgPressure();
 
-    int maxPressureTimestamp();
-    int minPressureTimestamp();
+    long long maxPressureTimestamp();
+    long long minPressureTimestamp();
 
     QTime maxPressureTime();
     QTime minPressureTime();
@@ -23,8 +35,8 @@ private:
     double _minPressure;
     double _avgPressure;
 
-    int _maxPressureTimestamp;
-    int _minPressureTimestamp;
+    long long _maxPressureTimestamp;
+    long long _minPressureTimestamp;
 };
 
 #endif // INTDAILYRECORD_H

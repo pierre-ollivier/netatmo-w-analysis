@@ -7,14 +7,26 @@
 class DailyRecord
 {
 public:
-    DailyRecord();
+    DailyRecord(
+            QDate date,
+            double maxTemperature,
+            double minTemperature,
+            double avgTemperature,
+            int maxHumidity,
+            int minHumidity,
+            double avgHumidity,
+            long long maxTemperatureTimestamp,
+            long long minTemperatureTimestamp,
+            long long maxHumidityTimestamp,
+            long long minHumidityTimestamp
+            );
 
     QDate date();
 
     int year();
     int month();
     int day();
-    int timestamp();
+    long long timestamp();
 
     double maxTemperature();
     double minTemperature();
@@ -24,11 +36,11 @@ public:
     int minHumidity();
     double avgHumidity();
 
-    int maxTemperatureTimestamp();
-    int minTemperatureTimestamp();
+    long long maxTemperatureTimestamp();
+    long long minTemperatureTimestamp();
 
-    int maxHumidityTimestamp();
-    int minHumidityTimestamp();
+    long long maxHumidityTimestamp();
+    long long minHumidityTimestamp();
 
     QTime maxTemperatureTime();
     QTime minTemperatureTime();
@@ -47,11 +59,11 @@ private:
     int _minHumidity;
     double _avgHumidity;
 
-    int _maxTemperatureTimestamp;
-    int _minTemperatureTimestamp;
+    long long _maxTemperatureTimestamp;
+    long long _minTemperatureTimestamp;
 
-    int _maxHumidityTimestamp;
-    int _minHumidityTimestamp;
+    long long _maxHumidityTimestamp;
+    long long _minHumidityTimestamp;
 
 
 
