@@ -2,7 +2,31 @@
 #include "DailyRecord.cpp"
 #include <QDateTime>
 
-IntDailyRecord::IntDailyRecord() : DailyRecord() // put here the transmitted parameters
+IntDailyRecord::IntDailyRecord(
+        QDate date,
+        double maxTemperature,
+        double minTemperature,
+        double avgTemperature,
+        int maxHumidity,
+        int minHumidity,
+        double avgHumidity,
+        long long maxTemperatureTimestamp,
+        long long minTemperatureTimestamp,
+        long long maxHumidityTimestamp,
+        long long minHumidityTimestamp
+        ) : DailyRecord(
+                date,
+                maxTemperature,
+                minTemperature,
+                avgTemperature,
+                maxHumidity,
+                minHumidity,
+                avgHumidity,
+                maxTemperatureTimestamp,
+                minTemperatureTimestamp,
+                maxHumidityTimestamp,
+                minHumidityTimestamp
+                )
 {
 
 }
@@ -17,10 +41,10 @@ double IntDailyRecord::avgPressure() {
     return _avgPressure;
 }
 
-int IntDailyRecord::maxPressureTimestamp() {
+long long IntDailyRecord::maxPressureTimestamp() {
     return _maxPressureTimestamp;
 }
-int IntDailyRecord::minPressureTimestamp() {
+long long IntDailyRecord::minPressureTimestamp() {
     return _minPressureTimestamp;
 }
 
