@@ -8,7 +8,6 @@ class DatabaseHandler
 {
 public:
     DatabaseHandler(QString pathToDatabase);
-
     void postDailyRecord(DailyRecord record);
 
 private:
