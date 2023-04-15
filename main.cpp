@@ -29,8 +29,6 @@ void tryDatabase2() {
                     1681423440000
                     ));
 
-    QSqlDatabase::removeDatabase("connection_name");
-
 }
 
 int main(int argc, char *argv[]) {
