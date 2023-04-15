@@ -21,6 +21,11 @@ int DailyRecord::month() {
 int DailyRecord::day() {
     return _date.day();
 }
+int DailyRecord::timestamp() {
+    QDateTime dt(_date);
+    dt.setTime(QTime(12, 0));
+    return dt.toMSecsSinceEpoch();
+}
 
 double DailyRecord::maxTemperature() {
     return _maxTemperature;

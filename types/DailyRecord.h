@@ -14,6 +14,7 @@ public:
     int year();
     int month();
     int day();
+    int timestamp();
 
     double maxTemperature();
     double minTemperature();
