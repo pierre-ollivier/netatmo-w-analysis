@@ -32,13 +32,30 @@ const QString outdoorDailyRecordsParams[26] = {
     "minHumiditySecond",
 };
 
+const QString outdoorDailyTimestampsParams[13] = {
+    "timestamp",
+    "year",
+    "month",
+    "day",
+    "date",
+    "hour",
+    "minute",
+    "second",
+    "time",
+    "temperature",
+    "humidity",
+    "dewPoint",
+    "humidex",
+};
+
+QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "connection_name");
+
 DatabaseHandler::DatabaseHandler(QString pathToDatabase)
 {
     _pathToDatabase = pathToDatabase;
 }
 
-void DatabaseHandler::postDailyRecord(DailyRecord record, QString tableName) {
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "connection_name");
+void DatabaseHandler::postOutdoorDailyRecord(DailyRecord record, QString tableName) {
     db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
     if (!db.open()) {
         qDebug() << "Database open error";
@@ -53,7 +70,7 @@ void DatabaseHandler::postDailyRecord(DailyRecord record, QString tableName) {
     }
     preparingQuery += outdoorDailyRecordsParams[25];
     preparingQuery += ") VALUES (";
-    for (int i = 0; i< 25; i++) {
+    for (int i = 0; i < 25; i++) {
         preparingQuery += "?,";
     }
     preparingQuery += "?);";
@@ -97,4 +114,50 @@ void DatabaseHandler::postDailyRecord(DailyRecord record, QString tableName) {
     if (!query.exec()) {
         qDebug() << "The following query could not be executed. Query: " << preparingQuery;
     }
+}
+
+void DatabaseHandler::postOutdoorTimestampRecord(TimestampRecord record, QString tableName) {
+    db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    if (!db.open()) {
+        qDebug() << "Database open error";
+    }
+    if (!db.isOpen() ) {
+        qDebug() << "Database is not open";
+    }
+
+    QString preparingQuery = "INSERT INTO " + tableName + "(";
+    for (int i = 0; i < 12; i++) {
+        preparingQuery += outdoorDailyTimestampsParams[i] + ",";
+    }
+    preparingQuery += outdoorDailyTimestampsParams[12];
+    preparingQuery += ") VALUES (";
+    for (int i = 0; i < 12; i++) {
+        preparingQuery += "?,";
+    }
+    preparingQuery += "?);";
+
+    QSqlQuery query(db);
+    query.prepare(preparingQuery);
+
+    query.addBindValue(record.timestamp());
+
+    query.addBindValue(record.date().year());
+    query.addBindValue(record.date().month());
+    query.addBindValue(record.date().day());
+    query.addBindValue(record.date().toString("dd/MM/yyyy"));
+
+    query.addBindValue(record.time().hour());
+    query.addBindValue(record.time().minute());
+    query.addBindValue(record.time().second());
+    query.addBindValue(record.time().toString("hh:mm:ss"));
+
+    query.addBindValue(record.temperature());
+    query.addBindValue(record.humidity());
+    query.addBindValue(record.dewPoint());
+    query.addBindValue(record.humidex());
+
+    if (!query.exec()) {
+        qDebug() << "The following query could not be executed. Query: " << preparingQuery;
+    }
+
 }

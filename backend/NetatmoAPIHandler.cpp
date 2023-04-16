@@ -1,5 +1,7 @@
 #include "NetatmoAPIHandler.h"
 #include <QJsonDocument>
+#include "types/TimestampRecord.h"  // TODO: remove provisional code
+#include "DatabaseHandler.h"  // TODO: remove provisional code
 
 NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequests)
 {
@@ -155,6 +157,14 @@ void NetatmoAPIHandler::retrieveCurrentConditions(QNetworkReply *reply) {
         emit intMaxTemperatureTimeChanged(intCurrentMaxTemperatureTime);
 
         emit currentTimeChanged(QDateTime::currentDateTime());
+
+        // for testing purposes only
+        // TODO: remove provisional code
+
+        long long currentUTCTimeLong = extCurrentUTCTime;  // implicit conversion to long long
+        TimestampRecord record(1000 * currentUTCTimeLong, extCurrentTemperature, extCurrentHumidity);
+        DatabaseHandler dbHandler("netatmo_analysis.db");
+        dbHandler.postOutdoorTimestampRecord(record, "OutdoorTimestampRecords");
 
     }
     else {
