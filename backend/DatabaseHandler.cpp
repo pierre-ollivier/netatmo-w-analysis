@@ -47,7 +47,7 @@ void DatabaseHandler::postDailyRecord(DailyRecord record, QString tableName) {
         qDebug() << "Database is not open";
     }
 
-    QString preparingQuery = "INSERT INTO " + tableName + "(";  // TODO: parametrize this for indoor
+    QString preparingQuery = "INSERT INTO " + tableName + "(";
     for (int i = 0; i < 25; i++) {
         preparingQuery += outdoorDailyRecordsParams[i] + ",";
     }
