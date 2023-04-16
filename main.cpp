@@ -27,14 +27,15 @@ void tryDatabase2() {
                     1681450020000,
                     1681487760000,
                     1681423440000
-                    ));
+                    ),
+                "OutdoorDailyRecords");
 
 }
 
 int main(int argc, char *argv[]) {
 
     QApplication app(argc, argv);
-//    tryDatabase2();
+    tryDatabase2();
     MainWindow mainWin;
     mainWin.show();
     return app.exec();

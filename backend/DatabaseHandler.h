@@ -8,7 +8,7 @@ class DatabaseHandler
 {
 public:
     DatabaseHandler(QString pathToDatabase);
-    void postDailyRecord(DailyRecord record);
+    void postDailyRecord(DailyRecord record, QString tableName);
 
 private:
     QString _pathToDatabase;
