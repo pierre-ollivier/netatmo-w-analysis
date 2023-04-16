@@ -37,7 +37,7 @@ DatabaseHandler::DatabaseHandler(QString pathToDatabase)
     _pathToDatabase = pathToDatabase;
 }
 
-void DatabaseHandler::postDailyRecord(DailyRecord record) {
+void DatabaseHandler::postDailyRecord(DailyRecord record, QString tableName) {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "connection_name");
     db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
     if (!db.open()) {
@@ -47,7 +47,7 @@ void DatabaseHandler::postDailyRecord(DailyRecord record) {
         qDebug() << "Database is not open";
     }
 
-    QString preparingQuery = "INSERT INTO OutdoorDailyRecords(";  // TODO: parametrize this for indoor
+    QString preparingQuery = "INSERT INTO " + tableName + "(";  // TODO: parametrize this for indoor
     for (int i = 0; i < 25; i++) {
         preparingQuery += outdoorDailyRecordsParams[i] + ",";
     }
