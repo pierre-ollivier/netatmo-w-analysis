@@ -9,13 +9,13 @@
 #include <QNetworkAccessManager>
 #include "frontend/MainWindow.h"
 #include "backend/DatabaseHandler.h"
-#include "types/DailyRecord.h"
+#include "types/ExtDailyRecord.h"
 
 
 void tryDatabase2() {
     DatabaseHandler dbHandler("netatmo_analysis.db");
     dbHandler.postDailyRecord(
-                DailyRecord(
+                ExtDailyRecord(
                     QDate(2023, 4, 14),
                     9.7,
                     6.3,
