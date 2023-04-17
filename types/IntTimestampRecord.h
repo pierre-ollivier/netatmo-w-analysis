@@ -17,9 +17,9 @@ public:
             int noise
             );
 
-    double getPressure();
-    int getCO2();
-    int getNoise();
+    double pressure();
+    int co2();
+    int noise();
 
 private:
     double _pressure;
