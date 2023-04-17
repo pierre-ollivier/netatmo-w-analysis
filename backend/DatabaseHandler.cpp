@@ -3,6 +3,81 @@
 #include <QSqlQuery>
 #include <QDebug>
 
+const QString indoorTimestampsParams[16] = {
+    "timestamp",
+    "year",
+    "month",
+    "day",
+    "date",
+    "hour",
+    "minute",
+    "second",
+    "time",
+    "temperature",
+    "humidity",
+    "dewPoint",
+    "humidex",
+    "pressure",
+    "co2",
+    "noise",
+};
+
+const QString indoorDailyRecordsParams[37] = {
+    "year",
+    "month",
+    "day",
+    "date",
+    "maxTemperature",
+    "minTemperature",
+    "avgTemperature",
+    "maxHumidity",
+    "minHumidity",
+    "avgHumidity",
+    "maxPressure",
+    "minPressure",
+    "avgPressure",
+    "maxTemperatureTimestamp",
+    "maxTemperatureHour",
+    "maxTemperatureMinute",
+    "maxTemperatureSecond",
+    "minTemperatureTimestamp",
+    "minTemperatureHour",
+    "minTemperatureMinute",
+    "minTemperatureSecond",
+    "maxHumidityTimestamp",
+    "maxHumidityHour",
+    "maxHumidityMinute",
+    "maxHumiditySecond",
+    "minHumidityTimestamp",
+    "minHumidityHour",
+    "minHumidityMinute",
+    "minHumiditySecond",
+    "maxPressureTimestamp",
+    "maxPressureHour",
+    "maxPressureMinute",
+    "maxPressureSecond",
+    "minPressureTimestamp",
+    "minPressureHour",
+    "minPressureMinute",
+    "minPressureSecond",
+};
+
+const QString outdoorTimestampsParams[13] = {
+    "timestamp",
+    "year",
+    "month",
+    "day",
+    "date",
+    "hour",
+    "minute",
+    "second",
+    "time",
+    "temperature",
+    "humidity",
+    "dewPoint",
+    "humidex",
+};
+
 const QString outdoorDailyRecordsParams[26] = {
     "year",
     "month",
@@ -32,22 +107,6 @@ const QString outdoorDailyRecordsParams[26] = {
     "minHumiditySecond",
 };
 
-const QString outdoorDailyTimestampsParams[13] = {
-    "timestamp",
-    "year",
-    "month",
-    "day",
-    "date",
-    "hour",
-    "minute",
-    "second",
-    "time",
-    "temperature",
-    "humidity",
-    "dewPoint",
-    "humidex",
-};
-
 QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "connection_name");
 
 DatabaseHandler::DatabaseHandler(QString pathToDatabase)
@@ -55,8 +114,32 @@ DatabaseHandler::DatabaseHandler(QString pathToDatabase)
     _pathToDatabase = pathToDatabase;
 }
 
+void DatabaseHandler::prepareQuery(QSqlQuery query, QString tableName, QString params[], int paramsSize) {
+
+    // Useless for now, still some work to do to pass a QString[]
+    if (!db.open()) {
+        qDebug() << "Database open error";
+    }
+    if (!db.isOpen() ) {
+        qDebug() << "Database is not open";
+    }
+
+    QString preparingQuery = "INSERT INTO " + tableName + "(";
+    for (int i = 0; i < paramsSize - 1; i++) {
+        preparingQuery += params[i] + ",";
+    }
+    preparingQuery += params[paramsSize - 1];
+    preparingQuery += ") VALUES (";
+    for (int i = 0; i < paramsSize - 1; i++) {
+        preparingQuery += "?,";
+    }
+    preparingQuery += "?);";
+    query.prepare(preparingQuery);
+}
+
 void DatabaseHandler::postOutdoorDailyRecord(DailyRecord record, QString tableName) {
     db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    QSqlQuery query(db);
     if (!db.open()) {
         qDebug() << "Database open error";
     }
@@ -75,8 +158,10 @@ void DatabaseHandler::postOutdoorDailyRecord(DailyRecord record, QString tableNa
     }
     preparingQuery += "?);";
 
-    QSqlQuery query(db);
+
     query.prepare(preparingQuery);
+
+//    prepareQuery(query, tableName, *outdoorDailyRecordsParams, 26);
 
     query.addBindValue(record.year());
     query.addBindValue(record.month());
@@ -118,6 +203,8 @@ void DatabaseHandler::postOutdoorDailyRecord(DailyRecord record, QString tableNa
 
 void DatabaseHandler::postOutdoorTimestampRecord(TimestampRecord record, QString tableName) {
     db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    QSqlQuery query(db);
+
     if (!db.open()) {
         qDebug() << "Database open error";
     }
@@ -127,16 +214,15 @@ void DatabaseHandler::postOutdoorTimestampRecord(TimestampRecord record, QString
 
     QString preparingQuery = "INSERT INTO " + tableName + "(";
     for (int i = 0; i < 12; i++) {
-        preparingQuery += outdoorDailyTimestampsParams[i] + ",";
+        preparingQuery += outdoorTimestampsParams[i] + ",";
     }
-    preparingQuery += outdoorDailyTimestampsParams[12];
+    preparingQuery += outdoorTimestampsParams[12];
     preparingQuery += ") VALUES (";
     for (int i = 0; i < 12; i++) {
         preparingQuery += "?,";
     }
     preparingQuery += "?);";
 
-    QSqlQuery query(db);
     query.prepare(preparingQuery);
 
     query.addBindValue(record.timestamp());
@@ -160,4 +246,114 @@ void DatabaseHandler::postOutdoorTimestampRecord(TimestampRecord record, QString
         qDebug() << "The following query could not be executed. Query: " << preparingQuery;
     }
 
+}
+
+void DatabaseHandler::postIndoorDailyRecord(DailyRecord record, QString tableName) {
+    db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    QSqlQuery query(db);
+    if (!db.open()) {
+        qDebug() << "Database open error";
+    }
+    if (!db.isOpen() ) {
+        qDebug() << "Database is not open";
+    }
+
+    QString preparingQuery = "INSERT INTO " + tableName + "(";
+    for (int i = 0; i < 36; i++) {
+        preparingQuery += outdoorDailyRecordsParams[i] + ",";
+    }
+    preparingQuery += indoorDailyRecordsParams[36];
+    preparingQuery += ") VALUES (";
+    for (int i = 0; i < 36; i++) {
+        preparingQuery += "?,";
+    }
+    preparingQuery += "?);";
+
+
+    query.prepare(preparingQuery);
+
+//    prepareQuery(query, tableName, *outdoorDailyRecordsParams, 26);
+
+    query.addBindValue(record.year());
+    query.addBindValue(record.month());
+    query.addBindValue(record.day());
+    query.addBindValue(record.date().toString("dd/MM/yyyy"));
+
+    query.addBindValue(record.maxTemperature());
+    query.addBindValue(record.minTemperature());
+    query.addBindValue(record.avgTemperature());
+
+    query.addBindValue(record.maxHumidity());
+    query.addBindValue(record.minHumidity());
+    query.addBindValue(record.avgHumidity());
+
+    query.addBindValue(record.maxTemperatureTimestamp());
+    query.addBindValue(record.maxTemperatureTime().hour());
+    query.addBindValue(record.maxTemperatureTime().minute());
+    query.addBindValue(record.maxTemperatureTime().second());
+
+    query.addBindValue(record.minTemperatureTimestamp());
+    query.addBindValue(record.minTemperatureTime().hour());
+    query.addBindValue(record.minTemperatureTime().minute());
+    query.addBindValue(record.minTemperatureTime().second());
+
+    query.addBindValue(record.maxHumidityTimestamp());
+    query.addBindValue(record.maxHumidityTime().hour());
+    query.addBindValue(record.maxHumidityTime().minute());
+    query.addBindValue(record.maxHumidityTime().second());
+
+    query.addBindValue(record.minHumidityTimestamp());
+    query.addBindValue(record.minHumidityTime().hour());
+    query.addBindValue(record.minHumidityTime().minute());
+    query.addBindValue(record.minHumidityTime().second());
+
+    if (!query.exec()) {
+        qDebug() << "The following query could not be executed. Query: " << preparingQuery;
+    }
+}
+
+void DatabaseHandler::postIndoorTimestampRecord(TimestampRecord record, QString tableName) {
+    db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    QSqlQuery query(db);
+
+    if (!db.open()) {
+        qDebug() << "Database open error";
+    }
+    if (!db.isOpen() ) {
+        qDebug() << "Database is not open";
+    }
+
+    QString preparingQuery = "INSERT INTO " + tableName + "(";
+    for (int i = 0; i < 15; i++) {
+        preparingQuery += indoorTimestampsParams[i] + ",";
+    }
+    preparingQuery += indoorTimestampsParams[15];
+    preparingQuery += ") VALUES (";
+    for (int i = 0; i < 15; i++) {
+        preparingQuery += "?,";
+    }
+    preparingQuery += "?);";
+
+    query.prepare(preparingQuery);
+
+    query.addBindValue(record.timestamp());
+
+    query.addBindValue(record.date().year());
+    query.addBindValue(record.date().month());
+    query.addBindValue(record.date().day());
+    query.addBindValue(record.date().toString("dd/MM/yyyy"));
+
+    query.addBindValue(record.time().hour());
+    query.addBindValue(record.time().minute());
+    query.addBindValue(record.time().second());
+    query.addBindValue(record.time().toString("hh:mm:ss"));
+
+    query.addBindValue(record.temperature());
+    query.addBindValue(record.humidity());
+    query.addBindValue(record.dewPoint());
+    query.addBindValue(record.humidex());
+
+    if (!query.exec()) {
+        qDebug() << "The following query could not be executed. Query: " << preparingQuery;
+    }
 }

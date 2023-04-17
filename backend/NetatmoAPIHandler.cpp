@@ -1,6 +1,7 @@
 #include "NetatmoAPIHandler.h"
 #include <QJsonDocument>
-#include "types/TimestampRecord.h"  // TODO: remove provisional code
+#include "types/IntTimestampRecord.h"  // TODO: remove provisional code
+#include "types/ExtTimestampRecord.h"  // TODO: remove provisional code
 #include "DatabaseHandler.h"  // TODO: remove provisional code
 
 NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequests)
@@ -139,6 +140,9 @@ void NetatmoAPIHandler::retrieveCurrentConditions(QNetworkReply *reply) {
         intCurrentUTCTime = js["body"]["devices"][0]["dashboard_data"]["time_utc"].toInt();
         intCurrentMinTemperatureTime = js["body"]["devices"][0]["dashboard_data"]["date_min_temp"].toInt();
         intCurrentMaxTemperatureTime = js["body"]["devices"][0]["dashboard_data"]["date_max_temp"].toInt();
+        intCurrentPressure = js["body"]["devices"][0]["dashboard_data"]["Pressure"].toDouble();
+        intCurrentCO2 = js["body"]["devices"][0]["dashboard_data"]["CO2"].toInt();
+        intCurrentNoise = js["body"]["devices"][0]["dashboard_data"]["Noise"].toInt();
 
         emit extTemperatureChanged(extCurrentTemperature);
         emit extMinTemperatureChanged(extCurrentMinTemperature);
@@ -162,9 +166,17 @@ void NetatmoAPIHandler::retrieveCurrentConditions(QNetworkReply *reply) {
         // TODO: remove provisional code
 
         long long currentUTCTimeLong = extCurrentUTCTime;  // implicit conversion to long long
-        TimestampRecord record(1000 * currentUTCTimeLong, extCurrentTemperature, extCurrentHumidity);
+        ExtTimestampRecord record(1000 * currentUTCTimeLong, extCurrentTemperature, extCurrentHumidity);
+        IntTimestampRecord intRecord(
+                    1000 * currentUTCTimeLong,
+                    intCurrentTemperature,
+                    intCurrentHumidity,
+                    intCurrentPressure,
+                    intCurrentCO2,
+                    intCurrentNoise);
         DatabaseHandler dbHandler("netatmo_analysis.db");
         dbHandler.postOutdoorTimestampRecord(record, "OutdoorTimestampRecords");
+        dbHandler.postOutdoorTimestampRecord(intRecord, "IndoorTimestampRecords");
 
     }
     else {
