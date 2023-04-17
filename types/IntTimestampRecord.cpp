@@ -18,12 +18,12 @@ IntTimestampRecord::IntTimestampRecord(
     _noise = noise;
 }
 
-double IntTimestampRecord::getPressure() {
+double IntTimestampRecord::pressure() {
     return _pressure;
 }
-int IntTimestampRecord::getCO2() {
+int IntTimestampRecord::co2() {
     return _co2;
 }
-int IntTimestampRecord::getNoise() {
+int IntTimestampRecord::noise() {
     return _noise;
 }

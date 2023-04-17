@@ -3,8 +3,10 @@
 
 #include <QString>
 #include <QSqlQuery>
-#include "types/DailyRecord.h"
-#include "types/TimestampRecord.h"
+#include "types/IntDailyRecord.h"
+#include "types/ExtDailyRecord.h"
+#include "types/ExtTimestampRecord.h"
+#include "types/IntTimestampRecord.h"
 
 class DatabaseHandler
 {
@@ -13,10 +15,10 @@ public:
 
     void prepareQuery(QSqlQuery query, QString tableName, QString params[], int paramsSize);
 
-    void postOutdoorDailyRecord(DailyRecord record, QString tableName);
-    void postIndoorDailyRecord(DailyRecord record, QString tableName);
-    void postOutdoorTimestampRecord(TimestampRecord record, QString tableName);
-    void postIndoorTimestampRecord(TimestampRecord record, QString tableName);
+    void postOutdoorDailyRecord(ExtDailyRecord record, QString tableName);
+    void postIndoorDailyRecord(IntDailyRecord record, QString tableName);
+    void postOutdoorTimestampRecord(ExtTimestampRecord record, QString tableName);
+    void postIndoorTimestampRecord(IntTimestampRecord record, QString tableName);
 
 private:
     QString _pathToDatabase;

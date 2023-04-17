@@ -137,7 +137,7 @@ void DatabaseHandler::prepareQuery(QSqlQuery query, QString tableName, QString p
     query.prepare(preparingQuery);
 }
 
-void DatabaseHandler::postOutdoorDailyRecord(DailyRecord record, QString tableName) {
+void DatabaseHandler::postOutdoorDailyRecord(ExtDailyRecord record, QString tableName) {
     db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
     QSqlQuery query(db);
     if (!db.open()) {
@@ -201,7 +201,7 @@ void DatabaseHandler::postOutdoorDailyRecord(DailyRecord record, QString tableNa
     }
 }
 
-void DatabaseHandler::postOutdoorTimestampRecord(TimestampRecord record, QString tableName) {
+void DatabaseHandler::postOutdoorTimestampRecord(ExtTimestampRecord record, QString tableName) {
     db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
     QSqlQuery query(db);
 
@@ -248,7 +248,7 @@ void DatabaseHandler::postOutdoorTimestampRecord(TimestampRecord record, QString
 
 }
 
-void DatabaseHandler::postIndoorDailyRecord(DailyRecord record, QString tableName) {
+void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString tableName) {
     db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
     QSqlQuery query(db);
     if (!db.open()) {
@@ -312,7 +312,7 @@ void DatabaseHandler::postIndoorDailyRecord(DailyRecord record, QString tableNam
     }
 }
 
-void DatabaseHandler::postIndoorTimestampRecord(TimestampRecord record, QString tableName) {
+void DatabaseHandler::postIndoorTimestampRecord(IntTimestampRecord record, QString tableName) {
     db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
     QSqlQuery query(db);
 
@@ -352,6 +352,9 @@ void DatabaseHandler::postIndoorTimestampRecord(TimestampRecord record, QString 
     query.addBindValue(record.humidity());
     query.addBindValue(record.dewPoint());
     query.addBindValue(record.humidex());
+    query.addBindValue(record.pressure());
+    query.addBindValue(record.co2());
+    query.addBindValue(record.noise());
 
     if (!query.exec()) {
         qDebug() << "The following query could not be executed. Query: " << preparingQuery;
