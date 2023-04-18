@@ -375,11 +375,38 @@ void DatabaseHandler::postFromOutdoorCsv(QString pathToCsv, QString tableName) {
                 continue;
             }
             QStringList l = s.split(';');
+            long long timestamp = l.at(0).toInt();
             double t = l.at(2).toFloat();
             int rh = l.at(3).toInt();
-            long long timestamp = l.at(0).toInt();
+
             ExtTimestampRecord record(timestamp, t, rh);
             postOutdoorTimestampRecord(record, tableName);
+        }
+    }
+}
+
+void DatabaseHandler::postFromIndoorCsv(QString pathToCsv, QString tableName) {
+    QFile file(pathToCsv);
+    if (file.open(QIODevice::ReadOnly)) {
+        QTextStream textStream(&file);
+        while(!textStream.atEnd()) {
+            QString s = textStream.readLine();
+            if (QDate::currentDate().year() >= 2030) {
+                qDebug() << "WARNING: the function postFromOutdoorCsv will stop working on May 18th, 2033 due to a timestamp issue";
+            }
+            if (s[0] != '1') {
+                continue;
+            }
+            QStringList l = s.split(';');
+            long long timestamp = l.at(0).toInt();
+            double t = l.at(2).toFloat();
+            int rh = l.at(3).toInt();
+            int co2 = l.at(4).toInt();
+            int noise = l.at(5).toInt();
+            double pressure = l.at(6).toInt();
+
+            IntTimestampRecord record(timestamp, t, rh, pressure, co2, noise);
+            postIndoorTimestampRecord(record, tableName);
         }
     }
 }

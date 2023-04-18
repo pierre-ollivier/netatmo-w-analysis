@@ -21,6 +21,7 @@ public:
     void postIndoorTimestampRecord(IntTimestampRecord record, QString tableName);
 
     void postFromOutdoorCsv(QString pathToCsv, QString tableName);
+    void postFromIndoorCsv(QString pathToCsv, QString tableName);
 
 private:
     QString _pathToDatabase;
