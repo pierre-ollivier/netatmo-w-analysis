@@ -166,9 +166,9 @@ void NetatmoAPIHandler::retrieveCurrentConditions(QNetworkReply *reply) {
         // TODO: remove provisional code
 
         long long currentUTCTimeLong = extCurrentUTCTime;  // implicit conversion to long long
-        ExtTimestampRecord record(1000 * currentUTCTimeLong, extCurrentTemperature, extCurrentHumidity);
+        ExtTimestampRecord record(currentUTCTimeLong, extCurrentTemperature, extCurrentHumidity);
         IntTimestampRecord intRecord(
-                    1000 * currentUTCTimeLong,
+                    currentUTCTimeLong,
                     intCurrentTemperature,
                     intCurrentHumidity,
                     intCurrentPressure,

@@ -1,9 +1,9 @@
 #include "DailyRecord.h"
 #include <QDateTime>
 
-QTime timestampToTime(long long timestampInms) {
+QTime timestampToTime(long long timestampIns) {
     QDateTime dt;
-    dt.setMSecsSinceEpoch(timestampInms);
+    dt.setSecsSinceEpoch(timestampIns);
     return dt.time();
 }
 
