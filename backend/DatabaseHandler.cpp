@@ -2,6 +2,7 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QDebug>
+#include <QFile>
 
 const QString indoorTimestampsParams[16] = {
     "timestamp",
@@ -358,5 +359,27 @@ void DatabaseHandler::postIndoorTimestampRecord(IntTimestampRecord record, QStri
 
     if (!query.exec()) {
         qDebug() << "The following query could not be executed. Query: " << preparingQuery;
+    }
+}
+
+void DatabaseHandler::postFromOutdoorCsv(QString pathToCsv, QString tableName) {
+    QFile file(pathToCsv);
+    if (file.open(QIODevice::ReadOnly)) {
+        QTextStream textStream(&file);
+        while(!textStream.atEnd()) {
+            QString s = textStream.readLine();
+            if (QDate::currentDate().year() >= 2030) {
+                qDebug() << "WARNING: the function postFromOutdoorCsv will stop working on May 18th, 2033 due to a timestamp issue";
+            }
+            if (s[0] != '1') {
+                continue;
+            }
+            QStringList l = s.split(';');
+            double t = l.at(2).toFloat();
+            int rh = l.at(3).toInt();
+            long long timestamp = l.at(0).toInt();
+            ExtTimestampRecord record(timestamp, t, rh);
+            postOutdoorTimestampRecord(record, tableName);
+        }
     }
 }
