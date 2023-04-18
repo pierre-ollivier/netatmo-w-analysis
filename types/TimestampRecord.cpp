@@ -18,12 +18,12 @@ long long TimestampRecord::timestamp() {
 }
 QDate TimestampRecord::date() {
     QDateTime dt;
-    dt.setMSecsSinceEpoch(_timestamp);
+    dt.setSecsSinceEpoch(_timestamp);
     return dt.date();
 }
 QTime TimestampRecord::time() {
     QDateTime dt;
-    dt.setMSecsSinceEpoch(_timestamp);
+    dt.setSecsSinceEpoch(_timestamp);
     return dt.time();
 }
 
