@@ -375,8 +375,8 @@ void DatabaseHandler::postFromOutdoorCsv(QString pathToCsv, QString tableName) {
                 continue;
             }
             QStringList l = s.split(';');
-            long long timestamp = l.at(0).toInt();
-            double t = l.at(2).toFloat();
+            long long timestamp = l.at(0).toLongLong();
+            double t = l.at(2).toDouble();
             int rh = l.at(3).toInt();
 
             ExtTimestampRecord record(timestamp, t, rh);
@@ -398,12 +398,12 @@ void DatabaseHandler::postFromIndoorCsv(QString pathToCsv, QString tableName) {
                 continue;
             }
             QStringList l = s.split(';');
-            long long timestamp = l.at(0).toInt();
-            double t = l.at(2).toFloat();
+            long long timestamp = l.at(0).toLongLong();
+            double t = l.at(2).toDouble();
             int rh = l.at(3).toInt();
             int co2 = l.at(4).toInt();
             int noise = l.at(5).toInt();
-            double pressure = l.at(6).toInt();
+            double pressure = l.at(6).toDouble();
 
             IntTimestampRecord record(timestamp, t, rh, pressure, co2, noise);
             postIndoorTimestampRecord(record, tableName);
