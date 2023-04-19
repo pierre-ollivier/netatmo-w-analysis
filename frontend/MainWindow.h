@@ -68,6 +68,7 @@ private:
 
     //actions
     QAction *requestCountsAction;
+    QAction *addMonthDataAction;
 };
 
 #endif // MAINWINDOW_H

@@ -91,14 +91,17 @@ void MainWindow::buildLayouts() {
     mainWidget->setLayout(mainLayout);
 }
 
-void MainWindow::createMenus() {
-    QMenu *networkMenu = menuBar->addMenu(tr("&Réseau"));
-    networkMenu->addAction(requestCountsAction);
-}
-
 void MainWindow::createActions() {
     requestCountsAction = new QAction("Rapport réseau...");
     connect(requestCountsAction, SIGNAL(triggered()), this, SLOT(updateRequestCounts()));
+    addMonthDataAction = new QAction("Ajouter des données mensuelles...");
+}
+
+void MainWindow::createMenus() {
+    QMenu *networkMenu = menuBar->addMenu(tr("&Réseau"));
+    networkMenu->addAction(requestCountsAction);
+    QMenu *dataMenu = menuBar->addMenu(tr("Données"));
+    dataMenu->addAction(addMonthDataAction);
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
