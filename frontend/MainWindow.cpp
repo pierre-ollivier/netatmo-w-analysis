@@ -1,6 +1,8 @@
 #include "MainWindow.h"
 #include <QDateTime>
 #include <QMessageBox>
+#include <QInputDialog>
+#include <QFileDialog>
 #include "backend/APIMonitor.h"
 
 MainWindow::MainWindow()
@@ -11,6 +13,7 @@ MainWindow::MainWindow()
     setMenuBar(menuBar);
     deviceLocale = new QLocale();
     apiMonitor = new APIMonitor();
+    dbHandler = new DatabaseHandler("netatmo_analysis.db");
     buildWindow();
 }
 
@@ -95,6 +98,7 @@ void MainWindow::createActions() {
     requestCountsAction = new QAction("Rapport réseau...");
     connect(requestCountsAction, SIGNAL(triggered()), this, SLOT(updateRequestCounts()));
     addMonthDataAction = new QAction("Ajouter des données mensuelles...");
+    connect(addMonthDataAction, SIGNAL(triggered()), this, SLOT(addMonthData()));
 }
 
 void MainWindow::createMenus() {
@@ -195,4 +199,32 @@ void MainWindow::updateRequestCounts() {
                              "Requêtes restantes : <br><b>"
                              + QString::number(remainingRequests10s) + "</b> / 10 secondes<br>"
                              + "<b>" + QString::number(remainingRequests1h) + "</b> / 1 heure");
+}
+
+void MainWindow::addMonthData() {
+    QString fileName = QFileDialog::getOpenFileName(this, "Ouvrir un fichier", "D:/Mes programmes/RegressionTemperature/Données Netatmo", "*.csv");
+
+//    bool okDebut = false, okFin = false;
+
+//    QString dateDebut = QInputDialog::getText(this, "Date de début", "Date de début (au format JJ/MM/AAAA) :", QLineEdit::Normal, QString(), &okDebut);
+//    QString dateFin = QInputDialog::getText(this, "Date de fin", "Date de fin (au format JJ/MM/AAAA) :", QLineEdit::Normal, QString(), &okFin);
+
+    QString q = "Confirmer la saisie ? \n\n";
+    q += "Nom du fichier : " + fileName.mid(56) + "\n";
+//    q += "Date de début : " + dateDebut + "\n";
+//    q += "Date de fin : " + dateFin;
+
+    int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
+    bool isIndoorData = (fileName.size() > 7 && fileName[fileName.size() - 12] == 'C');
+
+    if (response == QMessageBox::Yes) {
+        if (isIndoorData) {
+            dbHandler->postFromIndoorCsv(fileName, "IndoorTimestampRecords");
+        }
+        else {
+            dbHandler->postFromOutdoorCsv(fileName, "OutdoorTimestampRecords");
+        }
+    }
+    else if (response == QMessageBox::No) QMessageBox::warning(this, "Annulation", "Opération annulée.");
+
 }
