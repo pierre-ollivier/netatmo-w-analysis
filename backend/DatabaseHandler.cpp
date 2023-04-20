@@ -3,6 +3,7 @@
 #include <QSqlQuery>
 #include <QDebug>
 #include <QFile>
+#include <QDateTime>
 
 const QString indoorTimestampsParams[16] = {
     "timestamp",
@@ -362,7 +363,18 @@ void DatabaseHandler::postIndoorTimestampRecord(IntTimestampRecord record, QStri
     }
 }
 
-void DatabaseHandler::postFromOutdoorCsv(QString pathToCsv, QString tableName) {
+void DatabaseHandler::postFromOutdoorCsv(QString pathToCsv, QString tableName, QDate beginDate, QDate endDate) {
+
+    // Set default values of beginDate and endDate according to the file name
+    if (beginDate.isNull()) {
+        const int lenOfPathToCsv = pathToCsv.size() - 4;  // don't take into account .csv at the end
+        int month = pathToCsv.mid(lenOfPathToCsv - 2, 2).toInt();
+        int year = pathToCsv.mid(lenOfPathToCsv - 7, 4).toInt();
+        beginDate.setDate(year, month, 1);  // first day of the month
+        endDate.setDate(year, month, 1);
+        endDate.setDate(year, month, endDate.daysInMonth());  // last day of the month
+    }
+
     QFile file(pathToCsv);
     if (file.open(QIODevice::ReadOnly)) {
         QTextStream textStream(&file);
@@ -371,7 +383,7 @@ void DatabaseHandler::postFromOutdoorCsv(QString pathToCsv, QString tableName) {
             if (QDate::currentDate().year() >= 2030) {
                 qDebug() << "WARNING: the function postFromOutdoorCsv will stop working on May 18th, 2033 due to a timestamp issue";
             }
-            if (s[0] != '1') {
+            if (s[0] != '1') {  // if s doesn't start with '1', it is not a timestamp (until 2033) and we ignore it
                 continue;
             }
             QStringList l = s.split(';');
@@ -379,13 +391,30 @@ void DatabaseHandler::postFromOutdoorCsv(QString pathToCsv, QString tableName) {
             double t = l.at(2).toDouble();
             int rh = l.at(3).toInt();
 
-            ExtTimestampRecord record(timestamp, t, rh);
-            postOutdoorTimestampRecord(record, tableName);
+            // Check that timestamp is within the range of [beginDate, endDate]
+            QDateTime dateAssociatedToTimestamp = QDateTime();
+            dateAssociatedToTimestamp.setSecsSinceEpoch(timestamp);
+
+            if (beginDate <= dateAssociatedToTimestamp.date() && dateAssociatedToTimestamp.date() <= endDate) {
+                ExtTimestampRecord record(timestamp, t, rh);
+                postOutdoorTimestampRecord(record, tableName);
+            }
         }
     }
 }
 
-void DatabaseHandler::postFromIndoorCsv(QString pathToCsv, QString tableName) {
+void DatabaseHandler::postFromIndoorCsv(QString pathToCsv, QString tableName, QDate beginDate, QDate endDate) {
+
+    // Set default values of beginDate and endDate according to the file name
+    if (beginDate.isNull()) {
+        const int lenOfPathToCsv = pathToCsv.size() - 4;  // don't take into account .csv at the end
+        int month = pathToCsv.mid(lenOfPathToCsv - 2, 2).toInt();
+        int year = pathToCsv.mid(lenOfPathToCsv - 7, 4).toInt();
+        beginDate.setDate(year, month, 1);  // first day of the month
+        endDate.setDate(year, month, 1);
+        endDate.setDate(year, month, endDate.daysInMonth());  // last day of the month
+    }
+
     QFile file(pathToCsv);
     if (file.open(QIODevice::ReadOnly)) {
         QTextStream textStream(&file);
@@ -394,7 +423,7 @@ void DatabaseHandler::postFromIndoorCsv(QString pathToCsv, QString tableName) {
             if (QDate::currentDate().year() >= 2030) {
                 qDebug() << "WARNING: the function postFromOutdoorCsv will stop working on May 18th, 2033 due to a timestamp issue";
             }
-            if (s[0] != '1') {
+            if (s[0] != '1') {  // if s doesn't start with '1', it is not a timestamp (until 2033) and we ignore it
                 continue;
             }
             QStringList l = s.split(';');
@@ -405,8 +434,14 @@ void DatabaseHandler::postFromIndoorCsv(QString pathToCsv, QString tableName) {
             int noise = l.at(5).toInt();
             double pressure = l.at(6).toDouble();
 
-            IntTimestampRecord record(timestamp, t, rh, pressure, co2, noise);
-            postIndoorTimestampRecord(record, tableName);
+            // Check that timestamp is within the range of [beginDate, endDate]
+            QDateTime dateAssociatedToTimestamp = QDateTime();
+            dateAssociatedToTimestamp.setSecsSinceEpoch(timestamp);
+
+            if (beginDate <= dateAssociatedToTimestamp.date() && dateAssociatedToTimestamp.date() <= endDate) {
+                IntTimestampRecord record(timestamp, t, rh, pressure, co2, noise);
+                postIndoorTimestampRecord(record, tableName);
+            }
         }
     }
 }

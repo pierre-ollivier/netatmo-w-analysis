@@ -175,8 +175,8 @@ void NetatmoAPIHandler::retrieveCurrentConditions(QNetworkReply *reply) {
                     intCurrentCO2,
                     intCurrentNoise);
         DatabaseHandler dbHandler("netatmo_analysis.db");
-        dbHandler.postOutdoorTimestampRecord(record, "OutdoorTimestampRecords");
-        dbHandler.postIndoorTimestampRecord(intRecord, "IndoorTimestampRecords");
+//        dbHandler.postOutdoorTimestampRecord(record, "OutdoorTimestampRecords");
+//        dbHandler.postIndoorTimestampRecord(intRecord, "IndoorTimestampRecords");
 
     }
     else {
