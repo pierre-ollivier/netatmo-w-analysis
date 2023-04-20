@@ -20,8 +20,8 @@ public:
     void postOutdoorTimestampRecord(ExtTimestampRecord record, QString tableName);
     void postIndoorTimestampRecord(IntTimestampRecord record, QString tableName);
 
-    void postFromOutdoorCsv(QString pathToCsv, QString tableName);
-    void postFromIndoorCsv(QString pathToCsv, QString tableName);
+    void postFromOutdoorCsv(QString pathToCsv, QString tableName, QDate beginDate = QDate(), QDate endDate = QDate());
+    void postFromIndoorCsv(QString pathToCsv, QString tableName, QDate beginDate = QDate(), QDate endDate = QDate());
 
 private:
     QString _pathToDatabase;
