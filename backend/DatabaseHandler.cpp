@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QDateTime>
+#include <QProgressDialog>
 
 const QString indoorTimestampsParams[16] = {
     "timestamp",
@@ -378,7 +379,16 @@ void DatabaseHandler::postFromOutdoorCsv(QString pathToCsv, QString tableName, Q
     QFile file(pathToCsv);
     if (file.open(QIODevice::ReadOnly)) {
         QTextStream textStream(&file);
+        const int minTimestamp = beginDate.startOfDay().toSecsSinceEpoch();
+        const int maxTimestamp = endDate.endOfDay().toSecsSinceEpoch();
+        QProgressDialog progress("Ajout des nouvelles données...", "Annuler", minTimestamp, maxTimestamp);
+        progress.setWindowModality(Qt::WindowModal);
+        progress.setValue(minTimestamp);
+
         while(!textStream.atEnd()) {
+            if (progress.wasCanceled()) {
+                break;
+            }
             QString s = textStream.readLine();
             if (QDate::currentDate().year() >= 2030) {
                 qDebug() << "WARNING: the function postFromOutdoorCsv will stop working on May 18th, 2033 due to a timestamp issue";
@@ -398,8 +408,10 @@ void DatabaseHandler::postFromOutdoorCsv(QString pathToCsv, QString tableName, Q
             if (beginDate <= dateAssociatedToTimestamp.date() && dateAssociatedToTimestamp.date() <= endDate) {
                 ExtTimestampRecord record(timestamp, t, rh);
                 postOutdoorTimestampRecord(record, tableName);
+                progress.setValue(timestamp);
             }
         }
+        progress.setValue(maxTimestamp);
     }
 }
 
@@ -418,7 +430,16 @@ void DatabaseHandler::postFromIndoorCsv(QString pathToCsv, QString tableName, QD
     QFile file(pathToCsv);
     if (file.open(QIODevice::ReadOnly)) {
         QTextStream textStream(&file);
+        const int minTimestamp = beginDate.startOfDay().toSecsSinceEpoch();
+        const int maxTimestamp = endDate.endOfDay().toSecsSinceEpoch();
+        QProgressDialog progress("Ajout des nouvelles données...", "Annuler", minTimestamp, maxTimestamp);
+        progress.setWindowModality(Qt::WindowModal);
+        progress.setValue(minTimestamp);
+
         while(!textStream.atEnd()) {
+            if (progress.wasCanceled()) {
+                break;
+            }
             QString s = textStream.readLine();
             if (QDate::currentDate().year() >= 2030) {
                 qDebug() << "WARNING: the function postFromOutdoorCsv will stop working on May 18th, 2033 due to a timestamp issue";
@@ -441,7 +462,9 @@ void DatabaseHandler::postFromIndoorCsv(QString pathToCsv, QString tableName, QD
             if (beginDate <= dateAssociatedToTimestamp.date() && dateAssociatedToTimestamp.date() <= endDate) {
                 IntTimestampRecord record(timestamp, t, rh, pressure, co2, noise);
                 postIndoorTimestampRecord(record, tableName);
+                progress.setValue(timestamp);
             }
         }
+        progress.setValue(maxTimestamp);
     }
 }
