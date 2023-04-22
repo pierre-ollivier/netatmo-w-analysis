@@ -47,6 +47,13 @@ int DailyRecord::month() {
 int DailyRecord::day() {
     return _date.day();
 }
+int DailyRecord::decade() {
+    int result = _date.day() <= 10 ? 1 : _date.day() <= 20 ? 2 : 3;
+    return result + 3 * (_date.month() - 1);
+}
+int DailyRecord::weekNumber() {
+    return _date.weekNumber();
+}
 long long DailyRecord::timestamp() {
     QDateTime dt(_date);
     dt.setTime(QTime(12, 0));

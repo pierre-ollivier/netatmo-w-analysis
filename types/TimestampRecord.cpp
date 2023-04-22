@@ -26,6 +26,32 @@ QTime TimestampRecord::time() {
     dt.setSecsSinceEpoch(_timestamp);
     return dt.time();
 }
+// TODO: maybe store date and time to not recalculate them every time
+int TimestampRecord::year() {
+    return date().year();
+}
+int TimestampRecord::month() {
+    return date().month();
+}
+int TimestampRecord::day() {
+    return date().day();
+}
+int TimestampRecord::decade() {
+    int result =day() <= 10 ? 1 : day() <= 20 ? 2 : 3;
+    return result + 3 * (month() - 1);
+}
+int TimestampRecord::weekNumber() {
+    return date().weekNumber();
+}
+int TimestampRecord::hour() {
+    return time().hour();
+}
+int TimestampRecord::minute() {
+    return time().minute();
+}
+int TimestampRecord::second() {
+    return time().second();
+}
 
 double TimestampRecord::temperature() {
     return _temperature;
