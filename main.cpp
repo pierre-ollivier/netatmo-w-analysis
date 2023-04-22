@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QDateTime> // provisional
 #include "frontend/MainWindow.h"
 #include "backend/DatabaseHandler.h"
 #include "types/ExtDailyRecord.h"
@@ -22,7 +23,7 @@ void tryDatabase2() {
                     93,
                     68,
                     81.2,
-                    1681471380,
+                    QDateTime::currentSecsSinceEpoch(),
                     1681450020,
                     1681487760,
                     1681423440
@@ -34,8 +35,7 @@ void tryDatabase2() {
 int main(int argc, char *argv[]) {
 
     QApplication app(argc, argv);
-//    tryPostFromCsv();
-    tryDatabase2();
+    tryDatabase2(); // provisional
     MainWindow mainWin;
     mainWin.show();
     return app.exec();

@@ -15,6 +15,14 @@ public:
     long long timestamp();
     QDate date();
     QTime time();
+    int year();
+    int month();
+    int day();
+    int hour();
+    int minute();
+    int second();
+    int decade();
+    int weekNumber();
 
     double temperature();
     int humidity();

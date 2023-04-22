@@ -6,12 +6,14 @@
 #include <QDateTime>
 #include <QProgressDialog>
 
-const QString indoorTimestampsParams[16] = {
+const QString indoorTimestampsParams[18] = {
     "timestamp",
     "year",
     "month",
     "day",
     "date",
+    "decade",
+    "weekNumber",
     "hour",
     "minute",
     "second",
@@ -25,11 +27,13 @@ const QString indoorTimestampsParams[16] = {
     "noise",
 };
 
-const QString indoorDailyRecordsParams[37] = {
+const QString indoorDailyRecordsParams[39] = {
     "year",
     "month",
     "day",
     "date",
+    "decade",
+    "weekNumber",
     "maxTemperature",
     "minTemperature",
     "avgTemperature",
@@ -65,12 +69,14 @@ const QString indoorDailyRecordsParams[37] = {
     "minPressureSecond",
 };
 
-const QString outdoorTimestampsParams[13] = {
+const QString outdoorTimestampsParams[15] = {
     "timestamp",
     "year",
     "month",
     "day",
     "date",
+    "decade",
+    "weekNumber",
     "hour",
     "minute",
     "second",
@@ -81,11 +87,13 @@ const QString outdoorTimestampsParams[13] = {
     "humidex",
 };
 
-const QString outdoorDailyRecordsParams[26] = {
+const QString outdoorDailyRecordsParams[28] = {
     "year",
     "month",
     "day",
     "date",
+    "decade",
+    "weekNumber",
     "maxTemperature",
     "minTemperature",
     "avgTemperature",
@@ -151,12 +159,12 @@ void DatabaseHandler::postOutdoorDailyRecord(ExtDailyRecord record, QString tabl
     }
 
     QString preparingQuery = "INSERT INTO " + tableName + "(";
-    for (int i = 0; i < 25; i++) {
+    for (int i = 0; i < 27; i++) {
         preparingQuery += outdoorDailyRecordsParams[i] + ",";
     }
-    preparingQuery += outdoorDailyRecordsParams[25];
+    preparingQuery += outdoorDailyRecordsParams[27];
     preparingQuery += ") VALUES (";
-    for (int i = 0; i < 25; i++) {
+    for (int i = 0; i < 27; i++) {
         preparingQuery += "?,";
     }
     preparingQuery += "?);";
@@ -170,6 +178,8 @@ void DatabaseHandler::postOutdoorDailyRecord(ExtDailyRecord record, QString tabl
     query.addBindValue(record.month());
     query.addBindValue(record.day());
     query.addBindValue(record.date().toString("dd/MM/yyyy"));
+    query.addBindValue(record.decade());
+    query.addBindValue(record.weekNumber());
 
     query.addBindValue(record.maxTemperature());
     query.addBindValue(record.minTemperature());
@@ -216,12 +226,12 @@ void DatabaseHandler::postOutdoorTimestampRecord(ExtTimestampRecord record, QStr
     }
 
     QString preparingQuery = "INSERT INTO " + tableName + "(";
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < 14; i++) {
         preparingQuery += outdoorTimestampsParams[i] + ",";
     }
-    preparingQuery += outdoorTimestampsParams[12];
+    preparingQuery += outdoorTimestampsParams[14];
     preparingQuery += ") VALUES (";
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < 14; i++) {
         preparingQuery += "?,";
     }
     preparingQuery += "?);";
@@ -230,14 +240,16 @@ void DatabaseHandler::postOutdoorTimestampRecord(ExtTimestampRecord record, QStr
 
     query.addBindValue(record.timestamp());
 
-    query.addBindValue(record.date().year());
-    query.addBindValue(record.date().month());
-    query.addBindValue(record.date().day());
+    query.addBindValue(record.year());
+    query.addBindValue(record.month());
+    query.addBindValue(record.day());
     query.addBindValue(record.date().toString("dd/MM/yyyy"));
+    query.addBindValue(record.decade());
+    query.addBindValue(record.weekNumber());
 
-    query.addBindValue(record.time().hour());
-    query.addBindValue(record.time().minute());
-    query.addBindValue(record.time().second());
+    query.addBindValue(record.hour());
+    query.addBindValue(record.minute());
+    query.addBindValue(record.second());
     query.addBindValue(record.time().toString("hh:mm:ss"));
 
     query.addBindValue(record.temperature());
@@ -262,12 +274,12 @@ void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString table
     }
 
     QString preparingQuery = "INSERT INTO " + tableName + "(";
-    for (int i = 0; i < 36; i++) {
+    for (int i = 0; i < 38; i++) {
         preparingQuery += outdoorDailyRecordsParams[i] + ",";
     }
-    preparingQuery += indoorDailyRecordsParams[36];
+    preparingQuery += indoorDailyRecordsParams[38];
     preparingQuery += ") VALUES (";
-    for (int i = 0; i < 36; i++) {
+    for (int i = 0; i < 38; i++) {
         preparingQuery += "?,";
     }
     preparingQuery += "?);";
@@ -281,6 +293,8 @@ void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString table
     query.addBindValue(record.month());
     query.addBindValue(record.day());
     query.addBindValue(record.date().toString("dd/MM/yyyy"));
+    query.addBindValue(record.decade());
+    query.addBindValue(record.weekNumber());
 
     query.addBindValue(record.maxTemperature());
     query.addBindValue(record.minTemperature());
@@ -327,12 +341,12 @@ void DatabaseHandler::postIndoorTimestampRecord(IntTimestampRecord record, QStri
     }
 
     QString preparingQuery = "INSERT INTO " + tableName + "(";
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 17; i++) {
         preparingQuery += indoorTimestampsParams[i] + ",";
     }
-    preparingQuery += indoorTimestampsParams[15];
+    preparingQuery += indoorTimestampsParams[17];
     preparingQuery += ") VALUES (";
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 17; i++) {
         preparingQuery += "?,";
     }
     preparingQuery += "?);";
@@ -341,14 +355,16 @@ void DatabaseHandler::postIndoorTimestampRecord(IntTimestampRecord record, QStri
 
     query.addBindValue(record.timestamp());
 
-    query.addBindValue(record.date().year());
-    query.addBindValue(record.date().month());
-    query.addBindValue(record.date().day());
+    query.addBindValue(record.year());
+    query.addBindValue(record.month());
+    query.addBindValue(record.day());
     query.addBindValue(record.date().toString("dd/MM/yyyy"));
+    query.addBindValue(record.decade());
+    query.addBindValue(record.weekNumber());
 
-    query.addBindValue(record.time().hour());
-    query.addBindValue(record.time().minute());
-    query.addBindValue(record.time().second());
+    query.addBindValue(record.hour());
+    query.addBindValue(record.minute());
+    query.addBindValue(record.second());
     query.addBindValue(record.time().toString("hh:mm:ss"));
 
     query.addBindValue(record.temperature());

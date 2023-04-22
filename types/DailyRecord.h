@@ -26,6 +26,8 @@ public:
     int year();
     int month();
     int day();
+    int decade();
+    int weekNumber();
     long long timestamp();
 
     double maxTemperature();
