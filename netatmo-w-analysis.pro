@@ -8,4 +8,5 @@ include (backend/backend.pri)
 
 SOURCES += \
     credentials.cpp \
-    main.cpp
+    main.cpp \
+    playground.cpp
