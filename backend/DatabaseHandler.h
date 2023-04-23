@@ -24,6 +24,7 @@ public:
     void postFromIndoorCsv(QString pathToCsv, QString tableName, QDate beginDate = QDate(), QDate endDate = QDate());
 
     std::vector<IntTimestampRecord> getIntTimestampRecordsFromDatabase(QString tableName, QString query, int N = 1);
+    std::vector<ExtTimestampRecord> getExtTimestampRecordsFromDatabase(QString tableName, QString query, int N = 1);
 
 private:
     QString _pathToDatabase;
