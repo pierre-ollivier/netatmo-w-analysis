@@ -520,3 +520,33 @@ std::vector<IntTimestampRecord> DatabaseHandler::getIntTimestampRecordsFromDatab
     }
     return result;
 }
+
+std::vector<ExtTimestampRecord> DatabaseHandler::getExtTimestampRecordsFromDatabase(QString tableName, QString query, int N) {
+    if (N > 0) {
+        query += " LIMIT " + QString::number(N);
+    }
+    std::vector<ExtTimestampRecord> result = std::vector<ExtTimestampRecord>();
+    db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    QSqlQuery _query(db);
+
+    if (!db.open()) {
+        qDebug() << "Database open error";
+    }
+    if (!db.isOpen() ) {
+        qDebug() << "Database is not open";
+    }
+    if (_query.exec(query)) {
+        while (_query.next()) {
+            long long timestamp = _query.value(1).toLongLong();
+            double temperature = _query.value(12).toDouble();
+            int humidity = _query.value(13).toInt();
+            result.push_back(
+                        ExtTimestampRecord(
+                            timestamp,
+                            temperature,
+                            humidity)
+                        );
+        }
+    }
+    return result;
+}
