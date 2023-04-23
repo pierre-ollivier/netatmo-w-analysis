@@ -32,10 +32,21 @@ void tryDatabase2() {
 
 }
 
+void tryDatabase3() {
+    DatabaseHandler dbHandler("netatmo_analysis.db");
+    std::vector<IntTimestampRecord> records = dbHandler.getIntTimestampRecordsFromDatabase(
+                "IndoorTimestampRecords", "SELECT * from IndoorTimestampRecords WHERE date = \"05/10/2019\"", 5);
+    for (int i = 0; i < 5; i++) {
+        qDebug() << records[i].toString();
+    }
+}
+
+
 int main(int argc, char *argv[]) {
 
     QApplication app(argc, argv);
     tryDatabase2(); // provisional
+    tryDatabase3(); // provisional
     MainWindow mainWin;
     mainWin.show();
     return app.exec();

@@ -65,3 +65,11 @@ double TimestampRecord::dewPoint() {
 double TimestampRecord::humidex() {
     return (_temperature + 0.5555 * (6.11 * exp(5417.7530 * (1/273.16 - 1/(273.15 + dewPoint()))) - 10));
 }
+
+QString TimestampRecord::toString() {
+    return ("Date : " + date().toString("dd/MM/yyyy") + "\n"
+            + "Heure : " + time().toString("hh:mm:ss") + "\n"
+            + "Température : " + QString::number(_temperature) + " °C" + "\n"
+            + "Humidité : " + QString::number(_humidity) + " %" + "\n"
+            );
+}
