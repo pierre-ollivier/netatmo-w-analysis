@@ -29,6 +29,8 @@ public:
     double dewPoint();
     double humidex();
 
+    QString toString();
+
 private:
     long long _timestamp;
     double _temperature;
