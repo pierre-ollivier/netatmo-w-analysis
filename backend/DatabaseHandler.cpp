@@ -485,7 +485,7 @@ void DatabaseHandler::postFromIndoorCsv(QString pathToCsv, QString tableName, QD
     }
 }
 
-std::vector<IntTimestampRecord> DatabaseHandler::getIntTimestampRecordsFromDatabase(QString tableName, QString query, int N) {
+std::vector<IntTimestampRecord> DatabaseHandler::getIntTimestampRecordsFromDatabase(QString query, int N) {
     if (N > 0) {
         query += " LIMIT " + QString::number(N);
     }
@@ -521,7 +521,7 @@ std::vector<IntTimestampRecord> DatabaseHandler::getIntTimestampRecordsFromDatab
     return result;
 }
 
-std::vector<ExtTimestampRecord> DatabaseHandler::getExtTimestampRecordsFromDatabase(QString tableName, QString query, int N) {
+std::vector<ExtTimestampRecord> DatabaseHandler::getExtTimestampRecordsFromDatabase(QString query, int N) {
     if (N > 0) {
         query += " LIMIT " + QString::number(N);
     }
