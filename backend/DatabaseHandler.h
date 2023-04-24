@@ -26,6 +26,9 @@ public:
     std::vector<IntTimestampRecord> getIntTimestampRecordsFromDatabase(QString query, int N = 1);
     std::vector<ExtTimestampRecord> getExtTimestampRecordsFromDatabase(QString query, int N = 1);
 
+    std::vector<IntDailyRecord> getIntDailyRecordsFromDatabase(QString query, int N = 1);
+    std::vector<ExtDailyRecord> getExtDailyRecordsFromDatabase(QString query, int N = 1);
+
 private:
     QString _pathToDatabase;
 };
