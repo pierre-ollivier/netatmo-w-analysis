@@ -550,3 +550,99 @@ std::vector<ExtTimestampRecord> DatabaseHandler::getExtTimestampRecordsFromDatab
     }
     return result;
 }
+
+std::vector<IntDailyRecord> DatabaseHandler::getIntDailyRecordsFromDatabase(QString query, int N) {
+    if (N > 0) {
+        query += " LIMIT " + QString::number(N);
+    }
+    std::vector<IntDailyRecord> result = std::vector<IntDailyRecord>();
+    db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    QSqlQuery _query(db);
+
+    if (!db.open()) {
+        qDebug() << "Database open error";
+    }
+    if (!db.isOpen() ) {
+        qDebug() << "Database is not open";
+    }
+    if (_query.exec(query)) {
+        while (_query.next()) {
+            int year = _query.value(1).toInt();
+            int month = _query.value(2).toInt();
+            int day = _query.value(3).toInt();
+            double maxTemperature = _query.value(7).toDouble();
+            double minTemperature = _query.value(8).toDouble();
+            double avgTemperature = _query.value(9).toDouble();
+            double maxHumidity = _query.value(10).toDouble();
+            double minHumidity = _query.value(11).toDouble();
+            double avgHumidity = _query.value(12).toDouble();
+            long long maxTemperatureTimestamp = _query.value(13).toLongLong();
+            long long minTemperatureTimestamp = _query.value(17).toLongLong();
+            long long maxHumidityTimestamp = _query.value(21).toLongLong();
+            long long minHumidityTimestamp = _query.value(25).toLongLong();
+            result.push_back(
+                        IntDailyRecord(
+                            QDate(year, month, day),
+                            maxTemperature,
+                            minTemperature,
+                            avgTemperature,
+                            maxHumidity,
+                            minHumidity,
+                            avgHumidity,
+                            maxTemperatureTimestamp,
+                            minTemperatureTimestamp,
+                            maxHumidityTimestamp,
+                            minHumidityTimestamp)
+                        );
+        }
+    }
+    return result;
+}
+
+std::vector<ExtDailyRecord> DatabaseHandler::getExtDailyRecordsFromDatabase(QString query, int N) {
+    if (N > 0) {
+        query += " LIMIT " + QString::number(N);
+    }
+    std::vector<ExtDailyRecord> result = std::vector<ExtDailyRecord>();
+    db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    QSqlQuery _query(db);
+
+    if (!db.open()) {
+        qDebug() << "Database open error";
+    }
+    if (!db.isOpen() ) {
+        qDebug() << "Database is not open";
+    }
+    if (_query.exec(query)) {
+        while (_query.next()) {
+            int year = _query.value(1).toInt();
+            int month = _query.value(2).toInt();
+            int day = _query.value(3).toInt();
+            double maxTemperature = _query.value(7).toDouble();
+            double minTemperature = _query.value(8).toDouble();
+            double avgTemperature = _query.value(9).toDouble();
+            double maxHumidity = _query.value(10).toDouble();
+            double minHumidity = _query.value(11).toDouble();
+            double avgHumidity = _query.value(12).toDouble();
+            long long maxTemperatureTimestamp = _query.value(13).toLongLong();
+            long long minTemperatureTimestamp = _query.value(17).toLongLong();
+            long long maxHumidityTimestamp = _query.value(21).toLongLong();
+            long long minHumidityTimestamp = _query.value(25).toLongLong();
+            result.push_back(
+                        ExtDailyRecord(
+                            QDate(year, month, day),
+                            maxTemperature,
+                            minTemperature,
+                            avgTemperature,
+                            maxHumidity,
+                            minHumidity,
+                            avgHumidity,
+                            maxTemperatureTimestamp,
+                            minTemperatureTimestamp,
+                            maxHumidityTimestamp,
+                            minHumidityTimestamp)
+                        );
+        }
+    }
+    return result;
+}
