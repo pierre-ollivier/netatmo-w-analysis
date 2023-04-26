@@ -646,3 +646,31 @@ std::vector<ExtDailyRecord> DatabaseHandler::getExtDailyRecordsFromDatabase(QStr
     }
     return result;
 }
+
+QVariant DatabaseHandler::getResultFromDatabase(QString query, int N) {
+    if (N > 0) {
+        query += " LIMIT " + QString::number(N);
+    }
+    std::vector<ExtDailyRecord> result = std::vector<ExtDailyRecord>();
+    db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    QSqlQuery _query(db);
+
+    if (!db.open()) {
+        qDebug() << "Database open error";
+    }
+    if (!db.isOpen() ) {
+        qDebug() << "Database is not open";
+    }
+    if (_query.exec(query)) {
+        if (_query.next()) {
+            return _query.value(0);
+        }
+        else {
+            qDebug() << "Empty query result";
+        }
+    }
+    else {
+        qDebug() << "Invalid query:" << query;
+    }
+    return QVariant();
+}
