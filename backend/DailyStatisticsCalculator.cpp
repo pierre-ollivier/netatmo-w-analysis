@@ -1,6 +1,7 @@
 #include "DailyStatisticsCalculator.h"
 #include <QDateTime>
 #include <QTimeZone>
+#include <QDebug>
 
 DailyStatisticsCalculator::DailyStatisticsCalculator()
 {
@@ -16,11 +17,19 @@ double DailyStatisticsCalculator::getMaxTemperatureFromDate(QDate date, bool ind
     return dbHandler->getResultFromDatabase(query).toDouble();
 }
 
-long long getMaxTemperatureTimestampFromDate(QDate date, double maxTemperature, bool indoor) {
-    return 0;  // TODO
+long long DailyStatisticsCalculator::getMaxTemperatureTimestampFromDate(QDate date, double maxTemperature, bool indoor) {
+    const QString indoorOrOutdoor = indoor? "Indoor" : "Outdoor";
+    const long long firstTimestamp = getFirstTimestampFromDateWithUTCOffset(date, 6);
+    const long long lastTimestamp = firstTimestamp + 86400;
+    QString query = "SELECT min(timestamp) FROM " + indoorOrOutdoor + "TimestampRecords";
+    query += " WHERE temperature = " + QString::number(maxTemperature)
+           + " AND timestamp BETWEEN " + QString::number(firstTimestamp) + " AND " + QString::number(lastTimestamp);
+    return dbHandler->getResultFromDatabase(query).toLongLong();
 }
-long long getMaxTemperatureTimestampFromDate(QDate date, bool indoor) {
-    return 0;  // TODO
+
+long long DailyStatisticsCalculator::getMaxTemperatureTimestampFromDate(QDate date, bool indoor) {
+    double maxTemperature = getMaxTemperatureFromDate(date, indoor);
+    return getMaxTemperatureTimestampFromDate(date, maxTemperature, indoor);
 }
 
 
