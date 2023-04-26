@@ -647,10 +647,7 @@ std::vector<ExtDailyRecord> DatabaseHandler::getExtDailyRecordsFromDatabase(QStr
     return result;
 }
 
-QVariant DatabaseHandler::getResultFromDatabase(QString query, int N) {
-    if (N > 0) {
-        query += " LIMIT " + QString::number(N);
-    }
+QVariant DatabaseHandler::getResultFromDatabase(QString query) {
     std::vector<ExtDailyRecord> result = std::vector<ExtDailyRecord>();
     db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
     QSqlQuery _query(db);
