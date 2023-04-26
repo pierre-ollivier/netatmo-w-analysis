@@ -29,7 +29,7 @@ public:
     std::vector<IntDailyRecord> getIntDailyRecordsFromDatabase(QString query, int N = 1);
     std::vector<ExtDailyRecord> getExtDailyRecordsFromDatabase(QString query, int N = 1);
 
-    QVariant getResultFromDatabase(QString query, int N = 1);
+    QVariant getResultFromDatabase(QString query);
 
 private:
     QString _pathToDatabase;
