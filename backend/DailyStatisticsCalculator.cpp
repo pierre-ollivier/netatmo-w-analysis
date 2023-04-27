@@ -33,6 +33,31 @@ long long DailyStatisticsCalculator::getMaxTemperatureTimestampFromDate(QDate da
 }
 
 
+double DailyStatisticsCalculator::getMinTemperatureFromDate(QDate date, bool indoor) {
+    const QString indoorOrOutdoor = indoor? "Indoor" : "Outdoor";
+    const long long firstTimestamp = getFirstTimestampFromDateWithUTCOffset(date, -6);
+    const long long lastTimestamp = firstTimestamp + 86400;
+    QString query = "SELECT min(temperature) FROM " + indoorOrOutdoor + "TimestampRecords";
+    query += " WHERE timestamp BETWEEN " + QString::number(firstTimestamp) + " AND " + QString::number(lastTimestamp);
+    return dbHandler->getResultFromDatabase(query).toDouble();
+}
+
+long long DailyStatisticsCalculator::getMinTemperatureTimestampFromDate(QDate date, double minTemperature, bool indoor) {
+    const QString indoorOrOutdoor = indoor? "Indoor" : "Outdoor";
+    const long long firstTimestamp = getFirstTimestampFromDateWithUTCOffset(date, -6);
+    const long long lastTimestamp = firstTimestamp + 86400;
+    QString query = "SELECT min(timestamp) FROM " + indoorOrOutdoor + "TimestampRecords";
+    query += " WHERE temperature = " + QString::number(minTemperature)
+           + " AND timestamp BETWEEN " + QString::number(firstTimestamp) + " AND " + QString::number(lastTimestamp);
+    return dbHandler->getResultFromDatabase(query).toLongLong();
+}
+
+long long DailyStatisticsCalculator::getMinTemperatureTimestampFromDate(QDate date, bool indoor) {
+    double minTemperature = getMinTemperatureFromDate(date, indoor);
+    return getMinTemperatureTimestampFromDate(date, minTemperature, indoor);
+}
+
+
 long long DailyStatisticsCalculator::getFirstTimestampFromDate(QDate date) {
     QDateTime dt = QDateTime(date);
     return dt.toSecsSinceEpoch();
