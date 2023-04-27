@@ -12,6 +12,10 @@ public:
     long long getMaxTemperatureTimestampFromDate(QDate date, double maxTemperature, bool indoor = false);
     long long getMaxTemperatureTimestampFromDate(QDate date, bool indoor = false);
 
+    double getMinTemperatureFromDate(QDate date, bool indoor = false);
+    long long getMinTemperatureTimestampFromDate(QDate date, double minTemperature, bool indoor = false);
+    long long getMinTemperatureTimestampFromDate(QDate date, bool indoor = false);
+
     long long getFirstTimestampFromDate(QDate date);
     long long getFirstTimestampFromDateWithUTCOffset(QDate date, int offsetFromUTCInHours);
 
