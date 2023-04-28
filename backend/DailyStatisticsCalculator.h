@@ -39,6 +39,46 @@ public:
     long long getMinDewPointTimestampFromDate(QDate date, double minDewPoint, bool indoor = false);
     long long getMinDewPointTimestampFromDate(QDate date, bool indoor = false);
 
+    // humidex
+
+    double getMaxHumidexFromDate(QDate date, bool indoor = false);
+    long long getMaxHumidexTimestampFromDate(QDate date, double maxDewPoint, bool indoor = false);
+    long long getMaxHumidexTimestampFromDate(QDate date, bool indoor = false);
+
+    double getMinHumidexFromDate(QDate date, bool indoor = false);
+    long long getMinHumidexTimestampFromDate(QDate date, double minDewPoint, bool indoor = false);
+    long long getMinHumidexTimestampFromDate(QDate date, bool indoor = false);
+
+    // pressure
+
+    double getMaxPressureFromDate(QDate date);
+    long long getMaxPressureTimestampFromDate(QDate date, double maxPressure);
+    long long getMaxPressureTimestampFromDate(QDate date);
+
+    double getMinPressureFromDate(QDate date);
+    long long getMinPressureTimestampFromDate(QDate date, double minPressure);
+    long long getMinPressureTimestampFromDate(QDate date);
+
+    // co2
+
+    int getMaxCO2FromDate(QDate date);
+    long long getMaxCO2TimestampFromDate(QDate date, int maxCO2);
+    long long getMaxCO2TimestampFromDate(QDate date);
+
+    int getMinCO2FromDate(QDate date);
+    long long getMinCO2TimestampFromDate(QDate date, int minCO2);
+    long long getMinCO2TimestampFromDate(QDate date);
+
+    // noise
+
+    int getMaxNoiseFromDate(QDate date);
+    long long getMaxNoiseTimestampFromDate(QDate date, int maxNoise);
+    long long getMaxNoiseTimestampFromDate(QDate date);
+
+    int getMinNoiseFromDate(QDate date);
+    long long getMinNoiseTimestampFromDate(QDate date, int minNoise);
+    long long getMinNoiseTimestampFromDate(QDate date);
+
     // others
 
     long long getFirstTimestampFromDate(QDate date);
