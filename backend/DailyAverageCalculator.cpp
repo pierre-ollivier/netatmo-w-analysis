@@ -4,7 +4,7 @@
 
 double getFirstTemperatureFromDate(QDate date) {
     DatabaseHandler dbHandler("netatmo_analysis.db");
-    QString query = "SELECT temperature FROM ExtDailyRecords";
+    QString query = "SELECT temperature FROM OutdoorDailyRecords";
     query += "WHERE date = " + date.toString("dd/MM/yyyy");
     query += "ORDER BY timestamp";
     return dbHandler.getResultFromDatabase(query).toDouble();
@@ -12,7 +12,7 @@ double getFirstTemperatureFromDate(QDate date) {
 
 double getLastTemperatureFromDate(QDate date) {
     DatabaseHandler dbHandler("netatmo_analysis.db");
-    QString query = "SELECT temperature FROM ExtDailyRecords";
+    QString query = "SELECT temperature FROM OutdoorDailyRecords";
     query += "WHERE date = " + date.toString("dd/MM/yyyy");
     query += "ORDER BY timestamp desc";
     return dbHandler.getResultFromDatabase(query).toDouble();
