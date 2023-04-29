@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QSqlQuery>
+#include <QVariant>
 #include "types/IntDailyRecord.h"
 #include "types/ExtDailyRecord.h"
 #include "types/ExtTimestampRecord.h"
