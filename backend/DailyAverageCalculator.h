@@ -14,6 +14,8 @@ public:
     long long getFirstTimestampFromDate(QDate date);
     long long getLastTimestampFromDate(QDate date);
 
+    QString indoorOrOutdoor();
+
 private:
     bool _indoor;
 };

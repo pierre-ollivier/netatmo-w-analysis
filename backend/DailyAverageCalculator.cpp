@@ -20,36 +20,32 @@ DailyAverageCalculator::DailyAverageCalculator(bool indoor)
 
 
 double DailyAverageCalculator::getFirstTemperatureFromDate(QDate date) {
-    const QString indoorOrOutdoor = _indoor? "Indoor" : "Outdoor";
     DatabaseHandler dbHandler("netatmo_analysis.db");
-    QString query = "SELECT temperature FROM " + indoorOrOutdoor + "TimestampRecords ";
+    QString query = "SELECT temperature FROM " + indoorOrOutdoor() + "TimestampRecords ";
     query += "WHERE date = " + date.toString("\"dd/MM/yyyy\" ");
     query += "ORDER BY timestamp";
     return dbHandler.getResultFromDatabase(query).toDouble();
 }
 
 double DailyAverageCalculator::getLastTemperatureFromDate(QDate date) {
-    const QString indoorOrOutdoor = _indoor? "Indoor" : "Outdoor";
     DatabaseHandler dbHandler("netatmo_analysis.db");
-    QString query = "SELECT temperature FROM " + indoorOrOutdoor + "TimestampRecords ";
+    QString query = "SELECT temperature FROM " + indoorOrOutdoor() + "TimestampRecords ";
     query += "WHERE date = " + date.toString("\"dd/MM/yyyy\" ");
     query += "ORDER BY timestamp desc";
     return dbHandler.getResultFromDatabase(query).toDouble();
 }
 
 long long DailyAverageCalculator::getFirstTimestampFromDate(QDate date) {
-    const QString indoorOrOutdoor = _indoor? "Indoor" : "Outdoor";
     DatabaseHandler dbHandler("netatmo_analysis.db");
-    QString query = "SELECT timestamp FROM " + indoorOrOutdoor + "TimestampRecords ";
+    QString query = "SELECT timestamp FROM " + indoorOrOutdoor() + "TimestampRecords ";
     query += "WHERE date = " + date.toString("\"dd/MM/yyyy\" ");
     query += "ORDER BY timestamp";
     return dbHandler.getResultFromDatabase(query).toLongLong();
 }
 
 long long DailyAverageCalculator::getLastTimestampFromDate(QDate date) {
-    const QString indoorOrOutdoor = _indoor? "Indoor" : "Outdoor";
     DatabaseHandler dbHandler("netatmo_analysis.db");
-    QString query = "SELECT timestamp FROM " + indoorOrOutdoor + "TimestampRecords ";
+    QString query = "SELECT timestamp FROM " + indoorOrOutdoor() + "TimestampRecords ";
     query += "WHERE date = " + date.toString("\"dd/MM/yyyy\" ");
     query += "ORDER BY timestamp desc";
     return dbHandler.getResultFromDatabase(query).toLongLong();
@@ -57,7 +53,6 @@ long long DailyAverageCalculator::getLastTimestampFromDate(QDate date) {
 
 
 double DailyAverageCalculator::getAverageExtTemperatureFromDate(QDate date) {
-    const QString indoorOrOutdoor = _indoor? "Indoor" : "Outdoor";
     double sumOfTemperatureTime = 0.;
     // To compute the average of the temperature, we compute the integral of the temperature divided by the number of seconds in the day
     // The day is split in 3 parts: before the first record, between the first and the last records, and after the last record
@@ -77,7 +72,7 @@ double DailyAverageCalculator::getAverageExtTemperatureFromDate(QDate date) {
     query += "SELECT id, timestamp, temperature, ";
     query += "temperature + LAG(temperature) OVER (ORDER BY id) AS sumTemp, ";
     query += "timestamp - LAG(timestamp) OVER (ORDER BY id) AS diffTimestamp ";
-    query += "FROM " + indoorOrOutdoor + "TimestampRecords ";
+    query += "FROM " + indoorOrOutdoor() + "TimestampRecords ";
     query += "WHERE date = " + date.toString("\"dd/MM/yyyy\"");
     query += ")";
     sumOfTemperatureTime += dbHandler.getResultFromDatabase(query).toDouble();
@@ -102,4 +97,8 @@ double DailyAverageCalculator::getAverageExtTemperatureFromDate(QDate date) {
 
     // Return the result
     return sumOfTemperatureTime / (_24hTimestamp - _0hTimestamp);
+}
+
+QString DailyAverageCalculator::indoorOrOutdoor() {
+    return _indoor? "Indoor" : "Outdoor";
 }
