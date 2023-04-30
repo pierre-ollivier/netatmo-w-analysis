@@ -94,5 +94,5 @@ double DailyAverageCalculator::getAverageExtTemperatureFromDate(QDate date) {
     sumOfTemperatureTime += (_24hTemperature + lastTemperature) * (_24hTimestamp - lastTimestamp) / 2;
 
     // Return the result
-    return sumOfTemperatureTime / 86400;
+    return sumOfTemperatureTime / (_24hTimestamp - _0hTimestamp);
 }
