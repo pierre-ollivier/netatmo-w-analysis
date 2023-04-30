@@ -664,6 +664,7 @@ QVariant DatabaseHandler::getResultFromDatabase(QString query) {
         }
         else {
             qDebug() << "Empty query result";
+            qDebug() << query;
         }
     }
     else {
