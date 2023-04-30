@@ -4,32 +4,32 @@
 
 double getFirstTemperatureFromDate(QDate date) {
     DatabaseHandler dbHandler("netatmo_analysis.db");
-    QString query = "SELECT temperature FROM OutdoorDailyRecords";
-    query += "WHERE date = " + date.toString("\"dd/MM/yyyy\"");
+    QString query = "SELECT temperature FROM OutdoorTimestampRecords ";
+    query += "WHERE date = " + date.toString("\"dd/MM/yyyy\" ");
     query += "ORDER BY timestamp";
     return dbHandler.getResultFromDatabase(query).toDouble();
 }
 
 long long getFirstTimestampFromDate(QDate date) {
     DatabaseHandler dbHandler("netatmo_analysis.db");
-    QString query = "SELECT timestamp FROM OutdoorDailyRecords";
-    query += "WHERE date = " + date.toString("\"dd/MM/yyyy\"");
+    QString query = "SELECT timestamp FROM OutdoorTimestampRecords ";
+    query += "WHERE date = " + date.toString("\"dd/MM/yyyy\" ");
     query += "ORDER BY timestamp";
     return dbHandler.getResultFromDatabase(query).toLongLong();
 }
 
 double getLastTemperatureFromDate(QDate date) {
     DatabaseHandler dbHandler("netatmo_analysis.db");
-    QString query = "SELECT temperature FROM OutdoorDailyRecords";
-    query += "WHERE date = " + date.toString("\"dd/MM/yyyy\"");
+    QString query = "SELECT temperature FROM OutdoorTimestampRecords ";
+    query += "WHERE date = " + date.toString("\"dd/MM/yyyy\" ");
     query += "ORDER BY timestamp desc";
     return dbHandler.getResultFromDatabase(query).toDouble();
 }
 
 long long getLastTimestampFromDate(QDate date) {
     DatabaseHandler dbHandler("netatmo_analysis.db");
-    QString query = "SELECT timestamp FROM OutdoorDailyRecords";
-    query += "WHERE date = " + date.toString("\"dd/MM/yyyy\"");
+    QString query = "SELECT timestamp FROM OutdoorTimestampRecords ";
+    query += "WHERE date = " + date.toString("\"dd/MM/yyyy\" ");
     query += "ORDER BY timestamp desc";
     return dbHandler.getResultFromDatabase(query).toLongLong();
 }
@@ -70,7 +70,7 @@ double DailyAverageCalculator::getAverageExtTemperatureFromDate(QDate date) {
     query += "SELECT id, timestamp, temperature, ";
     query += "temperature + LAG(temperature) OVER (ORDER BY id) AS sumTemp, ";
     query += "timestamp - LAG(timestamp) OVER (ORDER BY id) AS diffTimestamp ";
-    query += "FROM IndoorTimestampRecords ";
+    query += "FROM OutdoorTimestampRecords ";
     query += "WHERE date = " + date.toString("\"dd/MM/yyyy\"");
     query += ")";
     sumOfTemperatureTime += dbHandler.getResultFromDatabase(query).toDouble();
