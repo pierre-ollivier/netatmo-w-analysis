@@ -10,10 +10,8 @@ public:
     double getAverageTemperatureFromDate(QDate date);
     double getAverageHumidityFromDate(QDate date);
 
-    double getFirstTemperatureFromDate(QDate date);
-    double getLastTemperatureFromDate(QDate date);
-    double getFirstHumidityFromDate(QDate date);
-    double getLastHumidityFromDate(QDate date);
+    double getFirstMeasurementFromDate(QDate date, QString measurementType);
+    double getLastMeasurementFromDate(QDate date, QString measurementType);
     long long getFirstTimestampFromDate(QDate date);
     long long getLastTimestampFromDate(QDate date);
 

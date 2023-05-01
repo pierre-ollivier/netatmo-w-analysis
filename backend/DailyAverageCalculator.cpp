@@ -18,34 +18,17 @@ DailyAverageCalculator::DailyAverageCalculator(bool indoor)
     _indoor = indoor;
 }
 
-
-double DailyAverageCalculator::getFirstTemperatureFromDate(QDate date) {
+double DailyAverageCalculator::getFirstMeasurementFromDate(QDate date, QString measurementType) {
     DatabaseHandler dbHandler("netatmo_analysis.db");
-    QString query = "SELECT temperature FROM " + indoorOrOutdoor() + "TimestampRecords ";
+    QString query = "SELECT " + measurementType + " FROM " + indoorOrOutdoor() + "TimestampRecords ";
     query += "WHERE date = " + date.toString("\"dd/MM/yyyy\" ");
     query += "ORDER BY timestamp";
     return dbHandler.getResultFromDatabase(query).toDouble();
 }
 
-double DailyAverageCalculator::getLastTemperatureFromDate(QDate date) {
+double DailyAverageCalculator::getLastMeasurementFromDate(QDate date, QString measurementType) {
     DatabaseHandler dbHandler("netatmo_analysis.db");
-    QString query = "SELECT temperature FROM " + indoorOrOutdoor() + "TimestampRecords ";
-    query += "WHERE date = " + date.toString("\"dd/MM/yyyy\" ");
-    query += "ORDER BY timestamp desc";
-    return dbHandler.getResultFromDatabase(query).toDouble();
-}
-
-double DailyAverageCalculator::getFirstHumidityFromDate(QDate date) {
-    DatabaseHandler dbHandler("netatmo_analysis.db");
-    QString query = "SELECT humidity FROM " + indoorOrOutdoor() + "TimestampRecords ";
-    query += "WHERE date = " + date.toString("\"dd/MM/yyyy\" ");
-    query += "ORDER BY timestamp";
-    return dbHandler.getResultFromDatabase(query).toDouble();
-}
-
-double DailyAverageCalculator::getLastHumidityFromDate(QDate date) {
-    DatabaseHandler dbHandler("netatmo_analysis.db");
-    QString query = "SELECT humidity FROM " + indoorOrOutdoor() + "TimestampRecords ";
+    QString query = "SELECT " + measurementType + " FROM " + indoorOrOutdoor() + "TimestampRecords ";
     query += "WHERE date = " + date.toString("\"dd/MM/yyyy\" ");
     query += "ORDER BY timestamp desc";
     return dbHandler.getResultFromDatabase(query).toDouble();
@@ -79,8 +62,8 @@ double DailyAverageCalculator::getAverageTemperatureFromDate(QDate date) {
     long long _24hTimestamp = dt.addDays(1).toSecsSinceEpoch();
     long long firstTimestamp = getFirstTimestampFromDate(date);
     long long lastTimestamp = getLastTimestampFromDate(date);
-    double firstTemperature = getFirstTemperatureFromDate(date);
-    double lastTemperature = getLastTemperatureFromDate(date);
+    double firstTemperature = getFirstMeasurementFromDate(date, "temperature");
+    double lastTemperature = getLastMeasurementFromDate(date, "temperature");
 
     // Between the records
     QString query = "";
@@ -98,7 +81,7 @@ double DailyAverageCalculator::getAverageTemperatureFromDate(QDate date) {
                 _0hTimestamp,
                 getLastTimestampFromDate(date.addDays(-1)),
                 firstTimestamp,
-                getLastTemperatureFromDate(date.addDays(-1)),
+                getLastMeasurementFromDate(date.addDays(-1), "temperature"),
                 firstTemperature);
     sumOfTemperatureTime += (_0hTemperature + firstTemperature) * (firstTimestamp - _0hTimestamp) / 2;
 
@@ -108,7 +91,7 @@ double DailyAverageCalculator::getAverageTemperatureFromDate(QDate date) {
                 lastTimestamp,
                 getFirstTimestampFromDate(date.addDays(1)),
                 lastTemperature,
-                getFirstTemperatureFromDate(date.addDays(1)));
+                getFirstMeasurementFromDate(date.addDays(1), "temperature"));
     sumOfTemperatureTime += (_24hTemperature + lastTemperature) * (_24hTimestamp - lastTimestamp) / 2;
 
     // Return the result
@@ -126,8 +109,8 @@ double DailyAverageCalculator::getAverageHumidityFromDate(QDate date) {
     long long _24hTimestamp = dt.addDays(1).toSecsSinceEpoch();
     long long firstTimestamp = getFirstTimestampFromDate(date);
     long long lastTimestamp = getLastTimestampFromDate(date);
-    double firstHumidity = getFirstHumidityFromDate(date);
-    double lastHumidity = getLastHumidityFromDate(date);
+    double firstHumidity = getFirstMeasurementFromDate(date, "humidity");
+    double lastHumidity = getLastMeasurementFromDate(date, "humidity");
 
     // Between the records
     QString query = "";
@@ -145,7 +128,7 @@ double DailyAverageCalculator::getAverageHumidityFromDate(QDate date) {
                 _0hTimestamp,
                 getLastTimestampFromDate(date.addDays(-1)),
                 firstTimestamp,
-                getLastTemperatureFromDate(date.addDays(-1)),
+                getLastMeasurementFromDate(date.addDays(-1), "humidity"),
                 firstHumidity);
     sumOfHumidityTime += (_0hHumidity + firstHumidity) * (firstTimestamp - _0hTimestamp) / 2;
 
@@ -155,7 +138,7 @@ double DailyAverageCalculator::getAverageHumidityFromDate(QDate date) {
                 lastTimestamp,
                 getFirstTimestampFromDate(date.addDays(1)),
                 lastHumidity,
-                getFirstTemperatureFromDate(date.addDays(1)));
+                getFirstMeasurementFromDate(date.addDays(1), "humidity"));
     sumOfHumidityTime += (_24hHumidity + lastHumidity) * (_24hTimestamp - lastTimestamp) / 2;
 
     // Return the result
