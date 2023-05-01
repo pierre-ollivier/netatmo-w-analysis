@@ -7,10 +7,13 @@ class DailyAverageCalculator
 {
 public:
     DailyAverageCalculator(bool indoor);
-    double getAverageExtTemperatureFromDate(QDate date);
+    double getAverageTemperatureFromDate(QDate date);
+    double getAverageHumidityFromDate(QDate date);
 
     double getFirstTemperatureFromDate(QDate date);
     double getLastTemperatureFromDate(QDate date);
+    int getFirstHumidityFromDate(QDate date);
+    int getLastHumidityFromDate(QDate date);
     long long getFirstTimestampFromDate(QDate date);
     long long getLastTimestampFromDate(QDate date);
 
