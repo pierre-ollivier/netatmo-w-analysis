@@ -7,8 +7,7 @@ class DailyAverageCalculator
 {
 public:
     DailyAverageCalculator(bool indoor);
-    double getAverageTemperatureFromDate(QDate date);
-    double getAverageHumidityFromDate(QDate date);
+    double getAverageMeasurementFromDate(QDate date, QString measurementType);
 
     double getFirstMeasurementFromDate(QDate date, QString measurementType);
     double getLastMeasurementFromDate(QDate date, QString measurementType);
