@@ -50,58 +50,10 @@ long long DailyAverageCalculator::getLastTimestampFromDate(QDate date) {
     return dbHandler.getResultFromDatabase(query).toLongLong();
 }
 
-
-double DailyAverageCalculator::getAverageTemperatureFromDate(QDate date) {
-    double sumOfTemperatureTime = 0.;
-    // To compute the average of the temperature, we compute the integral of the temperature divided by the number of seconds in the day
-    // The day is split in 3 parts: before the first record, between the first and the last records, and after the last record
-
-    DatabaseHandler dbHandler("netatmo_analysis.db");
-    QDateTime dt(date, QTime(0, 0));
-    long long _0hTimestamp = dt.toSecsSinceEpoch();
-    long long _24hTimestamp = dt.addDays(1).toSecsSinceEpoch();
-    long long firstTimestamp = getFirstTimestampFromDate(date);
-    long long lastTimestamp = getLastTimestampFromDate(date);
-    double firstTemperature = getFirstMeasurementFromDate(date, "temperature");
-    double lastTemperature = getLastMeasurementFromDate(date, "temperature");
-
-    // Between the records
-    QString query = "";
-    query += "SELECT SUM(sumTemp * diffTimestamp / 2) FROM (";
-    query += "SELECT id, timestamp, temperature, ";
-    query += "temperature + LAG(temperature) OVER (ORDER BY id) AS sumTemp, ";
-    query += "timestamp - LAG(timestamp) OVER (ORDER BY id) AS diffTimestamp ";
-    query += "FROM " + indoorOrOutdoor() + "TimestampRecords ";
-    query += "WHERE date = " + date.toString("\"dd/MM/yyyy\"");
-    query += ")";
-    sumOfTemperatureTime += dbHandler.getResultFromDatabase(query).toDouble();
-
-    // Before the first record
-    double _0hTemperature = interpolateMeasurementBetweenTimestamps(
-                _0hTimestamp,
-                getLastTimestampFromDate(date.addDays(-1)),
-                firstTimestamp,
-                getLastMeasurementFromDate(date.addDays(-1), "temperature"),
-                firstTemperature);
-    sumOfTemperatureTime += (_0hTemperature + firstTemperature) * (firstTimestamp - _0hTimestamp) / 2;
-
-    // After the last record
-    double _24hTemperature = interpolateMeasurementBetweenTimestamps(
-                _24hTimestamp,
-                lastTimestamp,
-                getFirstTimestampFromDate(date.addDays(1)),
-                lastTemperature,
-                getFirstMeasurementFromDate(date.addDays(1), "temperature"));
-    sumOfTemperatureTime += (_24hTemperature + lastTemperature) * (_24hTimestamp - lastTimestamp) / 2;
-
-    // Return the result
-    return sumOfTemperatureTime / (_24hTimestamp - _0hTimestamp);
-}
-
-double DailyAverageCalculator::getAverageHumidityFromDate(QDate date) {
-    double sumOfHumidityTime = 0.;
-    // To compute the average of the humidity, we compute the integral of the humidity divided by the number of seconds in the day
-    // The day is split in 3 parts: before the first record, between the first and the last records, and after the last record
+double DailyAverageCalculator::getAverageMeasurementFromDate(QDate date, QString measurementType) {
+    double sumOfMeasurementTime = 0.;
+    // To compute the average of the measurement, we compute its integral divided by the number of seconds in the day.
+    // The day is split in 3 parts: before the first record, between the first and the last records, and after the last record.
 
     DatabaseHandler dbHandler("netatmo_analysis.db");
     QDateTime dt(date, QTime(0, 0));
@@ -109,40 +61,40 @@ double DailyAverageCalculator::getAverageHumidityFromDate(QDate date) {
     long long _24hTimestamp = dt.addDays(1).toSecsSinceEpoch();
     long long firstTimestamp = getFirstTimestampFromDate(date);
     long long lastTimestamp = getLastTimestampFromDate(date);
-    double firstHumidity = getFirstMeasurementFromDate(date, "humidity");
-    double lastHumidity = getLastMeasurementFromDate(date, "humidity");
+    double firstMeasurement = getFirstMeasurementFromDate(date, measurementType);
+    double lastMeasurement = getLastMeasurementFromDate(date, measurementType);
 
     // Between the records
     QString query = "";
-    query += "SELECT SUM(sumHum * diffTimestamp / 2) FROM (";
-    query += "SELECT id, timestamp, humidity, ";
-    query += "humidity + LAG(humidity) OVER (ORDER BY id) AS sumHum, ";
+    query += "SELECT SUM(sumMeasurement * diffTimestamp / 2) FROM (";
+    query += "SELECT id, timestamp, ";
+    query += measurementType + " + LAG(" + measurementType + ") OVER (ORDER BY id) AS sumMeasurement, ";
     query += "timestamp - LAG(timestamp) OVER (ORDER BY id) AS diffTimestamp ";
     query += "FROM " + indoorOrOutdoor() + "TimestampRecords ";
     query += "WHERE date = " + date.toString("\"dd/MM/yyyy\"");
     query += ")";
-    sumOfHumidityTime += dbHandler.getResultFromDatabase(query).toInt();
+    sumOfMeasurementTime += dbHandler.getResultFromDatabase(query).toDouble();
 
     // Before the first record
-    double _0hHumidity = interpolateMeasurementBetweenTimestamps(
+    double _0hMeasurement = interpolateMeasurementBetweenTimestamps(
                 _0hTimestamp,
                 getLastTimestampFromDate(date.addDays(-1)),
                 firstTimestamp,
-                getLastMeasurementFromDate(date.addDays(-1), "humidity"),
-                firstHumidity);
-    sumOfHumidityTime += (_0hHumidity + firstHumidity) * (firstTimestamp - _0hTimestamp) / 2;
+                getLastMeasurementFromDate(date.addDays(-1), measurementType),
+                firstMeasurement);
+    sumOfMeasurementTime += (_0hMeasurement + firstMeasurement) * (firstTimestamp - _0hTimestamp) / 2;
 
     // After the last record
-    double _24hHumidity = interpolateMeasurementBetweenTimestamps(
+    double _24hMeasurement = interpolateMeasurementBetweenTimestamps(
                 _24hTimestamp,
                 lastTimestamp,
                 getFirstTimestampFromDate(date.addDays(1)),
-                lastHumidity,
-                getFirstMeasurementFromDate(date.addDays(1), "humidity"));
-    sumOfHumidityTime += (_24hHumidity + lastHumidity) * (_24hTimestamp - lastTimestamp) / 2;
+                lastMeasurement,
+                getFirstMeasurementFromDate(date.addDays(1), measurementType));
+    sumOfMeasurementTime += (_24hMeasurement + lastMeasurement) * (_24hTimestamp - lastTimestamp) / 2;
 
     // Return the result
-    return sumOfHumidityTime / (_24hTimestamp - _0hTimestamp);
+    return sumOfMeasurementTime / (_24hTimestamp - _0hTimestamp);
 }
 
 QString DailyAverageCalculator::indoorOrOutdoor() {
