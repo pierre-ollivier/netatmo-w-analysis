@@ -35,20 +35,20 @@ double DailyAverageCalculator::getLastTemperatureFromDate(QDate date) {
     return dbHandler.getResultFromDatabase(query).toDouble();
 }
 
-int DailyAverageCalculator::getFirstHumidityFromDate(QDate date) {
+double DailyAverageCalculator::getFirstHumidityFromDate(QDate date) {
     DatabaseHandler dbHandler("netatmo_analysis.db");
     QString query = "SELECT humidity FROM " + indoorOrOutdoor() + "TimestampRecords ";
     query += "WHERE date = " + date.toString("\"dd/MM/yyyy\" ");
     query += "ORDER BY timestamp";
-    return dbHandler.getResultFromDatabase(query).toInt();
+    return dbHandler.getResultFromDatabase(query).toDouble();
 }
 
-int DailyAverageCalculator::getLastHumidityFromDate(QDate date) {
+double DailyAverageCalculator::getLastHumidityFromDate(QDate date) {
     DatabaseHandler dbHandler("netatmo_analysis.db");
     QString query = "SELECT humidity FROM " + indoorOrOutdoor() + "TimestampRecords ";
     query += "WHERE date = " + date.toString("\"dd/MM/yyyy\" ");
     query += "ORDER BY timestamp desc";
-    return dbHandler.getResultFromDatabase(query).toInt();
+    return dbHandler.getResultFromDatabase(query).toDouble();
 }
 
 long long DailyAverageCalculator::getFirstTimestampFromDate(QDate date) {
@@ -126,8 +126,8 @@ double DailyAverageCalculator::getAverageHumidityFromDate(QDate date) {
     long long _24hTimestamp = dt.addDays(1).toSecsSinceEpoch();
     long long firstTimestamp = getFirstTimestampFromDate(date);
     long long lastTimestamp = getLastTimestampFromDate(date);
-    int firstHumidity = getFirstHumidityFromDate(date);
-    int lastHumidity = getLastHumidityFromDate(date);
+    double firstHumidity = getFirstHumidityFromDate(date);
+    double lastHumidity = getLastHumidityFromDate(date);
 
     // Between the records
     QString query = "";
