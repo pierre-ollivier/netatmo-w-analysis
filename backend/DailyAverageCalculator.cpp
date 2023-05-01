@@ -2,26 +2,15 @@
 #include "DatabaseHandler.h"
 #include "types/DailyRecord.h"
 
-double interpolateTemperatureBetweenTimestamps(
+double interpolateMeasurementBetweenTimestamps(
         long long targetTimestamp,
         long long timestamp1,
         long long timestamp2,
-        double temperature1,
-        double temperature2)
+        double measurement1,
+        double measurement2)
 {
     double k = (targetTimestamp - timestamp1) / (timestamp2 - timestamp1);
-    return temperature1 + k * (temperature2 - temperature1);
-}
-
-double interpolateHumidityBetweenTimestamps(
-        long long targetTimestamp,
-        long long timestamp1,
-        long long timestamp2,
-        double humidity1,
-        double humidity2)
-{
-    double k = (targetTimestamp - timestamp1) / (timestamp2 - timestamp1);
-    return humidity1 + k * (humidity2 - humidity1);
+    return measurement1 + k * (measurement2 - measurement1);
 }
 
 DailyAverageCalculator::DailyAverageCalculator(bool indoor)
@@ -105,7 +94,7 @@ double DailyAverageCalculator::getAverageTemperatureFromDate(QDate date) {
     sumOfTemperatureTime += dbHandler.getResultFromDatabase(query).toDouble();
 
     // Before the first record
-    double _0hTemperature = interpolateTemperatureBetweenTimestamps(
+    double _0hTemperature = interpolateMeasurementBetweenTimestamps(
                 _0hTimestamp,
                 getLastTimestampFromDate(date.addDays(-1)),
                 firstTimestamp,
@@ -114,7 +103,7 @@ double DailyAverageCalculator::getAverageTemperatureFromDate(QDate date) {
     sumOfTemperatureTime += (_0hTemperature + firstTemperature) * (firstTimestamp - _0hTimestamp) / 2;
 
     // After the last record
-    double _24hTemperature = interpolateTemperatureBetweenTimestamps(
+    double _24hTemperature = interpolateMeasurementBetweenTimestamps(
                 _24hTimestamp,
                 lastTimestamp,
                 getFirstTimestampFromDate(date.addDays(1)),
@@ -152,7 +141,7 @@ double DailyAverageCalculator::getAverageHumidityFromDate(QDate date) {
     sumOfHumidityTime += dbHandler.getResultFromDatabase(query).toInt();
 
     // Before the first record
-    double _0hHumidity = interpolateHumidityBetweenTimestamps(
+    double _0hHumidity = interpolateMeasurementBetweenTimestamps(
                 _0hTimestamp,
                 getLastTimestampFromDate(date.addDays(-1)),
                 firstTimestamp,
@@ -161,7 +150,7 @@ double DailyAverageCalculator::getAverageHumidityFromDate(QDate date) {
     sumOfHumidityTime += (_0hHumidity + firstHumidity) * (firstTimestamp - _0hTimestamp) / 2;
 
     // After the last record
-    double _24hHumidity = interpolateTemperatureBetweenTimestamps(
+    double _24hHumidity = interpolateMeasurementBetweenTimestamps(
                 _24hTimestamp,
                 lastTimestamp,
                 getFirstTimestampFromDate(date.addDays(1)),
