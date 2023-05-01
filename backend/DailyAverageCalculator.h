@@ -12,8 +12,8 @@ public:
 
     double getFirstTemperatureFromDate(QDate date);
     double getLastTemperatureFromDate(QDate date);
-    int getFirstHumidityFromDate(QDate date);
-    int getLastHumidityFromDate(QDate date);
+    double getFirstHumidityFromDate(QDate date);
+    double getLastHumidityFromDate(QDate date);
     long long getFirstTimestampFromDate(QDate date);
     long long getLastTimestampFromDate(QDate date);
 
