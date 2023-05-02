@@ -6,6 +6,8 @@
 DailyStatisticsCalculator::DailyStatisticsCalculator()
 {
     dbHandler = new DatabaseHandler("netatmo_analysis.db");
+    indoorAverageCalculator = new DailyAverageCalculator(true);
+    outdoorAverageCalculator = new DailyAverageCalculator(false);
 }
 
 // max temperature
@@ -60,6 +62,13 @@ long long DailyStatisticsCalculator::getMinTemperatureTimestampFromDate(QDate da
     return getMinTemperatureTimestampFromDate(date, minTemperature, indoor);
 }
 
+// avg temperature
+
+double DailyStatisticsCalculator::getAvgTemperatureFromDate(QDate date, bool indoor) {
+    if (indoor) return indoorAverageCalculator->getAverageMeasurementFromDate(date, "temperature");
+    return outdoorAverageCalculator->getAverageMeasurementFromDate(date, "temperature");
+}
+
 // max humidity
 
 int DailyStatisticsCalculator::getMaxHumidityFromDate(QDate date, bool indoor) {
@@ -112,6 +121,13 @@ long long DailyStatisticsCalculator::getMinHumidityTimestampFromDate(QDate date,
     return getMinHumidityTimestampFromDate(date, minHumidity, indoor);
 }
 
+// avg humidity
+
+double DailyStatisticsCalculator::getAvgHumidityFromDate(QDate date, bool indoor) {
+    if (indoor) return indoorAverageCalculator->getAverageMeasurementFromDate(date, "humidity");
+    return outdoorAverageCalculator->getAverageMeasurementFromDate(date, "humidity");
+}
+
 // max dew point
 
 double DailyStatisticsCalculator::getMaxDewPointFromDate(QDate date, bool indoor) {
@@ -162,6 +178,13 @@ long long DailyStatisticsCalculator::getMinDewPointTimestampFromDate(QDate date,
 long long DailyStatisticsCalculator::getMinDewPointTimestampFromDate(QDate date, bool indoor) {
     double minDewPoint = getMinDewPointFromDate(date, indoor);
     return getMinDewPointTimestampFromDate(date, minDewPoint, indoor);
+}
+
+// avg dew point
+
+double DailyStatisticsCalculator::getAvgDewPointFromDate(QDate date, bool indoor) {
+    if (indoor) return indoorAverageCalculator->getAverageMeasurementFromDate(date, "dewPoint");
+    return outdoorAverageCalculator->getAverageMeasurementFromDate(date, "dewPoint");
 }
 
 // max humidex
@@ -218,6 +241,13 @@ long long DailyStatisticsCalculator::getMinHumidexTimestampFromDate(QDate date, 
     return getMinHumidexTimestampFromDate(date, minHumidex, indoor);
 }
 
+// avg humidex
+
+double DailyStatisticsCalculator::getAvgHumidexFromDate(QDate date, bool indoor) {
+    if (indoor) return indoorAverageCalculator->getAverageMeasurementFromDate(date, "humidex");
+    return outdoorAverageCalculator->getAverageMeasurementFromDate(date, "humidex");
+}
+
 // max pressure
 
 double DailyStatisticsCalculator::getMaxPressureFromDate(QDate date) {
@@ -268,6 +298,12 @@ long long DailyStatisticsCalculator::getMinPressureTimestampFromDate(QDate date,
 long long DailyStatisticsCalculator::getMinPressureTimestampFromDate(QDate date) {
     double minPressure = getMinPressureFromDate(date);
     return getMinPressureTimestampFromDate(date, minPressure);
+}
+
+// avg pressure
+
+double DailyStatisticsCalculator::getAvgPressureFromDate(QDate date) {
+    return indoorAverageCalculator->getAverageMeasurementFromDate(date, "pressure");
 }
 
 // max CO2
@@ -322,6 +358,12 @@ long long DailyStatisticsCalculator::getMinCO2TimestampFromDate(QDate date) {
     return getMinCO2TimestampFromDate(date, minCO2);
 }
 
+// avg CO2
+
+double DailyStatisticsCalculator::getAvgCO2FromDate(QDate date) {
+    return indoorAverageCalculator->getAverageMeasurementFromDate(date, "co2");
+}
+
 // max noise
 
 int DailyStatisticsCalculator::getMaxNoiseFromDate(QDate date) {
@@ -373,6 +415,12 @@ long long DailyStatisticsCalculator::getMinNoiseTimestampFromDate(QDate date, in
 long long DailyStatisticsCalculator::getMinNoiseTimestampFromDate(QDate date) {
     int minNoise = getMinNoiseFromDate(date);
     return getMinNoiseTimestampFromDate(date, minNoise);
+}
+
+// avg noise
+
+double DailyStatisticsCalculator::getAvgNoiseFromDate(QDate date) {
+    return indoorAverageCalculator->getAverageMeasurementFromDate(date, "noise");
 }
 
 // others
