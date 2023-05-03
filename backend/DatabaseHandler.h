@@ -4,6 +4,7 @@
 #include <QString>
 #include <QSqlQuery>
 #include <QVariant>
+#include <QDate>
 #include "types/IntDailyRecord.h"
 #include "types/ExtDailyRecord.h"
 #include "types/ExtTimestampRecord.h"
@@ -31,6 +32,8 @@ public:
     std::vector<ExtDailyRecord> getExtDailyRecordsFromDatabase(QString query, int N = 1);
 
     QVariant getResultFromDatabase(QString query);
+
+    void updateOutdoorDailyRecords(QDate beginDate, QDate endDate);
 
 private:
     QString _pathToDatabase;

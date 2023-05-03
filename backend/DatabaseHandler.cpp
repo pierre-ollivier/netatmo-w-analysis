@@ -5,6 +5,7 @@
 #include <QFile>
 #include <QDateTime>
 #include <QProgressDialog>
+#include "DailyStatisticsCalculator.h"
 
 const QString indoorTimestampsParams[18] = {
     "timestamp",
@@ -671,4 +672,24 @@ QVariant DatabaseHandler::getResultFromDatabase(QString query) {
         qDebug() << "Invalid query:" << query;
     }
     return QVariant();
+}
+
+void DatabaseHandler::updateOutdoorDailyRecords(QDate beginDate, QDate endDate) {
+    DailyStatisticsCalculator dailyCalculator = DailyStatisticsCalculator();
+    for (QDate date = beginDate; date <= endDate; date = date.addDays(1)) {
+        ExtDailyRecord record(
+                    date,
+                    dailyCalculator.getMaxTemperatureFromDate(date),
+                    dailyCalculator.getMinTemperatureFromDate(date),
+                    dailyCalculator.getAvgTemperatureFromDate(date),
+                    dailyCalculator.getMaxHumidityFromDate(date),
+                    dailyCalculator.getMinHumidityFromDate(date),
+                    dailyCalculator.getAvgHumidityFromDate(date),
+                    dailyCalculator.getMaxTemperatureTimestampFromDate(date),
+                    dailyCalculator.getMinTemperatureTimestampFromDate(date),
+                    dailyCalculator.getMaxHumidityTimestampFromDate(date),
+                    dailyCalculator.getMinHumidityTimestampFromDate(date)
+                    );
+        postOutdoorDailyRecord(record, "OutdoorDailyRecords");
+    }
 }
