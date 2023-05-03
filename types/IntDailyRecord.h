@@ -14,10 +14,15 @@ public:
             int maxHumidity,
             int minHumidity,
             double avgHumidity,
+            double maxPressure,
+            double minPressure,
+            double avgPressure,
             long long maxTemperatureTimestamp,
             long long minTemperatureTimestamp,
             long long maxHumidityTimestamp,
-            long long minHumidityTimestamp
+            long long minHumidityTimestamp,
+            long long maxPressureTimestamp,
+            long long minPressureTimestamp
             );
 
     double maxPressure();

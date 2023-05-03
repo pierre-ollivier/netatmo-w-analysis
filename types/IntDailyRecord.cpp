@@ -10,10 +10,15 @@ IntDailyRecord::IntDailyRecord(
         int maxHumidity,
         int minHumidity,
         double avgHumidity,
+        double maxPressure,
+        double minPressure,
+        double avgPressure,
         long long maxTemperatureTimestamp,
         long long minTemperatureTimestamp,
         long long maxHumidityTimestamp,
-        long long minHumidityTimestamp
+        long long minHumidityTimestamp,
+        long long maxPressureTimestamp,
+        long long minPressureTimestamp
         ) : DailyRecord(
                 date,
                 maxTemperature,
@@ -28,7 +33,11 @@ IntDailyRecord::IntDailyRecord(
                 minHumidityTimestamp
                 )
 {
-
+    _maxPressure = maxPressure;
+    _minPressure = minPressure;
+    _avgPressure = avgPressure;
+    _maxPressureTimestamp = maxPressureTimestamp;
+    _minPressureTimestamp = minPressureTimestamp;
 }
 
 double IntDailyRecord::maxPressure() {
