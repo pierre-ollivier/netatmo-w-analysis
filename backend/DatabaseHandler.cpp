@@ -693,3 +693,28 @@ void DatabaseHandler::updateOutdoorDailyRecords(QDate beginDate, QDate endDate) 
         postOutdoorDailyRecord(record, "OutdoorDailyRecords");
     }
 }
+
+void DatabaseHandler::updateIndoorDailyRecords(QDate beginDate, QDate endDate) {
+    DailyStatisticsCalculator dailyCalculator = DailyStatisticsCalculator();
+    for (QDate date = beginDate; date <= endDate; date = date.addDays(1)) {
+        IntDailyRecord record(
+                    date,
+                    dailyCalculator.getMaxTemperatureFromDate(date, true),
+                    dailyCalculator.getMinTemperatureFromDate(date, true),
+                    dailyCalculator.getAvgTemperatureFromDate(date, true),
+                    dailyCalculator.getMaxHumidityFromDate(date, true),
+                    dailyCalculator.getMinHumidityFromDate(date, true),
+                    dailyCalculator.getAvgHumidityFromDate(date, true),
+                    dailyCalculator.getMaxPressureFromDate(date),
+                    dailyCalculator.getMinPressureFromDate(date),
+                    dailyCalculator.getAvgPressureFromDate(date),
+                    dailyCalculator.getMaxTemperatureTimestampFromDate(date, true),
+                    dailyCalculator.getMinTemperatureTimestampFromDate(date, true),
+                    dailyCalculator.getMaxHumidityTimestampFromDate(date, true),
+                    dailyCalculator.getMinHumidityTimestampFromDate(date, true),
+                    dailyCalculator.getMaxPressureFromDate(date),
+                    dailyCalculator.getMinPressureFromDate(date)
+                    );
+        postIndoorDailyRecord(record, "IndoorDailyRecords");
+    }
+}
