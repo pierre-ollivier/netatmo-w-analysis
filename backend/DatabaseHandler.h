@@ -34,6 +34,7 @@ public:
     QVariant getResultFromDatabase(QString query);
 
     void updateOutdoorDailyRecords(QDate beginDate, QDate endDate);
+    void updateIndoorDailyRecords(QDate beginDate, QDate endDate);
 
 private:
     QString _pathToDatabase;
