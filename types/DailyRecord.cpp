@@ -15,10 +15,20 @@ DailyRecord::DailyRecord(
         int maxHumidity,
         int minHumidity,
         double avgHumidity,
+        double maxDewPoint,
+        double minDewPoint,
+        double avgDewPoint,
+        double maxHumidex,
+        double minHumidex,
+        double avgHumidex,
         long long maxTemperatureTimestamp,
         long long minTemperatureTimestamp,
         long long maxHumidityTimestamp,
-        long long minHumidityTimestamp
+        long long minHumidityTimestamp,
+        long long maxDewPointTimestamp,
+        long long minDewPointTimestamp,
+        long long maxHumidexTimestamp,
+        long long minHumidexTimestamp
         )
 {
     _date = date;
@@ -28,10 +38,20 @@ DailyRecord::DailyRecord(
     _maxHumidity = maxHumidity;
     _minHumidity = minHumidity;
     _avgHumidity = avgHumidity;
+    _maxDewPoint = maxDewPoint;
+    _minDewPoint = minDewPoint;
+    _avgDewPoint = avgDewPoint;
+    _maxHumidex = maxHumidex;
+    _minHumidex = minHumidex;
+    _avgHumidex = avgHumidex;
     _maxTemperatureTimestamp = maxTemperatureTimestamp;
     _minTemperatureTimestamp = minTemperatureTimestamp;
     _maxHumidityTimestamp = maxHumidityTimestamp;
     _minHumidityTimestamp = minHumidityTimestamp;
+    _maxDewPointTimestamp = maxDewPointTimestamp;
+    _minDewPointTimestamp = minDewPointTimestamp;
+    _maxHumidexTimestamp = maxHumidexTimestamp;
+    _minHumidexTimestamp = minHumidexTimestamp;
 }
 
 QDate DailyRecord::date() {
@@ -80,6 +100,26 @@ double DailyRecord::avgHumidity() {
     return _avgHumidity;
 }
 
+double DailyRecord::maxDewPoint() {
+    return _maxTemperature;
+}
+double DailyRecord::minDewPoint() {
+    return _minTemperature;
+}
+double DailyRecord::avgDewPoint() {
+    return _avgTemperature;
+}
+
+double DailyRecord::maxHumidex() {
+    return _maxHumidity;
+}
+double DailyRecord::minHumidex() {
+    return _minHumidity;
+}
+double DailyRecord::avgHumidex() {
+    return _avgHumidity;
+}
+
 long long DailyRecord::maxTemperatureTimestamp() {
     return _maxTemperatureTimestamp;
 }
@@ -92,6 +132,20 @@ long long DailyRecord::maxHumidityTimestamp() {
 }
 long long DailyRecord::minHumidityTimestamp() {
     return _minHumidityTimestamp;
+}
+
+long long DailyRecord::maxDewPointTimestamp() {
+    return _maxDewPointTimestamp;
+}
+long long DailyRecord::minDewPointTimestamp() {
+    return _minDewPointTimestamp;
+}
+
+long long DailyRecord::maxHumidexTimestamp() {
+    return _maxHumidexTimestamp;
+}
+long long DailyRecord::minHumidexTimestamp() {
+    return _minHumidexTimestamp;
 }
 
 
@@ -107,4 +161,18 @@ QTime DailyRecord::maxHumidityTime() {
 }
 QTime DailyRecord::minHumidityTime() {
     return timestampToTime(_minHumidityTimestamp);
-};
+}
+
+QTime DailyRecord::maxDewPointTime() {
+    return timestampToTime(_maxDewPointTimestamp);
+}
+QTime DailyRecord::minDewPointTime() {
+    return timestampToTime(_minDewPointTimestamp);
+}
+
+QTime DailyRecord::maxHumidexTime() {
+    return timestampToTime(_maxHumidexTimestamp);
+}
+QTime DailyRecord::minHumidexTime() {
+    return timestampToTime(_minHumidexTimestamp);
+}
