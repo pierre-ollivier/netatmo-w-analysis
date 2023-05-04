@@ -14,10 +14,20 @@ public:
                    int maxHumidity,
                    int minHumidity,
                    double avgHumidity,
+                   double maxDewPoint,
+                   double minDewPoint,
+                   double avgDewPoint,
+                   double maxHumidex,
+                   double minHumidex,
+                   double avgHumidex,
                    long long maxTemperatureTimestamp,
                    long long minTemperatureTimestamp,
                    long long maxHumidityTimestamp,
-                   long long minHumidityTimestamp
+                   long long minHumidityTimestamp,
+                   long long maxDewPointTimestamp,
+                   long long minDewPointTimestamp,
+                   long long maxHumidexTimestamp,
+                   long long minHumidexTimestamp
                    );
 
 };
