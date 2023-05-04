@@ -236,7 +236,27 @@ void MainWindow::addMonthData() {
 }
 
 void MainWindow::updateDailyIndoorDatabase() {
-    // TODO
+    bool okBegin = false, okEnd = false;
+    QString beginDate = QInputDialog::getText(
+                this, "Date de début", "Date de début (au format JJ/MM/AAAA) :", QLineEdit::Normal, QString(), &okBegin);
+    if (!okBegin) return;
+    QString endDate = QInputDialog::getText(
+                this, "Date de fin", "Date de fin (au format JJ/MM/AAAA) :", QLineEdit::Normal, QString(), &okEnd);
+    if (!okEnd) return;
+
+    QString q = "Confirmer la saisie ? \n\n";
+    q += "Date de début : " + beginDate + "\n";
+    q += "Date de fin : " + endDate;
+
+    int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
+
+    if (response == QMessageBox::Yes) {
+        dbHandler->updateIndoorDailyRecords(
+                    QDate::fromString(beginDate, "dd/MM/yyyy"),
+                    QDate::fromString(endDate, "dd/MM/yyyy"));
+    }
+
+    else if (response == QMessageBox::No) QMessageBox::warning(this, "Annulation", "Opération annulée.");
 }
 void MainWindow::updateDailyOutdoorDatabase() {
     // TODO
