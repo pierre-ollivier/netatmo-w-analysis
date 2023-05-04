@@ -99,6 +99,10 @@ void MainWindow::createActions() {
     connect(requestCountsAction, SIGNAL(triggered()), this, SLOT(updateRequestCounts()));
     addMonthDataAction = new QAction("Ajouter des données mensuelles...");
     connect(addMonthDataAction, SIGNAL(triggered()), this, SLOT(addMonthData()));
+    updateDailyIndoorDatabaseAction = new QAction("Mettre à jour la base de données quotidiennes intérieures");
+    connect(updateDailyIndoorDatabaseAction, SIGNAL(triggered()), this, SLOT(updateDailyIndoorDatabase()));
+    updateDailyOutdoorDatabaseAction = new QAction("Mettre à jour la base de données quotidiennes extérieures");
+    connect(updateDailyOutdoorDatabaseAction, SIGNAL(triggered()), this, SLOT(updateDailyOutdoorDatabase()));
 }
 
 void MainWindow::createMenus() {
@@ -106,6 +110,8 @@ void MainWindow::createMenus() {
     networkMenu->addAction(requestCountsAction);
     QMenu *dataMenu = menuBar->addMenu(tr("Données"));
     dataMenu->addAction(addMonthDataAction);
+    dataMenu->addAction(updateDailyIndoorDatabaseAction);
+    dataMenu->addAction(updateDailyOutdoorDatabaseAction);
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
@@ -227,4 +233,11 @@ void MainWindow::addMonthData() {
     }
     else if (response == QMessageBox::No) QMessageBox::warning(this, "Annulation", "Opération annulée.");
 
+}
+
+void MainWindow::updateDailyIndoorDatabase() {
+    // TODO
+}
+void MainWindow::updateDailyOutdoorDatabase() {
+    // TODO
 }
