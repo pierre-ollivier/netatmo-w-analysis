@@ -28,7 +28,7 @@ const QString indoorTimestampsParams[18] = {
     "noise",
 };
 
-const QString indoorDailyRecordsParams[39] = {
+const QString indoorDailyRecordsParams[61] = {
     "year",
     "month",
     "day",
@@ -41,6 +41,12 @@ const QString indoorDailyRecordsParams[39] = {
     "maxHumidity",
     "minHumidity",
     "avgHumidity",
+    "maxDewPoint",
+    "minDewPoint",
+    "avgDewPoint",
+    "maxHumidex",
+    "minHumidex",
+    "avgHumidex",
     "maxPressure",
     "minPressure",
     "avgPressure",
@@ -60,6 +66,22 @@ const QString indoorDailyRecordsParams[39] = {
     "minHumidityHour",
     "minHumidityMinute",
     "minHumiditySecond",
+    "maxDewPointTimestamp",
+    "maxDewPointHour",
+    "maxDewPointMinute",
+    "maxDewPointSecond",
+    "minDewPointTimestamp",
+    "minDewPointHour",
+    "minDewPointMinute",
+    "minDewPointSecond",
+    "maxHumidexTimestamp",
+    "maxHumidexHour",
+    "maxHumidexMinute",
+    "maxHumidexSecond",
+    "minHumidexTimestamp",
+    "minHumidexHour",
+    "minHumidexMinute",
+    "minHumidexSecond",
     "maxPressureTimestamp",
     "maxPressureHour",
     "maxPressureMinute",
@@ -88,7 +110,7 @@ const QString outdoorTimestampsParams[15] = {
     "humidex",
 };
 
-const QString outdoorDailyRecordsParams[28] = {
+const QString outdoorDailyRecordsParams[50] = {
     "year",
     "month",
     "day",
@@ -101,6 +123,12 @@ const QString outdoorDailyRecordsParams[28] = {
     "maxHumidity",
     "minHumidity",
     "avgHumidity",
+    "maxDewPoint",
+    "minDewPoint",
+    "avgDewPoint",
+    "maxHumidex",
+    "minHumidex",
+    "avgHumidex",
     "maxTemperatureTimestamp",
     "maxTemperatureHour",
     "maxTemperatureMinute",
@@ -117,6 +145,22 @@ const QString outdoorDailyRecordsParams[28] = {
     "minHumidityHour",
     "minHumidityMinute",
     "minHumiditySecond",
+    "maxDewPointTimestamp",
+    "maxDewPointHour",
+    "maxDewPointMinute",
+    "maxDewPointSecond",
+    "minDewPointTimestamp",
+    "minDewPointHour",
+    "minDewPointMinute",
+    "minDewPointSecond",
+    "maxHumidexTimestamp",
+    "maxHumidexHour",
+    "maxHumidexMinute",
+    "maxHumidexSecond",
+    "minHumidexTimestamp",
+    "minHumidexHour",
+    "minHumidexMinute",
+    "minHumidexSecond",
 };
 
 QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "connection_name");
@@ -160,12 +204,12 @@ void DatabaseHandler::postOutdoorDailyRecord(ExtDailyRecord record, QString tabl
     }
 
     QString preparingQuery = "INSERT INTO " + tableName + "(";
-    for (int i = 0; i < 27; i++) {
+    for (int i = 0; i < 49; i++) {
         preparingQuery += outdoorDailyRecordsParams[i] + ",";
     }
-    preparingQuery += outdoorDailyRecordsParams[27];
+    preparingQuery += outdoorDailyRecordsParams[49];
     preparingQuery += ") VALUES (";
-    for (int i = 0; i < 27; i++) {
+    for (int i = 0; i < 49; i++) {
         preparingQuery += "?,";
     }
     preparingQuery += "?);";
@@ -190,6 +234,14 @@ void DatabaseHandler::postOutdoorDailyRecord(ExtDailyRecord record, QString tabl
     query.addBindValue(record.minHumidity());
     query.addBindValue(record.avgHumidity());
 
+    query.addBindValue(record.maxDewPoint());
+    query.addBindValue(record.minDewPoint());
+    query.addBindValue(record.avgDewPoint());
+
+    query.addBindValue(record.maxHumidex());
+    query.addBindValue(record.minHumidex());
+    query.addBindValue(record.avgHumidex());
+
     query.addBindValue(record.maxTemperatureTimestamp());
     query.addBindValue(record.maxTemperatureTime().hour());
     query.addBindValue(record.maxTemperatureTime().minute());
@@ -209,6 +261,26 @@ void DatabaseHandler::postOutdoorDailyRecord(ExtDailyRecord record, QString tabl
     query.addBindValue(record.minHumidityTime().hour());
     query.addBindValue(record.minHumidityTime().minute());
     query.addBindValue(record.minHumidityTime().second());
+
+    query.addBindValue(record.maxDewPointTimestamp());
+    query.addBindValue(record.maxDewPointTime().hour());
+    query.addBindValue(record.maxDewPointTime().minute());
+    query.addBindValue(record.maxDewPointTime().second());
+
+    query.addBindValue(record.minDewPointTimestamp());
+    query.addBindValue(record.minDewPointTime().hour());
+    query.addBindValue(record.minDewPointTime().minute());
+    query.addBindValue(record.minDewPointTime().second());
+
+    query.addBindValue(record.maxHumidexTimestamp());
+    query.addBindValue(record.maxHumidexTime().hour());
+    query.addBindValue(record.maxHumidexTime().minute());
+    query.addBindValue(record.maxHumidexTime().second());
+
+    query.addBindValue(record.minHumidexTimestamp());
+    query.addBindValue(record.minHumidexTime().hour());
+    query.addBindValue(record.minHumidexTime().minute());
+    query.addBindValue(record.minHumidexTime().second());
 
     if (!query.exec()) {
         qDebug() << "The following query could not be executed. Query: " << preparingQuery;
@@ -275,12 +347,12 @@ void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString table
     }
 
     QString preparingQuery = "INSERT INTO " + tableName + "(";
-    for (int i = 0; i < 38; i++) {
+    for (int i = 0; i < 60; i++) {
         preparingQuery += indoorDailyRecordsParams[i] + ",";
     }
-    preparingQuery += indoorDailyRecordsParams[38];
+    preparingQuery += indoorDailyRecordsParams[60];
     preparingQuery += ") VALUES (";
-    for (int i = 0; i < 38; i++) {
+    for (int i = 0; i < 60; i++) {
         preparingQuery += "?,";
     }
     preparingQuery += "?);";
@@ -305,6 +377,14 @@ void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString table
     query.addBindValue(record.minHumidity());
     query.addBindValue(record.avgHumidity());
 
+    query.addBindValue(record.maxDewPoint());
+    query.addBindValue(record.minDewPoint());
+    query.addBindValue(record.avgDewPoint());
+
+    query.addBindValue(record.maxHumidex());
+    query.addBindValue(record.minHumidex());
+    query.addBindValue(record.avgHumidex());
+
     query.addBindValue(record.maxPressure());
     query.addBindValue(record.minPressure());
     query.addBindValue(record.avgPressure());
@@ -328,6 +408,26 @@ void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString table
     query.addBindValue(record.minHumidityTime().hour());
     query.addBindValue(record.minHumidityTime().minute());
     query.addBindValue(record.minHumidityTime().second());
+
+    query.addBindValue(record.maxDewPointTimestamp());
+    query.addBindValue(record.maxDewPointTime().hour());
+    query.addBindValue(record.maxDewPointTime().minute());
+    query.addBindValue(record.maxDewPointTime().second());
+
+    query.addBindValue(record.minDewPointTimestamp());
+    query.addBindValue(record.minDewPointTime().hour());
+    query.addBindValue(record.minDewPointTime().minute());
+    query.addBindValue(record.minDewPointTime().second());
+
+    query.addBindValue(record.maxHumidexTimestamp());
+    query.addBindValue(record.maxHumidexTime().hour());
+    query.addBindValue(record.maxHumidexTime().minute());
+    query.addBindValue(record.maxHumidexTime().second());
+
+    query.addBindValue(record.minHumidexTimestamp());
+    query.addBindValue(record.minHumidexTime().hour());
+    query.addBindValue(record.minHumidexTime().minute());
+    query.addBindValue(record.minHumidexTime().second());
 
     query.addBindValue(record.maxPressureTimestamp());
     query.addBindValue(record.maxPressureTime().hour());
@@ -591,15 +691,25 @@ std::vector<IntDailyRecord> DatabaseHandler::getIntDailyRecordsFromDatabase(QStr
             int maxHumidity = _query.value(10).toInt();
             int minHumidity = _query.value(11).toInt();
             double avgHumidity = _query.value(12).toDouble();
-            double maxPressure = _query.value(13).toDouble();
-            double minPressure = _query.value(14).toDouble();
-            double avgPressure = _query.value(15).toDouble();
-            long long maxTemperatureTimestamp = _query.value(16).toLongLong();
-            long long minTemperatureTimestamp = _query.value(20).toLongLong();
-            long long maxHumidityTimestamp = _query.value(24).toLongLong();
-            long long minHumidityTimestamp = _query.value(28).toLongLong();
-            long long maxPressureTimestamp = _query.value(32).toLongLong();
-            long long minPressureTimestamp = _query.value(36).toLongLong();
+            double maxDewPoint = _query.value(13).toDouble();
+            double minDewPoint = _query.value(14).toDouble();
+            double avgDewPoint = _query.value(15).toDouble();
+            int maxHumidex = _query.value(16).toInt();
+            int minHumidex = _query.value(17).toInt();
+            double avgHumidex = _query.value(18).toDouble();
+            double maxPressure = _query.value(19).toDouble();
+            double minPressure = _query.value(20).toDouble();
+            double avgPressure = _query.value(21).toDouble();
+            long long maxTemperatureTimestamp = _query.value(22).toLongLong();
+            long long minTemperatureTimestamp = _query.value(26).toLongLong();
+            long long maxHumidityTimestamp = _query.value(30).toLongLong();
+            long long minHumidityTimestamp = _query.value(34).toLongLong();
+            long long maxDewPointTimestamp = _query.value(38).toLongLong();
+            long long minDewPointTimestamp = _query.value(42).toLongLong();
+            long long maxHumidexTimestamp = _query.value(46).toLongLong();
+            long long minHumidexTimestamp = _query.value(50).toLongLong();
+            long long maxPressureTimestamp = _query.value(54).toLongLong();
+            long long minPressureTimestamp = _query.value(58).toLongLong();
             result.push_back(
                         IntDailyRecord(
                             QDate(year, month, day),
@@ -609,6 +719,12 @@ std::vector<IntDailyRecord> DatabaseHandler::getIntDailyRecordsFromDatabase(QStr
                             maxHumidity,
                             minHumidity,
                             avgHumidity,
+                            maxDewPoint,
+                            minDewPoint,
+                            avgDewPoint,
+                            maxHumidex,
+                            minHumidex,
+                            avgHumidex,
                             maxPressure,
                             minPressure,
                             avgPressure,
@@ -616,6 +732,10 @@ std::vector<IntDailyRecord> DatabaseHandler::getIntDailyRecordsFromDatabase(QStr
                             minTemperatureTimestamp,
                             maxHumidityTimestamp,
                             minHumidityTimestamp,
+                            maxDewPointTimestamp,
+                            minDewPointTimestamp,
+                            maxHumidexTimestamp,
+                            minHumidexTimestamp,
                             maxPressureTimestamp,
                             minPressureTimestamp)
                         );
@@ -649,10 +769,20 @@ std::vector<ExtDailyRecord> DatabaseHandler::getExtDailyRecordsFromDatabase(QStr
             int maxHumidity = _query.value(10).toInt();
             int minHumidity = _query.value(11).toInt();
             double avgHumidity = _query.value(12).toDouble();
-            long long maxTemperatureTimestamp = _query.value(13).toLongLong();
-            long long minTemperatureTimestamp = _query.value(17).toLongLong();
-            long long maxHumidityTimestamp = _query.value(21).toLongLong();
-            long long minHumidityTimestamp = _query.value(25).toLongLong();
+            double maxDewPoint = _query.value(13).toDouble();
+            double minDewPoint = _query.value(14).toDouble();
+            double avgDewPoint = _query.value(15).toDouble();
+            double maxHumidex = _query.value(16).toDouble();
+            double minHumidex = _query.value(17).toDouble();
+            double avgHumidex = _query.value(18).toDouble();
+            long long maxTemperatureTimestamp = _query.value(19).toLongLong();
+            long long minTemperatureTimestamp = _query.value(23).toLongLong();
+            long long maxHumidityTimestamp = _query.value(27).toLongLong();
+            long long minHumidityTimestamp = _query.value(31).toLongLong();
+            long long maxDewPointTimestamp = _query.value(35).toLongLong();
+            long long minDewPointTimestamp = _query.value(39).toLongLong();
+            long long maxHumidexTimestamp = _query.value(43).toLongLong();
+            long long minHumidexTimestamp = _query.value(47).toLongLong();
             result.push_back(
                         ExtDailyRecord(
                             QDate(year, month, day),
@@ -662,10 +792,20 @@ std::vector<ExtDailyRecord> DatabaseHandler::getExtDailyRecordsFromDatabase(QStr
                             maxHumidity,
                             minHumidity,
                             avgHumidity,
+                            maxDewPoint,
+                            minDewPoint,
+                            avgDewPoint,
+                            maxHumidex,
+                            minHumidex,
+                            avgHumidex,
                             maxTemperatureTimestamp,
                             minTemperatureTimestamp,
                             maxHumidityTimestamp,
-                            minHumidityTimestamp)
+                            minHumidityTimestamp,
+                            maxDewPointTimestamp,
+                            minDewPointTimestamp,
+                            maxHumidexTimestamp,
+                            minHumidexTimestamp)
                         );
         }
     }
@@ -709,10 +849,20 @@ void DatabaseHandler::updateOutdoorDailyRecords(QDate beginDate, QDate endDate) 
                     dailyCalculator.getMaxHumidityFromDate(date),
                     dailyCalculator.getMinHumidityFromDate(date),
                     dailyCalculator.getAvgHumidityFromDate(date),
+                    dailyCalculator.getMaxDewPointFromDate(date),
+                    dailyCalculator.getMinDewPointFromDate(date),
+                    dailyCalculator.getAvgDewPointFromDate(date),
+                    dailyCalculator.getMaxHumidexFromDate(date),
+                    dailyCalculator.getMinHumidexFromDate(date),
+                    dailyCalculator.getAvgHumidexFromDate(date),
                     dailyCalculator.getMaxTemperatureTimestampFromDate(date),
                     dailyCalculator.getMinTemperatureTimestampFromDate(date),
                     dailyCalculator.getMaxHumidityTimestampFromDate(date),
-                    dailyCalculator.getMinHumidityTimestampFromDate(date)
+                    dailyCalculator.getMinHumidityTimestampFromDate(date),
+                    dailyCalculator.getMaxDewPointTimestampFromDate(date),
+                    dailyCalculator.getMinDewPointTimestampFromDate(date),
+                    dailyCalculator.getMaxHumidexTimestampFromDate(date),
+                    dailyCalculator.getMinHumidexTimestampFromDate(date)
                     );
         postOutdoorDailyRecord(record, "OutdoorDailyRecords");
     }
@@ -729,6 +879,12 @@ void DatabaseHandler::updateIndoorDailyRecords(QDate beginDate, QDate endDate) {
                     dailyCalculator.getMaxHumidityFromDate(date, true),
                     dailyCalculator.getMinHumidityFromDate(date, true),
                     dailyCalculator.getAvgHumidityFromDate(date, true),
+                    dailyCalculator.getMaxDewPointFromDate(date, true),
+                    dailyCalculator.getMinDewPointFromDate(date, true),
+                    dailyCalculator.getAvgDewPointFromDate(date, true),
+                    dailyCalculator.getMaxHumidexFromDate(date, true),
+                    dailyCalculator.getMinHumidexFromDate(date, true),
+                    dailyCalculator.getAvgHumidexFromDate(date, true),
                     dailyCalculator.getMaxPressureFromDate(date),
                     dailyCalculator.getMinPressureFromDate(date),
                     dailyCalculator.getAvgPressureFromDate(date),
@@ -736,6 +892,10 @@ void DatabaseHandler::updateIndoorDailyRecords(QDate beginDate, QDate endDate) {
                     dailyCalculator.getMinTemperatureTimestampFromDate(date, true),
                     dailyCalculator.getMaxHumidityTimestampFromDate(date, true),
                     dailyCalculator.getMinHumidityTimestampFromDate(date, true),
+                    dailyCalculator.getMaxDewPointTimestampFromDate(date, true),
+                    dailyCalculator.getMinDewPointTimestampFromDate(date, true),
+                    dailyCalculator.getMaxHumidexTimestampFromDate(date, true),
+                    dailyCalculator.getMinHumidexTimestampFromDate(date, true),
                     dailyCalculator.getMaxPressureTimestampFromDate(date),
                     dailyCalculator.getMinPressureTimestampFromDate(date)
                     );
