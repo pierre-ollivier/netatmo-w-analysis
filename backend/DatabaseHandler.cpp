@@ -276,7 +276,7 @@ void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString table
 
     QString preparingQuery = "INSERT INTO " + tableName + "(";
     for (int i = 0; i < 38; i++) {
-        preparingQuery += outdoorDailyRecordsParams[i] + ",";
+        preparingQuery += indoorDailyRecordsParams[i] + ",";
     }
     preparingQuery += indoorDailyRecordsParams[38];
     preparingQuery += ") VALUES (";
@@ -722,8 +722,8 @@ void DatabaseHandler::updateIndoorDailyRecords(QDate beginDate, QDate endDate) {
                     dailyCalculator.getMinTemperatureTimestampFromDate(date, true),
                     dailyCalculator.getMaxHumidityTimestampFromDate(date, true),
                     dailyCalculator.getMinHumidityTimestampFromDate(date, true),
-                    dailyCalculator.getMaxPressureFromDate(date),
-                    dailyCalculator.getMinPressureFromDate(date)
+                    dailyCalculator.getMaxPressureTimestampFromDate(date),
+                    dailyCalculator.getMinPressureTimestampFromDate(date)
                     );
         postIndoorDailyRecord(record, "IndoorDailyRecords");
     }
