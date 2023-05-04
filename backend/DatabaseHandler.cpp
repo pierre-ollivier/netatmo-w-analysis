@@ -305,6 +305,10 @@ void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString table
     query.addBindValue(record.minHumidity());
     query.addBindValue(record.avgHumidity());
 
+    query.addBindValue(record.maxPressure());
+    query.addBindValue(record.minPressure());
+    query.addBindValue(record.avgPressure());
+
     query.addBindValue(record.maxTemperatureTimestamp());
     query.addBindValue(record.maxTemperatureTime().hour());
     query.addBindValue(record.maxTemperatureTime().minute());
@@ -324,6 +328,16 @@ void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString table
     query.addBindValue(record.minHumidityTime().hour());
     query.addBindValue(record.minHumidityTime().minute());
     query.addBindValue(record.minHumidityTime().second());
+
+    query.addBindValue(record.maxPressureTimestamp());
+    query.addBindValue(record.maxPressureTime().hour());
+    query.addBindValue(record.maxPressureTime().minute());
+    query.addBindValue(record.maxPressureTime().second());
+
+    query.addBindValue(record.minPressureTimestamp());
+    query.addBindValue(record.minPressureTime().hour());
+    query.addBindValue(record.minPressureTime().minute());
+    query.addBindValue(record.minPressureTime().second());
 
     if (!query.exec()) {
         qDebug() << "The following query could not be executed. Query: " << preparingQuery;
