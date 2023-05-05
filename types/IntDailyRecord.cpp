@@ -19,6 +19,12 @@ IntDailyRecord::IntDailyRecord(
         double maxPressure,
         double minPressure,
         double avgPressure,
+        int maxCO2,
+        int minCO2,
+        double avgCO2,
+        int maxNoise,
+        int minNoise,
+        double avgNoise,
         long long maxTemperatureTimestamp,
         long long minTemperatureTimestamp,
         long long maxHumidityTimestamp,
@@ -56,6 +62,13 @@ IntDailyRecord::IntDailyRecord(
     _maxPressure = maxPressure;
     _minPressure = minPressure;
     _avgPressure = avgPressure;
+    _maxCO2 = maxCO2;
+    _minCO2 = minCO2;
+    _avgCO2 = avgCO2;
+    _maxNoise = maxNoise;
+    _minNoise = minNoise;
+    _avgNoise = avgNoise;
+
     _maxPressureTimestamp = maxPressureTimestamp;
     _minPressureTimestamp = minPressureTimestamp;
 }
@@ -68,6 +81,26 @@ double IntDailyRecord::minPressure() {
 }
 double IntDailyRecord::avgPressure() {
     return _avgPressure;
+}
+
+int IntDailyRecord::maxCO2() {
+    return _maxCO2;
+}
+int IntDailyRecord::minCO2() {
+    return _minCO2;
+}
+double IntDailyRecord::avgCO2() {
+    return _avgCO2;
+}
+
+int IntDailyRecord::maxNoise() {
+    return _maxNoise;
+}
+int IntDailyRecord::minNoise() {
+    return _minNoise;
+}
+double IntDailyRecord::avgNoise() {
+    return _avgNoise;
 }
 
 long long IntDailyRecord::maxPressureTimestamp() {

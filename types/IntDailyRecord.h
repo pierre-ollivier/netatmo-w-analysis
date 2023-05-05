@@ -23,6 +23,12 @@ public:
             double maxPressure,
             double minPressure,
             double avgPressure,
+            int maxCO2,
+            int minCO2,
+            double avgCO2,
+            int maxNoise,
+            int minNoise,
+            double avgNoise,
             long long maxTemperatureTimestamp,
             long long minTemperatureTimestamp,
             long long maxHumidityTimestamp,
@@ -39,6 +45,14 @@ public:
     double minPressure();
     double avgPressure();
 
+    int maxCO2();
+    int minCO2();
+    double avgCO2();
+
+    int maxNoise();
+    int minNoise();
+    double avgNoise();
+
     long long maxPressureTimestamp();
     long long minPressureTimestamp();
 
@@ -49,6 +63,14 @@ private:
     double _maxPressure;
     double _minPressure;
     double _avgPressure;
+
+    int _maxCO2;
+    int _minCO2;
+    double _avgCO2;
+
+    double _maxNoise;
+    double _minNoise;
+    double _avgNoise;
 
     long long _maxPressureTimestamp;
     long long _minPressureTimestamp;
