@@ -1,6 +1,7 @@
 #include "DatabaseHandler.h"
 #include <QSqlDatabase>
 #include <QSqlQuery>
+#include <QSqlError>
 #include <QDebug>
 #include <QFile>
 #include <QDateTime>
@@ -290,6 +291,7 @@ void DatabaseHandler::postOutdoorDailyRecord(ExtDailyRecord record, QString tabl
 
     if (!query.exec()) {
         qDebug() << "The following query could not be executed. Query: " << preparingQuery;
+        qDebug() << "ERROR:" << query.lastError().text();
     }
 }
 
