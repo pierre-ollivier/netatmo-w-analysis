@@ -111,13 +111,13 @@ double DailyRecord::avgDewPoint() {
 }
 
 double DailyRecord::maxHumidex() {
-    return _maxHumidity;
+    return _maxHumidex;
 }
 double DailyRecord::minHumidex() {
-    return _minHumidity;
+    return _minHumidex;
 }
 double DailyRecord::avgHumidex() {
-    return _avgHumidity;
+    return _avgHumidex;
 }
 
 long long DailyRecord::maxTemperatureTimestamp() {
