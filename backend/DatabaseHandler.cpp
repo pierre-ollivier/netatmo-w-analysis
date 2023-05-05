@@ -28,7 +28,7 @@ const QString indoorTimestampsParams[18] = {
     "noise",
 };
 
-const QString indoorDailyRecordsParams[61] = {
+const QString indoorDailyRecordsParams[67] = {
     "year",
     "month",
     "day",
@@ -50,6 +50,12 @@ const QString indoorDailyRecordsParams[61] = {
     "maxPressure",
     "minPressure",
     "avgPressure",
+    "maxCO2",
+    "minCO2",
+    "avgCO2",
+    "maxNoise",
+    "minNoise",
+    "avgNoise",
     "maxTemperatureTimestamp",
     "maxTemperatureHour",
     "maxTemperatureMinute",
@@ -347,12 +353,12 @@ void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString table
     }
 
     QString preparingQuery = "INSERT INTO " + tableName + "(";
-    for (int i = 0; i < 60; i++) {
+    for (int i = 0; i < 66; i++) {
         preparingQuery += indoorDailyRecordsParams[i] + ",";
     }
-    preparingQuery += indoorDailyRecordsParams[60];
+    preparingQuery += indoorDailyRecordsParams[66];
     preparingQuery += ") VALUES (";
-    for (int i = 0; i < 60; i++) {
+    for (int i = 0; i < 66; i++) {
         preparingQuery += "?,";
     }
     preparingQuery += "?);";
@@ -388,6 +394,14 @@ void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString table
     query.addBindValue(record.maxPressure());
     query.addBindValue(record.minPressure());
     query.addBindValue(record.avgPressure());
+
+    query.addBindValue(record.maxCO2());
+    query.addBindValue(record.minCO2());
+    query.addBindValue(record.avgCO2());
+
+    query.addBindValue(record.maxNoise());
+    query.addBindValue(record.minNoise());
+    query.addBindValue(record.avgNoise());
 
     query.addBindValue(record.maxTemperatureTimestamp());
     query.addBindValue(record.maxTemperatureTime().hour());
@@ -888,6 +902,12 @@ void DatabaseHandler::updateIndoorDailyRecords(QDate beginDate, QDate endDate) {
                     dailyCalculator.getMaxPressureFromDate(date),
                     dailyCalculator.getMinPressureFromDate(date),
                     dailyCalculator.getAvgPressureFromDate(date),
+                    dailyCalculator.getMaxCO2FromDate(date),
+                    dailyCalculator.getMinCO2FromDate(date),
+                    dailyCalculator.getAvgCO2FromDate(date),
+                    dailyCalculator.getMaxNoiseFromDate(date),
+                    dailyCalculator.getMinCO2FromDate(date),
+                    dailyCalculator.getAvgCO2FromDate(date),
                     dailyCalculator.getMaxTemperatureTimestampFromDate(date, true),
                     dailyCalculator.getMinTemperatureTimestampFromDate(date, true),
                     dailyCalculator.getMaxHumidityTimestampFromDate(date, true),
