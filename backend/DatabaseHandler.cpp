@@ -714,16 +714,22 @@ std::vector<IntDailyRecord> DatabaseHandler::getIntDailyRecordsFromDatabase(QStr
             double maxPressure = _query.value(19).toDouble();
             double minPressure = _query.value(20).toDouble();
             double avgPressure = _query.value(21).toDouble();
-            long long maxTemperatureTimestamp = _query.value(22).toLongLong();
-            long long minTemperatureTimestamp = _query.value(26).toLongLong();
-            long long maxHumidityTimestamp = _query.value(30).toLongLong();
-            long long minHumidityTimestamp = _query.value(34).toLongLong();
-            long long maxDewPointTimestamp = _query.value(38).toLongLong();
-            long long minDewPointTimestamp = _query.value(42).toLongLong();
-            long long maxHumidexTimestamp = _query.value(46).toLongLong();
-            long long minHumidexTimestamp = _query.value(50).toLongLong();
-            long long maxPressureTimestamp = _query.value(54).toLongLong();
-            long long minPressureTimestamp = _query.value(58).toLongLong();
+            int maxCO2 = _query.value(22).toInt();
+            int minCO2 = _query.value(23).toInt();
+            double avgCO2 = _query.value(24).toDouble();
+            int maxNoise = _query.value(25).toInt();
+            int minNoise = _query.value(26).toInt();
+            double avgNoise = _query.value(27).toDouble();
+            long long maxTemperatureTimestamp = _query.value(28).toLongLong();
+            long long minTemperatureTimestamp = _query.value(32).toLongLong();
+            long long maxHumidityTimestamp = _query.value(36).toLongLong();
+            long long minHumidityTimestamp = _query.value(40).toLongLong();
+            long long maxDewPointTimestamp = _query.value(44).toLongLong();
+            long long minDewPointTimestamp = _query.value(48).toLongLong();
+            long long maxHumidexTimestamp = _query.value(52).toLongLong();
+            long long minHumidexTimestamp = _query.value(56).toLongLong();
+            long long maxPressureTimestamp = _query.value(60).toLongLong();
+            long long minPressureTimestamp = _query.value(64).toLongLong();
             result.push_back(
                         IntDailyRecord(
                             QDate(year, month, day),
@@ -742,6 +748,12 @@ std::vector<IntDailyRecord> DatabaseHandler::getIntDailyRecordsFromDatabase(QStr
                             maxPressure,
                             minPressure,
                             avgPressure,
+                            maxCO2,
+                            minCO2,
+                            avgCO2,
+                            maxNoise,
+                            minNoise,
+                            avgNoise,
                             maxTemperatureTimestamp,
                             minTemperatureTimestamp,
                             maxHumidityTimestamp,
