@@ -920,7 +920,7 @@ void DatabaseHandler::updateIndoorDailyRecords(QDate beginDate, QDate endDate) {
                     dailyCalculator.getMinCO2FromDate(date),
                     dailyCalculator.getAvgCO2FromDate(date),
                     dailyCalculator.getMaxNoiseFromDate(date),
-                    dailyCalculator.getMinCO2FromDate(date),
+                    dailyCalculator.getMinNoiseFromDate(date),
                     dailyCalculator.getAvgCO2FromDate(date),
                     dailyCalculator.getMaxTemperatureTimestampFromDate(date, true),
                     dailyCalculator.getMinTemperatureTimestampFromDate(date, true),
