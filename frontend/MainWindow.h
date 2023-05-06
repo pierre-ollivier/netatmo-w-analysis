@@ -44,6 +44,7 @@ public slots:
     void updateRequestCounts();
 
     void addMonthData();
+    void addMultipleMonthsData();
 
     void updateDailyIndoorDatabase();
     void updateDailyOutdoorDatabase();
@@ -78,6 +79,7 @@ private:
     //actions
     QAction *requestCountsAction;
     QAction *addMonthDataAction;
+    QAction *addMultipleMonthsDataAction;
     QAction *updateDailyIndoorDatabaseAction;
     QAction *updateDailyOutdoorDatabaseAction;
 };
