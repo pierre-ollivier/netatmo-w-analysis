@@ -3,11 +3,11 @@
 #include "playground.cpp"
 
 int main(int argc, char *argv[]) {
-
+    extern const QString VERSION;
     QApplication app(argc, argv);
     MainWindow mainWin;
     mainWin.show();
-    mainWin.setWindowTitle("netatmo-w-analysis v1.0.0");
+    mainWin.setWindowTitle("netatmo-w-analysis v" + VERSION);
     executeAllPlaygroundFunctions();
     return app.exec();
 }

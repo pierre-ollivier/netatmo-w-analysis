@@ -10,4 +10,5 @@ SOURCES += \
     credentials.cpp \
     dbparams.cpp \
     main.cpp \
-    playground.cpp
+    playground.cpp \
+    setup.cpp
