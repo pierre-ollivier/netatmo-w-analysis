@@ -1,8 +1,5 @@
 #include "NetatmoAPIHandler.h"
 #include <QJsonDocument>
-#include "types/IntTimestampRecord.h"  // TODO: remove provisional code
-#include "types/ExtTimestampRecord.h"  // TODO: remove provisional code
-#include "DatabaseHandler.h"  // TODO: remove provisional code
 
 NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequests)
 {
@@ -161,23 +158,6 @@ void NetatmoAPIHandler::retrieveCurrentConditions(QNetworkReply *reply) {
         emit intMaxTemperatureTimeChanged(intCurrentMaxTemperatureTime);
 
         emit currentTimeChanged(QDateTime::currentDateTime());
-
-        // for testing purposes only
-        // TODO: remove provisional code
-
-        long long currentUTCTimeLong = extCurrentUTCTime;  // implicit conversion to long long
-        ExtTimestampRecord record(currentUTCTimeLong, extCurrentTemperature, extCurrentHumidity);
-        IntTimestampRecord intRecord(
-                    currentUTCTimeLong,
-                    intCurrentTemperature,
-                    intCurrentHumidity,
-                    intCurrentPressure,
-                    intCurrentCO2,
-                    intCurrentNoise);
-        DatabaseHandler dbHandler("netatmo_analysis.db");
-//        dbHandler.postOutdoorTimestampRecord(record, "OutdoorTimestampRecords");
-//        dbHandler.postIndoorTimestampRecord(intRecord, "IndoorTimestampRecords");
-
     }
     else {
         qDebug() << "ERROR with network"
