@@ -616,6 +616,23 @@ void DatabaseHandler::postFromIndoorCsv(QString pathToCsv, QString tableName, QD
     }
 }
 
+void DatabaseHandler::postFromMultipleOutdoorCsv(QString path, QString tableName, QString beginMonth, QString endMonth) {
+    // TODO: make this function and the following one more robust to paths ending or not with /
+    QDate beginDate = QDate::fromString("01/" + beginMonth, "dd/MM/yyyy");
+    QDate endDate = QDate::fromString("01/" + endMonth, "dd/MM/yyyy");
+    for (QDate date = beginDate; date <= endDate; date = date.addMonths(1)) {
+        postFromOutdoorCsv(path + "/" + date.toString("yyyy-MM"), tableName);
+    }
+}
+
+void DatabaseHandler::postFromMultipleIndoorCsv(QString path, QString tableName, QString beginMonth, QString endMonth) {
+    QDate beginDate = QDate::fromString("01/" + beginMonth, "dd/MM/yyyy");
+    QDate endDate = QDate::fromString("01/" + endMonth, "dd/MM/yyyy");
+    for (QDate date = beginDate; date <= endDate; date = date.addMonths(1)) {
+        postFromIndoorCsv(path + "/" + date.toString("yyyy-MM"), tableName);
+    }
+}
+
 std::vector<IntTimestampRecord> DatabaseHandler::getIntTimestampRecordsFromDatabase(QString query, int N) {
     if (N > 0) {
         query += " LIMIT " + QString::number(N);
