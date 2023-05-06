@@ -629,7 +629,7 @@ void DatabaseHandler::postFromMultipleIndoorCsv(QString path, QString tableName,
     QDate beginDate = QDate::fromString("01/" + beginMonth, "dd/MM/yyyy");
     QDate endDate = QDate::fromString("01/" + endMonth, "dd/MM/yyyy");
     for (QDate date = beginDate; date <= endDate; date = date.addMonths(1)) {
-        postFromIndoorCsv(path + "/" + date.toString("yyyy-MM"), tableName);
+        postFromIndoorCsv(path + "/C" + date.toString("yyyy-MM"), tableName);
     }
 }
 
