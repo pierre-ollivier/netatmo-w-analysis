@@ -24,6 +24,8 @@ public:
 
     void postFromOutdoorCsv(QString pathToCsv, QString tableName, QDate beginDate = QDate(), QDate endDate = QDate());
     void postFromIndoorCsv(QString pathToCsv, QString tableName, QDate beginDate = QDate(), QDate endDate = QDate());
+    void postFromMultipleOutdoorCsv(QString path, QString tableName, QString beginMonth, QString endMonth);
+    void postFromMultipleIndoorCsv(QString path, QString tableName, QString beginMonth, QString endMonth);
 
     std::vector<IntTimestampRecord> getIntTimestampRecordsFromDatabase(QString query, int N = 1);
     std::vector<ExtTimestampRecord> getExtTimestampRecordsFromDatabase(QString query, int N = 1);
