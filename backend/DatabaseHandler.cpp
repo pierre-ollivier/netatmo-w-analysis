@@ -883,8 +883,12 @@ QVariant DatabaseHandler::getResultFromDatabase(QString query) {
     return QVariant();
 }
 
-void DatabaseHandler::updateOutdoorDailyRecords(QDate beginDate, QDate endDate) {
+void DatabaseHandler::updateOutdoorDailyRecords(QDate beginDate, QDate endDate, bool verbose) {
     DailyStatisticsCalculator dailyCalculator = DailyStatisticsCalculator();
+    QProgressDialog progress("Ajout des nouvelles données...", "Annuler", beginDate.toJulianDay(), endDate.toJulianDay());
+    progress.setWindowModality(Qt::WindowModal);
+    progress.setValue(beginDate.toJulianDay());
+    if (!verbose) progress.reset();
     for (QDate date = beginDate; date <= endDate; date = date.addDays(1)) {
         ExtDailyRecord record(
                     date,
@@ -910,11 +914,16 @@ void DatabaseHandler::updateOutdoorDailyRecords(QDate beginDate, QDate endDate) 
                     dailyCalculator.getMinHumidexTimestampFromDate(date)
                     );
         postOutdoorDailyRecord(record, "OutdoorDailyRecords");
+        if (verbose) progress.setValue(date.toJulianDay());
     }
 }
 
-void DatabaseHandler::updateIndoorDailyRecords(QDate beginDate, QDate endDate) {
+void DatabaseHandler::updateIndoorDailyRecords(QDate beginDate, QDate endDate, bool verbose) {
     DailyStatisticsCalculator dailyCalculator = DailyStatisticsCalculator();
+    QProgressDialog progress("Ajout des nouvelles données...", "Annuler", beginDate.toJulianDay(), endDate.toJulianDay());
+    progress.setWindowModality(Qt::WindowModal);
+    progress.setValue(beginDate.toJulianDay());
+    if (!verbose) progress.reset();
     for (QDate date = beginDate; date <= endDate; date = date.addDays(1)) {
         IntDailyRecord record(
                     date,
@@ -951,5 +960,6 @@ void DatabaseHandler::updateIndoorDailyRecords(QDate beginDate, QDate endDate) {
                     dailyCalculator.getMinPressureTimestampFromDate(date)
                     );
         postIndoorDailyRecord(record, "IndoorDailyRecords");
+        if (verbose) progress.setValue(date.toJulianDay());
     }
 }
