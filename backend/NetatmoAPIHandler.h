@@ -101,6 +101,9 @@ private:
     int intCurrentMinTemperatureTime = 0;
     int intCurrentMaxTemperatureTime = 0;
 
+    double intCurrentPressure = 0.0;
+    int intCurrentCO2 = 0;
+    int intCurrentNoise = 0;
 };
 
 #endif // NETATMOAPIHANDLER_H

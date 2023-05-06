@@ -1,6 +1,8 @@
 #include "MainWindow.h"
 #include <QDateTime>
 #include <QMessageBox>
+#include <QInputDialog>
+#include <QFileDialog>
 #include "backend/APIMonitor.h"
 
 MainWindow::MainWindow()
@@ -11,6 +13,7 @@ MainWindow::MainWindow()
     setMenuBar(menuBar);
     deviceLocale = new QLocale();
     apiMonitor = new APIMonitor();
+    dbHandler = new DatabaseHandler("netatmo_analysis.db");
     buildWindow();
 }
 
@@ -91,14 +94,27 @@ void MainWindow::buildLayouts() {
     mainWidget->setLayout(mainLayout);
 }
 
-void MainWindow::createMenus() {
-    QMenu *networkMenu = menuBar->addMenu(tr("&Réseau"));
-    networkMenu->addAction(requestCountsAction);
-}
-
 void MainWindow::createActions() {
     requestCountsAction = new QAction("Rapport réseau...");
     connect(requestCountsAction, SIGNAL(triggered()), this, SLOT(updateRequestCounts()));
+    addMonthDataAction = new QAction("Ajouter des données mensuelles...");
+    connect(addMonthDataAction, SIGNAL(triggered()), this, SLOT(addMonthData()));
+    addMultipleMonthsDataAction = new QAction("Ajouter des données mensuelles sur plusieurs mois...");
+    connect(addMultipleMonthsDataAction, SIGNAL(triggered()), this, SLOT(addMultipleMonthsData()));
+    updateDailyIndoorDatabaseAction = new QAction("Mettre à jour la base de données quotidiennes intérieures");
+    connect(updateDailyIndoorDatabaseAction, SIGNAL(triggered()), this, SLOT(updateDailyIndoorDatabase()));
+    updateDailyOutdoorDatabaseAction = new QAction("Mettre à jour la base de données quotidiennes extérieures");
+    connect(updateDailyOutdoorDatabaseAction, SIGNAL(triggered()), this, SLOT(updateDailyOutdoorDatabase()));
+}
+
+void MainWindow::createMenus() {
+    QMenu *networkMenu = menuBar->addMenu(tr("&Réseau"));
+    networkMenu->addAction(requestCountsAction);
+    QMenu *dataMenu = menuBar->addMenu(tr("Données"));
+    dataMenu->addAction(addMonthDataAction);
+    dataMenu->addAction(addMultipleMonthsDataAction);
+    dataMenu->addAction(updateDailyIndoorDatabaseAction);
+    dataMenu->addAction(updateDailyOutdoorDatabaseAction);
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
@@ -192,4 +208,114 @@ void MainWindow::updateRequestCounts() {
                              "Requêtes restantes : <br><b>"
                              + QString::number(remainingRequests10s) + "</b> / 10 secondes<br>"
                              + "<b>" + QString::number(remainingRequests1h) + "</b> / 1 heure");
+}
+
+void MainWindow::addMonthData() {
+    QString fileName = QFileDialog::getOpenFileName(this, "Ouvrir un fichier", "D:/Mes programmes/RegressionTemperature/Données Netatmo", "*.csv");
+    QString q = "Confirmer la saisie ? \n\n";
+    q += "Nom du fichier : " + fileName.mid(56) + "\n";
+
+    int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
+    bool isIndoorData = (fileName.size() > 7 && fileName[fileName.size() - 12] == 'C');
+
+    if (response == QMessageBox::Yes) {
+        if (isIndoorData) {
+            dbHandler->postFromIndoorCsv(fileName, "IndoorTimestampRecords");
+        }
+        else {
+            dbHandler->postFromOutdoorCsv(fileName, "OutdoorTimestampRecords");
+        }
+    }
+    else if (response == QMessageBox::No) QMessageBox::warning(this, "Annulation", "Opération annulée.");
+
+}
+
+void MainWindow::addMultipleMonthsData() {
+    bool okBegin = false, okEnd = false;
+    QString beginDate = QInputDialog::getText(
+                this, "Mois de début", "Mois de début (au format MM/AAAA) :", QLineEdit::Normal, QString(), &okBegin);
+    if (!okBegin) return;
+    QString endDate = QInputDialog::getText(
+                this, "Mois de fin", "Mois de fin (au format MM/AAAA) :", QLineEdit::Normal, QString(), &okEnd);
+    if (!okEnd) return;
+
+    int indoorOrOutdoor = QMessageBox::question(this, "Lieu", "Considérer les données <b> intérieures </b> ?",
+                                                QMessageBox::Yes, QMessageBox::No);
+
+    bool isIndoorData = indoorOrOutdoor == QMessageBox::Yes;
+
+    QString q = "Confirmer la saisie ? \n\n";
+    q += "Mois de début : " + beginDate + "\n";
+    q += "Mois de fin : " + endDate + "\n";
+    q += "Données : ";
+    q += (isIndoorData ? "intérieures" : "extérieures");
+
+    int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
+
+    if (response == QMessageBox::Yes) {
+        if (isIndoorData) {
+            dbHandler->postFromMultipleIndoorCsv(
+                        "D:/Mes programmes/RegressionTemperature/Données Netatmo/Intérieur",
+                        "IndoorTimestampRecords",
+                        beginDate,
+                        endDate);
+        }
+        else {
+            dbHandler->postFromMultipleOutdoorCsv(
+                        "D:/Mes programmes/RegressionTemperature/Données Netatmo",
+                        "OutdoorTimestampRecords",
+                        beginDate,
+                        endDate);
+        }
+    }
+    else if (response == QMessageBox::No) QMessageBox::warning(this, "Annulation", "Opération annulée.");
+
+}
+
+void MainWindow::updateDailyIndoorDatabase() {
+    bool okBegin = false, okEnd = false;
+    QString beginDate = QInputDialog::getText(
+                this, "Date de début", "Date de début (au format JJ/MM/AAAA) :", QLineEdit::Normal, QString(), &okBegin);
+    if (!okBegin) return;
+    QString endDate = QInputDialog::getText(
+                this, "Date de fin", "Date de fin (au format JJ/MM/AAAA) :", QLineEdit::Normal, QString(), &okEnd);
+    if (!okEnd) return;
+
+    QString q = "Confirmer la saisie ? \n\n";
+    q += "Date de début : " + beginDate + "\n";
+    q += "Date de fin : " + endDate;
+
+    int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
+
+    if (response == QMessageBox::Yes) {
+        dbHandler->updateIndoorDailyRecords(
+                    QDate::fromString(beginDate, "dd/MM/yyyy"),
+                    QDate::fromString(endDate, "dd/MM/yyyy"));
+    }
+
+    else if (response == QMessageBox::No) QMessageBox::warning(this, "Annulation", "Opération annulée.");
+}
+
+void MainWindow::updateDailyOutdoorDatabase() {
+    bool okBegin = false, okEnd = false;
+    QString beginDate = QInputDialog::getText(
+                this, "Date de début", "Date de début (au format JJ/MM/AAAA) :", QLineEdit::Normal, QString(), &okBegin);
+    if (!okBegin) return;
+    QString endDate = QInputDialog::getText(
+                this, "Date de fin", "Date de fin (au format JJ/MM/AAAA) :", QLineEdit::Normal, QString(), &okEnd);
+    if (!okEnd) return;
+
+    QString q = "Confirmer la saisie ? \n\n";
+    q += "Date de début : " + beginDate + "\n";
+    q += "Date de fin : " + endDate;
+
+    int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
+
+    if (response == QMessageBox::Yes) {
+        dbHandler->updateOutdoorDailyRecords(
+                    QDate::fromString(beginDate, "dd/MM/yyyy"),
+                    QDate::fromString(endDate, "dd/MM/yyyy"));
+    }
+
+    else if (response == QMessageBox::No) QMessageBox::warning(this, "Annulation", "Opération annulée.");
 }

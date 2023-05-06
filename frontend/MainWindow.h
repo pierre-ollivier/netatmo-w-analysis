@@ -8,6 +8,7 @@
 #include <QGridLayout>
 #include <QMenuBar>
 #include "backend/NetatmoAPIHandler.h"
+#include "backend/DatabaseHandler.h"
 #include "backend/APIMonitor.h"
 
 
@@ -42,6 +43,12 @@ public slots:
     void updateActualisationDate(QDateTime timestamp);
     void updateRequestCounts();
 
+    void addMonthData();
+    void addMultipleMonthsData();
+
+    void updateDailyIndoorDatabase();
+    void updateDailyOutdoorDatabase();
+
 private:
     // labels
     QLabel *currentExtTempLabel, *currentIntTempLabel;
@@ -61,6 +68,9 @@ private:
     //other (provisional)
     NetatmoAPIHandler *apiHandler;
 
+    //database handler
+    DatabaseHandler *dbHandler;
+
     //other (provisional)
     QString accessToken = "";
     QLocale *deviceLocale;
@@ -68,6 +78,10 @@ private:
 
     //actions
     QAction *requestCountsAction;
+    QAction *addMonthDataAction;
+    QAction *addMultipleMonthsDataAction;
+    QAction *updateDailyIndoorDatabaseAction;
+    QAction *updateDailyOutdoorDatabaseAction;
 };
 
 #endif // MAINWINDOW_H
