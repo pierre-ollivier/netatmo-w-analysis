@@ -8,167 +8,10 @@
 #include <QProgressDialog>
 #include "DailyStatisticsCalculator.h"
 
-const QString indoorTimestampsParams[18] = {
-    "timestamp",
-    "year",
-    "month",
-    "day",
-    "date",
-    "decade",
-    "weekNumber",
-    "hour",
-    "minute",
-    "second",
-    "time",
-    "temperature",
-    "humidity",
-    "dewPoint",
-    "humidex",
-    "pressure",
-    "co2",
-    "noise",
-};
-
-const QString indoorDailyRecordsParams[67] = {
-    "year",
-    "month",
-    "day",
-    "date",
-    "decade",
-    "weekNumber",
-    "maxTemperature",
-    "minTemperature",
-    "avgTemperature",
-    "maxHumidity",
-    "minHumidity",
-    "avgHumidity",
-    "maxDewPoint",
-    "minDewPoint",
-    "avgDewPoint",
-    "maxHumidex",
-    "minHumidex",
-    "avgHumidex",
-    "maxPressure",
-    "minPressure",
-    "avgPressure",
-    "maxCO2",
-    "minCO2",
-    "avgCO2",
-    "maxNoise",
-    "minNoise",
-    "avgNoise",
-    "maxTemperatureTimestamp",
-    "maxTemperatureHour",
-    "maxTemperatureMinute",
-    "maxTemperatureSecond",
-    "minTemperatureTimestamp",
-    "minTemperatureHour",
-    "minTemperatureMinute",
-    "minTemperatureSecond",
-    "maxHumidityTimestamp",
-    "maxHumidityHour",
-    "maxHumidityMinute",
-    "maxHumiditySecond",
-    "minHumidityTimestamp",
-    "minHumidityHour",
-    "minHumidityMinute",
-    "minHumiditySecond",
-    "maxDewPointTimestamp",
-    "maxDewPointHour",
-    "maxDewPointMinute",
-    "maxDewPointSecond",
-    "minDewPointTimestamp",
-    "minDewPointHour",
-    "minDewPointMinute",
-    "minDewPointSecond",
-    "maxHumidexTimestamp",
-    "maxHumidexHour",
-    "maxHumidexMinute",
-    "maxHumidexSecond",
-    "minHumidexTimestamp",
-    "minHumidexHour",
-    "minHumidexMinute",
-    "minHumidexSecond",
-    "maxPressureTimestamp",
-    "maxPressureHour",
-    "maxPressureMinute",
-    "maxPressureSecond",
-    "minPressureTimestamp",
-    "minPressureHour",
-    "minPressureMinute",
-    "minPressureSecond",
-};
-
-const QString outdoorTimestampsParams[15] = {
-    "timestamp",
-    "year",
-    "month",
-    "day",
-    "date",
-    "decade",
-    "weekNumber",
-    "hour",
-    "minute",
-    "second",
-    "time",
-    "temperature",
-    "humidity",
-    "dewPoint",
-    "humidex",
-};
-
-const QString outdoorDailyRecordsParams[50] = {
-    "year",
-    "month",
-    "day",
-    "date",
-    "decade",
-    "weekNumber",
-    "maxTemperature",
-    "minTemperature",
-    "avgTemperature",
-    "maxHumidity",
-    "minHumidity",
-    "avgHumidity",
-    "maxDewPoint",
-    "minDewPoint",
-    "avgDewPoint",
-    "maxHumidex",
-    "minHumidex",
-    "avgHumidex",
-    "maxTemperatureTimestamp",
-    "maxTemperatureHour",
-    "maxTemperatureMinute",
-    "maxTemperatureSecond",
-    "minTemperatureTimestamp",
-    "minTemperatureHour",
-    "minTemperatureMinute",
-    "minTemperatureSecond",
-    "maxHumidityTimestamp",
-    "maxHumidityHour",
-    "maxHumidityMinute",
-    "maxHumiditySecond",
-    "minHumidityTimestamp",
-    "minHumidityHour",
-    "minHumidityMinute",
-    "minHumiditySecond",
-    "maxDewPointTimestamp",
-    "maxDewPointHour",
-    "maxDewPointMinute",
-    "maxDewPointSecond",
-    "minDewPointTimestamp",
-    "minDewPointHour",
-    "minDewPointMinute",
-    "minDewPointSecond",
-    "maxHumidexTimestamp",
-    "maxHumidexHour",
-    "maxHumidexMinute",
-    "maxHumidexSecond",
-    "minHumidexTimestamp",
-    "minHumidexHour",
-    "minHumidexMinute",
-    "minHumidexSecond",
-};
+extern const QStringList indoorDailyRecordsParams;
+extern const QStringList outdoorDailyRecordsParams;
+extern const QStringList indoorTimestampsParams;
+extern const QStringList outdoorTimestampsParams;
 
 QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "connection_name");
 
@@ -212,7 +55,8 @@ void DatabaseHandler::postOutdoorDailyRecord(ExtDailyRecord record, QString tabl
 
     QString preparingQuery = "INSERT INTO " + tableName + "(";
     for (int i = 0; i < 49; i++) {
-        preparingQuery += outdoorDailyRecordsParams[i] + ",";
+        preparingQuery += outdoorDailyRecordsParams[i];
+        preparingQuery += ",";
     }
     preparingQuery += outdoorDailyRecordsParams[49];
     preparingQuery += ") VALUES (";
@@ -308,7 +152,8 @@ void DatabaseHandler::postOutdoorTimestampRecord(ExtTimestampRecord record, QStr
 
     QString preparingQuery = "INSERT INTO " + tableName + "(";
     for (int i = 0; i < 14; i++) {
-        preparingQuery += outdoorTimestampsParams[i] + ",";
+        preparingQuery += outdoorTimestampsParams[i];
+        preparingQuery += ",";
     }
     preparingQuery += outdoorTimestampsParams[14];
     preparingQuery += ") VALUES (";
@@ -356,7 +201,8 @@ void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString table
 
     QString preparingQuery = "INSERT INTO " + tableName + "(";
     for (int i = 0; i < 66; i++) {
-        preparingQuery += indoorDailyRecordsParams[i] + ",";
+        preparingQuery += indoorDailyRecordsParams[i];
+        preparingQuery += ",";
     }
     preparingQuery += indoorDailyRecordsParams[66];
     preparingQuery += ") VALUES (";
@@ -473,7 +319,8 @@ void DatabaseHandler::postIndoorTimestampRecord(IntTimestampRecord record, QStri
 
     QString preparingQuery = "INSERT INTO " + tableName + "(";
     for (int i = 0; i < 17; i++) {
-        preparingQuery += indoorTimestampsParams[i] + ",";
+        preparingQuery += indoorTimestampsParams[i];
+        preparingQuery += ",";
     }
     preparingQuery += indoorTimestampsParams[17];
     preparingQuery += ") VALUES (";
