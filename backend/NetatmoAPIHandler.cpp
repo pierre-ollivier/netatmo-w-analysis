@@ -137,6 +137,9 @@ void NetatmoAPIHandler::retrieveCurrentConditions(QNetworkReply *reply) {
         intCurrentUTCTime = js["body"]["devices"][0]["dashboard_data"]["time_utc"].toInt();
         intCurrentMinTemperatureTime = js["body"]["devices"][0]["dashboard_data"]["date_min_temp"].toInt();
         intCurrentMaxTemperatureTime = js["body"]["devices"][0]["dashboard_data"]["date_max_temp"].toInt();
+        intCurrentPressure = js["body"]["devices"][0]["dashboard_data"]["Pressure"].toDouble();
+        intCurrentCO2 = js["body"]["devices"][0]["dashboard_data"]["CO2"].toInt();
+        intCurrentNoise = js["body"]["devices"][0]["dashboard_data"]["Noise"].toInt();
 
         emit extTemperatureChanged(extCurrentTemperature);
         emit extMinTemperatureChanged(extCurrentMinTemperature);
@@ -155,7 +158,6 @@ void NetatmoAPIHandler::retrieveCurrentConditions(QNetworkReply *reply) {
         emit intMaxTemperatureTimeChanged(intCurrentMaxTemperatureTime);
 
         emit currentTimeChanged(QDateTime::currentDateTime());
-
     }
     else {
         qDebug() << "ERROR with network"
