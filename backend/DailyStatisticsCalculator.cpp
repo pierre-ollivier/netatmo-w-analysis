@@ -7,8 +7,8 @@ DailyStatisticsCalculator::DailyStatisticsCalculator(QString pathToDatabase)
 {
     _pathToDatabase = pathToDatabase;
     dbHandler = new DatabaseHandler(pathToDatabase);
-    indoorAverageCalculator = new DailyAverageCalculator(true);
-    outdoorAverageCalculator = new DailyAverageCalculator(false);
+    indoorAverageCalculator = new DailyAverageCalculator(pathToDatabase, true);
+    outdoorAverageCalculator = new DailyAverageCalculator(pathToDatabase, false);
 }
 
 // max temperature
