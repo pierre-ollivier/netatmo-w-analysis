@@ -8,7 +8,7 @@
 class DailyStatisticsCalculator
 {
 public:
-    DailyStatisticsCalculator();
+    DailyStatisticsCalculator(QString pathToDatabase);
 
     //temperature
 
@@ -100,6 +100,7 @@ public:
     long long getFirstTimestampFromDateWithUTCOffset(QDate date, int offsetFromUTCInHours);
 
 private:
+    QString _pathToDatabase;
     DatabaseHandler *dbHandler;
     DailyAverageCalculator *indoorAverageCalculator;
     DailyAverageCalculator *outdoorAverageCalculator;

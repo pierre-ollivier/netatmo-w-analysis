@@ -3,9 +3,10 @@
 #include <QTimeZone>
 #include <QDebug>
 
-DailyStatisticsCalculator::DailyStatisticsCalculator()
+DailyStatisticsCalculator::DailyStatisticsCalculator(QString pathToDatabase)
 {
-    dbHandler = new DatabaseHandler("netatmo_analysis.db");
+    _pathToDatabase = pathToDatabase;
+    dbHandler = new DatabaseHandler(pathToDatabase);
     indoorAverageCalculator = new DailyAverageCalculator(true);
     outdoorAverageCalculator = new DailyAverageCalculator(false);
 }
