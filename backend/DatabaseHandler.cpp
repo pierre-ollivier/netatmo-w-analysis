@@ -185,6 +185,7 @@ void DatabaseHandler::postOutdoorTimestampRecord(ExtTimestampRecord record, QStr
 
     if (!query.exec()) {
         qDebug() << "The following query could not be executed. Query: " << preparingQuery;
+        qDebug() << "ERROR:" << query.lastError().text();
     }
 
 }
@@ -303,6 +304,7 @@ void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString table
 
     if (!query.exec()) {
         qDebug() << "The following query could not be executed. Query: " << preparingQuery;
+        qDebug() << "ERROR:" << query.lastError().text();
     }
 }
 
@@ -355,6 +357,7 @@ void DatabaseHandler::postIndoorTimestampRecord(IntTimestampRecord record, QStri
 
     if (!query.exec()) {
         qDebug() << "The following query could not be executed. Query: " << preparingQuery;
+        qDebug() << "ERROR:" << query.lastError().text();
     }
 }
 
@@ -794,7 +797,7 @@ void DatabaseHandler::updateIndoorDailyRecords(QDate beginDate, QDate endDate, b
                     dailyCalculator.getAvgCO2FromDate(date),
                     dailyCalculator.getMaxNoiseFromDate(date),
                     dailyCalculator.getMinNoiseFromDate(date),
-                    dailyCalculator.getAvgCO2FromDate(date),
+                    dailyCalculator.getAvgNoiseFromDate(date),
                     dailyCalculator.getMaxTemperatureTimestampFromDate(date, true),
                     dailyCalculator.getMinTemperatureTimestampFromDate(date, true),
                     dailyCalculator.getMaxHumidityTimestampFromDate(date, true),
