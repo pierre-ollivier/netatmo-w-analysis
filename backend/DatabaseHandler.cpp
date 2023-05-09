@@ -734,7 +734,7 @@ QVariant DatabaseHandler::getResultFromDatabase(QString query) {
 }
 
 void DatabaseHandler::updateOutdoorDailyRecords(QDate beginDate, QDate endDate, bool verbose) {
-    DailyStatisticsCalculator dailyCalculator = DailyStatisticsCalculator();
+    DailyStatisticsCalculator dailyCalculator = DailyStatisticsCalculator(_pathToDatabase);
     QProgressDialog progress("Ajout des nouvelles données...", "Annuler", beginDate.toJulianDay(), endDate.toJulianDay());
     progress.setWindowModality(Qt::WindowModal);
     progress.setValue(beginDate.toJulianDay());
@@ -769,7 +769,7 @@ void DatabaseHandler::updateOutdoorDailyRecords(QDate beginDate, QDate endDate, 
 }
 
 void DatabaseHandler::updateIndoorDailyRecords(QDate beginDate, QDate endDate, bool verbose) {
-    DailyStatisticsCalculator dailyCalculator = DailyStatisticsCalculator();
+    DailyStatisticsCalculator dailyCalculator = DailyStatisticsCalculator(_pathToDatabase);
     QProgressDialog progress("Ajout des nouvelles données...", "Annuler", beginDate.toJulianDay(), endDate.toJulianDay());
     progress.setWindowModality(Qt::WindowModal);
     progress.setValue(beginDate.toJulianDay());
