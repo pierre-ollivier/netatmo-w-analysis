@@ -1,7 +1,7 @@
 #include <QtTest>
 #include <QDate>
-#include "types/DailyRecord.h"
-#include "types/TimestampRecord.h"
+#include "../types/DailyRecord.cpp"
+#include "../types/TimestampRecord.cpp"
 
 class TestCase : public QObject
 {
