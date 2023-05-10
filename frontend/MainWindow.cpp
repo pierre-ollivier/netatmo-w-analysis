@@ -3,7 +3,7 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QFileDialog>
-#include "backend/APIMonitor.h"
+#include "../netatmo-w-analysis/backend/APIMonitor.h"
 
 MainWindow::MainWindow()
 {

@@ -1,6 +1,6 @@
 #include "DailyAverageCalculator.h"
 #include "DatabaseHandler.h"
-#include "types/DailyRecord.h"
+#include "../netatmo-w-analysis/types/DailyRecord.h"
 
 double interpolateMeasurementBetweenTimestamps(
         long long targetTimestamp,
