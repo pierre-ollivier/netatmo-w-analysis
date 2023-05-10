@@ -5,10 +5,10 @@
 #include <QSqlQuery>
 #include <QVariant>
 #include <QDate>
-#include "types/IntDailyRecord.h"
-#include "types/ExtDailyRecord.h"
-#include "types/ExtTimestampRecord.h"
-#include "types/IntTimestampRecord.h"
+#include "../netatmo-w-analysis/types/IntDailyRecord.h"
+#include "../netatmo-w-analysis/types/ExtDailyRecord.h"
+#include "../netatmo-w-analysis/types/ExtTimestampRecord.h"
+#include "../netatmo-w-analysis/types/IntTimestampRecord.h"
 
 class DatabaseHandler
 {

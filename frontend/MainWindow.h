@@ -7,9 +7,9 @@
 #include <QPushButton>
 #include <QGridLayout>
 #include <QMenuBar>
-#include "backend/NetatmoAPIHandler.h"
-#include "backend/DatabaseHandler.h"
-#include "backend/APIMonitor.h"
+#include "../netatmo-w-analysis/backend/NetatmoAPIHandler.h"
+#include "../netatmo-w-analysis/backend/DatabaseHandler.h"
+#include "../netatmo-w-analysis/backend/APIMonitor.h"
 
 
 class MainWindow : public QMainWindow
