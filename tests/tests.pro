@@ -12,6 +12,7 @@ include (../netatmo-w-analysis/frontend/frontend.pri)
 include (../netatmo-w-analysis/backend/backend.pri)
 
 SOURCES += \
+    TestDatabaseHandler.cpp \
     TestTypes.cpp \
     credentials_test.cpp \
     dbparams_test.cpp \
@@ -19,4 +20,5 @@ SOURCES += \
     tst_testcase.cpp \
 
 HEADERS += \
+    TestDatabaseHandler.h \
     TestTypes.h
