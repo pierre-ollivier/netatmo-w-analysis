@@ -5,8 +5,12 @@
 
 class TestTypes: public QObject
 {
+    Q_OBJECT
+
 public:
     TestTypes();
+
+private slots:
     void testDailyRecord();
     void testTimestampRecord();
 };
