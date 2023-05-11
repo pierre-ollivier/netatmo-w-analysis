@@ -1,4 +1,4 @@
-// While modifying this file, make sure to modify as well its copy in tests
+// While modifying this file, make sure to modify as well its copy in main folder
 
 #include <QStringList>
 
