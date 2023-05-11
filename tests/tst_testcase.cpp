@@ -1,19 +1,12 @@
 #include <QtTest>
 #include <QDate>
-//#include "../types/DailyRecord.h"
 #include "../netatmo-w-analysis/types/DailyRecord.h"
-//#include "../netatmo-w-analysis/types/DailyRecord.cpp"
 #include "../netatmo-w-analysis/types/IntDailyRecord.h"
-//#include "../netatmo-w-analysis/types/IntDailyRecord.cpp"
 #include "../netatmo-w-analysis/types/ExtDailyRecord.h"
 #include "../netatmo-w-analysis/types/TimestampRecord.h"
-//#include "../netatmo-w-analysis/types/TimestampRecord.cpp"
 #include "../netatmo-w-analysis/types/IntTimestampRecord.h"
 #include "../netatmo-w-analysis/types/ExtTimestampRecord.h"
-//#include <direct.h>
-//#include <QDebug>
 #include "../netatmo-w-analysis/backend/DatabaseHandler.h"
-//#include "../netatmo-w-analysis/backend/DatabaseHandler.cpp"
 #include "../netatmo-w-analysis/backend/DailyStatisticsCalculator.h"
 
 class TestCase : public QObject
