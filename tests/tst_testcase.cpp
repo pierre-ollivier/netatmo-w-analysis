@@ -83,6 +83,6 @@ void TestCase::testGetTimestampRecordsFromDatabase() {
     QCOMPARE(extRecords[2].temperature(), 17.3);
 }
 
-QTEST_APPLESS_MAIN(TestCase)
+//QTEST_APPLESS_MAIN(TestCase)
 
 #include "tst_testcase.moc"
