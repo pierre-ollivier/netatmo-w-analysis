@@ -17,7 +17,6 @@ SOURCES += \
     credentials_test.cpp \
     dbparams_test.cpp \
     main.cpp \
-    tst_testcase.cpp \
 
 HEADERS += \
     TestDatabaseHandler.h \
