@@ -12,6 +12,7 @@ include (../netatmo-w-analysis/frontend/frontend.pri)
 include (../netatmo-w-analysis/backend/backend.pri)
 
 SOURCES += \
+    TestDailyStatisticsCalculator.cpp \
     TestDatabaseHandler.cpp \
     TestTypes.cpp \
     credentials_test.cpp \
@@ -19,5 +20,6 @@ SOURCES += \
     main.cpp \
 
 HEADERS += \
+    TestDailyStatisticsCalculator.h \
     TestDatabaseHandler.h \
     TestTypes.h
