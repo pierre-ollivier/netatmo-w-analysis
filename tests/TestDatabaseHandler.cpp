@@ -34,3 +34,17 @@ void TestDatabaseHandler::testGetDailyRecordsFromDatabase() {
     QCOMPARE(extRecords.size(), 1);
     QCOMPARE(extRecords[0].minTemperature(), 9);
 }
+
+void TestDatabaseHandler::testGetResultFromDatabase() {
+    DatabaseHandler dbHandler("testdb.db");
+    QCOMPARE(dbHandler.getResultFromDatabase(
+                 "SELECT max(maxTemperature) from OutdoorDailyRecords where year = 2020"), 38.4);
+    QCOMPARE(dbHandler.getResultFromDatabase(
+                 "SELECT max(minHumidity) from OutdoorDailyRecords where year = 2020"), 89);
+    QCOMPARE(dbHandler.getResultFromDatabase(
+                 "SELECT sum(minCO2) from IndoorDailyRecords where year = 2019"), 16599);
+    QCOMPARE(dbHandler.getResultFromDatabase(
+                 "SELECT round(avg(avgPressure)) from IndoorDailyRecords where month = 10"), 953);
+    QCOMPARE(dbHandler.getResultFromDatabase(
+                 "SELECT max(minNoise) + min(maxNoise) as noise from IndoorDailyRecords where month = 11"), 83);
+}

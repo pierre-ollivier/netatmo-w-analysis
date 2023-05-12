@@ -13,6 +13,7 @@ public:
 private slots:
     void testGetTimestampRecordsFromDatabase();
     void testGetDailyRecordsFromDatabase();
+    void testGetResultFromDatabase();
 };
 
 #endif // TESTDATABASEHANDLER_H
