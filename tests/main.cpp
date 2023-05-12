@@ -1,5 +1,6 @@
 #include "TestTypes.h"
 #include "TestDatabaseHandler.h"
+#include "TestDailyStatisticsCalculator.h"
 #include <QtTest/QtTest>
 
 int main(int argc, char *argv[])
@@ -11,5 +12,6 @@ int main(int argc, char *argv[])
 
     runTests(new TestTypes);
     runTests(new TestDatabaseHandler);
+    runTests(new TestDailyStatisticsCalculator);
     return status;
 }

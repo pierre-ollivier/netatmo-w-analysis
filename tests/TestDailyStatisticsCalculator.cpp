@@ -2,7 +2,7 @@
 
 TestDailyStatisticsCalculator::TestDailyStatisticsCalculator()
 {
-
+    calculator = new DailyStatisticsCalculator("testdb.db");
 }
 
 //temperature
