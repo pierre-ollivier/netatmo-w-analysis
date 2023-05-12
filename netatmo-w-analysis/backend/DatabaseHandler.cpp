@@ -708,7 +708,6 @@ std::vector<ExtDailyRecord> DatabaseHandler::getExtDailyRecordsFromDatabase(QStr
 }
 
 QVariant DatabaseHandler::getResultFromDatabase(QString query) {
-    std::vector<ExtDailyRecord> result = std::vector<ExtDailyRecord>();
     db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
     QSqlQuery _query(db);
 
