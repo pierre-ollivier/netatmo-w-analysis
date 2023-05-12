@@ -1,6 +1,8 @@
 #ifndef TESTDAILYSTATISTICSCALCULATOR_H
 #define TESTDAILYSTATISTICSCALCULATOR_H
 
+#include "../netatmo-w-analysis/backend/DailyStatisticsCalculator.h"
+
 #include <QObject>
 
 class TestDailyStatisticsCalculator : public QObject
@@ -86,6 +88,9 @@ private slots:
 
     void testGetFirstTimestampFromDate();
     void testGetFirstTimestampFromDateWithUTCOffset();
+
+private:
+    DailyStatisticsCalculator *calculator;
 };
 
 #endif // TESTDAILYSTATISTICSCALCULATOR_H
