@@ -67,20 +67,16 @@ private slots:
     // co2
 
     void testGetMaxCO2FromDate();
-    void testGetMaxCO2TimestampFromDate();
 
     void testGetMinCO2FromDate();
-    void testGetMinCO2TimestampFromDate();
 
     void testGetAvgCO2FromDate();
 
     // noise
 
     void testGetMaxNoiseFromDate();
-    void testGetMaxNoiseTimestampFromDate();
 
     void testGetMinNoiseFromDate();
-    void testGetMinNoiseTimestampFromDate();
 
     void testGetAvgNoiseFromDate();
 
