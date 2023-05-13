@@ -176,8 +176,9 @@ void TestDailyStatisticsCalculator::testGetAvgNoiseFromDate() {
 // others
 
 void TestDailyStatisticsCalculator::testGetFirstTimestampFromDate() {
-
+    QCOMPARE(calculator->getFirstTimestampFromDate(QDate(2019, 10, 27)), 1572127200);  // midnight in summer time
+    QCOMPARE(calculator->getFirstTimestampFromDate(QDate(2019, 10, 28)), 1572217200);  // midnight in winter time
 }
 void TestDailyStatisticsCalculator::testGetFirstTimestampFromDateWithUTCOffset() {
-
+    QCOMPARE(calculator->getFirstTimestampFromDateWithUTCOffset(QDate(2019, 10, 29), 1), 1572310800);  // 29/10/2019 01:00 UTC
 }
