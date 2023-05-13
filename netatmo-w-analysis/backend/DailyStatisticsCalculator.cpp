@@ -425,12 +425,21 @@ double DailyStatisticsCalculator::getAvgNoiseFromDate(QDate date) {
 }
 
 // others
-
 long long DailyStatisticsCalculator::getFirstTimestampFromDate(QDate date) {
     QDateTime dt = QDateTime(date);
     return dt.toSecsSinceEpoch();
 }
 
+/**
+ * @brief DailyStatisticsCalculator::getFirstTimestampFromDateWithUTCOffset
+ * This function returns the timestamp that corresponds to offsetFromUTCInHours hours after midnight UTC on day date.
+ * @param date
+ * The date as a QDate object
+ * @param offsetFromUTCInHours
+ * The number of hours after midnight, as an integer. Negative offsets are supported.
+ * @return
+ * Returns a long long corresponding to the desired timestamp.
+ */
 long long DailyStatisticsCalculator::getFirstTimestampFromDateWithUTCOffset(QDate date, int offsetFromUTCInHours) {
     QDateTime dt = QDateTime(date, QTime(0, 0, 0), QTimeZone(-3600 * offsetFromUTCInHours));
     return dt.toSecsSinceEpoch();
