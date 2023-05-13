@@ -148,15 +148,15 @@ void TestDailyStatisticsCalculator::testGetAvgPressureFromDate() {
 // co2
 
 void TestDailyStatisticsCalculator::testGetMaxCO2FromDate() {
-
+    QCOMPARE(calculator->getMaxCO2FromDate(QDate(2019, 10, 21)), 431);
 }
 
 void TestDailyStatisticsCalculator::testGetMinCO2FromDate() {
-
+    QCOMPARE(calculator->getMinCO2FromDate(QDate(2019, 10, 22)), 362);
 }
 
 void TestDailyStatisticsCalculator::testGetAvgCO2FromDate() {
-
+    QCOMPARE(calculator->getAvgCO2FromDate(QDate(2019, 10, 23)), 376.909618055556);
 }
 
 // noise
