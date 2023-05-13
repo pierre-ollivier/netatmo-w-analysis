@@ -150,14 +150,8 @@ void TestDailyStatisticsCalculator::testGetAvgPressureFromDate() {
 void TestDailyStatisticsCalculator::testGetMaxCO2FromDate() {
 
 }
-void TestDailyStatisticsCalculator::testGetMaxCO2TimestampFromDate() {
-
-}
 
 void TestDailyStatisticsCalculator::testGetMinCO2FromDate() {
-
-}
-void TestDailyStatisticsCalculator::testGetMinCO2TimestampFromDate() {
 
 }
 
@@ -170,14 +164,8 @@ void TestDailyStatisticsCalculator::testGetAvgCO2FromDate() {
 void TestDailyStatisticsCalculator::testGetMaxNoiseFromDate() {
 
 }
-void TestDailyStatisticsCalculator::testGetMaxNoiseTimestampFromDate() {
-
-}
 
 void TestDailyStatisticsCalculator::testGetMinNoiseFromDate() {
-
-}
-void TestDailyStatisticsCalculator::testGetMinNoiseTimestampFromDate() {
 
 }
 
