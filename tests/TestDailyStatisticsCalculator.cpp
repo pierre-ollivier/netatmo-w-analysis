@@ -68,21 +68,30 @@ void TestDailyStatisticsCalculator::testGetAvgHumidityFromDate() {
 // dew point
 
 void TestDailyStatisticsCalculator::testGetMaxDewPointFromDate() {
-
+    QCOMPARE(calculator->getMaxDewPointFromDate(QDate(2019, 10, 12)), 15.564);
+    QCOMPARE(calculator->getMaxDewPointFromDate(QDate(2019, 10, 12), true), 16.18);
 }
 void TestDailyStatisticsCalculator::testGetMaxDewPointTimestampFromDate() {
-
+    QCOMPARE(calculator->getMaxDewPointTimestampFromDate(QDate(2019, 10, 12)), 1570896877);
+    QCOMPARE(calculator->getMaxDewPointTimestampFromDate(QDate(2019, 10, 12), 15.564), 1570896877);
+    QCOMPARE(calculator->getMaxDewPointTimestampFromDate(QDate(2019, 10, 12), true), 1570911815);
+    QCOMPARE(calculator->getMaxDewPointTimestampFromDate(QDate(2019, 10, 12), 16.18, true), 1570911815);
 }
 
 void TestDailyStatisticsCalculator::testGetMinDewPointFromDate() {
-
+    QCOMPARE(calculator->getMinDewPointFromDate(QDate(2019, 10, 13)), 12.697);
+    QCOMPARE(calculator->getMinDewPointFromDate(QDate(2019, 10, 13), true), 14.396);
 }
 void TestDailyStatisticsCalculator::testGetMinDewPointTimestampFromDate() {
-
+    QCOMPARE(calculator->getMinDewPointTimestampFromDate(QDate(2019, 10, 13)), 1571003461);
+    QCOMPARE(calculator->getMinDewPointTimestampFromDate(QDate(2019, 10, 13), 12.697), 1571003461);
+    QCOMPARE(calculator->getMinDewPointTimestampFromDate(QDate(2019, 10, 13), true), 1570950713);
+    QCOMPARE(calculator->getMinDewPointTimestampFromDate(QDate(2019, 10, 13), 14.396, true), 1570950713);
 }
 
 void TestDailyStatisticsCalculator::testGetAvgDewPointFromDate() {
-
+    QCOMPARE(calculator->getAvgDewPointFromDate(QDate(2019, 10, 14)), 13.4179805370356);
+    QCOMPARE(calculator->getAvgDewPointFromDate(QDate(2019, 10, 14), true), 14.9087712649165);
 }
 
 // humidex
