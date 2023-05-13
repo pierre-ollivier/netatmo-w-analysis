@@ -126,21 +126,23 @@ void TestDailyStatisticsCalculator::testGetAvgHumidexFromDate() {
 // pressure
 
 void TestDailyStatisticsCalculator::testGetMaxPressureFromDate() {
-
+    QCOMPARE(calculator->getMaxPressureFromDate(QDate(2019, 10, 18)), 1010.3);
 }
 void TestDailyStatisticsCalculator::testGetMaxPressureTimestampFromDate() {
-
+    QCOMPARE(calculator->getMaxPressureTimestampFromDate(QDate(2019, 10, 18)), 1571394921);
+    QCOMPARE(calculator->getMaxPressureTimestampFromDate(QDate(2019, 10, 18), 1010.3), 1571394921);
 }
 
 void TestDailyStatisticsCalculator::testGetMinPressureFromDate() {
-
+    QCOMPARE(calculator->getMinPressureFromDate(QDate(2019, 10, 19)), 1005);
 }
 void TestDailyStatisticsCalculator::testGetMinPressureTimestampFromDate() {
-
+    QCOMPARE(calculator->getMinPressureTimestampFromDate(QDate(2019, 10, 19)), 1571459014);
+    QCOMPARE(calculator->getMinPressureTimestampFromDate(QDate(2019, 10, 19), 1005), 1571459014);
 }
 
 void TestDailyStatisticsCalculator::testGetAvgPressureFromDate() {
-
+    QCOMPARE(calculator->getAvgPressureFromDate(QDate(2019, 10, 20)), 1006.85592361111);
 }
 
 // co2
