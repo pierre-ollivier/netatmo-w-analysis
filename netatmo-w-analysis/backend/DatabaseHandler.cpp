@@ -185,6 +185,7 @@ void DatabaseHandler::postOutdoorTimestampRecord(ExtTimestampRecord record, QStr
 
     if (!query.exec()) {
         qDebug() << "The following query could not be executed. Query: " << preparingQuery;
+        qDebug() << "ERROR:" << query.lastError().text();
     }
 
 }
@@ -303,6 +304,7 @@ void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString table
 
     if (!query.exec()) {
         qDebug() << "The following query could not be executed. Query: " << preparingQuery;
+        qDebug() << "ERROR:" << query.lastError().text();
     }
 }
 
@@ -355,6 +357,7 @@ void DatabaseHandler::postIndoorTimestampRecord(IntTimestampRecord record, QStri
 
     if (!query.exec()) {
         qDebug() << "The following query could not be executed. Query: " << preparingQuery;
+        qDebug() << "ERROR:" << query.lastError().text();
     }
 }
 
@@ -705,7 +708,6 @@ std::vector<ExtDailyRecord> DatabaseHandler::getExtDailyRecordsFromDatabase(QStr
 }
 
 QVariant DatabaseHandler::getResultFromDatabase(QString query) {
-    std::vector<ExtDailyRecord> result = std::vector<ExtDailyRecord>();
     db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
     QSqlQuery _query(db);
 
@@ -731,7 +733,7 @@ QVariant DatabaseHandler::getResultFromDatabase(QString query) {
 }
 
 void DatabaseHandler::updateOutdoorDailyRecords(QDate beginDate, QDate endDate, bool verbose) {
-    DailyStatisticsCalculator dailyCalculator = DailyStatisticsCalculator();
+    DailyStatisticsCalculator dailyCalculator = DailyStatisticsCalculator(_pathToDatabase);
     QProgressDialog progress("Ajout des nouvelles données...", "Annuler", beginDate.toJulianDay(), endDate.toJulianDay());
     progress.setWindowModality(Qt::WindowModal);
     progress.setValue(beginDate.toJulianDay());
@@ -766,7 +768,7 @@ void DatabaseHandler::updateOutdoorDailyRecords(QDate beginDate, QDate endDate, 
 }
 
 void DatabaseHandler::updateIndoorDailyRecords(QDate beginDate, QDate endDate, bool verbose) {
-    DailyStatisticsCalculator dailyCalculator = DailyStatisticsCalculator();
+    DailyStatisticsCalculator dailyCalculator = DailyStatisticsCalculator(_pathToDatabase);
     QProgressDialog progress("Ajout des nouvelles données...", "Annuler", beginDate.toJulianDay(), endDate.toJulianDay());
     progress.setWindowModality(Qt::WindowModal);
     progress.setValue(beginDate.toJulianDay());
@@ -794,7 +796,7 @@ void DatabaseHandler::updateIndoorDailyRecords(QDate beginDate, QDate endDate, b
                     dailyCalculator.getAvgCO2FromDate(date),
                     dailyCalculator.getMaxNoiseFromDate(date),
                     dailyCalculator.getMinNoiseFromDate(date),
-                    dailyCalculator.getAvgCO2FromDate(date),
+                    dailyCalculator.getAvgNoiseFromDate(date),
                     dailyCalculator.getMaxTemperatureTimestampFromDate(date, true),
                     dailyCalculator.getMinTemperatureTimestampFromDate(date, true),
                     dailyCalculator.getMaxHumidityTimestampFromDate(date, true),
