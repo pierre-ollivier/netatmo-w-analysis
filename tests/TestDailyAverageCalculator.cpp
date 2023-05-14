@@ -38,8 +38,10 @@ void TestDailyAverageCalculator::testGetLastMeasurementFromDate() {
     QCOMPARE(outdoorCalculator->getLastMeasurementFromDate(testDate, "humidex"), 12.7318686435551);
 }
 void TestDailyAverageCalculator::testGetFirstTimestampFromDate() {
-
+    QCOMPARE(indoorCalculator->getFirstTimestampFromDate(QDate(2019, 11, 1)), 1572562929);
+    QCOMPARE(outdoorCalculator->getFirstTimestampFromDate(QDate(2019, 11, 2)), 1572649215);
 }
 void TestDailyAverageCalculator::testGetLastTimestampFromDate() {
-
+    QCOMPARE(indoorCalculator->getLastTimestampFromDate(QDate(2019, 11, 3)), 1572821819);
+    QCOMPARE(outdoorCalculator->getLastTimestampFromDate(QDate(2019, 11, 4)), 1572908284);
 }
