@@ -1,6 +1,6 @@
 #include "DailyAverageCalculator.h"
 #include "DatabaseHandler.h"
-#include "types/DailyRecord.h"
+#include "../netatmo-w-analysis/types/DailyRecord.h"
 
 double interpolateMeasurementBetweenTimestamps(
         long long targetTimestamp,
@@ -13,13 +13,14 @@ double interpolateMeasurementBetweenTimestamps(
     return measurement1 + k * (measurement2 - measurement1);
 }
 
-DailyAverageCalculator::DailyAverageCalculator(bool indoor)
+DailyAverageCalculator::DailyAverageCalculator(QString pathToDatabase, bool indoor)
 {
+    _pathToDatabase = pathToDatabase;
     _indoor = indoor;
 }
 
 double DailyAverageCalculator::getFirstMeasurementFromDate(QDate date, QString measurementType) {
-    DatabaseHandler dbHandler("netatmo_analysis.db");
+    DatabaseHandler dbHandler(_pathToDatabase);
     QString query = "SELECT " + measurementType + " FROM " + indoorOrOutdoor() + "TimestampRecords ";
     query += "WHERE date = " + date.toString("\"dd/MM/yyyy\" ");
     query += "ORDER BY timestamp";
@@ -27,7 +28,7 @@ double DailyAverageCalculator::getFirstMeasurementFromDate(QDate date, QString m
 }
 
 double DailyAverageCalculator::getLastMeasurementFromDate(QDate date, QString measurementType) {
-    DatabaseHandler dbHandler("netatmo_analysis.db");
+    DatabaseHandler dbHandler(_pathToDatabase);
     QString query = "SELECT " + measurementType + " FROM " + indoorOrOutdoor() + "TimestampRecords ";
     query += "WHERE date = " + date.toString("\"dd/MM/yyyy\" ");
     query += "ORDER BY timestamp desc";
@@ -35,7 +36,7 @@ double DailyAverageCalculator::getLastMeasurementFromDate(QDate date, QString me
 }
 
 long long DailyAverageCalculator::getFirstTimestampFromDate(QDate date) {
-    DatabaseHandler dbHandler("netatmo_analysis.db");
+    DatabaseHandler dbHandler(_pathToDatabase);
     QString query = "SELECT timestamp FROM " + indoorOrOutdoor() + "TimestampRecords ";
     query += "WHERE date = " + date.toString("\"dd/MM/yyyy\" ");
     query += "ORDER BY timestamp";
@@ -43,7 +44,7 @@ long long DailyAverageCalculator::getFirstTimestampFromDate(QDate date) {
 }
 
 long long DailyAverageCalculator::getLastTimestampFromDate(QDate date) {
-    DatabaseHandler dbHandler("netatmo_analysis.db");
+    DatabaseHandler dbHandler(_pathToDatabase);
     QString query = "SELECT timestamp FROM " + indoorOrOutdoor() + "TimestampRecords ";
     query += "WHERE date = " + date.toString("\"dd/MM/yyyy\" ");
     query += "ORDER BY timestamp desc";
@@ -55,7 +56,7 @@ double DailyAverageCalculator::getAverageMeasurementFromDate(QDate date, QString
     // To compute the average of the measurement, we compute its integral divided by the number of seconds in the day.
     // The day is split in 3 parts: before the first record, between the first and the last records, and after the last record.
 
-    DatabaseHandler dbHandler("netatmo_analysis.db");
+    DatabaseHandler dbHandler(_pathToDatabase);
     QDateTime dt(date, QTime(0, 0));
     long long _0hTimestamp = dt.toSecsSinceEpoch();
     long long _24hTimestamp = dt.addDays(1).toSecsSinceEpoch();

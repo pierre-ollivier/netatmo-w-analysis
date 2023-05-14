@@ -6,7 +6,7 @@
 class DailyAverageCalculator
 {
 public:
-    DailyAverageCalculator(bool indoor);
+    DailyAverageCalculator(QString pathToDatabase, bool indoor);
     double getAverageMeasurementFromDate(QDate date, QString measurementType);
 
     double getFirstMeasurementFromDate(QDate date, QString measurementType);
@@ -17,6 +17,7 @@ public:
     QString indoorOrOutdoor();
 
 private:
+    QString _pathToDatabase;
     bool _indoor;
 };
 
