@@ -13,7 +13,7 @@ MainWindow::MainWindow()
     setMenuBar(menuBar);
     deviceLocale = new QLocale();
     apiMonitor = new APIMonitor();
-    dbHandler = new DatabaseHandler("netatmo_analysis.db");
+    dbHandler = new DatabaseHandler("netatmo-w-analysis/netatmo_analysis.db");
     buildWindow();
 }
 
