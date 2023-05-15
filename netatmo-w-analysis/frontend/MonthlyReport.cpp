@@ -4,6 +4,8 @@ MonthlyReport::MonthlyReport() : QWidget()
 {
     _date = new QDate(QDate::currentDate().addMonths(-1));
     dbHandler = new DatabaseHandler("netatmo-w-analysis/netatmo_analysis.db");
+    deviceLocale = new QLocale();
+
     this->setGeometry(300, 40, 720, 950);
     layout = new QGridLayout();
 
@@ -81,18 +83,18 @@ void MonthlyReport::fillBoard() {
         double tx = dbHandler->getResultFromDatabase(
                     "SELECT maxTemperature FROM OutdoorDailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
         double tm = dbHandler->getResultFromDatabase(
-                    "SELECT round(avgTemperature, 1) FROM OutdoorDailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
+                    "SELECT avgTemperature FROM OutdoorDailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
-        model->setItem(day - 1, 0, new QStandardItem(QString::number(tn) + " °C"));
+        model->setItem(day - 1, 0, new QStandardItem(deviceLocale->toString(tn, 'f', 1) + " °C"));
         model->item(day - 1, 0)->setBackground(QBrush(temperatureColor(tn)));
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
-        model->setItem(day - 1, 1, new QStandardItem(QString::number(tx) + " °C"));
+        model->setItem(day - 1, 1, new QStandardItem(deviceLocale->toString(tx, 'f', 1) + " °C"));
         model->item(day - 1, 1)->setBackground(QBrush(temperatureColor(tx)));
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
-        model->setItem(day - 1, 2, new QStandardItem(QString::number(tm) + " °C"));
+        model->setItem(day - 1, 2, new QStandardItem(deviceLocale->toString(tm, 'f', 1) + " °C"));
         model->item(day - 1, 2)->setBackground(QBrush(temperatureColor(tm)));
 
         model->item(day - 1, 0)->setEditable(false);
