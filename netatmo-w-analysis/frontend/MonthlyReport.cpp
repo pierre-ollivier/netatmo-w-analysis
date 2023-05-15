@@ -94,6 +94,13 @@ void MonthlyReport::fillBoard() {
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
         model->setItem(day - 1, 2, new QStandardItem(QString::number(tm) + " °C"));
         model->item(day - 1, 2)->setBackground(QBrush(temperatureColor(tm)));
+
+        model->item(day - 1, 0)->setEditable(false);
+        model->item(day - 1, 0)->setTextAlignment(Qt::AlignCenter);
+        model->item(day - 1, 1)->setEditable(false);
+        model->item(day - 1, 1)->setTextAlignment(Qt::AlignCenter);
+        model->item(day - 1, 2)->setEditable(false);
+        model->item(day - 1, 2)->setTextAlignment(Qt::AlignCenter);
     }
 }
 
