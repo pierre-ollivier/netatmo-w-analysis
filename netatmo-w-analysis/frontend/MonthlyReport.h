@@ -47,6 +47,7 @@ private:
 
     QDate *_date;
     DatabaseHandler *dbHandler;
+    QLocale *deviceLocale;
 };
 
 #endif // MONTHLYREPORT_H
