@@ -104,6 +104,8 @@ void MonthlyReport::fillBoard() {
         model->item(day - 1, 2)->setEditable(false);
         model->item(day - 1, 2)->setTextAlignment(Qt::AlignCenter);
     }
+    // Clean the extra rows when switching from a 31-day month to a shorter one
+    model->removeRows(_date->daysInMonth(), 31 - _date->daysInMonth());
 }
 
 void MonthlyReport::destroy() {
