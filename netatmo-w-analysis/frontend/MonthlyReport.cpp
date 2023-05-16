@@ -22,9 +22,10 @@ MonthlyReport::MonthlyReport() : QWidget()
     connect(add1MonthButton, SIGNAL(clicked()), this, SLOT(add1Month()));
     connect(substract1MonthButton, SIGNAL(clicked()), this, SLOT(substract1Month()));
 
-    currentMonthLabel = new QLabel(_date->toString("MMMM yyyy"));
-    currentMonthLabel->setAlignment(Qt::AlignCenter);
-    currentMonthLabel->setFont(QFont("Arial", 14));
+    currentMonthClickableLabel = new QPushButton(_date->toString("MMMM yyyy"));
+    currentMonthClickableLabel->setFlat(true);
+//    currentMonthClickableLabel->setAlignment(Qt::AlignCenter);
+    currentMonthClickableLabel->setFont(QFont("Arial", 14));
 
 //    rbT = new QRadioButton("Température");
 //    rbRh = new QRadioButton("Humidité");
@@ -48,7 +49,7 @@ MonthlyReport::MonthlyReport() : QWidget()
 
     layout->addWidget(add1MonthButton, 0, 2);
     layout->addWidget(substract1MonthButton, 0, 0);
-    layout->addWidget(currentMonthLabel, 0, 1);
+    layout->addWidget(currentMonthClickableLabel, 0, 1);
     layout->addWidget(view, 1, 0, 3, 2);
     layout->addLayout(buttonsLayout, 1, 2);
 
@@ -109,9 +110,7 @@ void MonthlyReport::fillBoard() {
 }
 
 void MonthlyReport::destroy() {
-
     delete this;
-
 }
 
 QColor MonthlyReport::temperatureColor(double temperature) {
@@ -169,12 +168,12 @@ QColor MonthlyReport::humidityColor(int humidity) {
 
 void MonthlyReport::add1Month() {
     _date->operator=(_date->addMonths(1));
-    currentMonthLabel->setText(_date->toString("MMMM yyyy"));
+    currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
     fillBoard();
 }
 
 void MonthlyReport::substract1Month() {
     _date->operator=(_date->addMonths(-1));
-    currentMonthLabel->setText(_date->toString("MMMM yyyy"));
+    currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
     fillBoard();
 }

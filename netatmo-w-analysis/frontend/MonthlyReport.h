@@ -36,7 +36,7 @@ private:
     QTableView *view;
     QStandardItemModel *model;
     QGridLayout *layout;
-    QLabel *currentMonthLabel;
+    QPushButton *currentMonthClickableLabel;
     QPushButton *add1MonthButton;
     QPushButton *substract1MonthButton;
 
