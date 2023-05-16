@@ -168,13 +168,11 @@ QColor MonthlyReport::humidityColor(int humidity) {
 void MonthlyReport::add1Month() {
     _date->operator=(_date->addMonths(1));
     currentMonthLabel->setText(_date->toString("MMMM yyyy"));
-//    majDate();
+    fillBoard();
 }
 
 void MonthlyReport::substract1Month() {
-
     _date->operator=(_date->addMonths(-1));
     currentMonthLabel->setText(_date->toString("MMMM yyyy"));
-//    majDate();
-
+    fillBoard();
 }
