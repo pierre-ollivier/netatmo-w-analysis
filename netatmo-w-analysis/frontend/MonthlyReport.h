@@ -13,6 +13,8 @@
 
 class MonthlyReport : public QWidget
 {
+    Q_OBJECT
+
 public:
     MonthlyReport();
 
@@ -21,7 +23,7 @@ public slots:
     void fillBoard();
     void add1Month();
     void substract1Month();
-    void majType();
+//    void majType();
 
 protected:
 
