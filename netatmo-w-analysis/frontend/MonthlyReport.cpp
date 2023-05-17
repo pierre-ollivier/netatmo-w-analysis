@@ -6,7 +6,7 @@ MonthlyReport::MonthlyReport() : QWidget()
     dbHandler = new DatabaseHandler("netatmo-w-analysis/netatmo_analysis.db");
     deviceLocale = new QLocale();
 
-    yearMonthPicker = new YearMonthPicker();
+    yearMonthPicker = new YearMonthPicker(_date->year(), _date->month());
 //    yearMonthPicker->setCalendarPopup(true);
 //    yearMonthPicker->setDisplayFormat("MMM yyyy");
 //    yearMonthPicker->setCurrentSection(QDateTimeEdit::MonthSection);
