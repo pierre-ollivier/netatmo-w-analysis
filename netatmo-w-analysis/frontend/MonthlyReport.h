@@ -3,13 +3,13 @@
 
 #include <QWidget>
 #include <QDate>
-#include <QDateEdit>
 #include <QTableView>
 #include <QStandardItemModel>
 #include <QLabel>
 #include <QPushButton>
 #include <QGridLayout>
 #include <QVBoxLayout>
+#include "../netatmo-w-analysis/frontend/YearMonthPicker.h"
 #include "../netatmo-w-analysis/backend/DatabaseHandler.h"
 
 class MonthlyReport : public QWidget
@@ -40,7 +40,7 @@ private:
     QPushButton *currentMonthClickableLabel;
     QPushButton *add1MonthButton;
     QPushButton *substract1MonthButton;
-    QDateEdit *yearMonthPicker;
+    YearMonthPicker *yearMonthPicker;
 
 //    QRadioButton *rbT;
 //    QRadioButton *rbRh;
