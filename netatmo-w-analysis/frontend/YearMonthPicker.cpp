@@ -1,4 +1,5 @@
 #include "YearMonthPicker.h"
+#include <QHeaderView>
 
 YearMonthPicker::YearMonthPicker(QWidget *parent) : QWidget(parent)
 {
@@ -36,6 +37,12 @@ YearMonthPicker::YearMonthPicker(QWidget *parent) : QWidget(parent)
 
     monthView->setModel(monthModel);
     yearView->setModel(yearModel);
+
+    monthView->horizontalHeader()->hide();
+    monthView->verticalHeader()->hide();
+
+    yearView->horizontalHeader()->hide();
+    yearView->verticalHeader()->hide();
 
     mainLayout = new QHBoxLayout();
     mainLayout->addWidget(yearView);
