@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QDate>
+#include <QDateEdit>
 #include <QTableView>
 #include <QStandardItemModel>
 #include <QLabel>
@@ -39,6 +40,7 @@ private:
     QPushButton *currentMonthClickableLabel;
     QPushButton *add1MonthButton;
     QPushButton *substract1MonthButton;
+    QDateEdit *yearMonthPicker;
 
 //    QRadioButton *rbT;
 //    QRadioButton *rbRh;
