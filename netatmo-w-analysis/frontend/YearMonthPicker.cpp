@@ -41,10 +41,14 @@ YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) :
     monthView->horizontalHeader()->hide();
     monthView->verticalHeader()->hide();
     monthView->setSelectionMode(QAbstractItemView::SingleSelection);
+    monthView->selectionModel()->select(monthView->model()->index((baseMonth - 1) / 3, (baseMonth - 1) % 3),
+                                        QItemSelectionModel::Select);
 
     yearView->horizontalHeader()->hide();
     yearView->verticalHeader()->hide();
     yearView->setSelectionMode(QAbstractItemView::SingleSelection);
+    yearView->selectionModel()->select(yearView->model()->index(baseYear - 2019, 0),
+                                       QItemSelectionModel::Select);
 
     for (int column = 0; column < 3; column++) {
         monthView->setColumnWidth(column, 40);
