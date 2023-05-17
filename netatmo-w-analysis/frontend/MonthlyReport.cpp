@@ -6,6 +6,10 @@ MonthlyReport::MonthlyReport() : QWidget()
     dbHandler = new DatabaseHandler("netatmo-w-analysis/netatmo_analysis.db");
     deviceLocale = new QLocale();
 
+    yearMonthPicker = new QDateEdit();
+    yearMonthPicker->setDisplayFormat("MMM yyyy");
+    yearMonthPicker->setCurrentSection(QDateTimeEdit::MonthSection);
+
     this->setGeometry(300, 40, 720, 950);
     layout = new QGridLayout();
 
@@ -26,6 +30,7 @@ MonthlyReport::MonthlyReport() : QWidget()
     currentMonthClickableLabel->setFlat(true);
 //    currentMonthClickableLabel->setAlignment(Qt::AlignCenter);
     currentMonthClickableLabel->setFont(QFont("Arial", 14));
+    connect(currentMonthClickableLabel, SIGNAL(clicked()), yearMonthPicker, SLOT(show()));
 
 //    rbT = new QRadioButton("Température");
 //    rbRh = new QRadioButton("Humidité");
