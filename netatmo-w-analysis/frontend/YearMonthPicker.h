@@ -3,10 +3,9 @@
 
 #include <QObject>
 #include <QWidget>
-#include <QPushButton>
-#include <QGridLayout>
+#include <QTableView>
+#include <QStandardItemModel>
 #include <QHBoxLayout>
-#include <QVBoxLayout>
 
 class YearMonthPicker : public QWidget
 {
@@ -31,10 +30,11 @@ private:
         "nov.",
         "déc."
     };
-    QPushButton *monthButtons[12];
-    QPushButton *yearButtons[5];
-    QGridLayout *monthButtonsLayout;
-    QVBoxLayout *yearButtonsLayout;
+
+    QTableView *monthView;
+    QTableView *yearView;
+    QStandardItemModel *monthModel;
+    QStandardItemModel *yearModel;
     QHBoxLayout *mainLayout;
 
 };
