@@ -11,7 +11,7 @@ class YearMonthPicker : public QWidget
 {
     Q_OBJECT
 public:
-    explicit YearMonthPicker(QWidget *parent = nullptr);
+    explicit YearMonthPicker(int baseYear, int baseMonth, QWidget *parent = nullptr);
 
 signals:
 

@@ -1,7 +1,7 @@
 #include "YearMonthPicker.h"
 #include <QHeaderView>
 
-YearMonthPicker::YearMonthPicker(QWidget *parent) : QWidget(parent)
+YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) : QWidget(parent)
 {
 //    monthButtonsLayout = new QGridLayout();
 //    for (int i = 0; i < 3; i++) {
@@ -40,9 +40,11 @@ YearMonthPicker::YearMonthPicker(QWidget *parent) : QWidget(parent)
 
     monthView->horizontalHeader()->hide();
     monthView->verticalHeader()->hide();
+    monthView->setSelectionMode(QAbstractItemView::SingleSelection);
 
     yearView->horizontalHeader()->hide();
     yearView->verticalHeader()->hide();
+    yearView->setSelectionMode(QAbstractItemView::SingleSelection);
 
     for (int column = 0; column < 3; column++) {
         monthView->setColumnWidth(column, 40);
