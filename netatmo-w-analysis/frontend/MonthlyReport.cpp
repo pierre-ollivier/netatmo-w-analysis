@@ -7,9 +7,8 @@ MonthlyReport::MonthlyReport() : QWidget()
     deviceLocale = new QLocale();
 
     yearMonthPicker = new YearMonthPicker(_date->year(), _date->month());
-//    yearMonthPicker->setCalendarPopup(true);
-//    yearMonthPicker->setDisplayFormat("MMM yyyy");
-//    yearMonthPicker->setCurrentSection(QDateTimeEdit::MonthSection);
+    connect(yearMonthPicker, SIGNAL(monthChanged(int)), SLOT(setMonth(int)));
+    connect(yearMonthPicker, SIGNAL(yearChanged(int)), SLOT(setYear(int)));
 
     this->setGeometry(300, 40, 720, 950);
     layout = new QGridLayout();
@@ -181,5 +180,15 @@ void MonthlyReport::add1Month() {
 void MonthlyReport::substract1Month() {
     _date->operator=(_date->addMonths(-1));
     currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
+    fillBoard();
+}
+
+void MonthlyReport::setMonth(int month) {
+    _date->setDate(_date->year(), month, _date->day());
+    fillBoard();
+}
+
+void MonthlyReport::setYear(int year) {
+    _date->setDate(year, _date->month(), _date->day());
     fillBoard();
 }

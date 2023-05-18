@@ -24,6 +24,8 @@ public slots:
     void fillBoard();
     void add1Month();
     void substract1Month();
+    void setMonth(int month);
+    void setYear(int year);
 //    void majType();
 
 protected:
