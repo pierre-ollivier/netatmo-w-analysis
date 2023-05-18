@@ -15,6 +15,7 @@ public:
 
 public slots:
     void handleMonthItemChanged(const QItemSelection &, const QItemSelection &);
+    void handleYearItemChanged(const QItemSelection &, const QItemSelection &);
 
 signals:
     void monthChanged(int);

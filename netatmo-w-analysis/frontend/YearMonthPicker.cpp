@@ -57,5 +57,10 @@ YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) :
 void YearMonthPicker::handleMonthItemChanged(const QItemSelection &selection, const QItemSelection &_) {
     int row = selection.indexes()[0].row();
     int column = selection.indexes()[0].column();
-    emit monthChanged(3 *row + column + 1);
+    emit monthChanged(3 * row + column + 1);
+}
+
+void YearMonthPicker::handleYearItemChanged(const QItemSelection &selection, const QItemSelection &_) {
+    int row = selection.indexes()[0].row();
+    emit yearChanged(row + 2019);
 }
