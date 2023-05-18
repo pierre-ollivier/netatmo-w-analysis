@@ -13,7 +13,12 @@ class YearMonthPicker : public QWidget
 public:
     explicit YearMonthPicker(int baseYear, int baseMonth, QWidget *parent = nullptr);
 
+public slots:
+    void handleItemChanged(const QItemSelection &, const QItemSelection &);
+
 signals:
+    void monthChanged(int);
+    void yearChanged(int);
 
 private:
     const QStringList abbreviatedMonths = {
