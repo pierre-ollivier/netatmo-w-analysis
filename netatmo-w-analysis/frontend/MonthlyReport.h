@@ -50,7 +50,7 @@ private:
     QRadioButton *humidityRadioButton;
     QRadioButton *dewPointRadioButton;
     QRadioButton *humidexRadioButton;
-    QCheckBox *boxInt;
+    QCheckBox *interiorCheckBox;
     QVBoxLayout *buttonsLayout;
 
     QDate *_date;
