@@ -36,20 +36,20 @@ MonthlyReport::MonthlyReport() : QWidget()
     dewPointRadioButton = new QRadioButton("Point de rosée");
     humidexRadioButton = new QRadioButton("Humidex");
 
-    boxInt = new QCheckBox("Intérieur");
+    interiorCheckBox = new QCheckBox("Intérieur");
 
     connect(temperatureRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
     connect(humidityRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
     connect(dewPointRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
     connect(humidexRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
-    connect(boxInt, SIGNAL(stateChanged(int)), this, SLOT(changeMeasurement()));
+    connect(interiorCheckBox, SIGNAL(stateChanged(int)), this, SLOT(changeMeasurement()));
 
     buttonsLayout = new QVBoxLayout();
     buttonsLayout->addWidget(temperatureRadioButton);
     buttonsLayout->addWidget(humidityRadioButton);
     buttonsLayout->addWidget(dewPointRadioButton);
     buttonsLayout->addWidget(humidexRadioButton);
-    buttonsLayout->addWidget(boxInt);
+    buttonsLayout->addWidget(interiorCheckBox);
 
     layout->addWidget(add1MonthButton, 0, 2);
     layout->addWidget(substract1MonthButton, 0, 0);
@@ -178,7 +178,7 @@ void MonthlyReport::setYear(int year) {
 }
 
 void MonthlyReport::changeMeasurement() {
-    IndoorOrOutdoor = boxInt->isChecked() ? "indoor" : "outdoor";
+    IndoorOrOutdoor = interiorCheckBox->isChecked() ? "indoor" : "outdoor";
     measurementType = temperatureRadioButton->isChecked() ? "temperature" :
                       humidityRadioButton->isChecked() ? "humidity" :
                       dewPointRadioButton->isChecked() ? "dew point" : "humidex";
