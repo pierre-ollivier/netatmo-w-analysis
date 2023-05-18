@@ -185,10 +185,12 @@ void MonthlyReport::substract1Month() {
 
 void MonthlyReport::setMonth(int month) {
     _date->setDate(_date->year(), month, _date->day());
+    currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
     fillBoard();
 }
 
 void MonthlyReport::setYear(int year) {
     _date->setDate(year, _date->month(), _date->day());
+    currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
     fillBoard();
 }
