@@ -46,10 +46,10 @@ private:
     QPushButton *substract1MonthButton;
     YearMonthPicker *yearMonthPicker;
 
-    QRadioButton *rbT;
-    QRadioButton *rbRh;
-    QRadioButton *rbTd;
-    QRadioButton *rbHx;
+    QRadioButton *temperatureRadioButton;
+    QRadioButton *humidityRadioButton;
+    QRadioButton *dewPointRadioButton;
+    QRadioButton *humidexRadioButton;
     QCheckBox *boxInt;
     QVBoxLayout *buttonsLayout;
 

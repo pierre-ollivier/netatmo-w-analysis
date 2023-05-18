@@ -31,24 +31,24 @@ MonthlyReport::MonthlyReport() : QWidget()
     currentMonthClickableLabel->setFont(QFont("Arial", 14));
     connect(currentMonthClickableLabel, SIGNAL(clicked()), yearMonthPicker, SLOT(show()));
 
-    rbT = new QRadioButton("Température");
-    rbRh = new QRadioButton("Humidité");
-    rbTd = new QRadioButton("Point de rosée");
-    rbHx = new QRadioButton("Humidex");
+    temperatureRadioButton = new QRadioButton("Température");
+    humidityRadioButton = new QRadioButton("Humidité");
+    dewPointRadioButton = new QRadioButton("Point de rosée");
+    humidexRadioButton = new QRadioButton("Humidex");
 
     boxInt = new QCheckBox("Intérieur");
 
-    connect(rbT, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
-    connect(rbRh, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
-    connect(rbTd, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
-    connect(rbHx, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
+    connect(temperatureRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
+    connect(humidityRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
+    connect(dewPointRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
+    connect(humidexRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
     connect(boxInt, SIGNAL(stateChanged(int)), this, SLOT(changeMeasurement()));
 
     buttonsLayout = new QVBoxLayout();
-    buttonsLayout->addWidget(rbT);
-    buttonsLayout->addWidget(rbRh);
-    buttonsLayout->addWidget(rbTd);
-    buttonsLayout->addWidget(rbHx);
+    buttonsLayout->addWidget(temperatureRadioButton);
+    buttonsLayout->addWidget(humidityRadioButton);
+    buttonsLayout->addWidget(dewPointRadioButton);
+    buttonsLayout->addWidget(humidexRadioButton);
     buttonsLayout->addWidget(boxInt);
 
     layout->addWidget(add1MonthButton, 0, 2);
@@ -179,8 +179,8 @@ void MonthlyReport::setYear(int year) {
 
 void MonthlyReport::changeMeasurement() {
     IndoorOrOutdoor = boxInt->isChecked() ? "indoor" : "outdoor";
-    measurementType = rbT->isChecked() ? "temperature" :
-                      rbRh->isChecked() ? "humidity" :
-                      rbTd->isChecked() ? "dew point" : "humidex";
+    measurementType = temperatureRadioButton->isChecked() ? "temperature" :
+                      humidityRadioButton->isChecked() ? "humidity" :
+                      dewPointRadioButton->isChecked() ? "dew point" : "humidex";
     fillBoard();
 }
