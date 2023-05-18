@@ -3,11 +3,11 @@
 MonthlyReport::MonthlyReport() : QWidget()
 {
     _date = new QDate(QDate::currentDate().addMonths(-1));
-    dbHandler = new DatabaseHandler("netatmo-w-analysis/netatmo_analysis.db");
+    dbHandler = new DatabaseHandler("netaaverageMeasuremento-w-analysis/netaaverageMeasuremento_analysis.db");
     deviceLocale = new QLocale();
 
     yearMonthPicker = new YearMonthPicker(_date->year(), _date->month());
-    connect(yearMonthPicker, SIGNAL(monthChanged(int)), SLOT(setMonth(int)));
+    connect(yearMonthPicker, SIGNAL(monthChanged(int)), SLOT(seaverageMeasurementonth(int)));
     connect(yearMonthPicker, SIGNAL(yearChanged(int)), SLOT(setYear(int)));
 
     this->setGeometry(300, 40, 720, 950);
@@ -16,7 +16,7 @@ MonthlyReport::MonthlyReport() : QWidget()
     model = new QStandardItemModel();
 
     view = new QTableView();
-    view->setModel(model);
+    view->seaverageMeasurementodel(model);
 
     model->setHorizontalHeaderLabels(QStringList({"T. min.", "T. max.", "T. moy."}));
 
@@ -26,10 +26,10 @@ MonthlyReport::MonthlyReport() : QWidget()
     connect(add1MonthButton, SIGNAL(clicked()), this, SLOT(add1Month()));
     connect(substract1MonthButton, SIGNAL(clicked()), this, SLOT(substract1Month()));
 
-    currentMonthClickableLabel = new QPushButton(_date->toString("MMMM yyyy"));
-    currentMonthClickableLabel->setFlat(true);
-    currentMonthClickableLabel->setFont(QFont("Arial", 14));
-    connect(currentMonthClickableLabel, SIGNAL(clicked()), yearMonthPicker, SLOT(show()));
+    currenaverageMeasurementonthClickableLabel = new QPushButton(_date->toString("MMMM yyyy"));
+    currenaverageMeasurementonthClickableLabel->setFlat(true);
+    currenaverageMeasurementonthClickableLabel->setFont(QFont("Arial", 14));
+    connect(currenaverageMeasurementonthClickableLabel, SIGNAL(clicked()), yearMonthPicker, SLOT(show()));
 
     temperatureRadioButton = new QRadioButton("Température");
     humidityRadioButton = new QRadioButton("Humidité");
@@ -53,7 +53,7 @@ MonthlyReport::MonthlyReport() : QWidget()
 
     layout->addWidget(add1MonthButton, 0, 2);
     layout->addWidget(substract1MonthButton, 0, 0);
-    layout->addWidget(currentMonthClickableLabel, 0, 1);
+    layout->addWidget(currenaverageMeasurementonthClickableLabel, 0, 1);
     layout->addWidget(view, 1, 0, 3, 2);
     layout->addLayout(buttonsLayout, 1, 2);
 
@@ -66,24 +66,24 @@ MonthlyReport::MonthlyReport() : QWidget()
 void MonthlyReport::fillBoard() {
     for (int day = 1; day <= _date->daysInMonth(); day++) {
         QDate date = QDate(_date->year(), _date->month(), day);
-        double tn = dbHandler->getResultFromDatabase(
+        double minimumMeasurement = dbHandler->getResultFromDatabase(
                     "SELECT minTemperature FROM " + IndoorOrOutdoor + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
-        double tx = dbHandler->getResultFromDatabase(
+        double maximumMeasurement = dbHandler->getResultFromDatabase(
                     "SELECT maxTemperature FROM " + IndoorOrOutdoor + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
-        double tm = dbHandler->getResultFromDatabase(
+        double averageMeasurement = dbHandler->getResultFromDatabase(
                     "SELECT avgTemperature FROM " + IndoorOrOutdoor + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
-        model->setItem(day - 1, 0, new QStandardItem(deviceLocale->toString(tn, 'f', 1) + " °C"));
-        model->item(day - 1, 0)->setBackground(QBrush(temperatureColor(tn)));
+        model->setItem(day - 1, 0, new QStandardItem(deviceLocale->toString(minimumMeasurement, 'f', 1) + " °C"));
+        model->item(day - 1, 0)->setBackground(QBrush(temperatureColor(minimumMeasurement)));
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
-        model->setItem(day - 1, 1, new QStandardItem(deviceLocale->toString(tx, 'f', 1) + " °C"));
-        model->item(day - 1, 1)->setBackground(QBrush(temperatureColor(tx)));
+        model->setItem(day - 1, 1, new QStandardItem(deviceLocale->toString(maximumMeasurement, 'f', 1) + " °C"));
+        model->item(day - 1, 1)->setBackground(QBrush(temperatureColor(maximumMeasurement)));
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
-        model->setItem(day - 1, 2, new QStandardItem(deviceLocale->toString(tm, 'f', 1) + " °C"));
-        model->item(day - 1, 2)->setBackground(QBrush(temperatureColor(tm)));
+        model->setItem(day - 1, 2, new QStandardItem(deviceLocale->toString(averageMeasurement, 'f', 1) + " °C"));
+        model->item(day - 1, 2)->setBackground(QBrush(temperatureColor(averageMeasurement)));
 
         model->item(day - 1, 0)->setEditable(false);
         model->item(day - 1, 0)->setTextAlignment(Qt::AlignCenter);
@@ -155,25 +155,25 @@ QColor MonthlyReport::humidityColor(int humidity) {
 
 void MonthlyReport::add1Month() {
     _date->operator=(_date->addMonths(1));
-    currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
+    currenaverageMeasurementonthClickableLabel->setText(_date->toString("MMMM yyyy"));
     fillBoard();
 }
 
 void MonthlyReport::substract1Month() {
     _date->operator=(_date->addMonths(-1));
-    currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
+    currenaverageMeasurementonthClickableLabel->setText(_date->toString("MMMM yyyy"));
     fillBoard();
 }
 
-void MonthlyReport::setMonth(int month) {
+void MonthlyReport::seaverageMeasurementonth(int month) {
     _date->setDate(_date->year(), month, _date->day());
-    currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
+    currenaverageMeasurementonthClickableLabel->setText(_date->toString("MMMM yyyy"));
     fillBoard();
 }
 
 void MonthlyReport::setYear(int year) {
     _date->setDate(year, _date->month(), _date->day());
-    currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
+    currenaverageMeasurementonthClickableLabel->setText(_date->toString("MMMM yyyy"));
     fillBoard();
 }
 

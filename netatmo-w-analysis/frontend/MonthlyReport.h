@@ -31,12 +31,10 @@ public slots:
     void changeMeasurement();
 
 protected:
-
     QColor temperatureColor(double temperature);
     QColor humidityColor(int humidity);
 
 private:
-
     QDate *initialDate;
     QTableView *view;
     QStandardItemModel *model;
