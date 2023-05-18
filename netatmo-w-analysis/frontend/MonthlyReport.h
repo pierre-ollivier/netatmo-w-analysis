@@ -56,6 +56,9 @@ private:
     QDate *_date;
     DatabaseHandler *dbHandler;
     QLocale *deviceLocale;
+
+    QString measurementType = "temperature";
+    QString IndoorOrOutdoor = "Outdoor";
 };
 
 #endif // MONTHLYREPORT_H

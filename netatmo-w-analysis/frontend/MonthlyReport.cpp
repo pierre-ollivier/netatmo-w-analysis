@@ -67,11 +67,11 @@ void MonthlyReport::fillBoard() {
     for (int day = 1; day <= _date->daysInMonth(); day++) {
         QDate date = QDate(_date->year(), _date->month(), day);
         double tn = dbHandler->getResultFromDatabase(
-                    "SELECT minTemperature FROM OutdoorDailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
+                    "SELECT minTemperature FROM " + IndoorOrOutdoor + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
         double tx = dbHandler->getResultFromDatabase(
-                    "SELECT maxTemperature FROM OutdoorDailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
+                    "SELECT maxTemperature FROM " + IndoorOrOutdoor + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
         double tm = dbHandler->getResultFromDatabase(
-                    "SELECT avgTemperature FROM OutdoorDailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
+                    "SELECT avgTemperature FROM " + IndoorOrOutdoor + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
         model->setItem(day - 1, 0, new QStandardItem(deviceLocale->toString(tn, 'f', 1) + " °C"));
@@ -178,5 +178,9 @@ void MonthlyReport::setYear(int year) {
 }
 
 void MonthlyReport::changeMeasurement() {
-
+    IndoorOrOutdoor = boxInt->isChecked() ? "indoor" : "outdoor";
+    measurementType = rbT->isChecked() ? "temperature" :
+                      rbRh->isChecked() ? "humidity" :
+                      rbTd->isChecked() ? "dew point" : "humidex";
+    fillBoard();
 }
