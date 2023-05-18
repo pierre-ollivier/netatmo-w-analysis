@@ -7,6 +7,8 @@
 #include <QStandardItemModel>
 #include <QLabel>
 #include <QPushButton>
+#include <QRadioButton>
+#include <QCheckBox>
 #include <QGridLayout>
 #include <QVBoxLayout>
 #include "../netatmo-w-analysis/frontend/YearMonthPicker.h"
@@ -26,7 +28,7 @@ public slots:
     void substract1Month();
     void setMonth(int month);
     void setYear(int year);
-//    void majType();
+    void changeMeasurement();
 
 protected:
 
@@ -44,11 +46,11 @@ private:
     QPushButton *substract1MonthButton;
     YearMonthPicker *yearMonthPicker;
 
-//    QRadioButton *rbT;
-//    QRadioButton *rbRh;
-//    QRadioButton *rbTd;
-//    QRadioButton *rbHx;
-//    QCheckBox *boxInt;
+    QRadioButton *rbT;
+    QRadioButton *rbRh;
+    QRadioButton *rbTd;
+    QRadioButton *rbHx;
+    QCheckBox *boxInt;
     QVBoxLayout *buttonsLayout;
 
     QDate *_date;
