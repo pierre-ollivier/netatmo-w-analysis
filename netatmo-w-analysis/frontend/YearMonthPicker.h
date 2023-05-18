@@ -14,7 +14,7 @@ public:
     explicit YearMonthPicker(int baseYear, int baseMonth, QWidget *parent = nullptr);
 
 public slots:
-    void handleItemChanged(const QItemSelection &, const QItemSelection &);
+    void handleMonthItemChanged(const QItemSelection &, const QItemSelection &);
 
 signals:
     void monthChanged(int);
