@@ -28,29 +28,28 @@ MonthlyReport::MonthlyReport() : QWidget()
 
     currentMonthClickableLabel = new QPushButton(_date->toString("MMMM yyyy"));
     currentMonthClickableLabel->setFlat(true);
-//    currentMonthClickableLabel->setAlignment(Qt::AlignCenter);
     currentMonthClickableLabel->setFont(QFont("Arial", 14));
     connect(currentMonthClickableLabel, SIGNAL(clicked()), yearMonthPicker, SLOT(show()));
 
-//    rbT = new QRadioButton("Température");
-//    rbRh = new QRadioButton("Humidité");
-//    rbTd = new QRadioButton("Point de rosée");
-//    rbHx = new QRadioButton("Humidex");
+    rbT = new QRadioButton("Température");
+    rbRh = new QRadioButton("Humidité");
+    rbTd = new QRadioButton("Point de rosée");
+    rbHx = new QRadioButton("Humidex");
 
-//    boxInt = new QCheckBox("Intérieur");
+    boxInt = new QCheckBox("Intérieur");
 
-//    connect(rbT, SIGNAL(toggled(bool)), this, SLOT(majType()));
-//    connect(rbRh, SIGNAL(toggled(bool)), this, SLOT(majType()));
-//    connect(rbTd, SIGNAL(toggled(bool)), this, SLOT(majType()));
-//    connect(rbHx, SIGNAL(toggled(bool)), this, SLOT(majType()));
-//    connect(boxInt, SIGNAL(stateChanged(int)), this, SLOT(majType()));
+    connect(rbT, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
+    connect(rbRh, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
+    connect(rbTd, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
+    connect(rbHx, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
+    connect(boxInt, SIGNAL(stateChanged(int)), this, SLOT(changeMeasurement()));
 
     buttonsLayout = new QVBoxLayout();
-//    buttonsLayout->addWidget(rbT);
-//    buttonsLayout->addWidget(rbRh);
-//    buttonsLayout->addWidget(rbTd);
-//    buttonsLayout->addWidget(rbHx);
-//    buttonsLayout->addWidget(boxInt);
+    buttonsLayout->addWidget(rbT);
+    buttonsLayout->addWidget(rbRh);
+    buttonsLayout->addWidget(rbTd);
+    buttonsLayout->addWidget(rbHx);
+    buttonsLayout->addWidget(boxInt);
 
     layout->addWidget(add1MonthButton, 0, 2);
     layout->addWidget(substract1MonthButton, 0, 0);
@@ -61,25 +60,8 @@ MonthlyReport::MonthlyReport() : QWidget()
     setLayout(layout);
     fillBoard();
 
-//    majDate();
-
-
-
 }
 
-//void RapportMensuel::majDate() {
-
-//    for (int jour = 1; jour <= _date->daysInMonth(); jour++) {
-//        QString s = _date->toString("dd/MM");
-//        s[0] = str(jour / 10)[0];
-//        s[1] = str(jour % 10)[0];
-//        model->setVerticalHeaderItem(jour-1, new QStandardItem(s));
-//    }
-//    if (_date->daysInMonth() < 31) model->removeRows(_date->daysInMonth(), model->rowCount() - _date->daysInMonth());
-//    if (boxInt->isChecked()) remplirTableauInt();
-//    else remplirTableau();
-
-//}
 
 void MonthlyReport::fillBoard() {
     for (int day = 1; day <= _date->daysInMonth(); day++) {
@@ -193,4 +175,8 @@ void MonthlyReport::setYear(int year) {
     _date->setDate(year, _date->month(), _date->day());
     currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
     fillBoard();
+}
+
+void MonthlyReport::changeMeasurement() {
+
 }
