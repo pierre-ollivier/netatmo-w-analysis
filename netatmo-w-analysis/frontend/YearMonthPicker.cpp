@@ -52,6 +52,12 @@ YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) :
         SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
         SLOT(handleMonthItemChanged(const QItemSelection &, const QItemSelection &))
     );
+
+    connect(
+        yearView->selectionModel(),
+        SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+        SLOT(handleYearItemChanged(const QItemSelection &, const QItemSelection &))
+    );
 }
 
 void YearMonthPicker::handleMonthItemChanged(const QItemSelection &selection, const QItemSelection &_) {
