@@ -1,5 +1,6 @@
 #include "YearMonthPicker.h"
 #include <QHeaderView>
+#include <QDebug>
 
 YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) : QWidget(parent)
 {
@@ -45,4 +46,17 @@ YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) :
     mainLayout->addWidget(monthView);
 
     setLayout(mainLayout);
+
+//    connect(monthModel, SIGNAL(itemChanged()), this, SLOT(handleItemChanged()));
+    connect(
+     monthView->selectionModel(),
+     SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+     SLOT(handleItemChanged(const QItemSelection &, const QItemSelection &))
+    );
+}
+
+void YearMonthPicker::handleItemChanged(const QItemSelection &rowSelection, const QItemSelection &columnSelection) {
+    int row = rowSelection.indexes()[0].row();
+    int column = columnSelection.indexes()[0].column();
+    qDebug() << 3 * row + column + 1;
 }
