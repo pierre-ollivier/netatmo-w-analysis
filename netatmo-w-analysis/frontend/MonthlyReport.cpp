@@ -66,12 +66,13 @@ MonthlyReport::MonthlyReport() : QWidget()
 void MonthlyReport::fillBoard() {
     for (int day = 1; day <= _date->daysInMonth(); day++) {
         QDate date = QDate(_date->year(), _date->month(), day);
+        QString measurementTypeCapitalized = QString(measurementType[0]).toUpper() + measurementType.mid(1);
         double minimumMeasurement = dbHandler->getResultFromDatabase(
-                    "SELECT minTemperature FROM " + IndoorOrOutdoor + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
+                    "SELECT min" + measurementTypeCapitalized + " FROM " + IndoorOrOutdoor + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
         double maximumMeasurement = dbHandler->getResultFromDatabase(
-                    "SELECT maxTemperature FROM " + IndoorOrOutdoor + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
+                    "SELECT max" + measurementTypeCapitalized + " FROM " + IndoorOrOutdoor + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
         double averageMeasurement = dbHandler->getResultFromDatabase(
-                    "SELECT avgTemperature FROM " + IndoorOrOutdoor + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
+                    "SELECT avg" + measurementTypeCapitalized + " FROM " + IndoorOrOutdoor + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
         model->setItem(day - 1, 0, new QStandardItem(deviceLocale->toString(minimumMeasurement, 'f', 1) + " °C"));
@@ -181,6 +182,6 @@ void MonthlyReport::changeMeasurement() {
     IndoorOrOutdoor = interiorCheckBox->isChecked() ? "indoor" : "outdoor";
     measurementType = temperatureRadioButton->isChecked() ? "temperature" :
                       humidityRadioButton->isChecked() ? "humidity" :
-                      dewPointRadioButton->isChecked() ? "dew point" : "humidex";
+                      dewPointRadioButton->isChecked() ? "dewPoint" : "humidex";
     fillBoard();
 }
