@@ -36,6 +36,8 @@ MonthlyReport::MonthlyReport() : QWidget()
     dewPointRadioButton = new QRadioButton("Point de rosée");
     humidexRadioButton = new QRadioButton("Humidex");
 
+    temperatureRadioButton->setChecked(true);
+
     interiorCheckBox = new QCheckBox("Intérieur");
 
     connect(temperatureRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
