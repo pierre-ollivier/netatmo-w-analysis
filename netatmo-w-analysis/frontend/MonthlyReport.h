@@ -59,6 +59,7 @@ private:
     QString abbreviatedMeasurement = "T.";
     QString unit = "°C";
     QString IndoorOrOutdoor = "Outdoor";
+    int numbersPrecision = 1;
 };
 
 #endif // MONTHLYREPORT_H

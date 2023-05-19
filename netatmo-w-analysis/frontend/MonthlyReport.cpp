@@ -75,14 +75,14 @@ void MonthlyReport::fillBoard() {
                     "SELECT avg" + measurementTypeCapitalized + " FROM " + IndoorOrOutdoor + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
-        model->setItem(day - 1, 0, new QStandardItem(deviceLocale->toString(minimumMeasurement, 'f', 1) + " " + unit));
+        model->setItem(day - 1, 0, new QStandardItem(deviceLocale->toString(minimumMeasurement, 'f', numbersPrecision) + " " + unit));
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
-        model->setItem(day - 1, 1, new QStandardItem(deviceLocale->toString(maximumMeasurement, 'f', 1) + " " + unit));
+        model->setItem(day - 1, 1, new QStandardItem(deviceLocale->toString(maximumMeasurement, 'f', numbersPrecision) + " " + unit));
 
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
-        model->setItem(day - 1, 2, new QStandardItem(deviceLocale->toString(averageMeasurement, 'f', 1) + " " + unit));
+        model->setItem(day - 1, 2, new QStandardItem(deviceLocale->toString(averageMeasurement, 'f', numbersPrecision) + " " + unit));
 
         model->item(day - 1, 0)->setEditable(false);
         model->item(day - 1, 0)->setTextAlignment(Qt::AlignCenter);
@@ -202,6 +202,7 @@ void MonthlyReport::changeMeasurement() {
     unit = temperatureRadioButton->isChecked() ? "°C" :
            humidityRadioButton->isChecked() ? "%" :
            dewPointRadioButton->isChecked() ? "°C" : "";
+    numbersPrecision = humidityRadioButton->isChecked() ? 0 : 1;
 
     fillBoard();
 }
