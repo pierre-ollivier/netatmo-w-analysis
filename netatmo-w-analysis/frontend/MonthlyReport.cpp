@@ -76,15 +76,13 @@ void MonthlyReport::fillBoard() {
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
         model->setItem(day - 1, 0, new QStandardItem(deviceLocale->toString(minimumMeasurement, 'f', 1) + " " + unit));
-        model->item(day - 1, 0)->setBackground(QBrush(temperatureColor(minimumMeasurement)));
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
         model->setItem(day - 1, 1, new QStandardItem(deviceLocale->toString(maximumMeasurement, 'f', 1) + " " + unit));
-        model->item(day - 1, 1)->setBackground(QBrush(temperatureColor(maximumMeasurement)));
+
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
         model->setItem(day - 1, 2, new QStandardItem(deviceLocale->toString(averageMeasurement, 'f', 1) + " " + unit));
-        model->item(day - 1, 2)->setBackground(QBrush(temperatureColor(averageMeasurement)));
 
         model->item(day - 1, 0)->setEditable(false);
         model->item(day - 1, 0)->setTextAlignment(Qt::AlignCenter);
@@ -92,6 +90,17 @@ void MonthlyReport::fillBoard() {
         model->item(day - 1, 1)->setTextAlignment(Qt::AlignCenter);
         model->item(day - 1, 2)->setEditable(false);
         model->item(day - 1, 2)->setTextAlignment(Qt::AlignCenter);
+
+        if (unit == "°C" or unit == "") {
+            model->item(day - 1, 0)->setBackground(QBrush(temperatureColor(minimumMeasurement)));
+            model->item(day - 1, 1)->setBackground(QBrush(temperatureColor(maximumMeasurement)));
+            model->item(day - 1, 2)->setBackground(QBrush(temperatureColor(averageMeasurement)));
+        }
+        else if (unit == "%") {
+            model->item(day - 1, 0)->setBackground(QBrush(humidityColor(minimumMeasurement)));
+            model->item(day - 1, 1)->setBackground(QBrush(humidityColor(maximumMeasurement)));
+            model->item(day - 1, 2)->setBackground(QBrush(humidityColor(averageMeasurement)));
+        }
 
         model->setHorizontalHeaderLabels(QStringList({abbreviatedMeasurement + " min.",
                                                       abbreviatedMeasurement + " max.",
