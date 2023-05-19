@@ -92,6 +92,10 @@ void MonthlyReport::fillBoard() {
         model->item(day - 1, 1)->setTextAlignment(Qt::AlignCenter);
         model->item(day - 1, 2)->setEditable(false);
         model->item(day - 1, 2)->setTextAlignment(Qt::AlignCenter);
+
+        model->setHorizontalHeaderLabels(QStringList({abbreviatedMeasurement + " min.",
+                                                      abbreviatedMeasurement + " max.",
+                                                      abbreviatedMeasurement + " moy."}));
     }
     // Clean the extra rows when switching from a 31-day month to a shorter one
     model->removeRows(_date->daysInMonth(), 31 - _date->daysInMonth());
@@ -183,5 +187,8 @@ void MonthlyReport::changeMeasurement() {
     measurementType = temperatureRadioButton->isChecked() ? "temperature" :
                       humidityRadioButton->isChecked() ? "humidity" :
                       dewPointRadioButton->isChecked() ? "dewPoint" : "humidex";
+    abbreviatedMeasurement = temperatureRadioButton->isChecked() ? "T." :
+                             humidityRadioButton->isChecked() ? "HR" :
+                             dewPointRadioButton->isChecked() ? "PdR" : "Hx";
     fillBoard();
 }
