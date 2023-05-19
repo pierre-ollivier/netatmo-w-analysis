@@ -56,6 +56,7 @@ private:
     QLocale *deviceLocale;
 
     QString measurementType = "temperature";
+    QString abbreviatedMeasurement = "T.";
     QString IndoorOrOutdoor = "Outdoor";
 };
 
