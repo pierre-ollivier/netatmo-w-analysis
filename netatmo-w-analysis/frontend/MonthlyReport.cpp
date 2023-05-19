@@ -3,11 +3,11 @@
 MonthlyReport::MonthlyReport() : QWidget()
 {
     _date = new QDate(QDate::currentDate().addMonths(-1));
-    dbHandler = new DatabaseHandler("netaaverageMeasuremento-w-analysis/netaaverageMeasuremento_analysis.db");
+    dbHandler = new DatabaseHandler("netatmo-w-analysis/netatmo_analysis.db");
     deviceLocale = new QLocale();
 
     yearMonthPicker = new YearMonthPicker(_date->year(), _date->month());
-    connect(yearMonthPicker, SIGNAL(monthChanged(int)), SLOT(seaverageMeasurementonth(int)));
+    connect(yearMonthPicker, SIGNAL(monthChanged(int)), SLOT(setMonth(int)));
     connect(yearMonthPicker, SIGNAL(yearChanged(int)), SLOT(setYear(int)));
 
     this->setGeometry(300, 40, 720, 950);
@@ -16,7 +16,7 @@ MonthlyReport::MonthlyReport() : QWidget()
     model = new QStandardItemModel();
 
     view = new QTableView();
-    view->seaverageMeasurementodel(model);
+    view->setModel(model);
 
     model->setHorizontalHeaderLabels(QStringList({"T. min.", "T. max.", "T. moy."}));
 
@@ -26,10 +26,10 @@ MonthlyReport::MonthlyReport() : QWidget()
     connect(add1MonthButton, SIGNAL(clicked()), this, SLOT(add1Month()));
     connect(substract1MonthButton, SIGNAL(clicked()), this, SLOT(substract1Month()));
 
-    currenaverageMeasurementonthClickableLabel = new QPushButton(_date->toString("MMMM yyyy"));
-    currenaverageMeasurementonthClickableLabel->setFlat(true);
-    currenaverageMeasurementonthClickableLabel->setFont(QFont("Arial", 14));
-    connect(currenaverageMeasurementonthClickableLabel, SIGNAL(clicked()), yearMonthPicker, SLOT(show()));
+    currentMonthClickableLabel = new QPushButton(_date->toString("MMMM yyyy"));
+    currentMonthClickableLabel->setFlat(true);
+    currentMonthClickableLabel->setFont(QFont("Arial", 14));
+    connect(currentMonthClickableLabel, SIGNAL(clicked()), yearMonthPicker, SLOT(show()));
 
     temperatureRadioButton = new QRadioButton("Température");
     humidityRadioButton = new QRadioButton("Humidité");
@@ -53,7 +53,7 @@ MonthlyReport::MonthlyReport() : QWidget()
 
     layout->addWidget(add1MonthButton, 0, 2);
     layout->addWidget(substract1MonthButton, 0, 0);
-    layout->addWidget(currenaverageMeasurementonthClickableLabel, 0, 1);
+    layout->addWidget(currentMonthClickableLabel, 0, 1);
     layout->addWidget(view, 1, 0, 3, 2);
     layout->addLayout(buttonsLayout, 1, 2);
 
@@ -155,25 +155,25 @@ QColor MonthlyReport::humidityColor(int humidity) {
 
 void MonthlyReport::add1Month() {
     _date->operator=(_date->addMonths(1));
-    currenaverageMeasurementonthClickableLabel->setText(_date->toString("MMMM yyyy"));
+    currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
     fillBoard();
 }
 
 void MonthlyReport::substract1Month() {
     _date->operator=(_date->addMonths(-1));
-    currenaverageMeasurementonthClickableLabel->setText(_date->toString("MMMM yyyy"));
+    currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
     fillBoard();
 }
 
-void MonthlyReport::seaverageMeasurementonth(int month) {
+void MonthlyReport::setMonth(int month) {
     _date->setDate(_date->year(), month, _date->day());
-    currenaverageMeasurementonthClickableLabel->setText(_date->toString("MMMM yyyy"));
+    currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
     fillBoard();
 }
 
 void MonthlyReport::setYear(int year) {
     _date->setDate(year, _date->month(), _date->day());
-    currenaverageMeasurementonthClickableLabel->setText(_date->toString("MMMM yyyy"));
+    currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
     fillBoard();
 }
 
