@@ -3,6 +3,7 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QFileDialog>
+#include "../netatmo-w-analysis/frontend/MonthlyReport.h"
 #include "../netatmo-w-analysis/backend/APIMonitor.h"
 
 MainWindow::MainWindow()
@@ -96,15 +97,19 @@ void MainWindow::buildLayouts() {
 
 void MainWindow::createActions() {
     requestCountsAction = new QAction("Rapport réseau...");
-    connect(requestCountsAction, SIGNAL(triggered()), this, SLOT(updateRequestCounts()));
+    connect(requestCountsAction, SIGNAL(triggered()), SLOT(updateRequestCounts()));
+
     addMonthDataAction = new QAction("Ajouter des données mensuelles...");
-    connect(addMonthDataAction, SIGNAL(triggered()), this, SLOT(addMonthData()));
+    connect(addMonthDataAction, SIGNAL(triggered()), SLOT(addMonthData()));
     addMultipleMonthsDataAction = new QAction("Ajouter des données mensuelles sur plusieurs mois...");
-    connect(addMultipleMonthsDataAction, SIGNAL(triggered()), this, SLOT(addMultipleMonthsData()));
+    connect(addMultipleMonthsDataAction, SIGNAL(triggered()), SLOT(addMultipleMonthsData()));
     updateDailyIndoorDatabaseAction = new QAction("Mettre à jour la base de données quotidiennes intérieures");
-    connect(updateDailyIndoorDatabaseAction, SIGNAL(triggered()), this, SLOT(updateDailyIndoorDatabase()));
+    connect(updateDailyIndoorDatabaseAction, SIGNAL(triggered()), SLOT(updateDailyIndoorDatabase()));
     updateDailyOutdoorDatabaseAction = new QAction("Mettre à jour la base de données quotidiennes extérieures");
-    connect(updateDailyOutdoorDatabaseAction, SIGNAL(triggered()), this, SLOT(updateDailyOutdoorDatabase()));
+    connect(updateDailyOutdoorDatabaseAction, SIGNAL(triggered()), SLOT(updateDailyOutdoorDatabase()));
+
+    displayMonthlyReportAction = new QAction("Rapport mensuel");
+    connect(displayMonthlyReportAction, SIGNAL(triggered()), SLOT(displayMonthlyReport()));
 }
 
 void MainWindow::createMenus() {
@@ -115,6 +120,8 @@ void MainWindow::createMenus() {
     dataMenu->addAction(addMultipleMonthsDataAction);
     dataMenu->addAction(updateDailyIndoorDatabaseAction);
     dataMenu->addAction(updateDailyOutdoorDatabaseAction);
+    QMenu *climatologyMenu = menuBar->addMenu(tr("&Climatologie"));
+    climatologyMenu->addAction(displayMonthlyReportAction);
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
@@ -318,4 +325,9 @@ void MainWindow::updateDailyOutdoorDatabase() {
     }
 
     else if (response == QMessageBox::No) QMessageBox::warning(this, "Annulation", "Opération annulée.");
+}
+
+void MainWindow::displayMonthlyReport() {
+    MonthlyReport *report = new MonthlyReport();
+    report->show();
 }
