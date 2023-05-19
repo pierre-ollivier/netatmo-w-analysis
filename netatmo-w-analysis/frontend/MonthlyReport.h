@@ -57,6 +57,7 @@ private:
 
     QString measurementType = "temperature";
     QString abbreviatedMeasurement = "T.";
+    QString unit = "°C";
     QString IndoorOrOutdoor = "Outdoor";
 };
 

@@ -75,15 +75,15 @@ void MonthlyReport::fillBoard() {
                     "SELECT avg" + measurementTypeCapitalized + " FROM " + IndoorOrOutdoor + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
-        model->setItem(day - 1, 0, new QStandardItem(deviceLocale->toString(minimumMeasurement, 'f', 1) + " °C"));
+        model->setItem(day - 1, 0, new QStandardItem(deviceLocale->toString(minimumMeasurement, 'f', 1) + " " + unit));
         model->item(day - 1, 0)->setBackground(QBrush(temperatureColor(minimumMeasurement)));
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
-        model->setItem(day - 1, 1, new QStandardItem(deviceLocale->toString(maximumMeasurement, 'f', 1) + " °C"));
+        model->setItem(day - 1, 1, new QStandardItem(deviceLocale->toString(maximumMeasurement, 'f', 1) + " " + unit));
         model->item(day - 1, 1)->setBackground(QBrush(temperatureColor(maximumMeasurement)));
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
-        model->setItem(day - 1, 2, new QStandardItem(deviceLocale->toString(averageMeasurement, 'f', 1) + " °C"));
+        model->setItem(day - 1, 2, new QStandardItem(deviceLocale->toString(averageMeasurement, 'f', 1) + " " + unit));
         model->item(day - 1, 2)->setBackground(QBrush(temperatureColor(averageMeasurement)));
 
         model->item(day - 1, 0)->setEditable(false);
@@ -190,5 +190,9 @@ void MonthlyReport::changeMeasurement() {
     abbreviatedMeasurement = temperatureRadioButton->isChecked() ? "T." :
                              humidityRadioButton->isChecked() ? "HR" :
                              dewPointRadioButton->isChecked() ? "PdR" : "Hx";
+    unit = temperatureRadioButton->isChecked() ? "°C" :
+           humidityRadioButton->isChecked() ? "%" :
+           dewPointRadioButton->isChecked() ? "°C" : "";
+
     fillBoard();
 }
