@@ -38,13 +38,14 @@ Cette table contient l'ensemble des données du module extérieur. Elle stocke :
 - le point de rosée et l'humidex calculés en fonction de la température et de l'humidité.
 
 ## IndoorDailyRecords
-Cette table agrège les données à l'échelle d'une uournée. Elle stocke donc :
+
+Cette table agrège les données du module intérieur à l'échelle d'une journée. Elle stocke donc :
 - la date (en incluant le numéro de la semaine et de la décade),
 - la température maximale et son heure de première occurrence,
 - la température minimale et son heure de première occurrence,
-- la température moyenne 
+- la température moyenne,
 - l'humidité maximale et son heure de première occirrence,
-- l'humidité minimale et son heure de première occurrence 
+- l'humidité minimale et son heure de première occurrence,
 - l'humidité moyenne,
 - le point de rosée maximal et son heure de première occurrence,
 - le point de rosée minimal et son heure de première occurrence,
@@ -57,3 +58,19 @@ Cette table agrège les données à l'échelle d'une uournée. Elle stocke donc 
 - la pression moyenne,
 - le taux de CO2 maximal, minimal et miyen,
 - le taux de bruit maximal, minimal et moyen.
+
+### OutdoorDailyRecords
+
+Cette table agrège les données du module extérieur à l'échelle d'une journée. Elle stocke donc :
+- la température maximale (sur la période 6 UTC - 6 UTC) et son heure de première occurrence,
+- la température minimale (sur la plage 18 UTC - 18 UTC) et son heure de première occurrence,
+- la température moyenne,
+- l'humidité maximale et son heure de première occurrence,
+- l'humidité minimale et son heure de première occurrence,
+- l'humidité moyenne,
+- le point de rosée maximal et son heure de première occurrence,
+- le point de rosée minimal et son heure de première occurrence,
+- le point de rosée moyen,
+- l'humidex maximal et son heure de première occurrence,
+- l'humidex minimal et son heure de première occurrence,
+- l'humidex moyen.
