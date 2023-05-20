@@ -28,3 +28,11 @@ Cette table contient l'ensemble des relevés du module intérieur. Elle stocke :
 - le niveau de CO2,
 - le niveau de bruit,
 - le point de rosée et l'humidex, calculés en fonction de la température et de l'humidité.
+
+### OutdoorTimestampRecords
+Cette table contient l'ensemble des données du module extérieur. Elle stocke :
+- la date (en incluant le numéro de la semaine et de la décade),
+- l'heure,
+- la température,
+- l'humidité,
+- le point de rosée et l'humidex calculés en fonction de la température et de l'humidité.
