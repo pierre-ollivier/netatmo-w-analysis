@@ -7,6 +7,8 @@ YearlyReport::YearlyReport()
     mainView = new QTableView();
     mainModel = new QStandardItemModel();
 
+    deviceLocale = new QLocale();
+
     mainView->setModel(mainModel);
 
     dbHandler = new DatabaseHandler("netatmo-w-analysis/netatmo_analysis.db");
@@ -25,9 +27,9 @@ YearlyReport::YearlyReport()
 void YearlyReport::fillBoard() {
     for (QDate date = QDate(2000, 1, 1); date <= QDate(2000, 12, 31); date = date.addDays(1)) {
         int row = date.dayOfYear();
-        QVariant txx = getMaxMaxTemperatureByDate(date.day(), date.month());
-        int txxYear = getMaxMaxTemperatureYearByDate(date.day(), date.month(), txx.toDouble());
-        mainModel->setItem(row, 0, new QStandardItem(txx.toString()));
+        double txx = getMaxMaxTemperatureByDate(date.day(), date.month()).toDouble();
+        int txxYear = getMaxMaxTemperatureYearByDate(date.day(), date.month(), txx);
+        mainModel->setItem(row, 0, new QStandardItem(deviceLocale->toString(txx, 'f', 1)));
         mainModel->setItem(row, 1, new QStandardItem(QString::number(txxYear)));
         mainModel->setVerticalHeaderItem(row, new QStandardItem(date.toString("dd/MM")));
     }
