@@ -6,6 +6,8 @@
 #include "../netatmo-w-analysis/frontend/MonthlyReport.h"
 #include "../netatmo-w-analysis/backend/APIMonitor.h"
 
+extern QString PATH_TO_PROD_DATABASE;
+
 MainWindow::MainWindow()
 {
     mainWidget = new QWidget();
@@ -14,7 +16,7 @@ MainWindow::MainWindow()
     setMenuBar(menuBar);
     deviceLocale = new QLocale();
     apiMonitor = new APIMonitor();
-    dbHandler = new DatabaseHandler("netatmo-w-analysis/netatmo_analysis.db");
+    dbHandler = new DatabaseHandler(PATH_TO_PROD_DATABASE);
     buildWindow();
 }
 
