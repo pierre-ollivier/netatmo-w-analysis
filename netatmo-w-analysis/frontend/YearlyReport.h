@@ -2,6 +2,7 @@
 #define YEARLYREPORT_H
 
 #include <QWidget>
+#include <QObject>
 #include <QTableView>
 #include <QStandardItemModel>
 #include <QHBoxLayout>
@@ -9,8 +10,14 @@
 
 class YearlyReport : public QWidget
 {
+    Q_OBJECT
 public:
     YearlyReport();
+
+public slots:
+    void fillBoard();
+
+signals:
 
 private:
     QTableView *mainView;
