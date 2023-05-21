@@ -2,7 +2,7 @@
 #include <QHeaderView>
 #include <QDebug>
 
-YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) : QWidget(parent)
+YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) : QDialog(parent)
 {
     monthModel = new QStandardItemModel();
     yearModel = new QStandardItemModel();
@@ -58,6 +58,8 @@ YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) :
         SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
         SLOT(handleYearItemChanged(const QItemSelection &, const QItemSelection &))
     );
+
+    setModal(true);
 }
 
 void YearMonthPicker::handleMonthItemChanged(const QItemSelection &selection, const QItemSelection &_) {

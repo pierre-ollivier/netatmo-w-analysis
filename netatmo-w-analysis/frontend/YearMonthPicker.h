@@ -3,11 +3,12 @@
 
 #include <QObject>
 #include <QWidget>
+#include <QDialog>
 #include <QTableView>
 #include <QStandardItemModel>
 #include <QHBoxLayout>
 
-class YearMonthPicker : public QWidget
+class YearMonthPicker : public QDialog
 {
     Q_OBJECT
 public:
