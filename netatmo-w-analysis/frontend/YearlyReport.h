@@ -7,6 +7,7 @@
 #include <QStandardItemModel>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include "../netatmo-w-analysis/backend/DatabaseHandler.h"
 
 class YearlyReport : public QWidget
 {
@@ -16,6 +17,7 @@ public:
 
 public slots:
     void fillBoard();
+    QVariant getMaxTemperatureByDate(int day, int month);
 
 signals:
 
@@ -25,6 +27,8 @@ private:
 
     QHBoxLayout *mainLayout;
     QVBoxLayout *optionsLayout;
+
+    DatabaseHandler *dbHandler;
 };
 
 #endif // YEARLYREPORT_H
