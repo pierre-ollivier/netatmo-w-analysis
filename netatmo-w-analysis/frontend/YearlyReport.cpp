@@ -2,6 +2,8 @@
 #include <QDate>
 #include <QDebug>
 
+extern QString PATH_TO_PROD_DATABASE;
+
 YearlyReport::YearlyReport()
 {
     mainView = new QTableView();
@@ -11,7 +13,7 @@ YearlyReport::YearlyReport()
 
     mainView->setModel(mainModel);
 
-    dbHandler = new DatabaseHandler("netatmo-w-analysis/netatmo_analysis.db");
+    dbHandler = new DatabaseHandler(PATH_TO_PROD_DATABASE);
 
     mainLayout = new QHBoxLayout();
     optionsLayout = new QVBoxLayout();
