@@ -25,16 +25,24 @@ YearlyReport::YearlyReport()
 void YearlyReport::fillBoard() {
     for (QDate date = QDate(2000, 1, 1); date <= QDate(2000, 12, 31); date = date.addDays(1)) {
         int row = date.dayOfYear();
-        qDebug() << getMaxTemperatureByDate(date.day(), date.month());
-        mainModel->setItem(row, 0, new QStandardItem(getMaxTemperatureByDate(date.day(), date.month()).toString()));
+        QVariant txx = getMaxMaxTemperatureByDate(date.day(), date.month());
+        int txxYear = getMaxMaxTemperatureYearByDate(date.day(), date.month(), txx.toDouble());
+        mainModel->setItem(row, 0, new QStandardItem(txx.toString()));
+        mainModel->setItem(row, 1, new QStandardItem(QString::number(txxYear)));
         mainModel->setVerticalHeaderItem(row, new QStandardItem(date.toString("dd/MM")));
     }
 }
 
-QVariant YearlyReport::getMaxTemperatureByDate(int day, int month) {
+QVariant YearlyReport::getMaxMaxTemperatureByDate(int day, int month) {
     return dbHandler->getResultFromDatabase(
-                "SELECT maxTemperature, year FROM OutdoorDailyRecords "
-                "WHERE maxTemperature = ("
                 "SELECT max(maxTemperature) FROM OutdoorDailyRecords "
-                "WHERE day = " + QString::number(day) + " AND month = " + QString::number(month) + ")");
+                "WHERE day = " + QString::number(day) + " AND month = " + QString::number(month));
+}
+
+int YearlyReport::getMaxMaxTemperatureYearByDate(int day, int month, double maxMaxTemperature) {
+    return dbHandler->getResultFromDatabase(
+                "SELECT year FROM OutdoorDailyRecords "
+                "WHERE day = " + QString::number(day) + " "
+                "AND month = " + QString::number(month) + " "
+                "AND maxTemperature = " + QString::number(maxMaxTemperature)).toInt();
 }
