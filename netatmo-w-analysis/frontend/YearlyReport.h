@@ -26,6 +26,8 @@ private:
     QTableView *mainView;
     QStandardItemModel *mainModel;
 
+    QLocale *deviceLocale;
+
     QHBoxLayout *mainLayout;
     QVBoxLayout *optionsLayout;
 
