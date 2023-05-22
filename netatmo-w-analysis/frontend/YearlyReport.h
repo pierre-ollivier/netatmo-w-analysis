@@ -21,6 +21,10 @@ public slots:
     int getMaxMaxTemperatureYearByDate(int day, int month, double maxMaxTemperature);
     QVariant getMinMinTemperatureByDate(int day, int month);
     int getMinMinTemperatureYearByDate(int day, int month, double minMinTemperature);
+    QVariant getMaxMinTemperatureByDate(int day, int month);
+    int getMaxMinTemperatureYearByDate(int day, int month, double maxMinTemperature);
+    QVariant getMinMaxTemperatureByDate(int day, int month);
+    int getMinMaxTemperatureYearByDate(int day, int month, double minMaxTemperature);
 
 signals:
 
