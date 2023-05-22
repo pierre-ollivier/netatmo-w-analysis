@@ -28,7 +28,7 @@ YearlyReport::YearlyReport()
 
 void YearlyReport::fillBoard() {
     for (QDate date = QDate(2000, 1, 1); date <= QDate(2000, 12, 31); date = date.addDays(1)) {
-        int row = date.dayOfYear();
+        int row = date.dayOfYear() - 1;
         double txx = getMaxMaxTemperatureByDate(date.day(), date.month()).toDouble();
         double tnn = getMinMinTemperatureByDate(date.day(), date.month()).toDouble();
         double tnx = getMaxMinTemperatureByDate(date.day(), date.month()).toDouble();
