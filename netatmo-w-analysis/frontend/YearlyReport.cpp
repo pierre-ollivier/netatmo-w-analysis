@@ -30,9 +30,13 @@ void YearlyReport::fillBoard() {
     for (QDate date = QDate(2000, 1, 1); date <= QDate(2000, 12, 31); date = date.addDays(1)) {
         int row = date.dayOfYear();
         double txx = getMaxMaxTemperatureByDate(date.day(), date.month()).toDouble();
+        double tnn = getMinMinTemperatureByDate(date.day(), date.month()).toDouble();
         int txxYear = getMaxMaxTemperatureYearByDate(date.day(), date.month(), txx);
+        int tnnYear = getMinMinTemperatureYearByDate(date.day(), date.month(), tnn);
         mainModel->setItem(row, 0, new QStandardItem(deviceLocale->toString(txx, 'f', 1)));
         mainModel->setItem(row, 1, new QStandardItem(QString::number(txxYear)));
+        mainModel->setItem(row, 2, new QStandardItem(deviceLocale->toString(tnn, 'f', 1)));
+        mainModel->setItem(row, 3, new QStandardItem(QString::number(tnnYear)));
         mainModel->setVerticalHeaderItem(row, new QStandardItem(date.toString("dd/MM")));
     }
 }
@@ -49,4 +53,18 @@ int YearlyReport::getMaxMaxTemperatureYearByDate(int day, int month, double maxM
                 "WHERE day = " + QString::number(day) + " "
                 "AND month = " + QString::number(month) + " "
                 "AND maxTemperature = " + QString::number(maxMaxTemperature)).toInt();
+}
+
+QVariant YearlyReport::getMinMinTemperatureByDate(int day, int month) {
+    return dbHandler->getResultFromDatabase(
+                "SELECT min(minTemperature) FROM OutdoorDailyRecords "
+                "WHERE day = " + QString::number(day) + " AND month = " + QString::number(month));
+}
+
+int YearlyReport::getMinMinTemperatureYearByDate(int day, int month, double minMinTemperature) {
+    return dbHandler->getResultFromDatabase(
+                "SELECT year FROM OutdoorDailyRecords "
+                "WHERE day = " + QString::number(day) + " "
+                "AND month = " + QString::number(month) + " "
+                "AND minTemperature = " + QString::number(minMinTemperature)).toInt();
 }
