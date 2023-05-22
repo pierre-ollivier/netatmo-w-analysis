@@ -46,6 +46,9 @@ void YearlyReport::fillBoard() {
         mainModel->setItem(row, 6, new QStandardItem(deviceLocale->toString(txx, 'f', 1)));
         mainModel->setItem(row, 7, new QStandardItem(QString::number(txxYear)));
         mainModel->setVerticalHeaderItem(row, new QStandardItem(date.toString("dd/MM")));
+        for (int column = 0; column < mainModel->columnCount(); column++) {
+            mainModel->item(row, column)->setEditable(false);
+        }
     }
 }
 
