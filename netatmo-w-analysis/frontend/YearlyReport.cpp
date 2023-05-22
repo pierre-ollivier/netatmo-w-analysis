@@ -15,8 +15,23 @@ YearlyReport::YearlyReport()
 
     dbHandler = new DatabaseHandler(PATH_TO_PROD_DATABASE);
 
+    temperatureRadioButton = new QRadioButton("Température");
+    humidityRadioButton = new QRadioButton("Humidité");
+    dewPointRadioButton = new QRadioButton("Point de rosée");
+    humidexRadioButton = new QRadioButton("Humidex");
+
+    temperatureRadioButton->setChecked(true);
+
+    interiorCheckBox = new QCheckBox("Intérieur");
+
     mainLayout = new QHBoxLayout();
+
     optionsLayout = new QVBoxLayout();
+    optionsLayout->addWidget(temperatureRadioButton);
+    optionsLayout->addWidget(humidityRadioButton);
+    optionsLayout->addWidget(dewPointRadioButton);
+    optionsLayout->addWidget(humidexRadioButton);
+    optionsLayout->addWidget(interiorCheckBox);
 
     mainLayout->addWidget(mainView);
     mainLayout->addLayout(optionsLayout);
