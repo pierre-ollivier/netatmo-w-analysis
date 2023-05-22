@@ -33,6 +33,8 @@ void YearlyReport::fillBoard() {
         double tnn = getMinMinTemperatureByDate(date.day(), date.month()).toDouble();
         double tnx = getMaxMinTemperatureByDate(date.day(), date.month()).toDouble();
         double txn = getMinMaxTemperatureByDate(date.day(), date.month()).toDouble();
+        double txm = getAvgMaxTemperatureByDate(date.day(), date.month()).toDouble();
+        double tnm = getAvgMinTemperatureByDate(date.day(), date.month()).toDouble();
         int txxYear = getMaxMaxTemperatureYearByDate(date.day(), date.month(), txx);
         int tnnYear = getMinMinTemperatureYearByDate(date.day(), date.month(), tnn);
         int tnxYear = getMaxMinTemperatureYearByDate(date.day(), date.month(), tnx);
@@ -45,6 +47,8 @@ void YearlyReport::fillBoard() {
         mainModel->setItem(row, 5, new QStandardItem(QString::number(tnxYear)));
         mainModel->setItem(row, 6, new QStandardItem(deviceLocale->toString(txx, 'f', 1)));
         mainModel->setItem(row, 7, new QStandardItem(QString::number(txxYear)));
+        mainModel->setItem(row, 8, new QStandardItem(deviceLocale->toString(tnm, 'f', 1)));
+        mainModel->setItem(row, 9, new QStandardItem(deviceLocale->toString(txm, 'f', 1)));
         mainModel->setVerticalHeaderItem(row, new QStandardItem(date.toString("dd/MM")));
         for (int column = 0; column < mainModel->columnCount(); column++) {
             mainModel->item(row, column)->setEditable(false);
@@ -107,3 +111,18 @@ int YearlyReport::getMinMaxTemperatureYearByDate(int day, int month, double minM
                 "AND month = " + QString::number(month) + " "
                 "AND maxTemperature = " + QString::number(minMaxTemperature)).toInt();
 }
+
+QVariant YearlyReport::getAvgMaxTemperatureByDate(int day, int month) {
+    return dbHandler->getResultFromDatabase(
+                "SELECT avg(maxTemperature) FROM OutdoorDailyRecords "
+                "WHERE day = " + QString::number(day) + " AND month = " + QString::number(month));
+}
+
+QVariant YearlyReport::getAvgMinTemperatureByDate(int day, int month) {
+    return dbHandler->getResultFromDatabase(
+                "SELECT avg(minTemperature) FROM OutdoorDailyRecords "
+                "WHERE day = " + QString::number(day) + " AND month = " + QString::number(month));
+}
+
+// idea: refactor all these functions providing the column (maxTemperature, minTemperature...) and the operation (min, max, avg)
+// idea: add amplitude? maybe as an option?
