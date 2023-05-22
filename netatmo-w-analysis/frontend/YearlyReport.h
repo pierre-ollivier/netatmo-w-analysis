@@ -19,6 +19,8 @@ public slots:
     void fillBoard();
     QVariant getMaxMaxTemperatureByDate(int day, int month);
     int getMaxMaxTemperatureYearByDate(int day, int month, double maxMaxTemperature);
+    QVariant getMinMinTemperatureByDate(int day, int month);
+    int getMinMinTemperatureYearByDate(int day, int month, double minMinTemperature);
 
 signals:
 
