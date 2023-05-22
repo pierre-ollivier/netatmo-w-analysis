@@ -7,6 +7,8 @@
 #include <QStandardItemModel>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QRadioButton>
+#include <QCheckBox>
 #include "../netatmo-w-analysis/backend/DatabaseHandler.h"
 
 class YearlyReport : public QWidget
@@ -38,6 +40,12 @@ private:
 
     QHBoxLayout *mainLayout;
     QVBoxLayout *optionsLayout;
+
+    QRadioButton *temperatureRadioButton;
+    QRadioButton *humidityRadioButton;
+    QRadioButton *dewPointRadioButton;
+    QRadioButton *humidexRadioButton;
+    QCheckBox *interiorCheckBox;
 
     DatabaseHandler *dbHandler;
 };
