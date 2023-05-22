@@ -37,14 +37,14 @@ void YearlyReport::fillBoard() {
         int tnnYear = getMinMinTemperatureYearByDate(date.day(), date.month(), tnn);
         int tnxYear = getMaxMinTemperatureYearByDate(date.day(), date.month(), tnx);
         int txnYear = getMinMaxTemperatureYearByDate(date.day(), date.month(), txn);
-        mainModel->setItem(row, 0, new QStandardItem(deviceLocale->toString(txx, 'f', 1)));
-        mainModel->setItem(row, 1, new QStandardItem(QString::number(txxYear)));
-        mainModel->setItem(row, 2, new QStandardItem(deviceLocale->toString(tnn, 'f', 1)));
-        mainModel->setItem(row, 3, new QStandardItem(QString::number(tnnYear)));
+        mainModel->setItem(row, 0, new QStandardItem(deviceLocale->toString(tnn, 'f', 1)));
+        mainModel->setItem(row, 1, new QStandardItem(QString::number(tnnYear)));
+        mainModel->setItem(row, 2, new QStandardItem(deviceLocale->toString(txn, 'f', 1)));
+        mainModel->setItem(row, 3, new QStandardItem(QString::number(txnYear)));
         mainModel->setItem(row, 4, new QStandardItem(deviceLocale->toString(tnx, 'f', 1)));
         mainModel->setItem(row, 5, new QStandardItem(QString::number(tnxYear)));
-        mainModel->setItem(row, 6, new QStandardItem(deviceLocale->toString(txn, 'f', 1)));
-        mainModel->setItem(row, 7, new QStandardItem(QString::number(txnYear)));
+        mainModel->setItem(row, 6, new QStandardItem(deviceLocale->toString(txx, 'f', 1)));
+        mainModel->setItem(row, 7, new QStandardItem(QString::number(txxYear)));
         mainModel->setVerticalHeaderItem(row, new QStandardItem(date.toString("dd/MM")));
     }
 }
