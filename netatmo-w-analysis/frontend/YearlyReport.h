@@ -20,16 +20,6 @@ public:
 
 public slots:
     void fillBoard();
-    QVariant getMaxMaxMeasurementByDate(QString measurement, int day, int month);
-    int getMaxMaxMeasurementYearByDate(QString measurement, int day, int month, double maxMaxMeasurement);
-    QVariant getMinMinMeasurementByDate(QString measurement, int day, int month);
-    int getMinMinMeasurementYearByDate(QString measurement, int day, int month, double minMinMeasurement);
-    QVariant getMaxMinMeasurementByDate(QString measurement, int day, int month);
-    int getMaxMinMeasurementYearByDate(QString measurement, int day, int month, double maxMinMeasurement);
-    QVariant getMinMaxMeasurementByDate(QString measurement, int day, int month);
-    int getMinMaxMeasurementYearByDate(QString measurement, int day, int month, double minMaxMeasurement);
-    QVariant getAvgMaxMeasurementByDate(QString measurement, int day, int month);
-    QVariant getAvgMinMeasurementByDate(QString measurement, int day, int month);
     QVariant getMeasurementByDate(QString measurement, QString operation, QString scope, int day, int month);
     int getMeasurementYearByDate(QString measurementType, QString scope, int day, int month, double measurementValue);
 
