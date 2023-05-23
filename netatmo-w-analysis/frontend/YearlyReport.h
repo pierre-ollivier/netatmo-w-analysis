@@ -19,8 +19,8 @@ public:
 
 public slots:
     void fillBoard();
-    QVariant getMaxMaxTemperatureByDate(int day, int month);
-    int getMaxMaxTemperatureYearByDate(int day, int month, double maxMaxTemperature);
+    QVariant getMaxMaxMeasurementByDate(QString measurement, int day, int month);
+    int getMaxMaxMeasurementYearByDate(QString measurement, int day, int month, double maxMaxMeasurement);
     QVariant getMinMinTemperatureByDate(int day, int month);
     int getMinMinTemperatureYearByDate(int day, int month, double minMinTemperature);
     QVariant getMaxMinTemperatureByDate(int day, int month);
@@ -33,6 +33,7 @@ public slots:
 signals:
 
 private:
+    QString capitalize(QString s);
     QTableView *mainView;
     QStandardItemModel *mainModel;
 
