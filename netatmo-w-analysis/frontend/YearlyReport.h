@@ -22,6 +22,7 @@ public slots:
     void fillBoard();
     QVariant getMeasurementByDate(QString measurement, QString operation, QString scope, int day, int month);
     int getMeasurementYearByDate(QString measurementType, QString scope, int day, int month, double measurementValue);
+    void changeMeasurement();
 
 signals:
 
@@ -40,6 +41,8 @@ private:
     QRadioButton *dewPointRadioButton;
     QRadioButton *humidexRadioButton;
     QCheckBox *interiorCheckBox;
+
+    QString measurementType = "temperature";
 
     DatabaseHandler *dbHandler;
 };

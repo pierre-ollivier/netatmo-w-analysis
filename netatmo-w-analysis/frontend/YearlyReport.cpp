@@ -24,6 +24,12 @@ YearlyReport::YearlyReport()
 
     interiorCheckBox = new QCheckBox("Intérieur");
 
+    connect(temperatureRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
+    connect(humidityRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
+    connect(dewPointRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
+    connect(humidexRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
+    connect(interiorCheckBox, SIGNAL(stateChanged(int)), this, SLOT(changeMeasurement()));
+
     mainLayout = new QHBoxLayout();
 
     optionsLayout = new QVBoxLayout();
@@ -42,18 +48,19 @@ YearlyReport::YearlyReport()
 }
 
 void YearlyReport::fillBoard() {
+    mainModel->clear();
     for (QDate date = QDate(2000, 1, 1); date <= QDate(2000, 12, 31); date = date.addDays(1)) {
         int row = date.dayOfYear() - 1;
-        double txx = getMeasurementByDate("temperature", "max", "max", date.day(), date.month()).toDouble();
-        double tnn = getMeasurementByDate("temperature", "min", "min", date.day(), date.month()).toDouble();
-        double tnx = getMeasurementByDate("temperature", "max", "min", date.day(), date.month()).toDouble();
-        double txn = getMeasurementByDate("temperature", "min", "max", date.day(), date.month()).toDouble();
-        double txm = getMeasurementByDate("temperature", "avg", "max", date.day(), date.month()).toDouble();
-        double tnm = getMeasurementByDate("temperature", "avg", "min", date.day(), date.month()).toDouble();
-        int txxYear = getMeasurementYearByDate("temperature", "max", date.day(), date.month(), txx);
-        int tnnYear = getMeasurementYearByDate("temperature", "min", date.day(), date.month(), tnn);
-        int tnxYear = getMeasurementYearByDate("temperature", "min", date.day(), date.month(), tnx);
-        int txnYear = getMeasurementYearByDate("temperature", "max", date.day(), date.month(), txn);
+        double txx = getMeasurementByDate(measurementType, "max", "max", date.day(), date.month()).toDouble();
+        double tnn = getMeasurementByDate(measurementType, "min", "min", date.day(), date.month()).toDouble();
+        double tnx = getMeasurementByDate(measurementType, "max", "min", date.day(), date.month()).toDouble();
+        double txn = getMeasurementByDate(measurementType, "min", "max", date.day(), date.month()).toDouble();
+        double txm = getMeasurementByDate(measurementType, "avg", "max", date.day(), date.month()).toDouble();
+        double tnm = getMeasurementByDate(measurementType, "avg", "min", date.day(), date.month()).toDouble();
+        int txxYear = getMeasurementYearByDate(measurementType, "max", date.day(), date.month(), txx);
+        int tnnYear = getMeasurementYearByDate(measurementType, "min", date.day(), date.month(), tnn);
+        int tnxYear = getMeasurementYearByDate(measurementType, "min", date.day(), date.month(), tnx);
+        int txnYear = getMeasurementYearByDate(measurementType, "max", date.day(), date.month(), txn);
         mainModel->setItem(row, 0, new QStandardItem(deviceLocale->toString(tnn, 'f', 1)));
         mainModel->setItem(row, 1, new QStandardItem(QString::number(tnnYear)));
         mainModel->setItem(row, 2, new QStandardItem(deviceLocale->toString(txn, 'f', 1)));
@@ -98,6 +105,22 @@ int YearlyReport::getMeasurementYearByDate(QString measurementType,
                 "WHERE day = " + QString::number(day) + " "
                 "AND month = " + QString::number(month) + " "
                 "AND " + scope + capitalize(measurementType) + " = " + QString::number(measurementValue)).toInt();
+}
+
+void YearlyReport::changeMeasurement() {
+    if (temperatureRadioButton->isChecked()) {
+        measurementType = "temperature";
+    }
+    else if (humidityRadioButton->isChecked()) {
+        measurementType = "humidity";
+    }
+    else if (dewPointRadioButton->isChecked()) {
+        measurementType = "dewPoint";
+    }
+    else {
+        measurementType = "humidex";
+    }
+    fillBoard();
 }
 
 // idea: add amplitude? maybe as an option?
