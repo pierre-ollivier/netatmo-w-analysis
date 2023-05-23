@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QObject>
+#include <QString>
 #include <QTableView>
 #include <QStandardItemModel>
 #include <QHBoxLayout>
@@ -21,8 +22,8 @@ public slots:
     void fillBoard();
     QVariant getMaxMaxMeasurementByDate(QString measurement, int day, int month);
     int getMaxMaxMeasurementYearByDate(QString measurement, int day, int month, double maxMaxMeasurement);
-    QVariant getMinMinTemperatureByDate(int day, int month);
-    int getMinMinTemperatureYearByDate(int day, int month, double minMinTemperature);
+    QVariant getMinMinMeasurementByDate(QString measurement, int day, int month);
+    int getMinMinMeasurementYearByDate(QString measurement, int day, int month, double minMinMeasurement);
     QVariant getMaxMinTemperatureByDate(int day, int month);
     int getMaxMinTemperatureYearByDate(int day, int month, double maxMinTemperature);
     QVariant getMinMaxTemperatureByDate(int day, int month);
