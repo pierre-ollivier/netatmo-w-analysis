@@ -53,9 +53,9 @@ void YearlyReport::fillBoard() {
         double tnm = getMeasurementByDate("temperature", "avg", "min", date.day(), date.month()).toDouble();
 //        int txxYear = getMaxMaxMeasurementYearByDate("temperature", date.day(), date.month(), txx);
         int txxYear = getMeasurementYearByDate("temperature", "max", date.day(), date.month(), txx);
-        int tnnYear = getMinMinMeasurementYearByDate("temperature", date.day(), date.month(), tnn);
-        int tnxYear = getMaxMinMeasurementYearByDate("temperature", date.day(), date.month(), tnx);
-        int txnYear = getMinMaxMeasurementYearByDate("temperature", date.day(), date.month(), txn);
+        int tnnYear = getMeasurementYearByDate("temperature", "min", date.day(), date.month(), tnn);
+        int tnxYear = getMeasurementYearByDate("temperature", "min", date.day(), date.month(), tnx);
+        int txnYear = getMeasurementYearByDate("temperature", "max", date.day(), date.month(), txn);
         mainModel->setItem(row, 0, new QStandardItem(deviceLocale->toString(tnn, 'f', 1)));
         mainModel->setItem(row, 1, new QStandardItem(QString::number(tnnYear)));
         mainModel->setItem(row, 2, new QStandardItem(deviceLocale->toString(txn, 'f', 1)));
