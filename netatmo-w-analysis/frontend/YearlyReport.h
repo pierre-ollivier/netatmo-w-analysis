@@ -28,8 +28,8 @@ public slots:
     int getMaxMinMeasurementYearByDate(QString measurement, int day, int month, double maxMinMeasurement);
     QVariant getMinMaxMeasurementByDate(QString measurement, int day, int month);
     int getMinMaxMeasurementYearByDate(QString measurement, int day, int month, double minMaxMeasurement);
-    QVariant getAvgMaxTemperatureByDate(int day, int month);
-    QVariant getAvgMinTemperatureByDate(int day, int month);
+    QVariant getAvgMaxMeasurementByDate(QString measurement, int day, int month);
+    QVariant getAvgMinMeasurementByDate(QString measurement, int day, int month);
 
 signals:
 
