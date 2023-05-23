@@ -46,11 +46,11 @@ void YearlyReport::fillBoard() {
         int row = date.dayOfYear() - 1;
 //        double txx = getMaxMaxMeasurementByDate("temperature", date.day(), date.month()).toDouble();
         double txx = getMeasurementByDate("temperature", "max", "max", date.day(), date.month()).toDouble();
-        double tnn = getMinMinMeasurementByDate("temperature", date.day(), date.month()).toDouble();
-        double tnx = getMaxMinMeasurementByDate("temperature", date.day(), date.month()).toDouble();
-        double txn = getMinMaxMeasurementByDate("temperature", date.day(), date.month()).toDouble();
-        double txm = getAvgMaxMeasurementByDate("temperature", date.day(), date.month()).toDouble();
-        double tnm = getAvgMinMeasurementByDate("temperature", date.day(), date.month()).toDouble();
+        double tnn = getMeasurementByDate("temperature", "min", "min", date.day(), date.month()).toDouble();
+        double tnx = getMeasurementByDate("temperature", "max", "min", date.day(), date.month()).toDouble();
+        double txn = getMeasurementByDate("temperature", "min", "max", date.day(), date.month()).toDouble();
+        double txm = getMeasurementByDate("temperature", "avg", "max", date.day(), date.month()).toDouble();
+        double tnm = getMeasurementByDate("temperature", "avg", "min", date.day(), date.month()).toDouble();
 //        int txxYear = getMaxMaxMeasurementYearByDate("temperature", date.day(), date.month(), txx);
         int txxYear = getMeasurementYearByDate("temperature", "max", date.day(), date.month(), txx);
         int tnnYear = getMinMinMeasurementYearByDate("temperature", date.day(), date.month(), tnn);
