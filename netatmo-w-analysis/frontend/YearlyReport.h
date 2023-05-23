@@ -30,6 +30,8 @@ public slots:
     int getMinMaxMeasurementYearByDate(QString measurement, int day, int month, double minMaxMeasurement);
     QVariant getAvgMaxMeasurementByDate(QString measurement, int day, int month);
     QVariant getAvgMinMeasurementByDate(QString measurement, int day, int month);
+    QVariant getMeasurementByDate(QString measurement, QString operation, QString scope, int day, int month);
+    int getMeasurementYearByDate(QString measurementType, QString scope, int day, int month, double measurementValue);
 
 signals:
 

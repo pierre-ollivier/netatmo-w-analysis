@@ -44,13 +44,15 @@ YearlyReport::YearlyReport()
 void YearlyReport::fillBoard() {
     for (QDate date = QDate(2000, 1, 1); date <= QDate(2000, 12, 31); date = date.addDays(1)) {
         int row = date.dayOfYear() - 1;
-        double txx = getMaxMaxMeasurementByDate("temperature", date.day(), date.month()).toDouble();
+//        double txx = getMaxMaxMeasurementByDate("temperature", date.day(), date.month()).toDouble();
+        double txx = getMeasurementByDate("temperature", "max", "max", date.day(), date.month()).toDouble();
         double tnn = getMinMinMeasurementByDate("temperature", date.day(), date.month()).toDouble();
         double tnx = getMaxMinMeasurementByDate("temperature", date.day(), date.month()).toDouble();
         double txn = getMinMaxMeasurementByDate("temperature", date.day(), date.month()).toDouble();
         double txm = getAvgMaxMeasurementByDate("temperature", date.day(), date.month()).toDouble();
         double tnm = getAvgMinMeasurementByDate("temperature", date.day(), date.month()).toDouble();
-        int txxYear = getMaxMaxMeasurementYearByDate("temperature", date.day(), date.month(), txx);
+//        int txxYear = getMaxMaxMeasurementYearByDate("temperature", date.day(), date.month(), txx);
+        int txxYear = getMeasurementYearByDate("temperature", "max", date.day(), date.month(), txx);
         int tnnYear = getMinMinMeasurementYearByDate("temperature", date.day(), date.month(), tnn);
         int tnxYear = getMaxMinMeasurementYearByDate("temperature", date.day(), date.month(), tnx);
         int txnYear = getMinMaxMeasurementYearByDate("temperature", date.day(), date.month(), txn);
@@ -144,6 +146,28 @@ QString YearlyReport::capitalize(QString s) {
      * Returns a copy of s where the first letter is in uppercase, the other ones in lowercase
      */
     return QString(s[0]).toUpper() + s.mid(1);
+}
+
+QVariant YearlyReport::getMeasurementByDate(QString measurement,
+                                            QString operation,
+                                            QString scope,
+                                            int day,
+                                            int month) {
+    return dbHandler->getResultFromDatabase(
+                "SELECT " + operation + "(" + scope + capitalize(measurement) + ") FROM OutdoorDailyRecords "
+                "WHERE day = " + QString::number(day) + " AND month = " + QString::number(month));
+}
+
+int YearlyReport::getMeasurementYearByDate(QString measurementType,
+                                           QString scope,
+                                           int day,
+                                           int month,
+                                           double measurementValue) {
+    return dbHandler->getResultFromDatabase(
+                "SELECT year FROM OutdoorDailyRecords "
+                "WHERE day = " + QString::number(day) + " "
+                "AND month = " + QString::number(month) + " "
+                "AND " + scope + capitalize(measurementType) + " = " + QString::number(measurementValue)).toInt();
 }
 
 // idea: refactor all these functions providing the column (maxTemperature, minTemperature...) and the operation (min, max, avg)
