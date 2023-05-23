@@ -48,8 +48,8 @@ void YearlyReport::fillBoard() {
         double tnn = getMinMinMeasurementByDate("temperature", date.day(), date.month()).toDouble();
         double tnx = getMaxMinMeasurementByDate("temperature", date.day(), date.month()).toDouble();
         double txn = getMinMaxMeasurementByDate("temperature", date.day(), date.month()).toDouble();
-        double txm = getAvgMaxTemperatureByDate(date.day(), date.month()).toDouble();
-        double tnm = getAvgMinTemperatureByDate(date.day(), date.month()).toDouble();
+        double txm = getAvgMaxMeasurementByDate("temperature", date.day(), date.month()).toDouble();
+        double tnm = getAvgMinMeasurementByDate("temperature", date.day(), date.month()).toDouble();
         int txxYear = getMaxMaxMeasurementYearByDate("temperature", date.day(), date.month(), txx);
         int tnnYear = getMinMinMeasurementYearByDate("temperature", date.day(), date.month(), tnn);
         int tnxYear = getMaxMinMeasurementYearByDate("temperature", date.day(), date.month(), tnx);
@@ -127,15 +127,15 @@ int YearlyReport::getMinMaxMeasurementYearByDate(QString measurement, int day, i
                 "AND max" + capitalize(measurement) + " = " + QString::number(minMaxMeasurement)).toInt();
 }
 
-QVariant YearlyReport::getAvgMaxTemperatureByDate(int day, int month) {
+QVariant YearlyReport::getAvgMaxMeasurementByDate(QString measurement, int day, int month) {
     return dbHandler->getResultFromDatabase(
-                "SELECT avg(maxTemperature) FROM OutdoorDailyRecords "
+                "SELECT avg(max" + capitalize(measurement) + ") FROM OutdoorDailyRecords "
                 "WHERE day = " + QString::number(day) + " AND month = " + QString::number(month));
 }
 
-QVariant YearlyReport::getAvgMinTemperatureByDate(int day, int month) {
+QVariant YearlyReport::getAvgMinMeasurementByDate(QString measurement, int day, int month) {
     return dbHandler->getResultFromDatabase(
-                "SELECT avg(minTemperature) FROM OutdoorDailyRecords "
+                "SELECT avg(min" + capitalize(measurement) + ") FROM OutdoorDailyRecords "
                 "WHERE day = " + QString::number(day) + " AND month = " + QString::number(month));
 }
 
