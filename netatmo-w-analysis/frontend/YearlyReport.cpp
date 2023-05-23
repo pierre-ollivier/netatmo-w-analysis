@@ -44,13 +44,13 @@ YearlyReport::YearlyReport()
 void YearlyReport::fillBoard() {
     for (QDate date = QDate(2000, 1, 1); date <= QDate(2000, 12, 31); date = date.addDays(1)) {
         int row = date.dayOfYear() - 1;
-        double txx = getMaxMaxTemperatureByDate(date.day(), date.month()).toDouble();
+        double txx = getMaxMaxMeasurementByDate("temperature", date.day(), date.month()).toDouble();
         double tnn = getMinMinTemperatureByDate(date.day(), date.month()).toDouble();
         double tnx = getMaxMinTemperatureByDate(date.day(), date.month()).toDouble();
         double txn = getMinMaxTemperatureByDate(date.day(), date.month()).toDouble();
         double txm = getAvgMaxTemperatureByDate(date.day(), date.month()).toDouble();
         double tnm = getAvgMinTemperatureByDate(date.day(), date.month()).toDouble();
-        int txxYear = getMaxMaxTemperatureYearByDate(date.day(), date.month(), txx);
+        int txxYear = getMaxMaxMeasurementYearByDate("temperature", date.day(), date.month(), txx);
         int tnnYear = getMinMinTemperatureYearByDate(date.day(), date.month(), tnn);
         int tnxYear = getMaxMinTemperatureYearByDate(date.day(), date.month(), tnx);
         int txnYear = getMinMaxTemperatureYearByDate(date.day(), date.month(), txn);
@@ -71,18 +71,18 @@ void YearlyReport::fillBoard() {
     }
 }
 
-QVariant YearlyReport::getMaxMaxTemperatureByDate(int day, int month) {
+QVariant YearlyReport::getMaxMaxMeasurementByDate(QString measurement, int day, int month) {
     return dbHandler->getResultFromDatabase(
-                "SELECT max(maxTemperature) FROM OutdoorDailyRecords "
+                "SELECT max(max" + capitalize(measurement) + ") FROM OutdoorDailyRecords "
                 "WHERE day = " + QString::number(day) + " AND month = " + QString::number(month));
 }
 
-int YearlyReport::getMaxMaxTemperatureYearByDate(int day, int month, double maxMaxTemperature) {
+int YearlyReport::getMaxMaxMeasurementYearByDate(QString measurement, int day, int month, double maxMaxMeasurement) {
     return dbHandler->getResultFromDatabase(
                 "SELECT year FROM OutdoorDailyRecords "
                 "WHERE day = " + QString::number(day) + " "
                 "AND month = " + QString::number(month) + " "
-                "AND maxTemperature = " + QString::number(maxMaxTemperature)).toInt();
+                "AND max" + capitalize(measurement) + " = " + QString::number(maxMaxMeasurement)).toInt();
 }
 
 QVariant YearlyReport::getMinMinTemperatureByDate(int day, int month) {
@@ -137,6 +137,13 @@ QVariant YearlyReport::getAvgMinTemperatureByDate(int day, int month) {
     return dbHandler->getResultFromDatabase(
                 "SELECT avg(minTemperature) FROM OutdoorDailyRecords "
                 "WHERE day = " + QString::number(day) + " AND month = " + QString::number(month));
+}
+
+QString YearlyReport::capitalize(QString s) {
+    /*
+     * Returns a copy of s where the first letter is in uppercase, the other ones in lowercase
+     */
+    return QString(s[0]).toUpper() + s.mid(1);
 }
 
 // idea: refactor all these functions providing the column (maxTemperature, minTemperature...) and the operation (min, max, avg)
