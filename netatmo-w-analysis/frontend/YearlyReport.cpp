@@ -46,13 +46,13 @@ void YearlyReport::fillBoard() {
         int row = date.dayOfYear() - 1;
         double txx = getMaxMaxMeasurementByDate("temperature", date.day(), date.month()).toDouble();
         double tnn = getMinMinMeasurementByDate("temperature", date.day(), date.month()).toDouble();
-        double tnx = getMaxMinTemperatureByDate(date.day(), date.month()).toDouble();
+        double tnx = getMaxMinMeasurementByDate("temperature", date.day(), date.month()).toDouble();
         double txn = getMinMaxTemperatureByDate(date.day(), date.month()).toDouble();
         double txm = getAvgMaxTemperatureByDate(date.day(), date.month()).toDouble();
         double tnm = getAvgMinTemperatureByDate(date.day(), date.month()).toDouble();
         int txxYear = getMaxMaxMeasurementYearByDate("temperature", date.day(), date.month(), txx);
         int tnnYear = getMinMinMeasurementYearByDate("temperature", date.day(), date.month(), tnn);
-        int tnxYear = getMaxMinTemperatureYearByDate(date.day(), date.month(), tnx);
+        int tnxYear = getMaxMinMeasurementYearByDate("temperature", date.day(), date.month(), tnx);
         int txnYear = getMinMaxTemperatureYearByDate(date.day(), date.month(), txn);
         mainModel->setItem(row, 0, new QStandardItem(deviceLocale->toString(tnn, 'f', 1)));
         mainModel->setItem(row, 1, new QStandardItem(QString::number(tnnYear)));
@@ -99,18 +99,18 @@ int YearlyReport::getMinMinMeasurementYearByDate(QString measurement, int day, i
                 "AND min" + capitalize(measurement) + " = " + QString::number(minMinMeasurement)).toInt();
 }
 
-QVariant YearlyReport::getMaxMinTemperatureByDate(int day, int month) {
+QVariant YearlyReport::getMaxMinMeasurementByDate(QString measurement, int day, int month) {
     return dbHandler->getResultFromDatabase(
-                "SELECT max(minTemperature) FROM OutdoorDailyRecords "
+                "SELECT max(min" + capitalize(measurement) + ") FROM OutdoorDailyRecords "
                 "WHERE day = " + QString::number(day) + " AND month = " + QString::number(month));
 }
 
-int YearlyReport::getMaxMinTemperatureYearByDate(int day, int month, double maxMinTemperature) {
+int YearlyReport::getMaxMinMeasurementYearByDate(QString measurement, int day, int month, double maxMinMeasurement) {
     return dbHandler->getResultFromDatabase(
                 "SELECT year FROM OutdoorDailyRecords "
                 "WHERE day = " + QString::number(day) + " "
                 "AND month = " + QString::number(month) + " "
-                "AND minTemperature = " + QString::number(maxMinTemperature)).toInt();
+                "AND min" + capitalize(measurement) + " = " + QString::number(maxMinMeasurement)).toInt();
 }
 
 QVariant YearlyReport::getMinMaxTemperatureByDate(int day, int month) {
