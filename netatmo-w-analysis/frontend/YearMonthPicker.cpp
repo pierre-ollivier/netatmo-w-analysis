@@ -65,6 +65,7 @@ YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) :
     mainLayout->setSpacing(60);
     mainLayout->addWidget(yearView);
     mainLayout->addWidget(monthView);
+    mainLayout->setSizeConstraint(QLayout::SetFixedSize);
 
     setLayout(mainLayout);
 
