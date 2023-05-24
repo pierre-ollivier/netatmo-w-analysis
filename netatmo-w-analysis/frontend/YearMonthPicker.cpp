@@ -11,11 +11,15 @@ YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) :
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 4; j++) {
             monthModel->setItem(j, i, new QStandardItem(abbreviatedMonths[3 * j + i]));
+            monthModel->item(j, i)->setEditable(false);
+            monthModel->item(j, i)->setTextAlignment(Qt::AlignCenter);
         }
     }
 
     for (int i = 0; i < 5; i++) {
         yearModel->setItem(i, 0, new QStandardItem(QString::number(2019 + i)));
+        yearModel->item(i, 0)->setEditable(false);
+        yearModel->item(i, 0)->setTextAlignment(Qt::AlignCenter);
     }
 
     monthView = new QTableView();
