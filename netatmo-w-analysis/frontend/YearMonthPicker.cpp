@@ -2,9 +2,12 @@
 #include "../netatmo-w-analysis/frontend/CustomItemDelegate.h"
 #include <QHeaderView>
 #include <QDebug>
+#include <QDate>
 
 YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) : QDialog(parent)
 {
+    const int START_YEAR = 2019;
+    const int NUMBER_OF_YEARS = QDate::currentDate().year() - START_YEAR + 1;
     monthModel = new QStandardItemModel();
     yearModel = new QStandardItemModel();
 
@@ -16,8 +19,8 @@ YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) :
         }
     }
 
-    for (int i = 0; i < 5; i++) {
-        yearModel->setItem(i, 0, new QStandardItem(QString::number(2019 + i)));
+    for (int i = 0; i < NUMBER_OF_YEARS; i++) {
+        yearModel->setItem(i, 0, new QStandardItem(QString::number(START_YEAR + i)));
         yearModel->item(i, 0)->setEditable(false);
         yearModel->item(i, 0)->setTextAlignment(Qt::AlignCenter);
     }
@@ -38,7 +41,7 @@ YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) :
     yearView->horizontalHeader()->hide();
     yearView->verticalHeader()->hide();
     yearView->setSelectionMode(QAbstractItemView::SingleSelection);
-    yearView->selectionModel()->select(yearView->model()->index(baseYear - 2019, 0),
+    yearView->selectionModel()->select(yearView->model()->index(baseYear - START_YEAR, 0),
                                        QItemSelectionModel::Select);
     yearView->setItemDelegate(new CustomItemDelegate());
 
@@ -49,10 +52,14 @@ YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) :
         monthView->setRowHeight(row, 50);
     }
 
+    for (int row = 0; row < NUMBER_OF_YEARS; row++) {
+        yearView->setRowHeight(row, 240 / NUMBER_OF_YEARS);
+    }
+
     monthView->setFixedSize(149, 202);
 
     yearView->setColumnWidth(0, 50);
-    yearView->setFixedSize(50, 250);
+    yearView->setFixedSize(50, 242);
 
     mainLayout = new QHBoxLayout();
     mainLayout->addWidget(yearView);
