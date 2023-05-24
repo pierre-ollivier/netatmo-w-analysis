@@ -1,4 +1,5 @@
 #include "YearMonthPicker.h"
+#include "../netatmo-w-analysis/frontend/CustomItemDelegate.h"
 #include <QHeaderView>
 #include <QDebug>
 
@@ -28,12 +29,14 @@ YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) :
     monthView->setSelectionMode(QAbstractItemView::SingleSelection);
     monthView->selectionModel()->select(monthView->model()->index((baseMonth - 1) / 3, (baseMonth - 1) % 3),
                                         QItemSelectionModel::Select);
+    monthView->setItemDelegate(new CustomItemDelegate());
 
     yearView->horizontalHeader()->hide();
     yearView->verticalHeader()->hide();
     yearView->setSelectionMode(QAbstractItemView::SingleSelection);
     yearView->selectionModel()->select(yearView->model()->index(baseYear - 2019, 0),
                                        QItemSelectionModel::Select);
+    yearView->setItemDelegate(new CustomItemDelegate());
 
     for (int column = 0; column < 3; column++) {
         monthView->setColumnWidth(column, 40);
