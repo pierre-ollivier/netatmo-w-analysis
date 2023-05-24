@@ -6,6 +6,7 @@ void CustomItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
 
     if (opt.state & QStyle::State_Selected) {
         opt.palette.setColor(QPalette::Highlight, QColor(100, 47, 143));
+        opt.palette.setColor(QPalette::HighlightedText, Qt::white);
     }
 
     QItemDelegate::paint(painter, opt, index);
