@@ -62,6 +62,7 @@ YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) :
     yearView->setFixedSize(50, 242);
 
     mainLayout = new QHBoxLayout();
+    mainLayout->setSpacing(60);
     mainLayout->addWidget(yearView);
     mainLayout->addWidget(monthView);
 
