@@ -5,7 +5,7 @@ void CustomItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     opt.state &= ~QStyle::State_HasFocus; // Remove focus indication
 
     if (opt.state & QStyle::State_Selected) {
-        opt.palette.setColor(QPalette::Highlight, Qt::red);
+        opt.palette.setColor(QPalette::Highlight, QColor(100, 47, 143));
     }
 
     QItemDelegate::paint(painter, opt, index);
