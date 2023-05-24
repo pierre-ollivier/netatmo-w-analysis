@@ -45,8 +45,14 @@ YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) :
     for (int column = 0; column < 3; column++) {
         monthView->setColumnWidth(column, 40);
     }
+    for (int row = 0; row < 4; row++) {
+        monthView->setRowHeight(row, 50);
+    }
+
+    monthView->setFixedSize(149, 202);
 
     yearView->setColumnWidth(0, 50);
+    yearView->setFixedSize(50, 250);
 
     mainLayout = new QHBoxLayout();
     mainLayout->addWidget(yearView);
