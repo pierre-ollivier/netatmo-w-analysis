@@ -24,15 +24,15 @@ signals:
 
 private:
     const QStringList abbreviatedMonths = {
-        "jan.",
-        "fév.",
-        "mar.",
+        "janv.",
+        "févr.",
+        "mars",
         "avr.",
         "mai",
-        "jun.",
-        "jul.",
-        "aoû.",
-        "sep.",
+        "juin",
+        "juill.",
+        "août",
+        "sept.",
         "oct.",
         "nov.",
         "déc."
