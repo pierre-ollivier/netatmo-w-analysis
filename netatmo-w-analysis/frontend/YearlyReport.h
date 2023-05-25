@@ -43,6 +43,14 @@ private:
     QCheckBox *interiorCheckBox;
 
     QString measurementType = "temperature";
+    QStringList legends = QStringList({
+                                          "Tnn",
+                                          "Txn",
+                                          "Tnx",
+                                          "Txx",
+                                          "Température minimale moyenne",
+                                          "Température maximale moyenne"
+                                      });
 
     DatabaseHandler *dbHandler;
 };
