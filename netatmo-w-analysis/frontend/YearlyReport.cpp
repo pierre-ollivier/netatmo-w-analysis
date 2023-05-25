@@ -38,6 +38,7 @@ YearlyReport::YearlyReport()
     optionsLayout->addWidget(dewPointRadioButton);
     optionsLayout->addWidget(humidexRadioButton);
     optionsLayout->addWidget(interiorCheckBox);
+    optionsLayout->setContentsMargins(0, 350, 0, 350);
 
     mainLayout->addWidget(mainView);
     mainLayout->addLayout(optionsLayout);
