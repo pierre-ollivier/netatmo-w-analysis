@@ -10,6 +10,7 @@
 #include <QVBoxLayout>
 #include <QRadioButton>
 #include <QCheckBox>
+#include <QColor>
 #include "../netatmo-w-analysis/backend/DatabaseHandler.h"
 
 class YearlyReport : public QWidget
@@ -23,6 +24,8 @@ public slots:
     QVariant getMeasurementByDate(QString measurement, QString operation, QString scope, int day, int month);
     int getMeasurementYearByDate(QString measurementType, QString scope, int day, int month, double measurementValue);
     void changeMeasurement();
+    QColor temperatureColor(double temperature);
+    QColor humidityColor(int humidity);
 
 signals:
 

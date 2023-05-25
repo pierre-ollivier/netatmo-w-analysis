@@ -51,31 +51,50 @@ void YearlyReport::fillBoard() {
     mainModel->clear();
     for (QDate date = QDate(2000, 1, 1); date <= QDate(2000, 12, 31); date = date.addDays(1)) {
         int row = date.dayOfYear() - 1;
-        double txx = getMeasurementByDate(measurementType, "max", "max", date.day(), date.month()).toDouble();
-        double tnn = getMeasurementByDate(measurementType, "min", "min", date.day(), date.month()).toDouble();
-        double tnx = getMeasurementByDate(measurementType, "max", "min", date.day(), date.month()).toDouble();
-        double txn = getMeasurementByDate(measurementType, "min", "max", date.day(), date.month()).toDouble();
-        double txm = getMeasurementByDate(measurementType, "avg", "max", date.day(), date.month()).toDouble();
-        double tnm = getMeasurementByDate(measurementType, "avg", "min", date.day(), date.month()).toDouble();
-        int txxYear = getMeasurementYearByDate(measurementType, "max", date.day(), date.month(), txx);
-        int tnnYear = getMeasurementYearByDate(measurementType, "min", date.day(), date.month(), tnn);
-        int tnxYear = getMeasurementYearByDate(measurementType, "min", date.day(), date.month(), tnx);
-        int txnYear = getMeasurementYearByDate(measurementType, "max", date.day(), date.month(), txn);
-        mainModel->setItem(row, 0, new QStandardItem(deviceLocale->toString(tnn, 'f', decimals) + " " + unit));
-        mainModel->setItem(row, 1, new QStandardItem(QString::number(tnnYear)));
-        mainModel->setItem(row, 2, new QStandardItem(deviceLocale->toString(txn, 'f', decimals) + " " + unit));
-        mainModel->setItem(row, 3, new QStandardItem(QString::number(txnYear)));
-        mainModel->setItem(row, 4, new QStandardItem(deviceLocale->toString(tnx, 'f', decimals) + " " + unit));
-        mainModel->setItem(row, 5, new QStandardItem(QString::number(tnxYear)));
-        mainModel->setItem(row, 6, new QStandardItem(deviceLocale->toString(txx, 'f', decimals) + " " + unit));
-        mainModel->setItem(row, 7, new QStandardItem(QString::number(txxYear)));
-        mainModel->setItem(row, 8, new QStandardItem(deviceLocale->toString(tnm, 'f', decimals) + " " + unit));
-        mainModel->setItem(row, 9, new QStandardItem(deviceLocale->toString(txm, 'f', decimals) + " " + unit));
+        double mxx = getMeasurementByDate(measurementType, "max", "max", date.day(), date.month()).toDouble();
+        double mnn = getMeasurementByDate(measurementType, "min", "min", date.day(), date.month()).toDouble();
+        double mnx = getMeasurementByDate(measurementType, "max", "min", date.day(), date.month()).toDouble();
+        double mxn = getMeasurementByDate(measurementType, "min", "max", date.day(), date.month()).toDouble();
+        double mxm = getMeasurementByDate(measurementType, "avg", "max", date.day(), date.month()).toDouble();
+        double mnm = getMeasurementByDate(measurementType, "avg", "min", date.day(), date.month()).toDouble();
+        int mxxYear = getMeasurementYearByDate(measurementType, "max", date.day(), date.month(), mxx);
+        int mnnYear = getMeasurementYearByDate(measurementType, "min", date.day(), date.month(), mnn);
+        int mnxYear = getMeasurementYearByDate(measurementType, "min", date.day(), date.month(), mnx);
+        int mxnYear = getMeasurementYearByDate(measurementType, "max", date.day(), date.month(), mxn);
+        mainModel->setItem(row, 0, new QStandardItem(deviceLocale->toString(mnn, 'f', decimals) + " " + unit));
+        mainModel->setItem(row, 1, new QStandardItem(QString::number(mnnYear)));
+        mainModel->setItem(row, 2, new QStandardItem(deviceLocale->toString(mxn, 'f', decimals) + " " + unit));
+        mainModel->setItem(row, 3, new QStandardItem(QString::number(mxnYear)));
+        mainModel->setItem(row, 4, new QStandardItem(deviceLocale->toString(mnx, 'f', decimals) + " " + unit));
+        mainModel->setItem(row, 5, new QStandardItem(QString::number(mnxYear)));
+        mainModel->setItem(row, 6, new QStandardItem(deviceLocale->toString(mxx, 'f', decimals) + " " + unit));
+        mainModel->setItem(row, 7, new QStandardItem(QString::number(mxxYear)));
+        mainModel->setItem(row, 8, new QStandardItem(deviceLocale->toString(mnm, 'f', decimals) + " " + unit));
+        mainModel->setItem(row, 9, new QStandardItem(deviceLocale->toString(mxm, 'f', decimals) + " " + unit));
         mainModel->setVerticalHeaderItem(row, new QStandardItem(date.toString("dd/MM")));
+
         for (int column = 0; column < mainModel->columnCount(); column++) {
             mainModel->item(row, column)->setEditable(false);
         }
+
+        if (unit == "°C" or unit == "") {
+            mainModel->item(row, 0)->setBackground(QBrush(temperatureColor(mnn)));
+            mainModel->item(row, 2)->setBackground(QBrush(temperatureColor(mxn)));
+            mainModel->item(row, 4)->setBackground(QBrush(temperatureColor(mnx)));
+            mainModel->item(row, 6)->setBackground(QBrush(temperatureColor(mxx)));
+            mainModel->item(row, 8)->setBackground(QBrush(temperatureColor(mnm)));
+            mainModel->item(row, 9)->setBackground(QBrush(temperatureColor(mxm)));
+        }
+        else if (unit == "%") {
+            mainModel->item(row, 0)->setBackground(QBrush(humidityColor(mnn)));
+            mainModel->item(row, 2)->setBackground(QBrush(humidityColor(mxn)));
+            mainModel->item(row, 4)->setBackground(QBrush(humidityColor(mnx)));
+            mainModel->item(row, 6)->setBackground(QBrush(humidityColor(mxx)));
+            mainModel->item(row, 8)->setBackground(QBrush(humidityColor(mnm)));
+            mainModel->item(row, 9)->setBackground(QBrush(humidityColor(mxm)));
+        }
     }
+
     mainModel->setHorizontalHeaderLabels(
                 QStringList({
                                 legends[0],
@@ -182,6 +201,59 @@ void YearlyReport::changeMeasurement() {
         indoorOrOutdoorCapitalized = "Outdoor";
     }
     fillBoard();
+}
+
+QColor YearlyReport::temperatureColor(double temperature) {
+
+    //t valant 10 fois la température exprimée en °C
+    //t =-200 : QColor(0, 0, 0)
+    //t =-150 : QColor(128, 0, 128)
+    //t =-100 : QColor(128, 0, 255)
+    //t = -50 : QColor(0, 0, 255)
+    //t =   0 : QColor(0, 128, 255)
+    //t =  50 : QColor(0, 255, 0)
+    //t = 100 : QColor(255, 255, 0)
+    //t = 200 : QColor(255, 128, 0)
+    //t = 300 : QColor(255, 0, 0)
+    //t = 350 : QColor(255, 0, 128)
+    //t = 400 : QColor(255, 0, 255)
+    //t = 450 : QColor(128, 0, 128)
+    //t = 500 : QColor(0, 0, 0)
+
+    int t = int(10 * temperature + 0.5 - (temperature < 0.0));
+
+    if (t < -200) return QColor(0, 0, 0);
+    if (t == -200) return QColor(0, 0, 0);
+    if (t < -150) return QColor(10 + (t + 200)*108/50, 0, 10 + (t + 200)*108/50);
+    if (t == -150) return QColor(128, 0, 128);
+    if (t < -100) return QColor(128, 0, 138 + (t + 150)*107/50);
+    if (t == -100) return QColor(128, 0, 255);
+    if (t < -50) return QColor(118 + (-100 - t)*108/50, 0, 255);
+    if (t == -50) return QColor(0, 0, 255);
+    if (t < 0) return QColor(0, 10 + (t + 50)*108/50, 255);
+    if (t == 0) return QColor(0, 128, 255);
+    if (t < 50) return QColor(0, 138 + t*107/50, 245 - t*235/50);
+    if (t == 50) return QColor(0, 255, 0);
+    if (t < 100) return QColor(10 + (t - 50)*235/50, 255, 0);
+    if (t == 100) return QColor(255, 255, 0);
+    if (t < 200) return QColor(255, 245 + (100 - t)*107/100, 0);
+    if (t == 200) return QColor(255, 128, 0);
+    if (t < 300) return QColor(255, 118 + (200 - t)*108/100, 0);
+    if (t == 300) return QColor(255, 0, 0);
+    if (t < 350) return QColor(255, 0, 10 + (t - 300)*108/50);
+    if (t == 350) return QColor(255, 0, 128);
+    if (t < 400) return QColor(255, 0, 138 + (t - 350)*107/50);
+    if (t == 400) return QColor(255, 0, 255);
+    if (t < 450) return QColor(245 + (400 - t)*107/50, 0, 245 + (400 - t)*107/50);
+    if (t == 450) return QColor(128, 0, 128);
+    if (t < 500) return QColor(118 + (450 - t)*108/50, 0, 118 + (450 - t)*108/50);
+    if (t == 500) return QColor(0, 0, 0);
+    return QColor(0, 0, 0);
+
+}
+
+QColor YearlyReport::humidityColor(int humidity) {
+    return temperatureColor(45 - 0.6 * humidity);
 }
 
 // idea: add amplitude? maybe as an option?
