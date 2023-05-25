@@ -61,16 +61,16 @@ void YearlyReport::fillBoard() {
         int tnnYear = getMeasurementYearByDate(measurementType, "min", date.day(), date.month(), tnn);
         int tnxYear = getMeasurementYearByDate(measurementType, "min", date.day(), date.month(), tnx);
         int txnYear = getMeasurementYearByDate(measurementType, "max", date.day(), date.month(), txn);
-        mainModel->setItem(row, 0, new QStandardItem(deviceLocale->toString(tnn, 'f', 1) + " " + unit));
+        mainModel->setItem(row, 0, new QStandardItem(deviceLocale->toString(tnn, 'f', decimals) + " " + unit));
         mainModel->setItem(row, 1, new QStandardItem(QString::number(tnnYear)));
-        mainModel->setItem(row, 2, new QStandardItem(deviceLocale->toString(txn, 'f', 1) + " " + unit));
+        mainModel->setItem(row, 2, new QStandardItem(deviceLocale->toString(txn, 'f', decimals) + " " + unit));
         mainModel->setItem(row, 3, new QStandardItem(QString::number(txnYear)));
-        mainModel->setItem(row, 4, new QStandardItem(deviceLocale->toString(tnx, 'f', 1) + " " + unit));
+        mainModel->setItem(row, 4, new QStandardItem(deviceLocale->toString(tnx, 'f', decimals) + " " + unit));
         mainModel->setItem(row, 5, new QStandardItem(QString::number(tnxYear)));
-        mainModel->setItem(row, 6, new QStandardItem(deviceLocale->toString(txx, 'f', 1) + " " + unit));
+        mainModel->setItem(row, 6, new QStandardItem(deviceLocale->toString(txx, 'f', decimals) + " " + unit));
         mainModel->setItem(row, 7, new QStandardItem(QString::number(txxYear)));
-        mainModel->setItem(row, 8, new QStandardItem(deviceLocale->toString(tnm, 'f', 1) + " " + unit));
-        mainModel->setItem(row, 9, new QStandardItem(deviceLocale->toString(txm, 'f', 1) + " " + unit));
+        mainModel->setItem(row, 8, new QStandardItem(deviceLocale->toString(tnm, 'f', decimals) + " " + unit));
+        mainModel->setItem(row, 9, new QStandardItem(deviceLocale->toString(txm, 'f', decimals) + " " + unit));
         mainModel->setVerticalHeaderItem(row, new QStandardItem(date.toString("dd/MM")));
         for (int column = 0; column < mainModel->columnCount(); column++) {
             mainModel->item(row, column)->setEditable(false);
@@ -132,6 +132,7 @@ void YearlyReport::changeMeasurement() {
             "Température maximale moyenne"
         });
         unit = "°C";
+        decimals = 1;
     }
     else if (humidityRadioButton->isChecked()) {
         measurementType = "humidity";
@@ -144,6 +145,7 @@ void YearlyReport::changeMeasurement() {
             "Humidité maximale moyenne"
         });
         unit = "%";
+        decimals = 0;
     }
     else if (dewPointRadioButton->isChecked()) {
         measurementType = "dewPoint";
@@ -156,6 +158,7 @@ void YearlyReport::changeMeasurement() {
             "Point de rosée maximal moyen"
         });
         unit = "°C";
+        decimals = 1;
     }
     else {
         measurementType = "humidex";
@@ -168,6 +171,7 @@ void YearlyReport::changeMeasurement() {
             "Humidex maximal moyen"
         });
         unit = "";
+        decimals = 1;
     }
     fillBoard();
 }
