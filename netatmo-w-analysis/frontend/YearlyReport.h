@@ -52,6 +52,7 @@ private:
                                           "Température maximale moyenne"
                                       });
     QString unit = "°C";
+    int decimals = 1;
 
     DatabaseHandler *dbHandler;
 };
