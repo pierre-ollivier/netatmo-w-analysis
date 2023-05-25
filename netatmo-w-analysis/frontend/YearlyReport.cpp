@@ -76,6 +76,19 @@ void YearlyReport::fillBoard() {
             mainModel->item(row, column)->setEditable(false);
         }
     }
+    mainModel->setHorizontalHeaderLabels(
+                QStringList({
+                                legends[0],
+                                "Année",
+                                legends[1],
+                                "Année",
+                                legends[2],
+                                "Année",
+                                legends[3],
+                                "Année",
+                                legends[4],
+                                legends[5]
+                            }));
 }
 
 QString YearlyReport::capitalize(QString s) {
@@ -110,15 +123,47 @@ int YearlyReport::getMeasurementYearByDate(QString measurementType,
 void YearlyReport::changeMeasurement() {
     if (temperatureRadioButton->isChecked()) {
         measurementType = "temperature";
+        legends = QStringList({
+            "Tnn",
+            "Txn",
+            "Tnx",
+            "Txx",
+            "Température minimale moyenne",
+            "Température maximale moyenne"
+        });
     }
     else if (humidityRadioButton->isChecked()) {
         measurementType = "humidity";
+        legends = QStringList({
+            "HRnn",
+            "HRxn",
+            "HRnx",
+            "HRxx",
+            "Humidité minimale moyenne",
+            "Humidité maximale moyenne"
+        });
     }
     else if (dewPointRadioButton->isChecked()) {
         measurementType = "dewPoint";
+        legends = QStringList({
+            "Tdnn",
+            "Tdxn",
+            "Tdnx",
+            "Tdxx",
+            "Point de rosée minimal moyen",
+            "Point de rosée maximal moyen"
+        });
     }
     else {
         measurementType = "humidex";
+        legends = QStringList({
+            "Hxnn",
+            "Hxxn",
+            "Hxnx",
+            "Hxxx",
+            "Humidex minimal moyen",
+            "Humidex maximal moyen"
+        });
     }
     fillBoard();
 }
