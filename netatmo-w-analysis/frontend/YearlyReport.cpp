@@ -43,6 +43,7 @@ YearlyReport::YearlyReport()
     mainLayout->addLayout(optionsLayout);
 
     setLayout(mainLayout);
+    setFixedSize(1480, 1000);
 
     fillBoard();
 }
@@ -108,6 +109,14 @@ void YearlyReport::fillBoard() {
                                 legends[4],
                                 legends[5]
                             }));
+
+    mainView->setColumnWidth(1, 60);
+    mainView->setColumnWidth(3, 60);
+    mainView->setColumnWidth(5, 60);
+    mainView->setColumnWidth(7, 60);
+    mainView->setColumnWidth(8, 240);
+    mainView->setColumnWidth(9, 240);
+    mainView->setFixedWidth(1290);
 }
 
 QString YearlyReport::capitalize(QString s) {
