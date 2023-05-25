@@ -104,7 +104,8 @@ QVariant YearlyReport::getMeasurementByDate(QString measurement,
                                             int day,
                                             int month) {
     return dbHandler->getResultFromDatabase(
-                "SELECT " + operation + "(" + scope + capitalize(measurement) + ") FROM OutdoorDailyRecords "
+                "SELECT " + operation + "(" + scope + capitalize(measurement) + ") "
+                "FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
                 "WHERE day = " + QString::number(day) + " AND month = " + QString::number(month));
 }
 
@@ -114,7 +115,7 @@ int YearlyReport::getMeasurementYearByDate(QString measurementType,
                                            int month,
                                            double measurementValue) {
     return dbHandler->getResultFromDatabase(
-                "SELECT year FROM OutdoorDailyRecords "
+                "SELECT year FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
                 "WHERE day = " + QString::number(day) + " "
                 "AND month = " + QString::number(month) + " "
                 "AND " + scope + capitalize(measurementType) + " = " + QString::number(measurementValue)).toInt();
@@ -172,6 +173,13 @@ void YearlyReport::changeMeasurement() {
         });
         unit = "";
         decimals = 1;
+    }
+
+    if (interiorCheckBox->isChecked()) {
+        indoorOrOutdoorCapitalized = "Indoor";
+    }
+    else {
+        indoorOrOutdoorCapitalized = "Outdoor";
     }
     fillBoard();
 }

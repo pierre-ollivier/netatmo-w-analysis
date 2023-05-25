@@ -53,6 +53,7 @@ private:
                                       });
     QString unit = "°C";
     int decimals = 1;
+    QString indoorOrOutdoorCapitalized = "Outdoor";
 
     DatabaseHandler *dbHandler;
 };
