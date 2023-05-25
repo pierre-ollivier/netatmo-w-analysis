@@ -50,6 +50,7 @@ public slots:
     void updateDailyOutdoorDatabase();
 
     void displayMonthlyReport();
+    void displayYearlyReport();
 
 private:
     // labels
@@ -85,6 +86,7 @@ private:
     QAction *updateDailyIndoorDatabaseAction;
     QAction *updateDailyOutdoorDatabaseAction;
     QAction *displayMonthlyReportAction;
+    QAction *displayYearlyReportAction;
 };
 
 #endif // MAINWINDOW_H

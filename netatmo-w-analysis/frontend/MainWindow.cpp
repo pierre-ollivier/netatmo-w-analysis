@@ -4,6 +4,7 @@
 #include <QInputDialog>
 #include <QFileDialog>
 #include "../netatmo-w-analysis/frontend/MonthlyReport.h"
+#include "../netatmo-w-analysis/frontend/YearlyReport.h"
 #include "../netatmo-w-analysis/backend/APIMonitor.h"
 
 extern QString PATH_TO_PROD_DATABASE;
@@ -112,6 +113,8 @@ void MainWindow::createActions() {
 
     displayMonthlyReportAction = new QAction("Rapport mensuel");
     connect(displayMonthlyReportAction, SIGNAL(triggered()), SLOT(displayMonthlyReport()));
+    displayYearlyReportAction = new QAction("Climatologie générale");
+    connect(displayYearlyReportAction, SIGNAL(triggered()), SLOT(displayYearlyReport()));
 }
 
 void MainWindow::createMenus() {
@@ -124,6 +127,7 @@ void MainWindow::createMenus() {
     dataMenu->addAction(updateDailyOutdoorDatabaseAction);
     QMenu *climatologyMenu = menuBar->addMenu(tr("&Climatologie"));
     climatologyMenu->addAction(displayMonthlyReportAction);
+    climatologyMenu->addAction(displayYearlyReportAction);
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
@@ -331,5 +335,10 @@ void MainWindow::updateDailyOutdoorDatabase() {
 
 void MainWindow::displayMonthlyReport() {
     MonthlyReport *report = new MonthlyReport();
+    report->show();
+}
+
+void MainWindow::displayYearlyReport() {
+    YearlyReport *report = new YearlyReport();
     report->show();
 }
