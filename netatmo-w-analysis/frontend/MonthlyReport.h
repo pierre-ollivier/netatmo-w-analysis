@@ -48,6 +48,7 @@ private:
     QRadioButton *humidityRadioButton;
     QRadioButton *dewPointRadioButton;
     QRadioButton *humidexRadioButton;
+    QRadioButton *pressureRadioButton;
     QCheckBox *interiorCheckBox;
     QVBoxLayout *buttonsLayout;
 
@@ -58,8 +59,8 @@ private:
     QString measurementType = "temperature";
     QString abbreviatedMeasurement = "T.";
     QString unit = "°C";
-    QString IndoorOrOutdoor = "Outdoor";
-    int numbersPrecision = 1;
+    QString indoorOrOutdoorCapitalized = "Outdoor";
+    int decimals = 1;
 };
 
 #endif // MONTHLYREPORT_H
