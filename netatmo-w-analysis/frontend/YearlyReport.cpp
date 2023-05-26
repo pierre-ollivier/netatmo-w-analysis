@@ -19,6 +19,7 @@ YearlyReport::YearlyReport()
     humidityRadioButton = new QRadioButton("Humidité");
     dewPointRadioButton = new QRadioButton("Point de rosée");
     humidexRadioButton = new QRadioButton("Humidex");
+    pressureRadioButton = new QRadioButton("Pression");
 
     temperatureRadioButton->setChecked(true);
 
@@ -28,6 +29,7 @@ YearlyReport::YearlyReport()
     connect(humidityRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
     connect(dewPointRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
     connect(humidexRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
+    connect(pressureRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
     connect(interiorCheckBox, SIGNAL(stateChanged(int)), this, SLOT(changeMeasurement()));
 
     mainLayout = new QHBoxLayout();
@@ -37,8 +39,9 @@ YearlyReport::YearlyReport()
     optionsLayout->addWidget(humidityRadioButton);
     optionsLayout->addWidget(dewPointRadioButton);
     optionsLayout->addWidget(humidexRadioButton);
+    optionsLayout->addWidget(pressureRadioButton);
     optionsLayout->addWidget(interiorCheckBox);
-    optionsLayout->setContentsMargins(0, 350, 0, 350);
+    optionsLayout->setContentsMargins(0, 380, 0, 380);
 
     mainLayout->addWidget(mainView);
     mainLayout->addLayout(optionsLayout);
@@ -94,6 +97,14 @@ void YearlyReport::fillBoard() {
             mainModel->item(row, 6)->setBackground(QBrush(humidityColor(mxx)));
             mainModel->item(row, 8)->setBackground(QBrush(humidityColor(mnm)));
             mainModel->item(row, 9)->setBackground(QBrush(humidityColor(mxm)));
+        }
+        else if (unit == "hPa") {
+            mainModel->item(row, 0)->setBackground(QBrush(pressureColor(mnn)));
+            mainModel->item(row, 2)->setBackground(QBrush(pressureColor(mxn)));
+            mainModel->item(row, 4)->setBackground(QBrush(pressureColor(mnx)));
+            mainModel->item(row, 6)->setBackground(QBrush(pressureColor(mxx)));
+            mainModel->item(row, 8)->setBackground(QBrush(pressureColor(mnm)));
+            mainModel->item(row, 9)->setBackground(QBrush(pressureColor(mxm)));
         }
     }
 
@@ -151,6 +162,13 @@ int YearlyReport::getMeasurementYearByDate(QString measurementType,
 }
 
 void YearlyReport::changeMeasurement() {
+    if (interiorCheckBox->isChecked()) {
+        indoorOrOutdoorCapitalized = "Indoor";
+    }
+    else {
+        indoorOrOutdoorCapitalized = "Outdoor";
+    }
+
     if (temperatureRadioButton->isChecked()) {
         measurementType = "temperature";
         legends = QStringList({
@@ -190,7 +208,7 @@ void YearlyReport::changeMeasurement() {
         unit = "°C";
         decimals = 1;
     }
-    else {
+    else if (humidexRadioButton->isChecked()) {
         measurementType = "humidex";
         legends = QStringList({
             "Hxnn",
@@ -203,13 +221,21 @@ void YearlyReport::changeMeasurement() {
         unit = "";
         decimals = 1;
     }
-
-    if (interiorCheckBox->isChecked()) {
+    else if (pressureRadioButton->isChecked()) {
+        measurementType = "pressure";
+        legends = QStringList({
+            "Pnn",
+            "Pxn",
+            "Pnx",
+            "Pxx",
+            "Pression minimale moyenne",
+            "Pression maximale moyenne"
+        });
+        unit = "hPa";
+        decimals = 1;
         indoorOrOutdoorCapitalized = "Indoor";
     }
-    else {
-        indoorOrOutdoorCapitalized = "Outdoor";
-    }
+
     fillBoard();
 }
 
@@ -264,6 +290,10 @@ QColor YearlyReport::temperatureColor(double temperature) {
 
 QColor YearlyReport::humidityColor(int humidity) {
     return temperatureColor(45 - 0.6 * humidity);
+}
+
+QColor YearlyReport::pressureColor(double pressure) {
+    return temperatureColor(-15 + (pressure - 960) * 60 / 126);
 }
 
 // idea: add amplitude? maybe as an option?

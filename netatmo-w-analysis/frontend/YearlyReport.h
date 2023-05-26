@@ -24,8 +24,10 @@ public slots:
     QVariant getMeasurementByDate(QString measurement, QString operation, QString scope, int day, int month);
     int getMeasurementYearByDate(QString measurementType, QString scope, int day, int month, double measurementValue);
     void changeMeasurement();
+
     QColor temperatureColor(double temperature);
     QColor humidityColor(int humidity);
+    QColor pressureColor(double pressure);
 
 signals:
 
@@ -43,6 +45,7 @@ private:
     QRadioButton *humidityRadioButton;
     QRadioButton *dewPointRadioButton;
     QRadioButton *humidexRadioButton;
+    QRadioButton *pressureRadioButton;
     QCheckBox *interiorCheckBox;
 
     QString measurementType = "temperature";
