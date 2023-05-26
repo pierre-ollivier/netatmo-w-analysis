@@ -49,6 +49,9 @@ public slots:
     void updateDailyIndoorDatabase();
     void updateDailyOutdoorDatabase();
 
+    void displayMonthlyReport();
+    void displayYearlyReport();
+
 private:
     // labels
     QLabel *currentExtTempLabel, *currentIntTempLabel;
@@ -82,6 +85,8 @@ private:
     QAction *addMultipleMonthsDataAction;
     QAction *updateDailyIndoorDatabaseAction;
     QAction *updateDailyOutdoorDatabaseAction;
+    QAction *displayMonthlyReportAction;
+    QAction *displayYearlyReportAction;
 };
 
 #endif // MAINWINDOW_H
