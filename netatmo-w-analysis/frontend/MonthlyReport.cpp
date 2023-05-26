@@ -37,6 +37,7 @@ MonthlyReport::MonthlyReport() : QWidget()
     humidityRadioButton = new QRadioButton("Humidité");
     dewPointRadioButton = new QRadioButton("Point de rosée");
     humidexRadioButton = new QRadioButton("Humidex");
+    pressureRadioButton = new QRadioButton("Pression");
 
     temperatureRadioButton->setChecked(true);
 
@@ -46,6 +47,7 @@ MonthlyReport::MonthlyReport() : QWidget()
     connect(humidityRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
     connect(dewPointRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
     connect(humidexRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
+    connect(pressureRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
     connect(interiorCheckBox, SIGNAL(stateChanged(int)), this, SLOT(changeMeasurement()));
 
     buttonsLayout = new QVBoxLayout();
@@ -53,6 +55,7 @@ MonthlyReport::MonthlyReport() : QWidget()
     buttonsLayout->addWidget(humidityRadioButton);
     buttonsLayout->addWidget(dewPointRadioButton);
     buttonsLayout->addWidget(humidexRadioButton);
+    buttonsLayout->addWidget(pressureRadioButton);
     buttonsLayout->addWidget(interiorCheckBox);
 
     layout->addWidget(add1MonthButton, 0, 2);
@@ -72,21 +75,21 @@ void MonthlyReport::fillBoard() {
         QDate date = QDate(_date->year(), _date->month(), day);
         QString measurementTypeCapitalized = QString(measurementType[0]).toUpper() + measurementType.mid(1);
         double minimumMeasurement = dbHandler->getResultFromDatabase(
-                    "SELECT min" + measurementTypeCapitalized + " FROM " + IndoorOrOutdoor + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
+                    "SELECT min" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
         double maximumMeasurement = dbHandler->getResultFromDatabase(
-                    "SELECT max" + measurementTypeCapitalized + " FROM " + IndoorOrOutdoor + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
+                    "SELECT max" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
         double averageMeasurement = dbHandler->getResultFromDatabase(
-                    "SELECT avg" + measurementTypeCapitalized + " FROM " + IndoorOrOutdoor + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
+                    "SELECT avg" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
-        model->setItem(day - 1, 0, new QStandardItem(deviceLocale->toString(minimumMeasurement, 'f', numbersPrecision) + " " + unit));
+        model->setItem(day - 1, 0, new QStandardItem(deviceLocale->toString(minimumMeasurement, 'f', decimals) + " " + unit));
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
-        model->setItem(day - 1, 1, new QStandardItem(deviceLocale->toString(maximumMeasurement, 'f', numbersPrecision) + " " + unit));
+        model->setItem(day - 1, 1, new QStandardItem(deviceLocale->toString(maximumMeasurement, 'f', decimals) + " " + unit));
 
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
-        model->setItem(day - 1, 2, new QStandardItem(deviceLocale->toString(averageMeasurement, 'f', numbersPrecision) + " " + unit));
+        model->setItem(day - 1, 2, new QStandardItem(deviceLocale->toString(averageMeasurement, 'f', decimals) + " " + unit));
 
         model->item(day - 1, 0)->setEditable(false);
         model->item(day - 1, 0)->setTextAlignment(Qt::AlignCenter);
@@ -195,18 +198,45 @@ void MonthlyReport::setYear(int year) {
     fillBoard();
 }
 
-void MonthlyReport::changeMeasurement() {
-    IndoorOrOutdoor = interiorCheckBox->isChecked() ? "indoor" : "outdoor";
-    measurementType = temperatureRadioButton->isChecked() ? "temperature" :
-                      humidityRadioButton->isChecked() ? "humidity" :
-                      dewPointRadioButton->isChecked() ? "dewPoint" : "humidex";
-    abbreviatedMeasurement = temperatureRadioButton->isChecked() ? "T." :
-                             humidityRadioButton->isChecked() ? "HR" :
-                             dewPointRadioButton->isChecked() ? "PdR" : "Hx";
-    unit = temperatureRadioButton->isChecked() ? "°C" :
-           humidityRadioButton->isChecked() ? "%" :
-           dewPointRadioButton->isChecked() ? "°C" : "";
-    numbersPrecision = humidityRadioButton->isChecked() ? 0 : 1;
+void MonthlyReport::changeMeasurement() { 
+    if (interiorCheckBox->isChecked()) {
+        indoorOrOutdoorCapitalized = "Indoor";
+    }
+    else {
+        indoorOrOutdoorCapitalized = "Outdoor";
+    }
+
+    if (temperatureRadioButton->isChecked()) {
+        measurementType = "temperature";
+        abbreviatedMeasurement = "T.";
+        unit = "°C";
+        decimals = 1;
+    }
+    else if (humidityRadioButton->isChecked()) {
+        measurementType = "humidity";
+        abbreviatedMeasurement = "HR";
+        unit = "%";
+        decimals = 0;
+    }
+    else if (dewPointRadioButton->isChecked()) {
+        measurementType = "dewPoint";
+        abbreviatedMeasurement = "PdR";
+        unit = "°C";
+        decimals = 1;
+    }
+    else if (humidexRadioButton->isChecked()) {
+        measurementType = "humidex";
+        abbreviatedMeasurement = "Hx";
+        unit = "";
+        decimals = 1;
+    }
+    else if (pressureRadioButton->isChecked()) {
+        measurementType = "pressure";
+        abbreviatedMeasurement = "P.";
+        unit = "hPa";
+        decimals = 1;
+        indoorOrOutdoorCapitalized = "Indoor";
+    }
 
     fillBoard();
 }
