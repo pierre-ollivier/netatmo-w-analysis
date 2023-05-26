@@ -146,7 +146,7 @@ QVariant YearlyReport::getMeasurementByDate(QString measurement,
     return dbHandler->getResultFromDatabase(
                 "SELECT " + operation + "(" + scope + capitalize(measurement) + ") "
                 "FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
-                "WHERE day = " + QString::number(day) + " AND month = " + QString::number(month));
+                "WHERE day = " + QString::number(day) + " AND month = " + QString::number(month) + " " + extraWhereClause);
 }
 
 int YearlyReport::getMeasurementYearByDate(QString measurementType,
@@ -158,7 +158,7 @@ int YearlyReport::getMeasurementYearByDate(QString measurementType,
                 "SELECT year FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
                 "WHERE day = " + QString::number(day) + " "
                 "AND month = " + QString::number(month) + " "
-                "AND " + scope + capitalize(measurementType) + " = " + QString::number(measurementValue)).toInt();
+                "AND " + scope + capitalize(measurementType) + " = " + QString::number(measurementValue) + " " + extraWhereClause).toInt();
 }
 
 void YearlyReport::changeMeasurement() {
@@ -181,6 +181,7 @@ void YearlyReport::changeMeasurement() {
         });
         unit = "°C";
         decimals = 1;
+        extraWhereClause = "";
     }
     else if (humidityRadioButton->isChecked()) {
         measurementType = "humidity";
@@ -194,6 +195,7 @@ void YearlyReport::changeMeasurement() {
         });
         unit = "%";
         decimals = 0;
+        extraWhereClause = "";
     }
     else if (dewPointRadioButton->isChecked()) {
         measurementType = "dewPoint";
@@ -207,6 +209,7 @@ void YearlyReport::changeMeasurement() {
         });
         unit = "°C";
         decimals = 1;
+        extraWhereClause = "";
     }
     else if (humidexRadioButton->isChecked()) {
         measurementType = "humidex";
@@ -220,6 +223,7 @@ void YearlyReport::changeMeasurement() {
         });
         unit = "";
         decimals = 1;
+        extraWhereClause = "";
     }
     else if (pressureRadioButton->isChecked()) {
         measurementType = "pressure";
@@ -234,6 +238,7 @@ void YearlyReport::changeMeasurement() {
         unit = "hPa";
         decimals = 1;
         indoorOrOutdoorCapitalized = "Indoor";
+        extraWhereClause = "AND maxPressure > 950 AND minPressure > 950";
     }
 
     fillBoard();
