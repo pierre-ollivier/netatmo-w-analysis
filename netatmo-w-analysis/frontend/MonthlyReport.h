@@ -33,6 +33,7 @@ public slots:
 protected:
     QColor temperatureColor(double temperature);
     QColor humidityColor(int humidity);
+    QColor pressureColor(double pressure);
 
 private:
     QDate *initialDate;
