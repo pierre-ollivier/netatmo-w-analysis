@@ -6,7 +6,6 @@
 
 YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) : QDialog(parent)
 {
-    const int NUMBER_OF_YEARS = QDate::currentDate().year() - START_YEAR + 1;
     _baseYear = baseYear;
     _baseMonth = baseMonth;
     monthModel = new QStandardItemModel();
@@ -83,23 +82,29 @@ YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) :
     );
 
     setModal(true);
+    disableIrrelevantItems();
 }
 
 void YearMonthPicker::handleMonthItemChanged(const QItemSelection &selection, const QItemSelection &_) {
     int row = selection.indexes()[0].row();
     int column = selection.indexes()[0].column();
     emit monthChanged(3 * row + column + 1);
+    _baseMonth = (3 * row + column + 1);
+    disableIrrelevantItems();
 }
 
 void YearMonthPicker::handleYearItemChanged(const QItemSelection &selection, const QItemSelection &_) {
     int row = selection.indexes()[0].row();
     emit yearChanged(row + 2019);
+    _baseYear = row + 2019;
+    disableIrrelevantItems();
 }
 
 void YearMonthPicker::setYear(int year) {
     _baseYear = year;
     yearView->selectionModel()->disconnect();
     yearView->selectionModel()->clearSelection();
+    disableIrrelevantItems();
     yearView->selectionModel()->select(yearView->model()->index(_baseYear - START_YEAR, 0),
                                        QItemSelectionModel::Select);
     connect(
@@ -113,6 +118,7 @@ void YearMonthPicker::setMonth(int month) {
     _baseMonth = month;
     monthView->selectionModel()->disconnect();
     monthView->selectionModel()->clearSelection();
+    disableIrrelevantItems();
     monthView->selectionModel()->select(monthView->model()->index((_baseMonth - 1) / 3, (_baseMonth - 1) % 3),
                                         QItemSelectionModel::Select);
     connect(
@@ -125,4 +131,22 @@ void YearMonthPicker::setMonth(int month) {
 void YearMonthPicker::setDate(QDate date) {
     setYear(date.year());
     setMonth(date.month());
+}
+
+void YearMonthPicker::disableIrrelevantItems() {
+    // provisionally enable all items
+    for (int month = 0; month <= 11; month++) monthModel->item(month / 3, month % 3)->setEnabled(true);
+    for (int year = 0; year < NUMBER_OF_YEARS; year++) yearModel->item(year)->setEnabled(true);
+
+    // when the month is < 10, disable year 2019
+    if (_baseMonth < 10) yearModel->item(0)->setEnabled(false);
+
+    // when the month is > CURRENT_MONTH, disable year CURRENT_YEAR
+    if (_baseMonth > CURRENT_MONTH) yearModel->item(NUMBER_OF_YEARS - 1)->setEnabled(false);
+
+    // when the year is 2019, disable months < 10
+    if (_baseYear == 2019) {for (int month = 0; month <= 8; month++) monthModel->item(month / 3, month % 3)->setEnabled(false);}
+
+    // when the year is CURRENT_YEAR, disable months > CURRENT_MONTH
+    if (_baseYear == CURRENT_YEAR) {for (int month = CURRENT_MONTH; month <= 11; month++) monthModel->item(month / 3, month % 3)->setEnabled(false);}
 }
