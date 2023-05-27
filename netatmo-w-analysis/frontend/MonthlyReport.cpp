@@ -193,9 +193,12 @@ void MonthlyReport::add1Month() {
 }
 
 void MonthlyReport::substract1Month() {
-    _date->operator=(_date->addMonths(-1));
-    currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
-    fillBoard();
+    QDate newDate = _date->addMonths(-1), minDate = QDate(2019, 10, 5);
+    if (newDate.year() > minDate.year() || (newDate.year() == minDate.year() && newDate.month() >= minDate.month())) {
+        _date->operator=(_date->addMonths(-1));
+        currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
+        fillBoard();
+    }
 }
 
 void MonthlyReport::setMonth(int month) {
