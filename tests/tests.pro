@@ -19,6 +19,7 @@ SOURCES += \
     credentials_test.cpp \
     dbparams_test.cpp \
     main.cpp \
+    setupTests.cpp
 
 HEADERS += \
     TestDailyAverageCalculator.h \
