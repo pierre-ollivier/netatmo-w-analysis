@@ -75,11 +75,14 @@ void MonthlyReport::fillBoard() {
         QDate date = QDate(_date->year(), _date->month(), day);
         QString measurementTypeCapitalized = QString(measurementType[0]).toUpper() + measurementType.mid(1);
         QVariant minimumMeasurement = dbHandler->getResultFromDatabase(
-                    "SELECT min" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\""));
+                    "SELECT min" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
+                    "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
         QVariant maximumMeasurement = dbHandler->getResultFromDatabase(
-                    "SELECT max" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\""));
+                    "SELECT max" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
+                    "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
         QVariant averageMeasurement = dbHandler->getResultFromDatabase(
-                    "SELECT avg" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\""));
+                    "SELECT avg" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
+                    "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
 
@@ -247,24 +250,28 @@ void MonthlyReport::changeMeasurement() {
         abbreviatedMeasurement = "T.";
         unit = "°C";
         decimals = 1;
+        extraWhereClause = "";
     }
     else if (humidityRadioButton->isChecked()) {
         measurementType = "humidity";
         abbreviatedMeasurement = "HR";
         unit = "%";
         decimals = 0;
+        extraWhereClause = "";
     }
     else if (dewPointRadioButton->isChecked()) {
         measurementType = "dewPoint";
         abbreviatedMeasurement = "PdR";
         unit = "°C";
         decimals = 1;
+        extraWhereClause = "";
     }
     else if (humidexRadioButton->isChecked()) {
         measurementType = "humidex";
         abbreviatedMeasurement = "Hx";
         unit = "";
         decimals = 1;
+        extraWhereClause = "";
     }
     else if (pressureRadioButton->isChecked()) {
         measurementType = "pressure";
@@ -272,6 +279,7 @@ void MonthlyReport::changeMeasurement() {
         unit = "hPa";
         decimals = 1;
         indoorOrOutdoorCapitalized = "Indoor";
+        extraWhereClause = "AND minPressure > 950";
     }
 
     fillBoard();
