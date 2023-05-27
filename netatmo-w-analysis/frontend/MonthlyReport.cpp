@@ -184,9 +184,12 @@ QColor MonthlyReport::pressureColor(double pressure) {
 }
 
 void MonthlyReport::add1Month() {
-    _date->operator=(_date->addMonths(1));
-    currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
-    fillBoard();
+    QDate newDate = _date->addMonths(1), currentDate = QDate::currentDate();
+    if (newDate.year() < currentDate.year() || (newDate.year() == currentDate.year() && newDate.month() <= currentDate.month())) {
+        _date->operator=(newDate);
+        currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
+        fillBoard();
+    }
 }
 
 void MonthlyReport::substract1Month() {
