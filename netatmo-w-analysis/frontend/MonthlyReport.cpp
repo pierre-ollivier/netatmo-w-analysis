@@ -75,24 +75,28 @@ void MonthlyReport::fillBoard() {
         QDate date = QDate(_date->year(), _date->month(), day);
         QString measurementTypeCapitalized = QString(measurementType[0]).toUpper() + measurementType.mid(1);
         QVariant minimumMeasurement = dbHandler->getResultFromDatabase(
-                    "SELECT min" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")); //.toDouble();
-        double maximumMeasurement = dbHandler->getResultFromDatabase(
-                    "SELECT max" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
-        double averageMeasurement = dbHandler->getResultFromDatabase(
-                    "SELECT avg" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
+                    "SELECT min" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\""));
+        QVariant maximumMeasurement = dbHandler->getResultFromDatabase(
+                    "SELECT max" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\""));
+        QVariant averageMeasurement = dbHandler->getResultFromDatabase(
+                    "SELECT avg" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\""));
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
+
         if (minimumMeasurement.isNull())
             model->setItem(day - 1, 0, new QStandardItem());
         else
             model->setItem(day - 1, 0, new QStandardItem(deviceLocale->toString(minimumMeasurement.toDouble(), 'f', decimals) + " " + unit));
 
-        model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
-        model->setItem(day - 1, 1, new QStandardItem(deviceLocale->toString(maximumMeasurement, 'f', decimals) + " " + unit));
+        if (maximumMeasurement.isNull())
+            model->setItem(day - 1, 1, new QStandardItem());
+        else
+            model->setItem(day - 1, 1, new QStandardItem(deviceLocale->toString(maximumMeasurement.toDouble(), 'f', decimals) + " " + unit));
 
-
-        model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
-        model->setItem(day - 1, 2, new QStandardItem(deviceLocale->toString(averageMeasurement, 'f', decimals) + " " + unit));
+        if (averageMeasurement.isNull())
+            model->setItem(day - 1, 2, new QStandardItem());
+        else
+            model->setItem(day - 1, 2, new QStandardItem(deviceLocale->toString(averageMeasurement.toDouble(), 'f', decimals) + " " + unit));
 
         model->item(day - 1, 0)->setEditable(false);
         model->item(day - 1, 0)->setTextAlignment(Qt::AlignCenter);
@@ -103,18 +107,18 @@ void MonthlyReport::fillBoard() {
 
         if (unit == "°C" or unit == "") {
 //            model->item(day - 1, 0)->setBackground(QBrush(temperatureColor(minimumMeasurement)));
-            model->item(day - 1, 1)->setBackground(QBrush(temperatureColor(maximumMeasurement)));
-            model->item(day - 1, 2)->setBackground(QBrush(temperatureColor(averageMeasurement)));
+//            model->item(day - 1, 1)->setBackground(QBrush(temperatureColor(maximumMeasurement)));
+//            model->item(day - 1, 2)->setBackground(QBrush(temperatureColor(averageMeasurement)));
         }
         else if (unit == "%") {
 //            model->item(day - 1, 0)->setBackground(QBrush(humidityColor(minimumMeasurement)));
-            model->item(day - 1, 1)->setBackground(QBrush(humidityColor(maximumMeasurement)));
-            model->item(day - 1, 2)->setBackground(QBrush(humidityColor(averageMeasurement)));
+//            model->item(day - 1, 1)->setBackground(QBrush(humidityColor(maximumMeasurement)));
+//            model->item(day - 1, 2)->setBackground(QBrush(humidityColor(averageMeasurement)));
         }
         else if (unit == "hPa") {
 //            model->item(day - 1, 0)->setBackground(QBrush(pressureColor(minimumMeasurement)));
-            model->item(day - 1, 1)->setBackground(QBrush(pressureColor(maximumMeasurement)));
-            model->item(day - 1, 2)->setBackground(QBrush(pressureColor(averageMeasurement)));
+//            model->item(day - 1, 1)->setBackground(QBrush(pressureColor(maximumMeasurement)));
+//            model->item(day - 1, 2)->setBackground(QBrush(pressureColor(averageMeasurement)));
         }
 
         model->setHorizontalHeaderLabels(QStringList({abbreviatedMeasurement + " min.",
