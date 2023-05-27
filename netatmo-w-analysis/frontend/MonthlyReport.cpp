@@ -74,22 +74,32 @@ void MonthlyReport::fillBoard() {
     for (int day = 1; day <= _date->daysInMonth(); day++) {
         QDate date = QDate(_date->year(), _date->month(), day);
         QString measurementTypeCapitalized = QString(measurementType[0]).toUpper() + measurementType.mid(1);
-        double minimumMeasurement = dbHandler->getResultFromDatabase(
-                    "SELECT min" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
-        double maximumMeasurement = dbHandler->getResultFromDatabase(
-                    "SELECT max" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
-        double averageMeasurement = dbHandler->getResultFromDatabase(
-                    "SELECT avg" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
+        QVariant minimumMeasurement = dbHandler->getResultFromDatabase(
+                    "SELECT min" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
+                    "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
+        QVariant maximumMeasurement = dbHandler->getResultFromDatabase(
+                    "SELECT max" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
+                    "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
+        QVariant averageMeasurement = dbHandler->getResultFromDatabase(
+                    "SELECT avg" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
+                    "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
-        model->setItem(day - 1, 0, new QStandardItem(deviceLocale->toString(minimumMeasurement, 'f', decimals) + " " + unit));
 
-        model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
-        model->setItem(day - 1, 1, new QStandardItem(deviceLocale->toString(maximumMeasurement, 'f', decimals) + " " + unit));
+        if (minimumMeasurement.isNull())
+            model->setItem(day - 1, 0, new QStandardItem());
+        else
+            model->setItem(day - 1, 0, new QStandardItem(deviceLocale->toString(minimumMeasurement.toDouble(), 'f', decimals) + " " + unit));
 
+        if (maximumMeasurement.isNull())
+            model->setItem(day - 1, 1, new QStandardItem());
+        else
+            model->setItem(day - 1, 1, new QStandardItem(deviceLocale->toString(maximumMeasurement.toDouble(), 'f', decimals) + " " + unit));
 
-        model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
-        model->setItem(day - 1, 2, new QStandardItem(deviceLocale->toString(averageMeasurement, 'f', decimals) + " " + unit));
+        if (averageMeasurement.isNull())
+            model->setItem(day - 1, 2, new QStandardItem());
+        else
+            model->setItem(day - 1, 2, new QStandardItem(deviceLocale->toString(averageMeasurement.toDouble(), 'f', decimals) + " " + unit));
 
         model->item(day - 1, 0)->setEditable(false);
         model->item(day - 1, 0)->setTextAlignment(Qt::AlignCenter);
@@ -172,15 +182,29 @@ QColor MonthlyReport::temperatureColor(double temperature) {
     if (t < 500) return QColor(118 + (450 - t)*108/50, 0, 118 + (450 - t)*108/50);
     if (t == 500) return QColor(0, 0, 0);
     return QColor(0, 0, 0);
+}
 
+QColor MonthlyReport::temperatureColor(QVariant temperature) {
+    if (temperature.isNull()) return QColor(Qt::white);
+    return temperatureColor(temperature.toDouble());
 }
 
 QColor MonthlyReport::humidityColor(int humidity) {
     return temperatureColor(45 - 0.6 * humidity);
 }
 
+QColor MonthlyReport::humidityColor(QVariant humidity) {
+    if (humidity.isNull()) return QColor(Qt::white);
+    return humidityColor(humidity.toInt());
+}
+
 QColor MonthlyReport::pressureColor(double pressure) {
     return temperatureColor(-15 + (pressure - 960) * 60 / 126);
+}
+
+QColor MonthlyReport::pressureColor(QVariant pressure) {
+    if (pressure.isNull()) return QColor(Qt::white);
+    return pressureColor(pressure.toDouble());
 }
 
 void MonthlyReport::add1Month() {
@@ -226,24 +250,28 @@ void MonthlyReport::changeMeasurement() {
         abbreviatedMeasurement = "T.";
         unit = "°C";
         decimals = 1;
+        extraWhereClause = "";
     }
     else if (humidityRadioButton->isChecked()) {
         measurementType = "humidity";
         abbreviatedMeasurement = "HR";
         unit = "%";
         decimals = 0;
+        extraWhereClause = "";
     }
     else if (dewPointRadioButton->isChecked()) {
         measurementType = "dewPoint";
         abbreviatedMeasurement = "PdR";
         unit = "°C";
         decimals = 1;
+        extraWhereClause = "";
     }
     else if (humidexRadioButton->isChecked()) {
         measurementType = "humidex";
         abbreviatedMeasurement = "Hx";
         unit = "";
         decimals = 1;
+        extraWhereClause = "";
     }
     else if (pressureRadioButton->isChecked()) {
         measurementType = "pressure";
@@ -251,6 +279,7 @@ void MonthlyReport::changeMeasurement() {
         unit = "hPa";
         decimals = 1;
         indoorOrOutdoorCapitalized = "Indoor";
+        extraWhereClause = "AND minPressure > 950";
     }
 
     fillBoard();

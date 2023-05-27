@@ -32,8 +32,11 @@ public slots:
 
 protected:
     QColor temperatureColor(double temperature);
+    QColor temperatureColor(QVariant temperature);
     QColor humidityColor(int humidity);
+    QColor humidityColor(QVariant humidity);
     QColor pressureColor(double pressure);
+    QColor pressureColor(QVariant pressure);
 
 private:
     QDate *initialDate;
@@ -61,6 +64,7 @@ private:
     QString abbreviatedMeasurement = "T.";
     QString unit = "°C";
     QString indoorOrOutdoorCapitalized = "Outdoor";
+    QString extraWhereClause = "";
     int decimals = 1;
 };
 
