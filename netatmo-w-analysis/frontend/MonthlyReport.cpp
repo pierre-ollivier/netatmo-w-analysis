@@ -74,15 +74,18 @@ void MonthlyReport::fillBoard() {
     for (int day = 1; day <= _date->daysInMonth(); day++) {
         QDate date = QDate(_date->year(), _date->month(), day);
         QString measurementTypeCapitalized = QString(measurementType[0]).toUpper() + measurementType.mid(1);
-        double minimumMeasurement = dbHandler->getResultFromDatabase(
-                    "SELECT min" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
+        QVariant minimumMeasurement = dbHandler->getResultFromDatabase(
+                    "SELECT min" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")); //.toDouble();
         double maximumMeasurement = dbHandler->getResultFromDatabase(
                     "SELECT max" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
         double averageMeasurement = dbHandler->getResultFromDatabase(
                     "SELECT avg" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
-        model->setItem(day - 1, 0, new QStandardItem(deviceLocale->toString(minimumMeasurement, 'f', decimals) + " " + unit));
+        if (minimumMeasurement.isNull())
+            model->setItem(day - 1, 0, new QStandardItem());
+        else
+            model->setItem(day - 1, 0, new QStandardItem(deviceLocale->toString(minimumMeasurement.toDouble(), 'f', decimals) + " " + unit));
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
         model->setItem(day - 1, 1, new QStandardItem(deviceLocale->toString(maximumMeasurement, 'f', decimals) + " " + unit));
@@ -99,17 +102,17 @@ void MonthlyReport::fillBoard() {
         model->item(day - 1, 2)->setTextAlignment(Qt::AlignCenter);
 
         if (unit == "°C" or unit == "") {
-            model->item(day - 1, 0)->setBackground(QBrush(temperatureColor(minimumMeasurement)));
+//            model->item(day - 1, 0)->setBackground(QBrush(temperatureColor(minimumMeasurement)));
             model->item(day - 1, 1)->setBackground(QBrush(temperatureColor(maximumMeasurement)));
             model->item(day - 1, 2)->setBackground(QBrush(temperatureColor(averageMeasurement)));
         }
         else if (unit == "%") {
-            model->item(day - 1, 0)->setBackground(QBrush(humidityColor(minimumMeasurement)));
+//            model->item(day - 1, 0)->setBackground(QBrush(humidityColor(minimumMeasurement)));
             model->item(day - 1, 1)->setBackground(QBrush(humidityColor(maximumMeasurement)));
             model->item(day - 1, 2)->setBackground(QBrush(humidityColor(averageMeasurement)));
         }
         else if (unit == "hPa") {
-            model->item(day - 1, 0)->setBackground(QBrush(pressureColor(minimumMeasurement)));
+//            model->item(day - 1, 0)->setBackground(QBrush(pressureColor(minimumMeasurement)));
             model->item(day - 1, 1)->setBackground(QBrush(pressureColor(maximumMeasurement)));
             model->item(day - 1, 2)->setBackground(QBrush(pressureColor(averageMeasurement)));
         }
