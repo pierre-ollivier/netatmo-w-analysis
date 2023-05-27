@@ -27,6 +27,7 @@ signals:
     void yearChanged(int);
 
 private:
+    const int START_YEAR = 2019;
     const QStringList abbreviatedMonths = {
         "janv.",
         "févr.",
