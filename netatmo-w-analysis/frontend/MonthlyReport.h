@@ -64,6 +64,7 @@ private:
     QString abbreviatedMeasurement = "T.";
     QString unit = "°C";
     QString indoorOrOutdoorCapitalized = "Outdoor";
+    QString extraWhereClause = "";
     int decimals = 1;
 };
 
