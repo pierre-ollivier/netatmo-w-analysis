@@ -8,6 +8,8 @@ YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) :
 {
     const int START_YEAR = 2019;
     const int NUMBER_OF_YEARS = QDate::currentDate().year() - START_YEAR + 1;
+    _baseYear = baseYear;
+    _baseMonth = baseMonth;
     monthModel = new QStandardItemModel();
     yearModel = new QStandardItemModel();
 
@@ -34,14 +36,14 @@ YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) :
     monthView->horizontalHeader()->hide();
     monthView->verticalHeader()->hide();
     monthView->setSelectionMode(QAbstractItemView::SingleSelection);
-    monthView->selectionModel()->select(monthView->model()->index((baseMonth - 1) / 3, (baseMonth - 1) % 3),
+    monthView->selectionModel()->select(monthView->model()->index((_baseMonth - 1) / 3, (_baseMonth - 1) % 3),
                                         QItemSelectionModel::Select);
     monthView->setItemDelegate(new CustomItemDelegate());
 
     yearView->horizontalHeader()->hide();
     yearView->verticalHeader()->hide();
     yearView->setSelectionMode(QAbstractItemView::SingleSelection);
-    yearView->selectionModel()->select(yearView->model()->index(baseYear - START_YEAR, 0),
+    yearView->selectionModel()->select(yearView->model()->index(_baseYear - START_YEAR, 0),
                                        QItemSelectionModel::Select);
     yearView->setItemDelegate(new CustomItemDelegate());
 
@@ -93,4 +95,17 @@ void YearMonthPicker::handleMonthItemChanged(const QItemSelection &selection, co
 void YearMonthPicker::handleYearItemChanged(const QItemSelection &selection, const QItemSelection &_) {
     int row = selection.indexes()[0].row();
     emit yearChanged(row + 2019);
+}
+
+void YearMonthPicker::setYear(int year) {
+    _baseYear = year;
+}
+
+void YearMonthPicker::setMonth(int month) {
+    _baseMonth = month;
+}
+
+void YearMonthPicker::setDate(QDate date) {
+    _baseYear = date.year();
+    _baseMonth = date.month();
 }
