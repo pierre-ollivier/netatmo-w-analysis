@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QWidget>
+#include <QDate>
 #include <QDialog>
 #include <QTableView>
 #include <QStandardItemModel>
@@ -17,12 +18,21 @@ public:
 public slots:
     void handleMonthItemChanged(const QItemSelection &, const QItemSelection &);
     void handleYearItemChanged(const QItemSelection &, const QItemSelection &);
+    void setYear(int year);
+    void setMonth(int month);
+    void setDate(QDate date);
+    void disableIrrelevantItems();
 
 signals:
     void monthChanged(int);
     void yearChanged(int);
 
 private:
+    const int START_YEAR = 2019;
+    const int CURRENT_YEAR = QDate::currentDate().year();
+    const int CURRENT_MONTH = QDate::currentDate().month();
+    const int NUMBER_OF_YEARS = CURRENT_YEAR - START_YEAR + 1;
+
     const QStringList abbreviatedMonths = {
         "janv.",
         "févr.",
@@ -43,6 +53,9 @@ private:
     QStandardItemModel *monthModel;
     QStandardItemModel *yearModel;
     QHBoxLayout *mainLayout;
+
+    int _baseYear;
+    int _baseMonth;
 
 };
 
