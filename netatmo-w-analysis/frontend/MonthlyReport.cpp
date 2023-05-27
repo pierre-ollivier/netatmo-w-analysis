@@ -12,13 +12,15 @@ MonthlyReport::MonthlyReport() : QWidget()
     connect(yearMonthPicker, SIGNAL(monthChanged(int)), SLOT(setMonth(int)));
     connect(yearMonthPicker, SIGNAL(yearChanged(int)), SLOT(setYear(int)));
 
-    this->setGeometry(300, 40, 720, 950);
+    this->setGeometry(300, 40, 1020, 950);
+    this->setFixedWidth(720);
     layout = new QGridLayout();
 
     model = new QStandardItemModel();
 
     view = new QTableView();
     view->setModel(model);
+    view->setFixedWidth(450);
 
     model->setHorizontalHeaderLabels(QStringList({"T. min.", "T. max.", "T. moy."}));
 
