@@ -106,19 +106,19 @@ void MonthlyReport::fillBoard() {
         model->item(day - 1, 2)->setTextAlignment(Qt::AlignCenter);
 
         if (unit == "°C" or unit == "") {
-//            model->item(day - 1, 0)->setBackground(QBrush(temperatureColor(minimumMeasurement)));
-//            model->item(day - 1, 1)->setBackground(QBrush(temperatureColor(maximumMeasurement)));
-//            model->item(day - 1, 2)->setBackground(QBrush(temperatureColor(averageMeasurement)));
+            model->item(day - 1, 0)->setBackground(QBrush(temperatureColor(minimumMeasurement)));
+            model->item(day - 1, 1)->setBackground(QBrush(temperatureColor(maximumMeasurement)));
+            model->item(day - 1, 2)->setBackground(QBrush(temperatureColor(averageMeasurement)));
         }
         else if (unit == "%") {
-//            model->item(day - 1, 0)->setBackground(QBrush(humidityColor(minimumMeasurement)));
-//            model->item(day - 1, 1)->setBackground(QBrush(humidityColor(maximumMeasurement)));
-//            model->item(day - 1, 2)->setBackground(QBrush(humidityColor(averageMeasurement)));
+            model->item(day - 1, 0)->setBackground(QBrush(humidityColor(minimumMeasurement)));
+            model->item(day - 1, 1)->setBackground(QBrush(humidityColor(maximumMeasurement)));
+            model->item(day - 1, 2)->setBackground(QBrush(humidityColor(averageMeasurement)));
         }
         else if (unit == "hPa") {
-//            model->item(day - 1, 0)->setBackground(QBrush(pressureColor(minimumMeasurement)));
-//            model->item(day - 1, 1)->setBackground(QBrush(pressureColor(maximumMeasurement)));
-//            model->item(day - 1, 2)->setBackground(QBrush(pressureColor(averageMeasurement)));
+            model->item(day - 1, 0)->setBackground(QBrush(pressureColor(minimumMeasurement)));
+            model->item(day - 1, 1)->setBackground(QBrush(pressureColor(maximumMeasurement)));
+            model->item(day - 1, 2)->setBackground(QBrush(pressureColor(averageMeasurement)));
         }
 
         model->setHorizontalHeaderLabels(QStringList({abbreviatedMeasurement + " min.",
@@ -179,15 +179,29 @@ QColor MonthlyReport::temperatureColor(double temperature) {
     if (t < 500) return QColor(118 + (450 - t)*108/50, 0, 118 + (450 - t)*108/50);
     if (t == 500) return QColor(0, 0, 0);
     return QColor(0, 0, 0);
+}
 
+QColor MonthlyReport::temperatureColor(QVariant temperature) {
+    if (temperature.isNull()) return QColor(Qt::white);
+    return temperatureColor(temperature.toDouble());
 }
 
 QColor MonthlyReport::humidityColor(int humidity) {
     return temperatureColor(45 - 0.6 * humidity);
 }
 
+QColor MonthlyReport::humidityColor(QVariant humidity) {
+    if (humidity.isNull()) return QColor(Qt::white);
+    return humidityColor(humidity.toInt());
+}
+
 QColor MonthlyReport::pressureColor(double pressure) {
     return temperatureColor(-15 + (pressure - 960) * 60 / 126);
+}
+
+QColor MonthlyReport::pressureColor(QVariant pressure) {
+    if (pressure.isNull()) return QColor(Qt::white);
+    return pressureColor(pressure.toDouble());
 }
 
 void MonthlyReport::add1Month() {
