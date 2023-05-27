@@ -213,6 +213,7 @@ void MonthlyReport::add1Month() {
         _date->operator=(newDate);
         currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
         fillBoard();
+        yearMonthPicker->setDate(newDate);
     }
 }
 
@@ -222,6 +223,7 @@ void MonthlyReport::substract1Month() {
         _date->operator=(_date->addMonths(-1));
         currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
         fillBoard();
+        yearMonthPicker->setDate(newDate);
     }
 }
 
