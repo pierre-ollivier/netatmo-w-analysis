@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QWidget>
+#include <QDate>
 #include <QDialog>
 #include <QTableView>
 #include <QStandardItemModel>
@@ -17,6 +18,9 @@ public:
 public slots:
     void handleMonthItemChanged(const QItemSelection &, const QItemSelection &);
     void handleYearItemChanged(const QItemSelection &, const QItemSelection &);
+    void setYear(int year);
+    void setMonth(int month);
+    void setDate(QDate date);
 
 signals:
     void monthChanged(int);
@@ -43,6 +47,9 @@ private:
     QStandardItemModel *monthModel;
     QStandardItemModel *yearModel;
     QHBoxLayout *mainLayout;
+
+    int _baseYear;
+    int _baseMonth;
 
 };
 
