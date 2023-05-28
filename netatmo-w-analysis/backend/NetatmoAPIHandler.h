@@ -24,6 +24,7 @@ public slots:
     void postCurrentConditionsRequest();
     void postCurrentConditionsRequest(QString accessToken);
     void postDailyRequest(int dateBegin, QString scale, QString accessToken);
+    void postDailyRequest(int dateBegin, int dateEnd, QString scale, QString accessToken);
 
     void retrieveTokens(QNetworkReply*);
     void retrieveCurrentConditions(QNetworkReply*);

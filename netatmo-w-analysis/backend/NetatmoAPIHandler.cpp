@@ -91,7 +91,28 @@ void NetatmoAPIHandler::postDailyRequest(int date_begin, QString scale, QString 
     params.addQueryItem("real_time", "true");
     dailyRequestManager->post(request, params.query().toUtf8());
     apiMonitor->addTimestamp();
+}
 
+void NetatmoAPIHandler::postDailyRequest(int date_begin, int date_end, QString scale, QString accessToken) {
+
+    extern const QString mainDeviceId;
+    extern const QString outdoorModuleId;
+
+    QUrl url("https://api.netatmo.com/api/getmeasure?");
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    QUrlQuery params;
+    params.addQueryItem("access_token", accessToken.toUtf8());
+    params.addQueryItem("device_id", mainDeviceId);
+    params.addQueryItem("module_id", outdoorModuleId);
+    params.addQueryItem("scale", scale);
+    params.addQueryItem("type", "temperature,humidity");
+    params.addQueryItem("date_begin", QString::number(date_begin));
+    params.addQueryItem("date_end", QString::number(date_end));
+    params.addQueryItem("optimize", "false");
+    params.addQueryItem("real_time", "true");
+    dailyRequestManager->post(request, params.query().toUtf8());
+    apiMonitor->addTimestamp();
 }
 
 void NetatmoAPIHandler::retrieveTokens(QNetworkReply *reply) {
