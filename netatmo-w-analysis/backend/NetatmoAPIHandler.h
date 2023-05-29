@@ -28,6 +28,7 @@ public slots:
 
     void retrieveTokens(QNetworkReply*);
     void retrieveCurrentConditions(QNetworkReply*);
+    void retrieveDailyOutdoorConditions(QNetworkReply*);
 
 signals:
     // TOKENS
