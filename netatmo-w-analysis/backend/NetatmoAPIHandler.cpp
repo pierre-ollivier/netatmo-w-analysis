@@ -9,9 +9,9 @@ NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequest
 
     apiMonitor = monitor;
 
-    connect(tokensManager, SIGNAL(finished(QNetworkReply *)), this, SLOT(retrieveTokens(QNetworkReply *)));
-    connect(currentConditionsManager, SIGNAL(finished(QNetworkReply *)),
-            this, SLOT(retrieveCurrentConditions(QNetworkReply *)));
+    connect(tokensManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveTokens(QNetworkReply *)));
+    connect(currentConditionsManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveCurrentConditions(QNetworkReply *)));
+    connect(dailyRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveDailyOutdoorConditions(QNetworkReply *)));
 
     currentConditionsTimer = new QTimer();
     if (timeBetweenRequests > 0) {
@@ -128,6 +128,7 @@ void NetatmoAPIHandler::retrieveTokens(QNetworkReply *reply) {
 
         emit accessTokenChanged(accessToken);
         emit refreshTokenChanged(refreshToken);
+        postDailyRequest(1682899200, "max", accessToken);
     }
     else {
         qDebug() << "ERROR with network"
@@ -183,5 +184,16 @@ void NetatmoAPIHandler::retrieveCurrentConditions(QNetworkReply *reply) {
     else {
         qDebug() << "ERROR with network"
                  << "Impossible de recevoir le token. Vérifier la connexion et redémarrer le programme.";
+    }
+}
+
+void NetatmoAPIHandler::retrieveDailyOutdoorConditions(QNetworkReply *reply) {
+    QByteArray bytes = reply->readAll();
+    if (bytes.contains("error")) {
+        qDebug() << "ERROR with current conditions" << bytes;
+    }
+    else if (bytes.size() >= 1) {
+        QJsonDocument js = QJsonDocument::fromJson(bytes);
+        qDebug() << bytes;
     }
 }
