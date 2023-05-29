@@ -10,7 +10,7 @@
 #include <QDateTime>
 #include <QTimer>
 #include "APIMonitor.h"
-
+#include "../types/ExtTimestampRecord.h"
 
 class NetatmoAPIHandler: public QObject
 {
@@ -66,6 +66,9 @@ signals:
     void intUTCTimeChanged(int);
     void intMinTemperatureTimeChanged(int);
     void intMaxTemperatureTimeChanged(int);
+
+    // TIMESTAMP RECORD
+    void extTimestampRecordRetrieved(ExtTimestampRecord);
 
     // OTHER
 
