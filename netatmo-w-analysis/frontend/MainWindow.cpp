@@ -6,8 +6,10 @@
 #include "../netatmo-w-analysis/frontend/MonthlyReport.h"
 #include "../netatmo-w-analysis/frontend/YearlyReport.h"
 #include "../netatmo-w-analysis/backend/APIMonitor.h"
+#include "../types/ExtTimestampRecord.h"
 
 extern QString PATH_TO_PROD_DATABASE;
+extern QString PATH_TO_COPY_DATABASE;
 
 MainWindow::MainWindow()
 {
@@ -35,6 +37,7 @@ void MainWindow::buildAPIHandler() {
     apiHandler->postTokensRequest();
     connect(apiHandler, SIGNAL(accessTokenChanged(QString)),
             apiHandler, SLOT(postCurrentConditionsRequest(QString)));
+    connect(apiHandler, SIGNAL(accessTokenChanged(QString)), SLOT(setAccessToken(QString)));
     connect(apiHandler, SIGNAL(extTemperatureChanged(double)), this, SLOT(updateCurrentExtTemperature(double)));
     connect(apiHandler, SIGNAL(intTemperatureChanged(double)), this, SLOT(updateCurrentIntTemperature(double)));
     connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), this, SLOT(updateLastMeasurementDate(int)));
@@ -128,6 +131,11 @@ void MainWindow::createMenus() {
     QMenu *climatologyMenu = menuBar->addMenu(tr("&Climatologie"));
     climatologyMenu->addAction(displayMonthlyReportAction);
     climatologyMenu->addAction(displayYearlyReportAction);
+}
+
+void MainWindow::setAccessToken(QString newAccessToken) {
+    accessToken = newAccessToken;
+    addDataFromCurrentMonths();
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
@@ -341,4 +349,16 @@ void MainWindow::displayMonthlyReport() {
 void MainWindow::displayYearlyReport() {
     YearlyReport *report = new YearlyReport();
     report->show();
+}
+
+void MainWindow::addDataFromCurrentMonths() {
+    apiHandler->postDailyRequest(1682899200, "max", accessToken); // provisional, and start date is wrong because it corresponds to 02:00 CEST
+    // idea: loop over dates to perform 1 call every 3 days (should be enough)
+    connect(apiHandler, SIGNAL(extTimestampRecordRetrieved(ExtTimestampRecord)), SLOT(addExtTimestampRecordToCopyDatabase(ExtTimestampRecord)));
+}
+
+void MainWindow::addExtTimestampRecordToCopyDatabase(ExtTimestampRecord record) {
+    DatabaseHandler dbHandlerCopy(PATH_TO_COPY_DATABASE);
+    dbHandlerCopy.postOutdoorTimestampRecord(record, "OutdoorTimestampRecords");
+//    qDebug() << record.timestamp();
 }

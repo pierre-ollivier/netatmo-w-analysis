@@ -27,6 +27,8 @@ public:
     void createActions();
 
 public slots:
+    void setAccessToken(QString);
+
     void updateCurrentExtTemperature(double currentTemperature);
     void updateMinExtTemperature(double minTemperature);
     void updateMaxExtTemperature(double maxTemperature);
@@ -51,6 +53,9 @@ public slots:
 
     void displayMonthlyReport();
     void displayYearlyReport();
+
+    void addDataFromCurrentMonths();
+    void addExtTimestampRecordToCopyDatabase(ExtTimestampRecord);
 
 private:
     // labels

@@ -130,7 +130,6 @@ void NetatmoAPIHandler::retrieveTokens(QNetworkReply *reply) {
 
         emit accessTokenChanged(accessToken);
         emit refreshTokenChanged(refreshToken);
-        postDailyRequest(1682899200, "max", accessToken);
     }
     else {
         qDebug() << "ERROR with network"
