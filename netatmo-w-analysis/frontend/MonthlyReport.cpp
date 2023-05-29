@@ -1,11 +1,11 @@
 #include "MonthlyReport.h"
 
-extern QString PATH_TO_PROD_DATABASE;
+extern QString PATH_TO_COPY_DATABASE;
 
 MonthlyReport::MonthlyReport() : QWidget()
 {
     _date = new QDate(QDate::currentDate().addMonths(-1));
-    dbHandler = new DatabaseHandler(PATH_TO_PROD_DATABASE);
+    dbHandler = new DatabaseHandler(PATH_TO_COPY_DATABASE);
     deviceLocale = new QLocale();
 
     yearMonthPicker = new YearMonthPicker(_date->year(), _date->month());
