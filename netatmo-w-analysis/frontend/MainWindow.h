@@ -10,6 +10,7 @@
 #include "../netatmo-w-analysis/backend/NetatmoAPIHandler.h"
 #include "../netatmo-w-analysis/backend/DatabaseHandler.h"
 #include "../netatmo-w-analysis/backend/APIMonitor.h"
+#include "../netatmo-w-analysis/backend/OldDataUploader.h"
 
 
 class MainWindow : public QMainWindow
@@ -54,8 +55,8 @@ public slots:
     void displayMonthlyReport();
     void displayYearlyReport();
 
-    void addDataFromCurrentMonths();
-    void addExtTimestampRecordToCopyDatabase(ExtTimestampRecord);
+//    void addDataFromCurrentMonths();
+//    void addExtTimestampRecordToCopyDatabase(ExtTimestampRecord);
 
 private:
     // labels
@@ -83,6 +84,9 @@ private:
     QString accessToken = "";
     QLocale *deviceLocale;
     APIMonitor *apiMonitor;
+
+    //data uploader
+    OldDataUploader *oldDataUploader;
 
     //actions
     QAction *requestCountsAction;

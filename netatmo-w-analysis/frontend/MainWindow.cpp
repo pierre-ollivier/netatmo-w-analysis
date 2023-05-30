@@ -19,7 +19,9 @@ MainWindow::MainWindow()
     setMenuBar(menuBar);
     deviceLocale = new QLocale();
     apiMonitor = new APIMonitor();
+    apiHandler = new NetatmoAPIHandler(apiMonitor, 20000);
     dbHandler = new DatabaseHandler(PATH_TO_PROD_DATABASE);
+    oldDataUploader = new OldDataUploader(apiHandler);
     buildWindow();
 }
 
@@ -32,8 +34,7 @@ void MainWindow::buildWindow() {
     createMenus();
 }
 
-void MainWindow::buildAPIHandler() {
-    apiHandler = new NetatmoAPIHandler(apiMonitor, 20000);
+void MainWindow::buildAPIHandler() { 
     apiHandler->postTokensRequest();
     connect(apiHandler, SIGNAL(accessTokenChanged(QString)),
             apiHandler, SLOT(postCurrentConditionsRequest(QString)));
@@ -135,7 +136,10 @@ void MainWindow::createMenus() {
 
 void MainWindow::setAccessToken(QString newAccessToken) {
     accessToken = newAccessToken;
-    addDataFromCurrentMonths();
+    oldDataUploader->setAccessToken(accessToken);
+    // the following lines are provisional
+    oldDataUploader->addDataFromCurrentMonths(QDate(2023, 5, 1), QDate(2023, 5, 3), false);
+    oldDataUploader->addDataFromCurrentMonths(QDate(2023, 5, 1), QDate(2023, 5, 3), true);
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
@@ -351,14 +355,9 @@ void MainWindow::displayYearlyReport() {
     report->show();
 }
 
-void MainWindow::addDataFromCurrentMonths() {
-    apiHandler->postOutdoorDailyRequest(1682899200, "max", accessToken); // provisional, and start date is wrong because it corresponds to 02:00 CEST
-    // idea: loop over dates to perform 1 call every 3 days (should be enough)
-    connect(apiHandler, SIGNAL(extTimestampRecordRetrieved(ExtTimestampRecord)), SLOT(addExtTimestampRecordToCopyDatabase(ExtTimestampRecord)));
-}
+//void MainWindow::addDataFromCurrentMonths() {
+//    apiHandler->postOutdoorDailyRequest(1682899200, "max", accessToken); // provisional, and start date is wrong because it corresponds to 02:00 CEST
+//    // idea: loop over dates to perform 1 call every 3 days (should be enough)
+//    connect(apiHandler, SIGNAL(extTimestampRecordRetrieved(ExtTimestampRecord)), SLOT(addExtTimestampRecordToCopyDatabase(ExtTimestampRecord)));
+//}
 
-void MainWindow::addExtTimestampRecordToCopyDatabase(ExtTimestampRecord record) {
-    DatabaseHandler dbHandlerCopy(PATH_TO_COPY_DATABASE);
-    dbHandlerCopy.postOutdoorTimestampRecord(record, "OutdoorTimestampRecords");
-//    qDebug() << record.timestamp();
-}
