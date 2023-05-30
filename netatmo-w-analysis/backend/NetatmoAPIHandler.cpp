@@ -165,7 +165,6 @@ void NetatmoAPIHandler::postIndoorDailyRequest(int date_begin, QString scale, QS
 void NetatmoAPIHandler::postIndoorDailyRequest(int date_begin, int date_end, QString scale, QString accessToken) {
     if (accessToken == "") qDebug() << "Warning: undefined access token in NetatmoAPIHandler";
     extern const QString mainDeviceId;
-    extern const QString outdoorModuleId;
 
     QUrl url("https://api.netatmo.com/api/getmeasure?");
     QNetworkRequest request(url);
@@ -173,7 +172,7 @@ void NetatmoAPIHandler::postIndoorDailyRequest(int date_begin, int date_end, QSt
     QUrlQuery params;
     params.addQueryItem("access_token", accessToken.toUtf8());
     params.addQueryItem("device_id", mainDeviceId);
-    params.addQueryItem("module_id", outdoorModuleId);
+    params.addQueryItem("module_id", mainDeviceId);
     params.addQueryItem("scale", scale);
     params.addQueryItem("type", "temperature,humidity,pressure,co2,noise");
     params.addQueryItem("date_begin", QString::number(date_begin));

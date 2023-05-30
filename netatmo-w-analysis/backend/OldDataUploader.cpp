@@ -11,8 +11,8 @@ OldDataUploader::OldDataUploader(NetatmoAPIHandler* apiHandler, QString accessTo
 
     connect(apiHandler, SIGNAL(extTimestampRecordRetrieved(ExtTimestampRecord)),
             SLOT(addExtTimestampRecordToCopyDatabase(ExtTimestampRecord)));
-    connect(apiHandler, SIGNAL(extTimestampRecordRetrieved(ExtTimestampRecord)),
-            SLOT(addExtTimestampRecordToCopyDatabase(ExtTimestampRecord)));
+    connect(apiHandler, SIGNAL(intTimestampRecordRetrieved(IntTimestampRecord)),
+            SLOT(addIntTimestampRecordToCopyDatabase(IntTimestampRecord)));
 }
 
 void OldDataUploader::addDataFromCurrentMonths(QDate beginDate, QDate endDate, bool indoor) {
