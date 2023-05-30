@@ -7,13 +7,15 @@ NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequest
 {
     tokensManager = new QNetworkAccessManager();
     currentConditionsManager = new QNetworkAccessManager();
-    dailyRequestManager = new QNetworkAccessManager();
+    dailyOutdoorRequestManager = new QNetworkAccessManager();
+    dailyIndoorRequestManager = new QNetworkAccessManager();
 
     apiMonitor = monitor;
 
     connect(tokensManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveTokens(QNetworkReply *)));
     connect(currentConditionsManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveCurrentConditions(QNetworkReply *)));
-    connect(dailyRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveDailyOutdoorConditions(QNetworkReply *)));
+    connect(dailyOutdoorRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveDailyOutdoorConditions(QNetworkReply *)));
+    connect(dailyIndoorRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveDailyIndoorConditions(QNetworkReply *)));
 
     currentConditionsTimer = new QTimer();
     if (timeBetweenRequests > 0) {
@@ -74,7 +76,7 @@ void NetatmoAPIHandler::postCurrentConditionsRequest() {
     apiMonitor->addTimestamp();
 }
 
-void NetatmoAPIHandler::postDailyRequest(int date_begin, QString scale, QString accessToken) {
+void NetatmoAPIHandler::postOutdoorDailyRequest(int date_begin, QString scale, QString accessToken) {
 
     extern const QString mainDeviceId;
     extern const QString outdoorModuleId;
@@ -91,11 +93,11 @@ void NetatmoAPIHandler::postDailyRequest(int date_begin, QString scale, QString 
     params.addQueryItem("date_begin", QString::number(date_begin));
     params.addQueryItem("optimize", "false");
     params.addQueryItem("real_time", "true");
-    dailyRequestManager->post(request, params.query().toUtf8());
+    dailyOutdoorRequestManager->post(request, params.query().toUtf8());
     apiMonitor->addTimestamp();
 }
 
-void NetatmoAPIHandler::postDailyRequest(int date_begin, int date_end, QString scale, QString accessToken) {
+void NetatmoAPIHandler::postOutdoorDailyRequest(int date_begin, int date_end, QString scale, QString accessToken) {
 
     extern const QString mainDeviceId;
     extern const QString outdoorModuleId;
@@ -113,7 +115,50 @@ void NetatmoAPIHandler::postDailyRequest(int date_begin, int date_end, QString s
     params.addQueryItem("date_end", QString::number(date_end));
     params.addQueryItem("optimize", "false");
     params.addQueryItem("real_time", "true");
-    dailyRequestManager->post(request, params.query().toUtf8());
+    dailyOutdoorRequestManager->post(request, params.query().toUtf8());
+    apiMonitor->addTimestamp();
+}
+
+void NetatmoAPIHandler::postIndoorDailyRequest(int date_begin, QString scale, QString accessToken) {
+
+    extern const QString mainDeviceId;
+    extern const QString outdoorModuleId;
+
+    QUrl url("https://api.netatmo.com/api/getmeasure?");
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    QUrlQuery params;
+    params.addQueryItem("access_token", accessToken.toUtf8());
+    params.addQueryItem("device_id", mainDeviceId);
+    params.addQueryItem("module_id", outdoorModuleId);
+    params.addQueryItem("scale", scale);
+    params.addQueryItem("type", "temperature,humidity");
+    params.addQueryItem("date_begin", QString::number(date_begin));
+    params.addQueryItem("optimize", "false");
+    params.addQueryItem("real_time", "true");
+    dailyIndoorRequestManager->post(request, params.query().toUtf8());
+    apiMonitor->addTimestamp();
+}
+
+void NetatmoAPIHandler::postIndoorDailyRequest(int date_begin, int date_end, QString scale, QString accessToken) {
+
+    extern const QString mainDeviceId;
+    extern const QString outdoorModuleId;
+
+    QUrl url("https://api.netatmo.com/api/getmeasure?");
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    QUrlQuery params;
+    params.addQueryItem("access_token", accessToken.toUtf8());
+    params.addQueryItem("device_id", mainDeviceId);
+    params.addQueryItem("module_id", outdoorModuleId);
+    params.addQueryItem("scale", scale);
+    params.addQueryItem("type", "temperature,humidity,pressure,co2,noise");
+    params.addQueryItem("date_begin", QString::number(date_begin));
+    params.addQueryItem("date_end", QString::number(date_end));
+    params.addQueryItem("optimize", "false");
+    params.addQueryItem("real_time", "true");
+    dailyIndoorRequestManager->post(request, params.query().toUtf8());
     apiMonitor->addTimestamp();
 }
 
@@ -205,6 +250,30 @@ void NetatmoAPIHandler::retrieveDailyOutdoorConditions(QNetworkReply *reply) {
             int humidity = int(0.5 + value[1].toDouble());
             emit extTimestampRecordRetrieved(
                         ExtTimestampRecord(timestamp, temperature, humidity));
+        }
+    }
+}
+
+void NetatmoAPIHandler::retrieveDailyIndoorConditions(QNetworkReply *reply) {
+    QByteArray bytes = reply->readAll();
+    QJsonDocument js = QJsonDocument::fromJson(bytes);
+    QJsonObject tb = js["body"].toObject();
+    if (bytes.contains("error")) {
+        qDebug() << "ERROR with current conditions" << bytes;
+    }
+
+    else if (bytes.size() >= 1) {
+        QJsonDocument js = QJsonDocument::fromJson(bytes);
+        foreach (const QString &key, tb.keys()) {
+            QJsonValue value = tb.value(key);
+            long long timestamp = key.toLongLong();
+            double temperature = value[0].toDouble();
+            int humidity = int(0.5 + value[1].toDouble());
+            double pressure = value[2].toDouble();
+            int co2 = int(0.5 + value[3].toDouble());
+            int noise = int(0.5 + value[4].toDouble());
+            emit intTimestampRecordRetrieved(
+                        IntTimestampRecord(timestamp, temperature, humidity, pressure, co2, noise));
         }
     }
 }
