@@ -4,9 +4,9 @@
 
 extern const QString PATH_TO_COPY_DATABASE;
 
-OldDataUploader::OldDataUploader(NetatmoAPIHandler *apiHandler, QString accessToken)
+OldDataUploader::OldDataUploader(NetatmoAPIHandler* apiHandler, QString accessToken)
 {
-    _apiHandler = new NetatmoAPIHandler(*apiHandler);
+    _apiHandler = apiHandler;
     _accessToken = accessToken;
 
     connect(apiHandler, SIGNAL(extTimestampRecordRetrieved(ExtTimestampRecord)),
