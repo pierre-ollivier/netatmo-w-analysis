@@ -354,10 +354,3 @@ void MainWindow::displayYearlyReport() {
     YearlyReport *report = new YearlyReport();
     report->show();
 }
-
-//void MainWindow::addDataFromCurrentMonths() {
-//    apiHandler->postOutdoorDailyRequest(1682899200, "max", accessToken); // provisional, and start date is wrong because it corresponds to 02:00 CEST
-//    // idea: loop over dates to perform 1 call every 3 days (should be enough)
-//    connect(apiHandler, SIGNAL(extTimestampRecordRetrieved(ExtTimestampRecord)), SLOT(addExtTimestampRecordToCopyDatabase(ExtTimestampRecord)));
-//}
-
