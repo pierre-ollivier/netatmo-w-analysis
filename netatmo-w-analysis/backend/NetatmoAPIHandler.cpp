@@ -27,6 +27,7 @@ NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequest
 
 NetatmoAPIHandler::NetatmoAPIHandler(NetatmoAPIHandler &other) :
     NetatmoAPIHandler(other.getAPIMonitor(), other.getTimeBetweenRequests()) {
+    accessToken = other.getAccessToken();
 }
 
 APIMonitor* NetatmoAPIHandler::getAPIMonitor() {
@@ -37,8 +38,15 @@ int NetatmoAPIHandler::getTimeBetweenRequests() {
     return currentConditionsTimer->interval();
 }
 
-void NetatmoAPIHandler::postTokensRequest() {
+QString NetatmoAPIHandler::getAccessToken() {
+    return accessToken;
+}
 
+void NetatmoAPIHandler::setAccessToken(QString newAccessToken) {
+    accessToken = newAccessToken;
+}
+
+void NetatmoAPIHandler::postTokensRequest() {
     extern const QString username;
     extern const QString password;
     extern const QString clientId;
@@ -61,6 +69,7 @@ void NetatmoAPIHandler::postTokensRequest() {
 }
 
 void NetatmoAPIHandler::postCurrentConditionsRequest(QString accessToken) {
+    if (accessToken == "") qDebug() << "Warning: undefined access token in NetatmoAPIHandler";
     extern const QString mainDeviceId;
 
     QUrl url("https://api.netatmo.com/api/getstationsdata?");
@@ -75,6 +84,7 @@ void NetatmoAPIHandler::postCurrentConditionsRequest(QString accessToken) {
 }
 
 void NetatmoAPIHandler::postCurrentConditionsRequest() {
+    if (accessToken == "") qDebug() << "Warning: undefined access token in NetatmoAPIHandler (postCurCondRqst)";
     extern const QString mainDeviceId;
 
     QUrl url("https://api.netatmo.com/api/getstationsdata?");
@@ -89,7 +99,7 @@ void NetatmoAPIHandler::postCurrentConditionsRequest() {
 }
 
 void NetatmoAPIHandler::postOutdoorDailyRequest(int date_begin, QString scale, QString accessToken) {
-
+    if (accessToken == "") qDebug() << "Warning: undefined access token in NetatmoAPIHandler";
     extern const QString mainDeviceId;
     extern const QString outdoorModuleId;
 
@@ -110,7 +120,7 @@ void NetatmoAPIHandler::postOutdoorDailyRequest(int date_begin, QString scale, Q
 }
 
 void NetatmoAPIHandler::postOutdoorDailyRequest(int date_begin, int date_end, QString scale, QString accessToken) {
-
+    if (accessToken == "") qDebug() << "Warning: undefined access token in NetatmoAPIHandler";
     extern const QString mainDeviceId;
     extern const QString outdoorModuleId;
 
@@ -132,7 +142,7 @@ void NetatmoAPIHandler::postOutdoorDailyRequest(int date_begin, int date_end, QS
 }
 
 void NetatmoAPIHandler::postIndoorDailyRequest(int date_begin, QString scale, QString accessToken) {
-
+    if (accessToken == "") qDebug() << "Warning: undefined access token in NetatmoAPIHandler";
     extern const QString mainDeviceId;
     extern const QString outdoorModuleId;
 
@@ -153,7 +163,7 @@ void NetatmoAPIHandler::postIndoorDailyRequest(int date_begin, QString scale, QS
 }
 
 void NetatmoAPIHandler::postIndoorDailyRequest(int date_begin, int date_end, QString scale, QString accessToken) {
-
+    if (accessToken == "") qDebug() << "Warning: undefined access token in NetatmoAPIHandler";
     extern const QString mainDeviceId;
     extern const QString outdoorModuleId;
 

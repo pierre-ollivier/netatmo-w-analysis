@@ -37,6 +37,8 @@ public slots:
 
     APIMonitor* getAPIMonitor();
     int getTimeBetweenRequests();
+    QString getAccessToken();
+    void setAccessToken(QString newAccessToken);
 
 signals:
     // TOKENS
