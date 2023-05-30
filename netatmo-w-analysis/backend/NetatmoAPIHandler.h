@@ -19,6 +19,7 @@ class NetatmoAPIHandler: public QObject
 
 public:
     NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequests = -1);
+    NetatmoAPIHandler(NetatmoAPIHandler &other);
 
 public slots:
     void postTokensRequest();
@@ -33,6 +34,9 @@ public slots:
     void retrieveCurrentConditions(QNetworkReply*);
     void retrieveDailyOutdoorConditions(QNetworkReply*);
     void retrieveDailyIndoorConditions(QNetworkReply*);
+
+    APIMonitor* getAPIMonitor();
+    int getTimeBetweenRequests();
 
 signals:
     // TOKENS

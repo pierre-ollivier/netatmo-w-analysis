@@ -25,6 +25,18 @@ NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequest
 
 }
 
+NetatmoAPIHandler::NetatmoAPIHandler(NetatmoAPIHandler &other) :
+    NetatmoAPIHandler(other.getAPIMonitor(), other.getTimeBetweenRequests()) {
+}
+
+APIMonitor* NetatmoAPIHandler::getAPIMonitor() {
+    return apiMonitor;
+}
+
+int NetatmoAPIHandler::getTimeBetweenRequests() {
+    return currentConditionsTimer->interval();
+}
+
 void NetatmoAPIHandler::postTokensRequest() {
 
     extern const QString username;
