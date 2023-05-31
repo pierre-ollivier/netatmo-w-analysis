@@ -138,8 +138,8 @@ void MainWindow::setAccessToken(QString newAccessToken) {
     accessToken = newAccessToken;
     oldDataUploader->setAccessToken(accessToken);
     // the following lines are provisional
-    oldDataUploader->addDataFromCurrentMonths(QDate(2023, 5, 1), QDate(2023, 5, 3), false);
-    oldDataUploader->addDataFromCurrentMonths(QDate(2023, 5, 1), QDate(2023, 5, 3), true);
+    oldDataUploader->addDataFromCurrentMonths(QDate(2023, 5, 1), QDate::currentDate().addDays(-1), false);
+    oldDataUploader->addDataFromCurrentMonths(QDate(2023, 5, 1), QDate::currentDate().addDays(-1), true);
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
