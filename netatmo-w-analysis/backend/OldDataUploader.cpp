@@ -20,7 +20,7 @@ void OldDataUploader::addDataFromCurrentMonths(QDate beginDate, QDate endDate, b
     int N = beginDate.daysTo(endDate);
     for (int n = 0; n < N - N % 3; n += 3) {
         long long beginTimestamp = QDateTime(beginDate.addDays(n)).toSecsSinceEpoch();
-        long long endTimestamp = QDateTime(endDate.addDays(n + 3)).toSecsSinceEpoch() + 86400;
+        long long endTimestamp = QDateTime(beginDate.addDays(n + 2)).toSecsSinceEpoch() + 86400;
 
         if (indoor) {
             _apiHandler->postIndoorDailyRequest(beginTimestamp, endTimestamp, "max", _accessToken);
@@ -31,7 +31,7 @@ void OldDataUploader::addDataFromCurrentMonths(QDate beginDate, QDate endDate, b
     }
 
     long long beginTimestamp = QDateTime(beginDate.addDays(N - N % 3)).toSecsSinceEpoch();
-    long long endTimestamp = QDateTime(endDate.addDays(N)).toSecsSinceEpoch() + 86400;
+    long long endTimestamp = QDateTime(beginDate.addDays(N)).toSecsSinceEpoch() + 86400;
 
     if (indoor) {
         _apiHandler->postIndoorDailyRequest(beginTimestamp, endTimestamp, "max", _accessToken);
