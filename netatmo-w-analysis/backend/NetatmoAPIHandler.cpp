@@ -121,7 +121,6 @@ void NetatmoAPIHandler::postOutdoorDailyRequest(int date_begin, QString scale, Q
 
 void NetatmoAPIHandler::postOutdoorDailyRequest(int date_begin, int date_end, QString scale, QString accessToken) {
     if (accessToken == "") qDebug() << "Warning: undefined access token in NetatmoAPIHandler";
-    qDebug() << date_begin << "--" << date_end;
     extern const QString mainDeviceId;
     extern const QString outdoorModuleId;
 

@@ -137,9 +137,17 @@ void MainWindow::createMenus() {
 void MainWindow::setAccessToken(QString newAccessToken) {
     accessToken = newAccessToken;
     oldDataUploader->setAccessToken(accessToken);
-    // the following lines are provisional
-    oldDataUploader->addDataFromCurrentMonths(QDate(2023, 5, 1), QDate::currentDate().addDays(-1), false);
-    oldDataUploader->addDataFromCurrentMonths(QDate(2023, 5, 1), QDate::currentDate().addDays(-1), true);
+    addDataFromCurrentMonths();
+}
+
+void MainWindow::addDataFromCurrentMonths() {
+    QDate lastAddedOutdoorDate = dbHandler->getLatestDateTimeFromDatabase("OutdoorTimestampRecords").date();
+    QDate lastAddedIndoorDate = dbHandler->getLatestDateTimeFromDatabase("IndoorTimestampRecords").date();
+
+    oldDataUploader->addDataFromCurrentMonths(lastAddedOutdoorDate.addDays(1),
+                                              QDate::currentDate().addDays(-1), false);
+    oldDataUploader->addDataFromCurrentMonths(lastAddedIndoorDate.addDays(1),
+                                              QDate::currentDate().addDays(-1), true);
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {

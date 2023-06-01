@@ -55,8 +55,7 @@ public slots:
     void displayMonthlyReport();
     void displayYearlyReport();
 
-//    void addDataFromCurrentMonths();
-//    void addExtTimestampRecordToCopyDatabase(ExtTimestampRecord);
+    void addDataFromCurrentMonths();
 
 private:
     // labels
