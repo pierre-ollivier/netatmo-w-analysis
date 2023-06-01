@@ -812,3 +812,25 @@ void DatabaseHandler::updateIndoorDailyRecords(QDate beginDate, QDate endDate, b
         if (verbose) progress.setValue(date.toJulianDay());
     }
 }
+
+QDateTime DatabaseHandler::getLatestDateTimeFromDatabase(QString tableName) {
+    if (tableName == QString("OutdoorDailyRecords") || tableName == "IndoorDailyRecords") {
+        QString latestDate = getResultFromDatabase(
+                    "SELECT date from " + tableName + " "
+                    "ORDER BY year desc, month desc, day desc "
+                    "LIMIT 1").toString();
+        return QDateTime(QDate::fromString(latestDate, "dd/MM/yyyy"));
+    }
+    else {
+        QString latestDate = getResultFromDatabase(
+                    "SELECT date from " + tableName + " "
+                    "ORDER BY year desc, month desc, day desc "
+                    "LIMIT 1").toString();
+        QString latestTime = getResultFromDatabase(
+                    "SELECT time from " + tableName + " "
+                    "WHERE date = \"" + latestDate + "\" "
+                    "ORDER BY hour desc, minute desc, second desc "
+                    "LIMIT 1").toString();
+        return QDateTime(QDate::fromString(latestDate, "dd/MM/yyyy"), QTime::fromString(latestTime, "hh:mm:ss"));
+    }
+}
