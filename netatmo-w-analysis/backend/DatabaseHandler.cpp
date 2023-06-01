@@ -137,6 +137,7 @@ void DatabaseHandler::postOutdoorDailyRecord(ExtDailyRecord record, QString tabl
         qDebug() << "The following query could not be executed. Query: " << preparingQuery;
         qDebug() << "ERROR:" << query.lastError().text();
     }
+    db.close();
 }
 
 void DatabaseHandler::postOutdoorTimestampRecord(ExtTimestampRecord record, QString tableName) {
@@ -187,6 +188,7 @@ void DatabaseHandler::postOutdoorTimestampRecord(ExtTimestampRecord record, QStr
         qDebug() << "The following query could not be executed. Query: " << preparingQuery;
         qDebug() << "ERROR:" << query.lastError().text();
     }
+    db.close();
 
 }
 
@@ -306,6 +308,7 @@ void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString table
         qDebug() << "The following query could not be executed. Query: " << preparingQuery;
         qDebug() << "ERROR:" << query.lastError().text();
     }
+    db.close();
 }
 
 void DatabaseHandler::postIndoorTimestampRecord(IntTimestampRecord record, QString tableName) {
@@ -359,6 +362,7 @@ void DatabaseHandler::postIndoorTimestampRecord(IntTimestampRecord record, QStri
         qDebug() << "The following query could not be executed. Query: " << preparingQuery;
         qDebug() << "ERROR:" << query.lastError().text();
     }
+    db.close();
 }
 
 void DatabaseHandler::postFromOutdoorCsv(QString pathToCsv, QString tableName, QDate beginDate, QDate endDate) {
@@ -516,6 +520,7 @@ std::vector<IntTimestampRecord> DatabaseHandler::getIntTimestampRecordsFromDatab
                         );
         }
     }
+    db.close();
     return result;
 }
 
@@ -546,6 +551,7 @@ std::vector<ExtTimestampRecord> DatabaseHandler::getExtTimestampRecordsFromDatab
                         );
         }
     }
+    db.close();
     return result;
 }
 
@@ -636,6 +642,7 @@ std::vector<IntDailyRecord> DatabaseHandler::getIntDailyRecordsFromDatabase(QStr
                         );
         }
     }
+    db.close();
     return result;
 }
 
@@ -704,6 +711,7 @@ std::vector<ExtDailyRecord> DatabaseHandler::getExtDailyRecordsFromDatabase(QStr
                         );
         }
     }
+    db.close();
     return result;
 }
 
@@ -729,6 +737,7 @@ QVariant DatabaseHandler::getResultFromDatabase(QString query) {
     else {
         qDebug() << "Invalid query:" << query;
     }
+    db.close();
     return QVariant();
 }
 
