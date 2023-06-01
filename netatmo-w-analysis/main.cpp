@@ -22,6 +22,7 @@ int main(int argc, char *argv[]) {
     if (valid) {
         int result = app.exec();
         QFile copyDatabase(APP_PATH + "/" + PATH_TO_COPY_DATABASE);
+        copyDatabase.close();
         bool deleteValid = copyDatabase.remove();
         if (deleteValid) return result;
         else {
