@@ -2,6 +2,7 @@
 #include <QDate>
 #include <QDebug>
 
+extern QString PATH_TO_PROD_DATABASE;
 extern QString PATH_TO_COPY_DATABASE;
 
 YearlyReport::YearlyReport()
@@ -13,7 +14,7 @@ YearlyReport::YearlyReport()
 
     mainView->setModel(mainModel);
 
-    dbHandler = new DatabaseHandler(PATH_TO_COPY_DATABASE);
+    dbHandler = new DatabaseHandler(PATH_TO_PROD_DATABASE);
 
     temperatureRadioButton = new QRadioButton("Température");
     humidityRadioButton = new QRadioButton("Humidité");
