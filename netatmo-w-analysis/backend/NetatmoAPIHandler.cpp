@@ -272,6 +272,8 @@ void NetatmoAPIHandler::retrieveDailyOutdoorConditions(QNetworkReply *reply) {
             emit extTimestampRecordRetrieved(
                         ExtTimestampRecord(timestamp, temperature, humidity));
         }
+
+        emit endOfDailyOutdoorConditionsRetrieval();
     }
 }
 
@@ -296,5 +298,7 @@ void NetatmoAPIHandler::retrieveDailyIndoorConditions(QNetworkReply *reply) {
             emit intTimestampRecordRetrieved(
                         IntTimestampRecord(timestamp, temperature, humidity, pressure, co2, noise));
         }
+
+        emit endOfDailyIndoorConditionsRetrieval();
     }
 }

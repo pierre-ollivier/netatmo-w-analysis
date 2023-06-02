@@ -84,6 +84,8 @@ signals:
     // OTHER
 
     void currentTimeChanged(QDateTime);
+    void endOfDailyOutdoorConditionsRetrieval();
+    void endOfDailyIndoorConditionsRetrieval();
 
 private:
     QNetworkAccessManager *tokensManager;

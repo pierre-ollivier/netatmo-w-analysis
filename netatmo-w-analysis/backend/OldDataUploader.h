@@ -21,9 +21,16 @@ public slots:
     void addExtTimestampRecordToCopyDatabase(ExtTimestampRecord);
     void addIntTimestampRecordToCopyDatabase(IntTimestampRecord);
 
+    void intBatchRetrieved();
+    void extBatchRetrieved();
+
 private:
     NetatmoAPIHandler *_apiHandler;
     QString _accessToken;
+    QDate _beginDate = QDate();
+    QDate _endDate = QDate();
+    int numberOfExtBatchesToRetrieve = 0;
+    int numberOfIntBatchesToRetrieve = 0;
 };
 
 #endif // OLDDATAUPLOADER_H
