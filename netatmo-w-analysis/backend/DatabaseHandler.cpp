@@ -729,7 +729,7 @@ QVariant DatabaseHandler::getResultFromDatabase(QString query) {
         if (_query.next()) {
             return _query.value(0);
         }
-        else {
+        else if (query.left(6) != "DELETE") {
             qDebug() << "Empty query result";
             qDebug() << query;
         }
