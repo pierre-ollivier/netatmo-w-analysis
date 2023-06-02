@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QFile>
 #include "frontend/MainWindow.h"
+#include "backend/DatabaseHandler.h"
 #include "playground.cpp"
 
 extern const QString VERSION;
@@ -20,6 +21,12 @@ int main(int argc, char *argv[]) {
                              APP_PATH + "/" + PATH_TO_COPY_DATABASE);
 
     if (valid) {
+        DatabaseHandler copyDbEmptier(PATH_TO_COPY_DATABASE);
+        copyDbEmptier.getResultFromDatabase("DELETE FROM IndoorDailyRecords");
+        copyDbEmptier.getResultFromDatabase("DELETE FROM OutdoorDailyRecords");
+        copyDbEmptier.getResultFromDatabase("DELETE FROM IndoorTimestampRecords");
+        copyDbEmptier.getResultFromDatabase("DELETE FROM OutdoorTimestampRecords");
+
         int result = app.exec();
         QFile copyDatabase(APP_PATH + "/" + PATH_TO_COPY_DATABASE);
         copyDatabase.close();
