@@ -141,8 +141,8 @@ void MainWindow::setAccessToken(QString newAccessToken) {
 }
 
 void MainWindow::addDataFromCurrentMonths() {
-    QDate lastAddedOutdoorDate = dbHandler->getLatestDateTimeFromDatabase("OutdoorTimestampRecords").date();
-    QDate lastAddedIndoorDate = dbHandler->getLatestDateTimeFromDatabase("IndoorTimestampRecords").date();
+    QDate lastAddedOutdoorDate = dbHandler->getLatestDateTimeFromDatabase("OutdoorDailyRecords").date();
+    QDate lastAddedIndoorDate = dbHandler->getLatestDateTimeFromDatabase("IndoorDailyRecords").date();
 
     oldDataUploader->addDataFromCurrentMonths(lastAddedOutdoorDate.addDays(1),
                                               QDate::currentDate().addDays(-1), false);

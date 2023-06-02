@@ -18,12 +18,14 @@ OldDataUploader::OldDataUploader(NetatmoAPIHandler* apiHandler, QString accessTo
 }
 
 void OldDataUploader::addDataFromCurrentMonths(QDate beginDate, QDate endDate, bool indoor) {
+    qDebug() << beginDate << endDate;
     if (_accessToken == "") qDebug() << "Warning: undefined access token in OldDataUploader";
     int N = beginDate.daysTo(endDate);
-    if (indoor) numberOfIntBatchesToRetrieve = N + 1; else numberOfExtBatchesToRetrieve = N + 1;
     _beginDate = beginDate; _endDate = endDate;
 
     for (int n = 0; n <= N; n += 3) {
+        if (indoor) numberOfIntBatchesToRetrieve += 1; else numberOfExtBatchesToRetrieve += 1;
+
         long long beginTimestamp = QDateTime(beginDate.addDays(n)).toSecsSinceEpoch();
         long long endTimestamp = QDateTime(beginDate.addDays(n + 2)).toSecsSinceEpoch() + 86400;
 
@@ -41,26 +43,12 @@ void OldDataUploader::addDataFromCurrentMonths(QDate beginDate, QDate endDate, b
             _apiHandler->postOutdoorDailyRequest(beginTimestamp, endTimestamp, "max", _accessToken);
         }
     }
-
-//    long long beginTimestamp = QDateTime(beginDate.addDays(N - N % 3)).toSecsSinceEpoch();
-//    long long endTimestamp = QDateTime(beginDate.addDays(N)).toSecsSinceEpoch() + 86400;
-
-//    if (indoor) {
-//        _apiHandler->postIndoorDailyRequest(beginTimestamp, endTimestamp, "max", _accessToken);
-//    }
-//    else {
-//        _apiHandler->postOutdoorDailyRequest(beginTimestamp, endTimestamp, "max", _accessToken);
-//    }
 }
 
 
 void OldDataUploader::addExtTimestampRecordToCopyDatabase(ExtTimestampRecord record) {
     DatabaseHandler dbHandlerCopy(PATH_TO_COPY_DATABASE);
     dbHandlerCopy.postOutdoorTimestampRecord(record, "OutdoorTimestampRecords");
-//    numberOfExtRecordsToRetrieve--;
-//    if (numberOfExtRecordsToRetrieve == 0) {
-//        dbHandlerCopy.updateOutdoorDailyRecords(_beginDate, _endDate, false);
-//    }
 }
 
 
@@ -80,6 +68,7 @@ void OldDataUploader::extBatchRetrieved() {
 void OldDataUploader::intBatchRetrieved() {
     DatabaseHandler dbHandlerCopy(PATH_TO_COPY_DATABASE);
     numberOfIntBatchesToRetrieve--;
+    qDebug() << numberOfIntBatchesToRetrieve;
     if (numberOfIntBatchesToRetrieve == 0) {
         dbHandlerCopy.updateIndoorDailyRecords(_beginDate, _endDate, false);
     }

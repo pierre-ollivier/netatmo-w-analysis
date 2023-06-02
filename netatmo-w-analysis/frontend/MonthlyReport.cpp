@@ -6,8 +6,12 @@ extern QString PATH_TO_COPY_DATABASE;
 MonthlyReport::MonthlyReport() : QWidget()
 {
     _date = new QDate(QDate::currentDate().addMonths(-1));
-    dbHandler = new DatabaseHandler(PATH_TO_PROD_DATABASE);
+    dbHandlerProd = new DatabaseHandler(PATH_TO_PROD_DATABASE);
+    dbHandlerCopy = new DatabaseHandler(PATH_TO_COPY_DATABASE);
     deviceLocale = new QLocale();
+
+    limitBetweenProdAndCopyExt = dbHandlerProd->getLatestDateTimeFromDatabase("OutdoorDailyRecords").date();
+    limitBetweenProdAndCopyInt = dbHandlerProd->getLatestDateTimeFromDatabase("IndoorDailyRecords").date();
 
     yearMonthPicker = new YearMonthPicker(_date->year(), _date->month());
     connect(yearMonthPicker, SIGNAL(monthChanged(int)), SLOT(setMonth(int)));
@@ -77,15 +81,34 @@ void MonthlyReport::fillBoard() {
     for (int day = 1; day <= _date->daysInMonth(); day++) {
         QDate date = QDate(_date->year(), _date->month(), day);
         QString measurementTypeCapitalized = QString(measurementType[0]).toUpper() + measurementType.mid(1);
-        QVariant minimumMeasurement = dbHandler->getResultFromDatabase(
-                    "SELECT min" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
-                    "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
-        QVariant maximumMeasurement = dbHandler->getResultFromDatabase(
-                    "SELECT max" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
-                    "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
-        QVariant averageMeasurement = dbHandler->getResultFromDatabase(
-                    "SELECT avg" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
-                    "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
+        QVariant minimumMeasurement, maximumMeasurement, averageMeasurement;
+
+        if ((indoorOrOutdoorCapitalized == "Outdoor" && date <= limitBetweenProdAndCopyExt)
+            || (indoorOrOutdoorCapitalized == "Indoor" && date <= limitBetweenProdAndCopyInt))
+        {
+            minimumMeasurement = dbHandlerProd->getResultFromDatabase(
+                        "SELECT min" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
+                                                                                                            "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
+            maximumMeasurement = dbHandlerProd->getResultFromDatabase(
+                        "SELECT max" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
+                                                                                                            "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
+            averageMeasurement = dbHandlerProd->getResultFromDatabase(
+                        "SELECT avg" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
+                                                                                                            "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
+        }
+
+        else
+        {
+            minimumMeasurement = dbHandlerCopy->getResultFromDatabase(
+                        "SELECT min" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
+                                                                                                            "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
+            maximumMeasurement = dbHandlerCopy->getResultFromDatabase(
+                        "SELECT max" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
+                                                                                                            "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
+            averageMeasurement = dbHandlerCopy->getResultFromDatabase(
+                        "SELECT avg" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
+                                                                                                            "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
+        }
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
 

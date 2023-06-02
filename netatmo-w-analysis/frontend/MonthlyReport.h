@@ -40,6 +40,7 @@ protected:
 
 private:
     QDate *initialDate;
+    QDate limitBetweenProdAndCopyExt, limitBetweenProdAndCopyInt;
     QTableView *view;
     QStandardItemModel *model;
     QGridLayout *layout;
@@ -57,7 +58,8 @@ private:
     QVBoxLayout *buttonsLayout;
 
     QDate *_date;
-    DatabaseHandler *dbHandler;
+    DatabaseHandler *dbHandlerProd;
+    DatabaseHandler *dbHandlerCopy;
     QLocale *deviceLocale;
 
     QString measurementType = "temperature";
