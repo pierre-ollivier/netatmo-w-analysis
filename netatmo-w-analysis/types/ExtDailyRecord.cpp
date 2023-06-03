@@ -48,3 +48,42 @@ ExtDailyRecord::ExtDailyRecord(
 {
 
 }
+
+ExtDailyRecord::ExtDailyRecord(
+        QDate date,
+        double maxTemperature,
+        double minTemperature,
+        double avgTemperature,
+        int maxHumidity,
+        int minHumidity,
+        double avgHumidity,
+        long long maxTemperatureTimestamp,
+        long long minTemperatureTimestamp,
+        long long maxHumidityTimestamp,
+        long long minHumidityTimestamp
+        ) : DailyRecord(
+                date,
+                maxTemperature,
+                minTemperature,
+                avgTemperature,
+                maxHumidity,
+                minHumidity,
+                avgHumidity,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                maxTemperatureTimestamp,
+                minTemperatureTimestamp,
+                maxHumidityTimestamp,
+                minHumidityTimestamp,
+                1000000000,
+                1000000000,
+                1000000000,
+                1000000000
+                )
+{
+
+}

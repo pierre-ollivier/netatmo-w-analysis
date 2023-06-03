@@ -8,6 +8,7 @@ NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequest
     tokensManager = new QNetworkAccessManager();
     currentConditionsManager = new QNetworkAccessManager();
     dailyOutdoorRequestManager = new QNetworkAccessManager();
+    dailyFullOutdoorRequestManager = new QNetworkAccessManager();
     dailyIndoorRequestManager = new QNetworkAccessManager();
 
     apiMonitor = monitor;
@@ -15,6 +16,7 @@ NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequest
     connect(tokensManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveTokens(QNetworkReply *)));
     connect(currentConditionsManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveCurrentConditions(QNetworkReply *)));
     connect(dailyOutdoorRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveDailyOutdoorConditions(QNetworkReply *)));
+    connect(dailyFullOutdoorRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveFullDailyOutdoorConditions(QNetworkReply *)));
     connect(dailyIndoorRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveDailyIndoorConditions(QNetworkReply *)));
 
     currentConditionsTimer = new QTimer();
@@ -119,6 +121,28 @@ void NetatmoAPIHandler::postOutdoorDailyRequest(int date_begin, QString scale, Q
     apiMonitor->addTimestamp();
 }
 
+void NetatmoAPIHandler::postFullOutdoorDailyRequest(int date_begin, int date_end, QString scale, QString accessToken) {
+    if (accessToken == "") qDebug() << "Warning: undefined access token in NetatmoAPIHandler";
+    extern const QString mainDeviceId;
+    extern const QString outdoorModuleId;
+
+    QUrl url("https://api.netatmo.com/api/getmeasure?");
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    QUrlQuery params;
+    params.addQueryItem("access_token", accessToken.toUtf8());
+    params.addQueryItem("device_id", mainDeviceId);
+    params.addQueryItem("module_id", outdoorModuleId);
+    params.addQueryItem("scale", scale);
+    params.addQueryItem("type", "max_temp,min_temp,temperature,date_max_temp,date_min_temp,min_hum,max_hum,humidity,date_min_hum,date_max_hum");
+    params.addQueryItem("date_begin", QString::number(date_begin));
+    params.addQueryItem("date_end", QString::number(date_end));
+    params.addQueryItem("optimize", "false");
+    params.addQueryItem("real_time", "true");
+    dailyFullOutdoorRequestManager->post(request, params.query().toUtf8());
+    apiMonitor->addTimestamp();
+}
+
 void NetatmoAPIHandler::postOutdoorDailyRequest(int date_begin, int date_end, QString scale, QString accessToken) {
     if (accessToken == "") qDebug() << "Warning: undefined access token in NetatmoAPIHandler";
     extern const QString mainDeviceId;
@@ -196,6 +220,13 @@ void NetatmoAPIHandler::retrieveTokens(QNetworkReply *reply) {
 
         emit accessTokenChanged(accessToken);
         emit refreshTokenChanged(refreshToken);
+
+        // provisional
+
+        postFullOutdoorDailyRequest(1685404800,
+                                    1685823533,
+                                    "1day",
+                                    accessToken);
     }
     else {
         qDebug() << "ERROR with network"
@@ -274,6 +305,39 @@ void NetatmoAPIHandler::retrieveDailyOutdoorConditions(QNetworkReply *reply) {
         }
 
         emit endOfDailyOutdoorConditionsRetrieval();
+    }
+}
+
+void NetatmoAPIHandler::retrieveFullDailyOutdoorConditions(QNetworkReply *reply) {
+    QByteArray bytes = reply->readAll();
+    QJsonDocument js = QJsonDocument::fromJson(bytes);
+    QJsonObject tb = js["body"].toObject();
+    if (bytes.contains("error")) {
+        qDebug() << "ERROR with current conditions" << bytes;
+    }
+
+    else if (bytes.size() >= 1) {
+        QJsonDocument js = QJsonDocument::fromJson(bytes);
+        foreach (const QString &key, tb.keys()) {
+            QJsonValue value = tb.value(key);
+            long long timestamp = key.toLongLong();
+            qDebug() << timestamp << value;
+            emit extDailyRecordRetrieved(
+                        ExtDailyRecord(
+                            QDateTime::fromSecsSinceEpoch(timestamp).date(),
+                            value[0].toDouble(),
+                            value[1].toDouble(),
+                            value[2].toDouble(),
+                            value[5].toDouble(),
+                            value[6].toDouble(),
+                            value[7].toDouble(),
+                            value[3].toInt(),
+                            value[4].toInt(),
+                            value[8].toInt(),
+                            value[9].toInt()
+                        )
+            );
+        }
     }
 }
 
