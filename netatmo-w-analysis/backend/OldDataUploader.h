@@ -7,6 +7,8 @@
 #include "../backend/NetatmoAPIHandler.h"
 #include "../types/ExtTimestampRecord.h"
 #include "../types/IntTimestampRecord.h"
+#include "../types/ExtDailyRecord.h"
+#include "../types/IntDailyRecord.h"
 
 class OldDataUploader : public QObject
 {
@@ -20,6 +22,8 @@ public slots:
     void addDataFromCurrentMonths(QDate beginDate, QDate endDate, bool indoor = false);
     void addExtTimestampRecordToCopyDatabase(ExtTimestampRecord);
     void addIntTimestampRecordToCopyDatabase(IntTimestampRecord);
+
+    void logExtDailyRecord(ExtDailyRecord);
 
     void intBatchRetrieved();
     void extBatchRetrieved();

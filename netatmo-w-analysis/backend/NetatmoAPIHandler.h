@@ -12,6 +12,8 @@
 #include "APIMonitor.h"
 #include "../types/ExtTimestampRecord.h"
 #include "../types/IntTimestampRecord.h"
+#include "../types/ExtDailyRecord.h"
+#include "../types/IntDailyRecord.h"
 
 class NetatmoAPIHandler: public QObject
 {
@@ -27,12 +29,14 @@ public slots:
     void postCurrentConditionsRequest(QString accessToken);
     void postOutdoorDailyRequest(int dateBegin, QString scale, QString accessToken);
     void postOutdoorDailyRequest(int dateBegin, int dateEnd, QString scale, QString accessToken);
+    void postFullOutdoorDailyRequest(int dateBegin, int dateEnd, QString scale, QString accessToken);
     void postIndoorDailyRequest(int dateBegin, QString scale, QString accessToken);
     void postIndoorDailyRequest(int dateBegin, int dateEnd, QString scale, QString accessToken);
 
     void retrieveTokens(QNetworkReply*);
     void retrieveCurrentConditions(QNetworkReply*);
     void retrieveDailyOutdoorConditions(QNetworkReply*);
+    void retrieveFullDailyOutdoorConditions(QNetworkReply*);
     void retrieveDailyIndoorConditions(QNetworkReply*);
 
     APIMonitor* getAPIMonitor();
@@ -87,10 +91,14 @@ signals:
     void endOfDailyOutdoorConditionsRetrieval();
     void endOfDailyIndoorConditionsRetrieval();
 
+    void extDailyRecordRetrieved(ExtDailyRecord);
+    void intDailyRecordRetrieved(ExtDailyRecord);
+
 private:
     QNetworkAccessManager *tokensManager;
     QNetworkAccessManager *currentConditionsManager;
     QNetworkAccessManager *dailyOutdoorRequestManager;
+    QNetworkAccessManager *dailyFullOutdoorRequestManager;
     QNetworkAccessManager *dailyIndoorRequestManager;
 
     APIMonitor *apiMonitor;
