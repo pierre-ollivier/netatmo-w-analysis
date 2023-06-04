@@ -24,6 +24,7 @@ public slots:
     void addIntTimestampRecordToCopyDatabase(IntTimestampRecord);
 
     void logExtDailyRecord(ExtDailyRecord);
+    void logIntDailyRecord(IntDailyRecord);
 
 private:
     NetatmoAPIHandler *_apiHandler;

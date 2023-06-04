@@ -1,5 +1,6 @@
 #include "IntDailyRecord.h"
 #include "DailyRecord.cpp"
+#include <cmath>
 #include <QDateTime>
 
 IntDailyRecord::IntDailyRecord(
@@ -57,6 +58,67 @@ IntDailyRecord::IntDailyRecord(
                 minDewPointTimestamp,
                 maxHumidexTimestamp,
                 minHumidexTimestamp
+                )
+{
+    _maxPressure = maxPressure;
+    _minPressure = minPressure;
+    _avgPressure = avgPressure;
+    _maxCO2 = maxCO2;
+    _minCO2 = minCO2;
+    _avgCO2 = avgCO2;
+    _maxNoise = maxNoise;
+    _minNoise = minNoise;
+    _avgNoise = avgNoise;
+
+    _maxPressureTimestamp = maxPressureTimestamp;
+    _minPressureTimestamp = minPressureTimestamp;
+}
+
+IntDailyRecord::IntDailyRecord(
+        QDate date,
+        double maxTemperature,
+        double minTemperature,
+        double avgTemperature,
+        int maxHumidity,
+        int minHumidity,
+        double avgHumidity,
+        double maxPressure,
+        double minPressure,
+        double avgPressure,
+        int maxCO2,
+        int minCO2,
+        double avgCO2,
+        int maxNoise,
+        int minNoise,
+        double avgNoise,
+        long long maxTemperatureTimestamp,
+        long long minTemperatureTimestamp,
+        long long maxHumidityTimestamp,
+        long long minHumidityTimestamp,
+        long long maxPressureTimestamp,
+        long long minPressureTimestamp
+        ) : DailyRecord(
+                date,
+                maxTemperature,
+                minTemperature,
+                avgTemperature,
+                maxHumidity,
+                minHumidity,
+                avgHumidity,
+                nan(""),
+                nan(""),
+                nan(""),
+                nan(""),
+                nan(""),
+                nan(""),
+                maxTemperatureTimestamp,
+                minTemperatureTimestamp,
+                maxHumidityTimestamp,
+                minHumidityTimestamp,
+                nan(""),
+                nan(""),
+                nan(""),
+                nan("")
                 )
 {
     _maxPressure = maxPressure;

@@ -8,12 +8,14 @@ NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequest
     tokensManager = new QNetworkAccessManager();
     currentConditionsManager = new QNetworkAccessManager();
     dailyFullOutdoorRequestManager = new QNetworkAccessManager();
+    dailyFullIndoorRequestManager = new QNetworkAccessManager();
 
     apiMonitor = monitor;
 
     connect(tokensManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveTokens(QNetworkReply *)));
     connect(currentConditionsManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveCurrentConditions(QNetworkReply *)));
     connect(dailyFullOutdoorRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveFullDailyOutdoorConditions(QNetworkReply *)));
+    connect(dailyFullIndoorRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveFullDailyIndoorConditions(QNetworkReply *)));
 
     currentConditionsTimer = new QTimer();
     if (timeBetweenRequests > 0) {
@@ -93,6 +95,32 @@ void NetatmoAPIHandler::postCurrentConditionsRequest() {
     params.addQueryItem("device_id", mainDeviceId);
     params.addQueryItem("get_favorites", "false");
     currentConditionsManager->post(request, params.query().toUtf8());
+    apiMonitor->addTimestamp();
+}
+
+void NetatmoAPIHandler::postFullIndoorDailyRequest(int date_begin, int date_end, QString scale, QString accessToken) {
+    if (accessToken == "") qDebug() << "Warning: undefined access token in NetatmoAPIHandler";
+    extern const QString mainDeviceId;
+    extern const QString indoorModuleId;
+
+    QUrl url("https://api.netatmo.com/api/getmeasure?");
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    QUrlQuery params;
+    params.addQueryItem("access_token", accessToken.toUtf8());
+    params.addQueryItem("device_id", mainDeviceId);
+    params.addQueryItem("module_id", indoorModuleId);
+    params.addQueryItem("scale", scale);
+    params.addQueryItem("type", "max_temp,min_temp,temperature,date_max_temp,date_min_temp,"
+                                "max_hum,min_hum,humidity,date_max_hum,date_min_hum,"
+                                "max_pressure,min_pressure,pressure,date_max_pressure,date_min_pressure,"
+                                "max_co2,min_co2,co2,date_max_co2,date_min_co2,"
+                                "max_noise,min_noise,noise,date_max_noise,date_min_noise");
+    params.addQueryItem("date_begin", QString::number(date_begin));
+    params.addQueryItem("date_end", QString::number(date_end));
+    params.addQueryItem("optimize", "false");
+    params.addQueryItem("real_time", "true");
+    dailyFullIndoorRequestManager->post(request, params.query().toUtf8());
     apiMonitor->addTimestamp();
 }
 
@@ -215,6 +243,49 @@ void NetatmoAPIHandler::retrieveFullDailyOutdoorConditions(QNetworkReply *reply)
                             value[4].toInt(),
                             value[8].toInt(),
                             value[9].toInt()
+                        )
+            );
+        }
+    }
+}
+
+void NetatmoAPIHandler::retrieveFullDailyIndoorConditions(QNetworkReply *reply) {
+    QByteArray bytes = reply->readAll();
+    QJsonDocument js = QJsonDocument::fromJson(bytes);
+    QJsonObject tb = js["body"].toObject();
+    if (bytes.contains("error")) {
+        qDebug() << "ERROR with current conditions" << bytes;
+    }
+
+    else if (bytes.size() >= 1) {
+        QJsonDocument js = QJsonDocument::fromJson(bytes);
+        foreach (const QString &key, tb.keys()) {
+            QJsonValue value = tb.value(key);
+            long long timestamp = key.toLongLong();
+            emit intDailyRecordRetrieved(
+                        IntDailyRecord(
+                            QDateTime::fromSecsSinceEpoch(timestamp).date(),
+                            value[0].toDouble(),
+                            value[1].toDouble(),
+                            value[2].toDouble(),
+                            value[5].toDouble(),
+                            value[6].toDouble(),
+                            value[7].toDouble(),
+                            value[10].toDouble(),
+                            value[11].toDouble(),
+                            value[12].toDouble(),
+                            value[15].toDouble(),
+                            value[16].toDouble(),
+                            value[17].toDouble(),
+                            value[20].toDouble(),
+                            value[21].toDouble(),
+                            value[22].toDouble(),
+                            value[3].toInt(),
+                            value[4].toInt(),
+                            value[8].toInt(),
+                            value[9].toInt(),
+                            value[13].toInt(),
+                            value[14].toInt()
                         )
             );
         }
