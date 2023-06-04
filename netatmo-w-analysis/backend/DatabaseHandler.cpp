@@ -726,6 +726,7 @@ QVariant DatabaseHandler::getResultFromDatabase(QString query) {
     }
     if (_query.exec(query)) {
         if (_query.next()) {
+            db.close();
             return _query.value(0);
         }
         else if (query.left(6) != "DELETE") {
