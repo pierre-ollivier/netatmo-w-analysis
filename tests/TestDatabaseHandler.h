@@ -14,6 +14,7 @@ private slots:
     void testGetTimestampRecordsFromDatabase();
     void testGetDailyRecordsFromDatabase();
     void testGetResultFromDatabase();
+    void testGetLatestDateTimeFromDatabase();
 };
 
 #endif // TESTDATABASEHANDLER_H

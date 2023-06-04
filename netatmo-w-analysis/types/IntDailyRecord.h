@@ -41,6 +41,31 @@ public:
             long long minPressureTimestamp
             );
 
+    IntDailyRecord(
+            QDate date,
+            double maxTemperature,
+            double minTemperature,
+            double avgTemperature,
+            int maxHumidity,
+            int minHumidity,
+            double avgHumidity,
+            double maxPressure,
+            double minPressure,
+            double avgPressure,
+            int maxCO2,
+            int minCO2,
+            double avgCO2,
+            int maxNoise,
+            int minNoise,
+            double avgNoise,
+            long long maxTemperatureTimestamp,
+            long long minTemperatureTimestamp,
+            long long maxHumidityTimestamp,
+            long long minHumidityTimestamp,
+            long long maxPressureTimestamp,
+            long long minPressureTimestamp
+            );
+
     double maxPressure();
     double minPressure();
     double avgPressure();

@@ -57,7 +57,7 @@ private:
     QVBoxLayout *buttonsLayout;
 
     QDate *_date;
-    DatabaseHandler *dbHandler;
+    DatabaseHandler *dbHandlerCopy;
     QLocale *deviceLocale;
 
     QString measurementType = "temperature";

@@ -1,11 +1,12 @@
 #include "MonthlyReport.h"
 
 extern QString PATH_TO_PROD_DATABASE;
+extern QString PATH_TO_COPY_DATABASE;
 
 MonthlyReport::MonthlyReport() : QWidget()
 {
     _date = new QDate(QDate::currentDate().addMonths(-1));
-    dbHandler = new DatabaseHandler(PATH_TO_PROD_DATABASE);
+    dbHandlerCopy = new DatabaseHandler(PATH_TO_COPY_DATABASE);
     deviceLocale = new QLocale();
 
     yearMonthPicker = new YearMonthPicker(_date->year(), _date->month());
@@ -76,15 +77,17 @@ void MonthlyReport::fillBoard() {
     for (int day = 1; day <= _date->daysInMonth(); day++) {
         QDate date = QDate(_date->year(), _date->month(), day);
         QString measurementTypeCapitalized = QString(measurementType[0]).toUpper() + measurementType.mid(1);
-        QVariant minimumMeasurement = dbHandler->getResultFromDatabase(
+        QVariant minimumMeasurement, maximumMeasurement, averageMeasurement;
+
+        minimumMeasurement = dbHandlerCopy->getResultFromDatabase(
                     "SELECT min" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
-                    "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
-        QVariant maximumMeasurement = dbHandler->getResultFromDatabase(
+                                                                                                            "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
+        maximumMeasurement = dbHandlerCopy->getResultFromDatabase(
                     "SELECT max" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
-                    "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
-        QVariant averageMeasurement = dbHandler->getResultFromDatabase(
+                                                                                                            "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
+        averageMeasurement = dbHandlerCopy->getResultFromDatabase(
                     "SELECT avg" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
-                    "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
+                                                                                                            "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
 
         model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
 
@@ -131,7 +134,7 @@ void MonthlyReport::fillBoard() {
                                                       abbreviatedMeasurement + " moy."}));
     }
     // Clean the extra rows when switching from a 31-day month to a shorter one
-    model->removeRows(_date->daysInMonth(), 31 - _date->daysInMonth());
+    model->removeRows(_date->daysInMonth(), model->rowCount() - _date->daysInMonth());
 }
 
 void MonthlyReport::destroy() {

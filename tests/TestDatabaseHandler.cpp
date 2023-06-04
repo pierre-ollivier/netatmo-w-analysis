@@ -48,3 +48,15 @@ void TestDatabaseHandler::testGetResultFromDatabase() {
     QCOMPARE(dbHandler.getResultFromDatabase(
                  "SELECT max(minNoise) + min(maxNoise) as noise from IndoorDailyRecords where month = 11"), 83);
 }
+
+void TestDatabaseHandler::testGetLatestDateTimeFromDatabase() {
+    DatabaseHandler dbHandler("testdb.db");
+    QCOMPARE(dbHandler.getLatestDateTimeFromDatabase("IndoorDailyRecords"),
+             QDateTime(QDate(2019, 11, 19)));
+    QCOMPARE(dbHandler.getLatestDateTimeFromDatabase("OutdoorDailyRecords"),
+             QDateTime(QDate(2021, 12, 30)));
+    QCOMPARE(dbHandler.getLatestDateTimeFromDatabase("IndoorTimestampRecords"),
+             QDateTime(QDate(2019, 11, 30), QTime(23, 57, 33)));
+    QCOMPARE(dbHandler.getLatestDateTimeFromDatabase("OutdoorTimestampRecords"),
+             QDateTime(QDate(2021, 12, 31), QTime(23, 58, 1)));
+}

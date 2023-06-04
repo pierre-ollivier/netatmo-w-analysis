@@ -65,7 +65,6 @@ void DatabaseHandler::postOutdoorDailyRecord(ExtDailyRecord record, QString tabl
     }
     preparingQuery += "?);";
 
-
     query.prepare(preparingQuery);
 
 //    prepareQuery(query, tableName, *outdoorDailyRecordsParams, 26);
@@ -137,6 +136,7 @@ void DatabaseHandler::postOutdoorDailyRecord(ExtDailyRecord record, QString tabl
         qDebug() << "The following query could not be executed. Query: " << preparingQuery;
         qDebug() << "ERROR:" << query.lastError().text();
     }
+    db.close();
 }
 
 void DatabaseHandler::postOutdoorTimestampRecord(ExtTimestampRecord record, QString tableName) {
@@ -187,6 +187,7 @@ void DatabaseHandler::postOutdoorTimestampRecord(ExtTimestampRecord record, QStr
         qDebug() << "The following query could not be executed. Query: " << preparingQuery;
         qDebug() << "ERROR:" << query.lastError().text();
     }
+    db.close();
 
 }
 
@@ -306,6 +307,7 @@ void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString table
         qDebug() << "The following query could not be executed. Query: " << preparingQuery;
         qDebug() << "ERROR:" << query.lastError().text();
     }
+    db.close();
 }
 
 void DatabaseHandler::postIndoorTimestampRecord(IntTimestampRecord record, QString tableName) {
@@ -359,6 +361,7 @@ void DatabaseHandler::postIndoorTimestampRecord(IntTimestampRecord record, QStri
         qDebug() << "The following query could not be executed. Query: " << preparingQuery;
         qDebug() << "ERROR:" << query.lastError().text();
     }
+    db.close();
 }
 
 void DatabaseHandler::postFromOutdoorCsv(QString pathToCsv, QString tableName, QDate beginDate, QDate endDate) {
@@ -516,6 +519,7 @@ std::vector<IntTimestampRecord> DatabaseHandler::getIntTimestampRecordsFromDatab
                         );
         }
     }
+    db.close();
     return result;
 }
 
@@ -546,6 +550,7 @@ std::vector<ExtTimestampRecord> DatabaseHandler::getExtTimestampRecordsFromDatab
                         );
         }
     }
+    db.close();
     return result;
 }
 
@@ -636,6 +641,7 @@ std::vector<IntDailyRecord> DatabaseHandler::getIntDailyRecordsFromDatabase(QStr
                         );
         }
     }
+    db.close();
     return result;
 }
 
@@ -704,6 +710,7 @@ std::vector<ExtDailyRecord> DatabaseHandler::getExtDailyRecordsFromDatabase(QStr
                         );
         }
     }
+    db.close();
     return result;
 }
 
@@ -719,9 +726,10 @@ QVariant DatabaseHandler::getResultFromDatabase(QString query) {
     }
     if (_query.exec(query)) {
         if (_query.next()) {
+            db.close();
             return _query.value(0);
         }
-        else {
+        else if (query.left(6) != "DELETE") {
             qDebug() << "Empty query result";
             qDebug() << query;
         }
@@ -729,6 +737,7 @@ QVariant DatabaseHandler::getResultFromDatabase(QString query) {
     else {
         qDebug() << "Invalid query:" << query;
     }
+    db.close();
     return QVariant();
 }
 
@@ -810,5 +819,27 @@ void DatabaseHandler::updateIndoorDailyRecords(QDate beginDate, QDate endDate, b
                     );
         postIndoorDailyRecord(record, "IndoorDailyRecords");
         if (verbose) progress.setValue(date.toJulianDay());
+    }
+}
+
+QDateTime DatabaseHandler::getLatestDateTimeFromDatabase(QString tableName) {
+    if (tableName == QString("OutdoorDailyRecords") || tableName == "IndoorDailyRecords") {
+        QString latestDate = getResultFromDatabase(
+                    "SELECT date from " + tableName + " "
+                    "ORDER BY year desc, month desc, day desc "
+                    "LIMIT 1").toString();
+        return QDateTime(QDate::fromString(latestDate, "dd/MM/yyyy"));
+    }
+    else {
+        QString latestDate = getResultFromDatabase(
+                    "SELECT date from " + tableName + " "
+                    "ORDER BY year desc, month desc, day desc "
+                    "LIMIT 1").toString();
+        QString latestTime = getResultFromDatabase(
+                    "SELECT time from " + tableName + " "
+                    "WHERE date = \"" + latestDate + "\" "
+                    "ORDER BY hour desc, minute desc, second desc "
+                    "LIMIT 1").toString();
+        return QDateTime(QDate::fromString(latestDate, "dd/MM/yyyy"), QTime::fromString(latestTime, "hh:mm:ss"));
     }
 }
