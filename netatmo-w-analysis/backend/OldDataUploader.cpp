@@ -88,5 +88,5 @@ void OldDataUploader::setAccessToken(QString accessToken) {
 void OldDataUploader::logExtDailyRecord(ExtDailyRecord record) {
     QString tableName = "OutdoorDailyRecords";
     DatabaseHandler dbHandler(PATH_TO_COPY_DATABASE);
-    dbHandler.postOutdoorDailyRecord(record, PATH_TO_COPY_DATABASE);
+    dbHandler.postOutdoorDailyRecord(record, tableName);
 }
