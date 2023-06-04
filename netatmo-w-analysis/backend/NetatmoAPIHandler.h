@@ -10,7 +10,10 @@
 #include <QDateTime>
 #include <QTimer>
 #include "APIMonitor.h"
-
+#include "../types/ExtTimestampRecord.h"
+#include "../types/IntTimestampRecord.h"
+#include "../types/ExtDailyRecord.h"
+#include "../types/IntDailyRecord.h"
 
 class NetatmoAPIHandler: public QObject
 {
@@ -18,15 +21,24 @@ class NetatmoAPIHandler: public QObject
 
 public:
     NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequests = -1);
+    NetatmoAPIHandler(NetatmoAPIHandler &other);
 
 public slots:
     void postTokensRequest();
     void postCurrentConditionsRequest();
     void postCurrentConditionsRequest(QString accessToken);
-    void postDailyRequest(int dateBegin, QString scale, QString accessToken);
+    void postFullOutdoorDailyRequest(int dateBegin, int dateEnd, QString scale, QString accessToken);
+    void postFullIndoorDailyRequest(int dateBegin, int dateEnd, QString scale, QString accessToken);
 
     void retrieveTokens(QNetworkReply*);
     void retrieveCurrentConditions(QNetworkReply*);
+    void retrieveFullDailyOutdoorConditions(QNetworkReply*);
+    void retrieveFullDailyIndoorConditions(QNetworkReply*);
+
+    APIMonitor* getAPIMonitor();
+    int getTimeBetweenRequests();
+    QString getAccessToken();
+    void setAccessToken(QString newAccessToken);
 
 signals:
     // TOKENS
@@ -65,14 +77,22 @@ signals:
     void intMinTemperatureTimeChanged(int);
     void intMaxTemperatureTimeChanged(int);
 
+    // TIMESTAMP RECORD
+    void extTimestampRecordRetrieved(ExtTimestampRecord);
+    void intTimestampRecordRetrieved(IntTimestampRecord);
+
     // OTHER
 
     void currentTimeChanged(QDateTime);
 
+    void extDailyRecordRetrieved(ExtDailyRecord);
+    void intDailyRecordRetrieved(IntDailyRecord);
+
 private:
     QNetworkAccessManager *tokensManager;
     QNetworkAccessManager *currentConditionsManager;
-    QNetworkAccessManager *dailyRequestManager;
+    QNetworkAccessManager *dailyFullOutdoorRequestManager;
+    QNetworkAccessManager *dailyFullIndoorRequestManager;
 
     APIMonitor *apiMonitor;
 

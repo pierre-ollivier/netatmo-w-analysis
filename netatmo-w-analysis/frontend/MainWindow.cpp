@@ -6,8 +6,10 @@
 #include "../netatmo-w-analysis/frontend/MonthlyReport.h"
 #include "../netatmo-w-analysis/frontend/YearlyReport.h"
 #include "../netatmo-w-analysis/backend/APIMonitor.h"
+#include "../types/ExtTimestampRecord.h"
 
 extern QString PATH_TO_PROD_DATABASE;
+extern QString PATH_TO_COPY_DATABASE;
 
 MainWindow::MainWindow()
 {
@@ -17,7 +19,9 @@ MainWindow::MainWindow()
     setMenuBar(menuBar);
     deviceLocale = new QLocale();
     apiMonitor = new APIMonitor();
+    apiHandler = new NetatmoAPIHandler(apiMonitor, 20000);
     dbHandler = new DatabaseHandler(PATH_TO_PROD_DATABASE);
+    oldDataUploader = new OldDataUploader(apiHandler);
     buildWindow();
 }
 
@@ -30,11 +34,11 @@ void MainWindow::buildWindow() {
     createMenus();
 }
 
-void MainWindow::buildAPIHandler() {
-    apiHandler = new NetatmoAPIHandler(apiMonitor, 20000);
+void MainWindow::buildAPIHandler() { 
     apiHandler->postTokensRequest();
     connect(apiHandler, SIGNAL(accessTokenChanged(QString)),
             apiHandler, SLOT(postCurrentConditionsRequest(QString)));
+    connect(apiHandler, SIGNAL(accessTokenChanged(QString)), SLOT(setAccessToken(QString)));
     connect(apiHandler, SIGNAL(extTemperatureChanged(double)), this, SLOT(updateCurrentExtTemperature(double)));
     connect(apiHandler, SIGNAL(intTemperatureChanged(double)), this, SLOT(updateCurrentIntTemperature(double)));
     connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), this, SLOT(updateLastMeasurementDate(int)));
@@ -54,18 +58,18 @@ void MainWindow::buildAPIHandler() {
 }
 
 void MainWindow::buildLabels() {
-    statusLabel = new QLabel("Mesure : --/--/---- --:--:--\nActualisation : --/--/---- --:--:--");
-    currentMinExtTempLabel = new QLabel("<font color=\"#0010ff\">↓</font> -,- °C (--:--)");
-    currentMaxExtTempLabel = new QLabel("<font color=\"#ff1000\">↑</font> -,- °C (--:--)");
+    statusLabel = new QLabel("Mesure : __/__/____ __:__:__\nActualisation : __/__/____ __:__:__");
+    currentMinExtTempLabel = new QLabel("<font color=\"#0010ff\">↓</font> _,_ °C (__:__)");
+    currentMaxExtTempLabel = new QLabel("<font color=\"#ff1000\">↑</font> _,_ °C (__:__)");
     currentMinExtTempLabel->setFont(QFont("Arial", 13));
     currentMaxExtTempLabel->setFont(QFont("Arial", 13));
 
-    currentExtTempLabel = new QLabel();
+    currentExtTempLabel = new QLabel("__,_<font color=\"#606060\"> °C</font>");
     currentExtTempLabel->setFont(QFont("Arial", 32));
-    currentIntTempLabel = new QLabel();
+    currentIntTempLabel = new QLabel("__,_<font color=\"#606060\"> °C</font>");
     currentIntTempLabel->setFont(QFont("Arial", 32));
-    currentMinIntTempLabel = new QLabel("<font color=\"#0010ff\">↓</font> -,- °C (--:--)");
-    currentMaxIntTempLabel = new QLabel("<font color=\"#ff1000\">↑</font> -,- °C (--:--)");
+    currentMinIntTempLabel = new QLabel("<font color=\"#0010ff\">↓</font> _,_ °C (__:__)");
+    currentMaxIntTempLabel = new QLabel("<font color=\"#ff1000\">↑</font> _,_ °C (__:__)");
     currentMinIntTempLabel->setFont(QFont("Arial", 13));
     currentMaxIntTempLabel->setFont(QFont("Arial", 13));
 }
@@ -128,6 +132,22 @@ void MainWindow::createMenus() {
     QMenu *climatologyMenu = menuBar->addMenu(tr("&Climatologie"));
     climatologyMenu->addAction(displayMonthlyReportAction);
     climatologyMenu->addAction(displayYearlyReportAction);
+}
+
+void MainWindow::setAccessToken(QString newAccessToken) {
+    accessToken = newAccessToken;
+    oldDataUploader->setAccessToken(accessToken);
+    addDataFromCurrentMonths();
+}
+
+void MainWindow::addDataFromCurrentMonths() {
+    QDate lastAddedOutdoorDate = dbHandler->getLatestDateTimeFromDatabase("OutdoorDailyRecords").date();
+    QDate lastAddedIndoorDate = dbHandler->getLatestDateTimeFromDatabase("IndoorDailyRecords").date();
+
+    oldDataUploader->addDataFromCurrentMonths(lastAddedOutdoorDate.addDays(1),
+                                              QDate::currentDate(), false);
+    oldDataUploader->addDataFromCurrentMonths(lastAddedIndoorDate.addDays(1),
+                                              QDate::currentDate(), true);
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {

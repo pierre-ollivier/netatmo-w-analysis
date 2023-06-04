@@ -1,4 +1,5 @@
 #include "ExtDailyRecord.h"
+#include <cmath>
 
 ExtDailyRecord::ExtDailyRecord(
         QDate date,
@@ -44,6 +45,45 @@ ExtDailyRecord::ExtDailyRecord(
                 minDewPointTimestamp,
                 maxHumidexTimestamp,
                 minHumidexTimestamp
+                )
+{
+
+}
+
+ExtDailyRecord::ExtDailyRecord(
+        QDate date,
+        double maxTemperature,
+        double minTemperature,
+        double avgTemperature,
+        int maxHumidity,
+        int minHumidity,
+        double avgHumidity,
+        long long maxTemperatureTimestamp,
+        long long minTemperatureTimestamp,
+        long long maxHumidityTimestamp,
+        long long minHumidityTimestamp
+        ) : DailyRecord(
+                date,
+                maxTemperature,
+                minTemperature,
+                avgTemperature,
+                maxHumidity,
+                minHumidity,
+                avgHumidity,
+                nan(""),
+                nan(""),
+                nan(""),
+                nan(""),
+                nan(""),
+                nan(""),
+                maxTemperatureTimestamp,
+                minTemperatureTimestamp,
+                maxHumidityTimestamp,
+                minHumidityTimestamp,
+                (long long) (nanl("")),
+                (long long) (nanl("")),
+                (long long) (nanl("")),
+                (long long) (nanl(""))
                 )
 {
 

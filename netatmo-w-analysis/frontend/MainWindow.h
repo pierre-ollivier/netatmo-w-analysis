@@ -10,6 +10,7 @@
 #include "../netatmo-w-analysis/backend/NetatmoAPIHandler.h"
 #include "../netatmo-w-analysis/backend/DatabaseHandler.h"
 #include "../netatmo-w-analysis/backend/APIMonitor.h"
+#include "../netatmo-w-analysis/backend/OldDataUploader.h"
 
 
 class MainWindow : public QMainWindow
@@ -27,6 +28,8 @@ public:
     void createActions();
 
 public slots:
+    void setAccessToken(QString);
+
     void updateCurrentExtTemperature(double currentTemperature);
     void updateMinExtTemperature(double minTemperature);
     void updateMaxExtTemperature(double maxTemperature);
@@ -51,6 +54,8 @@ public slots:
 
     void displayMonthlyReport();
     void displayYearlyReport();
+
+    void addDataFromCurrentMonths();
 
 private:
     // labels
@@ -78,6 +83,9 @@ private:
     QString accessToken = "";
     QLocale *deviceLocale;
     APIMonitor *apiMonitor;
+
+    //data uploader
+    OldDataUploader *oldDataUploader;
 
     //actions
     QAction *requestCountsAction;
