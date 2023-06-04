@@ -134,7 +134,7 @@ void NetatmoAPIHandler::postFullOutdoorDailyRequest(int date_begin, int date_end
     params.addQueryItem("device_id", mainDeviceId);
     params.addQueryItem("module_id", outdoorModuleId);
     params.addQueryItem("scale", scale);
-    params.addQueryItem("type", "max_temp,min_temp,temperature,date_max_temp,date_min_temp,min_hum,max_hum,humidity,date_min_hum,date_max_hum");
+    params.addQueryItem("type", "max_temp,min_temp,temperature,date_max_temp,date_min_temp,max_hum,min_hum,humidity,date_max_hum,date_min_hum");
     params.addQueryItem("date_begin", QString::number(date_begin));
     params.addQueryItem("date_end", QString::number(date_end));
     params.addQueryItem("optimize", "false");
@@ -298,7 +298,6 @@ void NetatmoAPIHandler::retrieveFullDailyOutdoorConditions(QNetworkReply *reply)
         foreach (const QString &key, tb.keys()) {
             QJsonValue value = tb.value(key);
             long long timestamp = key.toLongLong();
-            qDebug() << timestamp << value;
             emit extDailyRecordRetrieved(
                         ExtDailyRecord(
                             QDateTime::fromSecsSinceEpoch(timestamp).date(),
