@@ -80,10 +80,10 @@ ExtDailyRecord::ExtDailyRecord(
                 minTemperatureTimestamp,
                 maxHumidityTimestamp,
                 minHumidityTimestamp,
-                nan(""),
-                nan(""),
-                nan(""),
-                nan("")
+                (long long) (nanl("")),
+                (long long) (nanl("")),
+                (long long) (nanl("")),
+                (long long) (nanl(""))
                 )
 {
 
