@@ -65,9 +65,6 @@ void DatabaseHandler::postOutdoorDailyRecord(ExtDailyRecord record, QString tabl
     }
     preparingQuery += "?);";
 
-    qDebug() << record.date() << record.maxHumidex() << record.minDewPointTime();
-
-
     query.prepare(preparingQuery);
 
 //    prepareQuery(query, tableName, *outdoorDailyRecordsParams, 26);
