@@ -115,10 +115,10 @@ IntDailyRecord::IntDailyRecord(
                 minTemperatureTimestamp,
                 maxHumidityTimestamp,
                 minHumidityTimestamp,
-                nan(""),
-                nan(""),
-                nan(""),
-                nan("")
+                (long long) nanf(""),
+                (long long) nanf(""),
+                (long long) nanf(""),
+                (long long) nanf("")
                 )
 {
     _maxPressure = maxPressure;
