@@ -131,13 +131,6 @@ void NetatmoAPIHandler::retrieveTokens(QNetworkReply *reply) {
 
         emit accessTokenChanged(accessToken);
         emit refreshTokenChanged(refreshToken);
-
-        // provisional
-
-        postFullOutdoorDailyRequest(1685404800,
-                                    1685823533,
-                                    "1day",
-                                    accessToken);
     }
     else {
         qDebug() << "ERROR with network"
