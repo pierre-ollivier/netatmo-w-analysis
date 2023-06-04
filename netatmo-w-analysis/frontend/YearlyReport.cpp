@@ -14,7 +14,7 @@ YearlyReport::YearlyReport()
 
     mainView->setModel(mainModel);
 
-    dbHandler = new DatabaseHandler(PATH_TO_PROD_DATABASE);
+    dbHandler = new DatabaseHandler(PATH_TO_COPY_DATABASE);
 
     temperatureRadioButton = new QRadioButton("Température");
     humidityRadioButton = new QRadioButton("Humidité");
@@ -129,7 +129,7 @@ void YearlyReport::fillBoard() {
     mainView->setColumnWidth(7, 60);
     mainView->setColumnWidth(8, 240);
     mainView->setColumnWidth(9, 240);
-    mainView->setFixedWidth(1290);
+    mainView->setFixedWidth(1296);
 }
 
 QString YearlyReport::capitalize(QString s) {
