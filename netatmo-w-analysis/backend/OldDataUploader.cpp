@@ -17,7 +17,6 @@ OldDataUploader::OldDataUploader(NetatmoAPIHandler* apiHandler, QString accessTo
 }
 
 void OldDataUploader::addDataFromCurrentMonths(QDate beginDate, QDate endDate, bool indoor) {
-    qDebug() << beginDate << endDate;
     if (_accessToken == "") qDebug() << "Warning: undefined access token in OldDataUploader";
     _beginDate = beginDate; _endDate = endDate;
 
