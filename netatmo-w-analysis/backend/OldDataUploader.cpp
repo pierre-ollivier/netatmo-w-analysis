@@ -14,6 +14,7 @@ OldDataUploader::OldDataUploader(NetatmoAPIHandler* apiHandler, QString accessTo
     connect(apiHandler, SIGNAL(intTimestampRecordRetrieved(IntTimestampRecord)),
             SLOT(addIntTimestampRecordToCopyDatabase(IntTimestampRecord)));
     connect(apiHandler, SIGNAL(extDailyRecordRetrieved(ExtDailyRecord)), SLOT(logExtDailyRecord(ExtDailyRecord)));
+    connect(apiHandler, SIGNAL(intDailyRecordRetrieved(IntDailyRecord)), SLOT(logIntDailyRecord(IntDailyRecord)));
 }
 
 void OldDataUploader::addDataFromCurrentMonths(QDate beginDate, QDate endDate, bool indoor) {
@@ -22,7 +23,10 @@ void OldDataUploader::addDataFromCurrentMonths(QDate beginDate, QDate endDate, b
 
     long long beginTimestamp = QDateTime(beginDate).toSecsSinceEpoch();
     long long endTimestamp = QDateTime(endDate).toSecsSinceEpoch();
-    if (!indoor) {
+    if (indoor) {
+        _apiHandler->postFullIndoorDailyRequest(beginTimestamp, endTimestamp, "1day", _accessToken);
+    }
+    else {
         _apiHandler->postFullOutdoorDailyRequest(beginTimestamp, endTimestamp, "1day", _accessToken);
     }
 }
@@ -47,4 +51,10 @@ void OldDataUploader::logExtDailyRecord(ExtDailyRecord record) {
     QString tableName = "OutdoorDailyRecords";
     DatabaseHandler dbHandler(PATH_TO_COPY_DATABASE);
     dbHandler.postOutdoorDailyRecord(record, tableName);
+}
+
+void OldDataUploader::logIntDailyRecord(IntDailyRecord record) {
+    QString tableName = "IndoorDailyRecords";
+    DatabaseHandler dbHandler(PATH_TO_COPY_DATABASE);
+    dbHandler.postIndoorDailyRecord(record, tableName);
 }
