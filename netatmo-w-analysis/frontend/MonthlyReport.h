@@ -40,7 +40,6 @@ protected:
 
 private:
     QDate *initialDate;
-    QDate limitBetweenProdAndCopyExt, limitBetweenProdAndCopyInt;
     QTableView *view;
     QStandardItemModel *model;
     QGridLayout *layout;
@@ -58,7 +57,6 @@ private:
     QVBoxLayout *buttonsLayout;
 
     QDate *_date;
-    DatabaseHandler *dbHandlerProd;
     DatabaseHandler *dbHandlerCopy;
     QLocale *deviceLocale;
 
