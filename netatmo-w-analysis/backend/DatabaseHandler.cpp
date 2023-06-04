@@ -79,12 +79,9 @@ void DatabaseHandler::postOutdoorDailyRecord(ExtDailyRecord record, QString tabl
     query.addBindValue(record.decade());
     query.addBindValue(record.weekNumber());
 
-//    query.addBindValue(record.maxTemperature());
-//    query.addBindValue(record.minTemperature());
-//    query.addBindValue(record.avgTemperature());
-        query.addBindValue(25.2);
-        query.addBindValue(12.3);
-        query.addBindValue(17.8);
+    query.addBindValue(record.maxTemperature());
+    query.addBindValue(record.minTemperature());
+    query.addBindValue(record.avgTemperature());
 
     query.addBindValue(record.maxHumidity());
     query.addBindValue(record.minHumidity());
