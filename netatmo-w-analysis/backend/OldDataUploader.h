@@ -25,9 +25,6 @@ public slots:
 
     void logExtDailyRecord(ExtDailyRecord);
 
-    void intBatchRetrieved();
-    void extBatchRetrieved();
-
 private:
     NetatmoAPIHandler *_apiHandler;
     QString _accessToken;

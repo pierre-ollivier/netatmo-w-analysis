@@ -35,9 +35,9 @@ public slots:
 
     void retrieveTokens(QNetworkReply*);
     void retrieveCurrentConditions(QNetworkReply*);
-    void retrieveDailyOutdoorConditions(QNetworkReply*);
+//    void retrieveDailyOutdoorConditions(QNetworkReply*);
     void retrieveFullDailyOutdoorConditions(QNetworkReply*);
-    void retrieveDailyIndoorConditions(QNetworkReply*);
+//    void retrieveDailyIndoorConditions(QNetworkReply*);
 
     APIMonitor* getAPIMonitor();
     int getTimeBetweenRequests();
@@ -88,8 +88,6 @@ signals:
     // OTHER
 
     void currentTimeChanged(QDateTime);
-    void endOfDailyOutdoorConditionsRetrieval();
-    void endOfDailyIndoorConditionsRetrieval();
 
     void extDailyRecordRetrieved(ExtDailyRecord);
     void intDailyRecordRetrieved(ExtDailyRecord);
