@@ -145,9 +145,9 @@ void MainWindow::addDataFromCurrentMonths() {
     QDate lastAddedIndoorDate = dbHandler->getLatestDateTimeFromDatabase("IndoorDailyRecords").date();
 
     oldDataUploader->addDataFromCurrentMonths(lastAddedOutdoorDate.addDays(1),
-                                              QDate::currentDate().addDays(-1), false);
+                                              QDate::currentDate(), false);
     oldDataUploader->addDataFromCurrentMonths(lastAddedIndoorDate.addDays(1),
-                                              QDate::currentDate().addDays(-1), true);
+                                              QDate::currentDate(), true);
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
