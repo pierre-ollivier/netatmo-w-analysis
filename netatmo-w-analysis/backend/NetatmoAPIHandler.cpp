@@ -285,29 +285,6 @@ void NetatmoAPIHandler::retrieveCurrentConditions(QNetworkReply *reply) {
     }
 }
 
-//void NetatmoAPIHandler::retrieveDailyOutdoorConditions(QNetworkReply *reply) {
-//    QByteArray bytes = reply->readAll();
-//    QJsonDocument js = QJsonDocument::fromJson(bytes);
-//    QJsonObject tb = js["body"].toObject();
-//    if (bytes.contains("error")) {
-//        qDebug() << "ERROR with current conditions" << bytes;
-//    }
-
-//    else if (bytes.size() >= 1) {
-//        QJsonDocument js = QJsonDocument::fromJson(bytes);
-//        foreach (const QString &key, tb.keys()) {
-//            QJsonValue value = tb.value(key);
-//            long long timestamp = key.toLongLong();
-//            double temperature = value[0].toDouble();
-//            int humidity = int(0.5 + value[1].toDouble());
-//            emit extTimestampRecordRetrieved(
-//                        ExtTimestampRecord(timestamp, temperature, humidity));
-//        }
-
-//        emit endOfDailyOutdoorConditionsRetrieval();
-//    }
-//}
-
 void NetatmoAPIHandler::retrieveFullDailyOutdoorConditions(QNetworkReply *reply) {
     QByteArray bytes = reply->readAll();
     QJsonDocument js = QJsonDocument::fromJson(bytes);
@@ -340,29 +317,3 @@ void NetatmoAPIHandler::retrieveFullDailyOutdoorConditions(QNetworkReply *reply)
         }
     }
 }
-
-//void NetatmoAPIHandler::retrieveDailyIndoorConditions(QNetworkReply *reply) {
-//    QByteArray bytes = reply->readAll();
-//    QJsonDocument js = QJsonDocument::fromJson(bytes);
-//    QJsonObject tb = js["body"].toObject();
-//    if (bytes.contains("error")) {
-//        qDebug() << "ERROR with current conditions" << bytes;
-//    }
-
-//    else if (bytes.size() >= 1) {
-//        QJsonDocument js = QJsonDocument::fromJson(bytes);
-//        foreach (const QString &key, tb.keys()) {
-//            QJsonValue value = tb.value(key);
-//            long long timestamp = key.toLongLong();
-//            double temperature = value[0].toDouble();
-//            int humidity = int(0.5 + value[1].toDouble());
-//            double pressure = value[2].toDouble();
-//            int co2 = int(0.5 + value[3].toDouble());
-//            int noise = int(0.5 + value[4].toDouble());
-//            emit intTimestampRecordRetrieved(
-//                        IntTimestampRecord(timestamp, temperature, humidity, pressure, co2, noise));
-//        }
-
-//        emit endOfDailyIndoorConditionsRetrieval();
-//    }
-//}

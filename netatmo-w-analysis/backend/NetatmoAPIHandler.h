@@ -35,9 +35,7 @@ public slots:
 
     void retrieveTokens(QNetworkReply*);
     void retrieveCurrentConditions(QNetworkReply*);
-//    void retrieveDailyOutdoorConditions(QNetworkReply*);
     void retrieveFullDailyOutdoorConditions(QNetworkReply*);
-//    void retrieveDailyIndoorConditions(QNetworkReply*);
 
     APIMonitor* getAPIMonitor();
     int getTimeBetweenRequests();
