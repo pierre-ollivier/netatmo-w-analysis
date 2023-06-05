@@ -24,6 +24,7 @@ public:
     void buildAPIHandler();
     void buildLabels();
     void buildButtons();
+    void buildCharts();
     void buildLayouts();
     void createMenus();
     void createActions();

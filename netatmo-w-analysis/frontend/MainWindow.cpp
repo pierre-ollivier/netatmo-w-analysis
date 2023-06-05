@@ -29,12 +29,10 @@ void MainWindow::buildWindow() {
     buildAPIHandler();
     buildLabels();
     buildButtons();
+    buildCharts();
     buildLayouts();
     createActions();
     createMenus();
-    series = new QLineSeries();
-    chart = new QChart();
-    chartView = new QChartView();
 }
 
 void MainWindow::buildAPIHandler() { 
@@ -87,13 +85,27 @@ void MainWindow::buildButtons() {
             apiHandler, SLOT(postCurrentConditionsRequest()));
 }
 
+void MainWindow::buildCharts() {
+    series = new QLineSeries();
+    series->append(1685993836, 24.2);
+    series->append(1685993936, 24.3);
+    series->append(1685994000, 24.1);
+    series->append(1685994349, 24.5);
+    chart = new QChart();
+    chart->legend()->hide();
+    chart->addSeries(series);
+    chart->createDefaultAxes();
+    chartView = new QChartView(chart);
+    chartView->setMinimumSize(400, 300);
+}
+
 void MainWindow::buildLayouts() {
     mainLayout = new QGridLayout();
     mainLayout->addWidget(currentExtTempLabel, 1, 0, 2, 1);
     mainLayout->addWidget(statusLabel, 0, 0);
 //    mainLayout->addWidget(labelExtremes, 0, 1, 1, 2);
     mainLayout->addWidget(actualisationButton, 0, 3);
-//    mainLayout->addWidget(vuegp, 1, 1, 2, 2);
+    mainLayout->addWidget(chartView, 1, 1, 2, 2);
     mainLayout->addWidget(currentMaxExtTempLabel, 1, 3);
     mainLayout->addWidget(currentMinExtTempLabel, 2, 3);
     mainLayout->addWidget(currentIntTempLabel, 3, 0, 2, 1);
