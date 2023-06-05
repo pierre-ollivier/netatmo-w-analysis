@@ -102,6 +102,8 @@ private:
     QLineSeries *series;
     QChart *chart;
     QChartView *chartView;
+    QDateTimeAxis *xAxis;
+    QValueAxis *yAxis;
 };
 
 #endif // MAINWINDOW_H

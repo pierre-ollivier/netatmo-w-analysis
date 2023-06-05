@@ -87,14 +87,26 @@ void MainWindow::buildButtons() {
 
 void MainWindow::buildCharts() {
     series = new QLineSeries();
-    series->append(1685993836, 24.2);
-    series->append(1685993936, 24.3);
-    series->append(1685994000, 24.1);
-    series->append(1685994349, 24.5);
+    series->append(1685993836000, 24.2);
+    series->append(1685993936000, 24.3);
+    series->append(1685994000000, 24.1);
+    series->append(1685994349000, 24.5);
+
+    xAxis = new QDateTimeAxis();
+    xAxis->setFormat("hh:mm");
+
+    yAxis = new QValueAxis();
+    yAxis->setLabelFormat("%.1f");
     chart = new QChart();
+
     chart->legend()->hide();
+    chart->addAxis(xAxis,  Qt::AlignBottom);
     chart->addSeries(series);
-    chart->createDefaultAxes();
+    chart->addAxis(yAxis, Qt::AlignLeft);
+
+    series->attachAxis(xAxis);
+    series->attachAxis(yAxis);
+
     chartView = new QChartView(chart);
     chartView->setMinimumSize(400, 300);
 }
