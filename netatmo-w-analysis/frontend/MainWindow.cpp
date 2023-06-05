@@ -32,6 +32,9 @@ void MainWindow::buildWindow() {
     buildLayouts();
     createActions();
     createMenus();
+    series = new QLineSeries();
+    chart = new QChart();
+    chartView = new QChartView();
 }
 
 void MainWindow::buildAPIHandler() { 

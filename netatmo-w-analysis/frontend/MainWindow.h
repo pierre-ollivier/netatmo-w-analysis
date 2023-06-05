@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QGridLayout>
 #include <QMenuBar>
+#include <QtCharts>
 #include "../netatmo-w-analysis/backend/NetatmoAPIHandler.h"
 #include "../netatmo-w-analysis/backend/DatabaseHandler.h"
 #include "../netatmo-w-analysis/backend/APIMonitor.h"
@@ -95,6 +96,11 @@ private:
     QAction *updateDailyOutdoorDatabaseAction;
     QAction *displayMonthlyReportAction;
     QAction *displayYearlyReportAction;
+
+    //tests about charts
+    QLineSeries *series;
+    QChart *chart;
+    QChartView *chartView;
 };
 
 #endif // MAINWINDOW_H
