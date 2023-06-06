@@ -15,6 +15,11 @@ HomePageChart::HomePageChart(QString tableName) : QChartView()
 
     xAxis = new QDateTimeAxis();
     xAxis->setFormat("hh:mm");
+    xAxis->setRange(
+                QDateTime(QDate(2023, 5, 31), QTime(20, 0)),
+                QDateTime(QDate(2023, 6, 1), QTime(0, 0)));
+    // provisional - range needs to be adapted to the scale
+    xAxis->setTickCount(5);
 
     yAxis = new QValueAxis();
     yAxis->setLabelFormat("%.1f");
