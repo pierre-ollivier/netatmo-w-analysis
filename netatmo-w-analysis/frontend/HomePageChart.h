@@ -20,6 +20,9 @@ private:
 
     QString _tableName;
 
+    QVariant maxOfSeries = QVariant();
+    QVariant minOfSeries = QVariant();
+
 };
 
 #endif // HOMEPAGECHART_H

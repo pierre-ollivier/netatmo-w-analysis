@@ -27,7 +27,7 @@ HomePageChart::HomePageChart(QString tableName) : QChartView()
     chart = new QChart();
 
     chart->legend()->hide();
-    chart->addAxis(xAxis,  Qt::AlignBottom);
+    chart->addAxis(xAxis, Qt::AlignBottom);
     chart->addSeries(series);
     chart->addAxis(yAxis, Qt::AlignLeft);
 
@@ -45,9 +45,15 @@ void HomePageChart::fillSeries() {
     QString timelimit = QString::number(inttimelimit);
     std::vector<ExtTimestampRecord> records = dbHandler->getExtTimestampRecordsFromDatabase(
                 "SELECT * from " + _tableName + " where timestamp >= " + timelimit, 0);
+    maxOfSeries = QVariant();
+    minOfSeries = QVariant();
+
     for (ExtTimestampRecord record: records) {
         series->append(1000 * record.timestamp(), record.temperature());
+        if (maxOfSeries.isNull() || record.temperature() > maxOfSeries.toDouble()) maxOfSeries = record.temperature();
+        if (minOfSeries.isNull() || record.temperature() < minOfSeries.toDouble()) minOfSeries = record.temperature();
     }
+
     xAxis->setRange(QDateTime::fromSecsSinceEpoch(chartStart),
                     QDateTime::fromSecsSinceEpoch(chartStart + 4 * 3600));
 }
