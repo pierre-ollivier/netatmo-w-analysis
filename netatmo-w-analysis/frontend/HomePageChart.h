@@ -7,7 +7,7 @@
 class HomePageChart : public QChartView
 {
 public:
-    HomePageChart();
+    HomePageChart(QString tableName);
     void fillSeries();
 
 private:
@@ -17,6 +17,8 @@ private:
     QValueAxis *yAxis;
 
     DatabaseHandler *dbHandler;
+
+    QString _tableName;
 
 };
 
