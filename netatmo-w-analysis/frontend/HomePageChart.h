@@ -2,17 +2,21 @@
 #define HOMEPAGECHART_H
 
 #include <QtCharts>
+#include "../netatmo-w-analysis/backend/DatabaseHandler.h"
 
 class HomePageChart : public QChartView
 {
 public:
     HomePageChart();
+    void fillSeries();
 
 private:
     QLineSeries *series;
     QChart *chart;
     QDateTimeAxis *xAxis;
     QValueAxis *yAxis;
+
+    DatabaseHandler *dbHandler;
 
 };
 
