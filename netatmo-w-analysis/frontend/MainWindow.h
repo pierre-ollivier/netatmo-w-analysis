@@ -12,6 +12,7 @@
 #include "../netatmo-w-analysis/backend/DatabaseHandler.h"
 #include "../netatmo-w-analysis/backend/APIMonitor.h"
 #include "../netatmo-w-analysis/backend/OldDataUploader.h"
+#include "../netatmo-w-analysis/frontend/HomePageChart.h"
 
 
 class MainWindow : public QMainWindow
@@ -85,6 +86,7 @@ private:
     QString accessToken = "";
     QLocale *deviceLocale;
     APIMonitor *apiMonitor;
+    HomePageChart *chart;
 
     //data uploader
     OldDataUploader *oldDataUploader;
@@ -98,12 +100,6 @@ private:
     QAction *displayMonthlyReportAction;
     QAction *displayYearlyReportAction;
 
-    //tests about charts
-    QLineSeries *series;
-    QChart *chart;
-    QChartView *chartView;
-    QDateTimeAxis *xAxis;
-    QValueAxis *yAxis;
 };
 
 #endif // MAINWINDOW_H
