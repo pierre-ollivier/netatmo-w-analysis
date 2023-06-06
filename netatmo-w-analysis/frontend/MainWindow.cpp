@@ -86,7 +86,8 @@ void MainWindow::buildButtons() {
 }
 
 void MainWindow::buildCharts() {
-    chart = new HomePageChart();
+    indoorChart = new HomePageChart("IndoorTimestampRecords");
+    outdoorChart = new HomePageChart("OutdoorTimestampRecords");
 }
 
 void MainWindow::buildLayouts() {
@@ -95,13 +96,13 @@ void MainWindow::buildLayouts() {
     mainLayout->addWidget(statusLabel, 0, 0);
 //    mainLayout->addWidget(labelExtremes, 0, 1, 1, 2);
     mainLayout->addWidget(actualisationButton, 0, 3);
-    mainLayout->addWidget(chart, 1, 1, 2, 2);
+    mainLayout->addWidget(outdoorChart, 1, 1, 2, 2);
     mainLayout->addWidget(currentMaxExtTempLabel, 1, 3);
     mainLayout->addWidget(currentMinExtTempLabel, 2, 3);
     mainLayout->addWidget(currentIntTempLabel, 3, 0, 2, 1);
     mainLayout->addWidget(currentMaxIntTempLabel, 3, 3);
     mainLayout->addWidget(currentMinIntTempLabel, 4, 3);
-//    mainLayout->addWidget(vuegpint, 3, 1, 2, 2);
+    mainLayout->addWidget(indoorChart, 3, 1, 2, 2);
 
     // set window's layout
     mainWidget->setLayout(mainLayout);

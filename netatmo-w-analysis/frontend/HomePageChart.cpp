@@ -4,8 +4,10 @@
 
 extern QString PATH_TO_COPY_DATABASE;
 
-HomePageChart::HomePageChart() : QChartView()
+HomePageChart::HomePageChart(QString tableName) : QChartView()
 {
+    _tableName = tableName;
+
     dbHandler = new DatabaseHandler(PATH_TO_COPY_DATABASE);
 
     series = new QLineSeries();
@@ -35,7 +37,7 @@ void HomePageChart::fillSeries() {
 //    QString timelimit = QString::number(QDateTime::currentDateTime().toSecsSinceEpoch() - 4 * 3600);
     QString timelimit = QString::number(1685556000);
     std::vector<ExtTimestampRecord> records = dbHandler->getExtTimestampRecordsFromDatabase(
-                "SELECT * from OutdoorTimestampRecords where timestamp >= " + timelimit, 0);
+                "SELECT * from " + _tableName + " where timestamp >= " + timelimit, 0);
     for (ExtTimestampRecord record: records) {
         series->append(1000 * record.timestamp(), record.temperature());
     }

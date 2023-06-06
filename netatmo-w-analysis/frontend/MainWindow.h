@@ -86,7 +86,8 @@ private:
     QString accessToken = "";
     QLocale *deviceLocale;
     APIMonitor *apiMonitor;
-    HomePageChart *chart;
+    HomePageChart *indoorChart;
+    HomePageChart *outdoorChart;
 
     //data uploader
     OldDataUploader *oldDataUploader;
