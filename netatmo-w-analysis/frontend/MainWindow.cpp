@@ -86,29 +86,7 @@ void MainWindow::buildButtons() {
 }
 
 void MainWindow::buildCharts() {
-    series = new QLineSeries();
-    series->append(1685993836000, 24.2);
-    series->append(1685993936000, 24.3);
-    series->append(1685994000000, 24.1);
-    series->append(1685994349000, 24.5);
-
-    xAxis = new QDateTimeAxis();
-    xAxis->setFormat("hh:mm");
-
-    yAxis = new QValueAxis();
-    yAxis->setLabelFormat("%.1f");
-    chart = new QChart();
-
-    chart->legend()->hide();
-    chart->addAxis(xAxis,  Qt::AlignBottom);
-    chart->addSeries(series);
-    chart->addAxis(yAxis, Qt::AlignLeft);
-
-    series->attachAxis(xAxis);
-    series->attachAxis(yAxis);
-
-    chartView = new QChartView(chart);
-    chartView->setMinimumSize(400, 300);
+    chart = new HomePageChart();
 }
 
 void MainWindow::buildLayouts() {
@@ -117,7 +95,7 @@ void MainWindow::buildLayouts() {
     mainLayout->addWidget(statusLabel, 0, 0);
 //    mainLayout->addWidget(labelExtremes, 0, 1, 1, 2);
     mainLayout->addWidget(actualisationButton, 0, 3);
-    mainLayout->addWidget(chartView, 1, 1, 2, 2);
+    mainLayout->addWidget(chart, 1, 1, 2, 2);
     mainLayout->addWidget(currentMaxExtTempLabel, 1, 3);
     mainLayout->addWidget(currentMinExtTempLabel, 2, 3);
     mainLayout->addWidget(currentIntTempLabel, 3, 0, 2, 1);
