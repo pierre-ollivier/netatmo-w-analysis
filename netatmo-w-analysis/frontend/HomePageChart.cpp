@@ -1,13 +1,15 @@
 #include "HomePageChart.h"
+#include <QDateTime>
+#include "../types/ExtTimestampRecord.h"
+
+extern QString PATH_TO_COPY_DATABASE;
 
 HomePageChart::HomePageChart() : QChartView()
 {
+    dbHandler = new DatabaseHandler(PATH_TO_COPY_DATABASE);
+
     series = new QLineSeries();
-    series->append(1685993836000, 24.2);
-    series->append(1685993936000, 23.8);
-    series->append(1685994000000, 24.1);
-    series->append(1685994349000, 24.5);
-    series->append(1685994353520, 24.4);
+    fillSeries();
 
     xAxis = new QDateTimeAxis();
     xAxis->setFormat("hh:mm");
@@ -27,4 +29,14 @@ HomePageChart::HomePageChart() : QChartView()
 
     setChart(chart);
     setFixedSize(400, 300);
+}
+
+void HomePageChart::fillSeries() {
+//    QString timelimit = QString::number(QDateTime::currentDateTime().toSecsSinceEpoch() - 4 * 3600);
+    QString timelimit = QString::number(1685556000);
+    std::vector<ExtTimestampRecord> records = dbHandler->getExtTimestampRecordsFromDatabase(
+                "SELECT * from OutdoorTimestampRecords where timestamp >= " + timelimit, 0);
+    for (ExtTimestampRecord record: records) {
+        series->append(1000 * record.timestamp(), record.temperature());
+    }
 }
