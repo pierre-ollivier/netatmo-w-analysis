@@ -20,7 +20,8 @@ MainWindow::MainWindow()
     deviceLocale = new QLocale();
     apiMonitor = new APIMonitor();
     apiHandler = new NetatmoAPIHandler(apiMonitor, 20000);
-    dbHandler = new DatabaseHandler(PATH_TO_PROD_DATABASE);
+    dbHandlerProd = new DatabaseHandler(PATH_TO_PROD_DATABASE);
+    dbHandlerCopy = new DatabaseHandler(PATH_TO_COPY_DATABASE);
     oldDataUploader = new OldDataUploader(apiHandler);
     buildWindow();
 }
@@ -86,8 +87,8 @@ void MainWindow::buildButtons() {
 }
 
 void MainWindow::buildCharts() {
-    indoorChart = new HomePageChart(dbHandler, "IndoorTimestampRecords");
-    outdoorChart = new HomePageChart(dbHandler, "OutdoorTimestampRecords");
+    indoorChart = new HomePageChart(dbHandlerCopy, "IndoorTimestampRecords");
+    outdoorChart = new HomePageChart(dbHandlerCopy, "OutdoorTimestampRecords");
 }
 
 void MainWindow::buildLayouts() {
@@ -147,8 +148,8 @@ void MainWindow::setAccessToken(QString newAccessToken) {
 }
 
 void MainWindow::addDataFromCurrentMonths() {
-    QDate lastAddedOutdoorDate = dbHandler->getLatestDateTimeFromDatabase("OutdoorDailyRecords").date();
-    QDate lastAddedIndoorDate = dbHandler->getLatestDateTimeFromDatabase("IndoorDailyRecords").date();
+    QDate lastAddedOutdoorDate = dbHandlerProd->getLatestDateTimeFromDatabase("OutdoorDailyRecords").date();
+    QDate lastAddedIndoorDate = dbHandlerProd->getLatestDateTimeFromDatabase("IndoorDailyRecords").date();
 
     oldDataUploader->addDataFromCurrentMonths(lastAddedOutdoorDate.addDays(1),
                                               QDate::currentDate(), false);
@@ -259,10 +260,10 @@ void MainWindow::addMonthData() {
 
     if (response == QMessageBox::Yes) {
         if (isIndoorData) {
-            dbHandler->postFromIndoorCsv(fileName, "IndoorTimestampRecords");
+            dbHandlerProd->postFromIndoorCsv(fileName, "IndoorTimestampRecords");
         }
         else {
-            dbHandler->postFromOutdoorCsv(fileName, "OutdoorTimestampRecords");
+            dbHandlerProd->postFromOutdoorCsv(fileName, "OutdoorTimestampRecords");
         }
     }
     else if (response == QMessageBox::No) QMessageBox::warning(this, "Annulation", "Opération annulée.");
@@ -293,14 +294,14 @@ void MainWindow::addMultipleMonthsData() {
 
     if (response == QMessageBox::Yes) {
         if (isIndoorData) {
-            dbHandler->postFromMultipleIndoorCsv(
+            dbHandlerProd->postFromMultipleIndoorCsv(
                         "D:/Mes programmes/RegressionTemperature/Données Netatmo/Intérieur",
                         "IndoorTimestampRecords",
                         beginDate,
                         endDate);
         }
         else {
-            dbHandler->postFromMultipleOutdoorCsv(
+            dbHandlerProd->postFromMultipleOutdoorCsv(
                         "D:/Mes programmes/RegressionTemperature/Données Netatmo",
                         "OutdoorTimestampRecords",
                         beginDate,
@@ -327,7 +328,7 @@ void MainWindow::updateDailyIndoorDatabase() {
     int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
 
     if (response == QMessageBox::Yes) {
-        dbHandler->updateIndoorDailyRecords(
+        dbHandlerProd->updateIndoorDailyRecords(
                     QDate::fromString(beginDate, "dd/MM/yyyy"),
                     QDate::fromString(endDate, "dd/MM/yyyy"));
     }
@@ -351,7 +352,7 @@ void MainWindow::updateDailyOutdoorDatabase() {
     int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
 
     if (response == QMessageBox::Yes) {
-        dbHandler->updateOutdoorDailyRecords(
+        dbHandlerProd->updateOutdoorDailyRecords(
                     QDate::fromString(beginDate, "dd/MM/yyyy"),
                     QDate::fromString(endDate, "dd/MM/yyyy"));
     }

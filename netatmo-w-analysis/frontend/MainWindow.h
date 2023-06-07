@@ -79,8 +79,9 @@ private:
     //other (provisional)
     NetatmoAPIHandler *apiHandler;
 
-    //database handler
-    DatabaseHandler *dbHandler;
+    //database handlers
+    DatabaseHandler *dbHandlerProd;
+    DatabaseHandler *dbHandlerCopy;
 
     //other (provisional)
     QString accessToken = "";
