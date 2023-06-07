@@ -4,11 +4,14 @@
 
 extern QString PATH_TO_COPY_DATABASE;
 
-HomePageChart::HomePageChart(QString tableName) : QChartView()
+HomePageChart::HomePageChart(DatabaseHandler *dbHandler, QString tableName) : QChartView()
 {
     _tableName = tableName;
+    _dbHandler = dbHandler;
 
-    dbHandler = new DatabaseHandler(PATH_TO_COPY_DATABASE);
+    locale = new QLocale(QLocale::system());
+
+//    dbHandler = new DatabaseHandler(PATH_TO_COPY_DATABASE);
 
     xAxis = new QDateTimeAxis();
     xAxis->setFormat("hh:mm");
@@ -21,8 +24,11 @@ HomePageChart::HomePageChart(QString tableName) : QChartView()
     series = new QLineSeries();
     fillSeries();
 
+    QString unit = "";
+
     yAxis = new QValueAxis();
-    yAxis->setLabelFormat("%.1f");
+    yAxis->setLabelFormat(QString("%.1f") + unit);
+//    yAxis->setLabelFormat(locale->toString(yAxis->labelFormat()));
 //    yAxis->setTickType(QValueAxis::TicksDynamic);
     chart = new QChart();
 
@@ -30,6 +36,7 @@ HomePageChart::HomePageChart(QString tableName) : QChartView()
     chart->addAxis(xAxis, Qt::AlignBottom);
     chart->addSeries(series);
     chart->addAxis(yAxis, Qt::AlignLeft);
+    chart->setLocalizeNumbers(true);
 
     series->attachAxis(xAxis);
     series->attachAxis(yAxis);
@@ -38,12 +45,22 @@ HomePageChart::HomePageChart(QString tableName) : QChartView()
     setFixedSize(400, 300);
 }
 
+//HomePageChart::~HomePageChart() {
+//    delete series;
+//    delete chart;
+////    delete xAxis;
+//    delete yAxis;
+//    delete xAxis;
+//    delete locale;
+//    delete dbHandler;
+//}
+
 void HomePageChart::fillSeries() {
 //    int inttimelimit = QString::number(QDateTime::currentDateTime().toSecsSinceEpoch() - 4 * 3600);
     int inttimelimit = 1685556000;
     int chartStart = inttimelimit - (inttimelimit % 1800);
     QString timelimit = QString::number(inttimelimit);
-    std::vector<ExtTimestampRecord> records = dbHandler->getExtTimestampRecordsFromDatabase(
+    std::vector<ExtTimestampRecord> records = _dbHandler->getExtTimestampRecordsFromDatabase(
                 "SELECT * from " + _tableName + " where timestamp >= " + timelimit, 0);
     maxOfSeries = QVariant();
     minOfSeries = QVariant();

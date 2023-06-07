@@ -86,8 +86,8 @@ void MainWindow::buildButtons() {
 }
 
 void MainWindow::buildCharts() {
-    indoorChart = new HomePageChart("IndoorTimestampRecords");
-    outdoorChart = new HomePageChart("OutdoorTimestampRecords");
+    indoorChart = new HomePageChart(dbHandler, "IndoorTimestampRecords");
+    outdoorChart = new HomePageChart(dbHandler, "OutdoorTimestampRecords");
 }
 
 void MainWindow::buildLayouts() {
