@@ -22,10 +22,10 @@ HomePageChart::HomePageChart(DatabaseHandler *dbHandler, QString tableName) : QC
     series = new QLineSeries();
     fillSeries();
 
-    QString unit = "";
+    QString unitWithTrailingSpace = " °C";
 
     yAxis = new QValueAxis();
-    yAxis->setLabelFormat(QString("%.1f") + unit);
+    yAxis->setLabelFormat(QString("%.1f") + unitWithTrailingSpace);
 //    yAxis->setTickType(QValueAxis::TicksDynamic);
     chart = new QChart();
 
