@@ -11,8 +11,6 @@ HomePageChart::HomePageChart(DatabaseHandler *dbHandler, QString tableName) : QC
 
     locale = new QLocale(QLocale::system());
 
-//    dbHandler = new DatabaseHandler(PATH_TO_COPY_DATABASE);
-
     xAxis = new QDateTimeAxis();
     xAxis->setFormat("hh:mm");
 //    xAxis->setRange(
@@ -28,7 +26,6 @@ HomePageChart::HomePageChart(DatabaseHandler *dbHandler, QString tableName) : QC
 
     yAxis = new QValueAxis();
     yAxis->setLabelFormat(QString("%.1f") + unit);
-//    yAxis->setLabelFormat(locale->toString(yAxis->labelFormat()));
 //    yAxis->setTickType(QValueAxis::TicksDynamic);
     chart = new QChart();
 
@@ -44,16 +41,6 @@ HomePageChart::HomePageChart(DatabaseHandler *dbHandler, QString tableName) : QC
     setChart(chart);
     setFixedSize(400, 300);
 }
-
-//HomePageChart::~HomePageChart() {
-//    delete series;
-//    delete chart;
-////    delete xAxis;
-//    delete yAxis;
-//    delete xAxis;
-//    delete locale;
-//    delete dbHandler;
-//}
 
 void HomePageChart::fillSeries() {
 //    int inttimelimit = QString::number(QDateTime::currentDateTime().toSecsSinceEpoch() - 4 * 3600);

@@ -8,7 +8,6 @@ class HomePageChart : public QChartView
 {
 public:
     HomePageChart(DatabaseHandler *dbHandler, QString tableName);
-//    ~HomePageChart();
     void fillSeries();
 
 private:
