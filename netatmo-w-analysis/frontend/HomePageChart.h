@@ -9,6 +9,7 @@ class HomePageChart : public QChartView
 public:
     HomePageChart(DatabaseHandler *dbHandler, QString tableName);
     void fillSeries();
+    void setYAxisRange(double maxValue, double minValue);
 
 private:
     QLineSeries *series;
