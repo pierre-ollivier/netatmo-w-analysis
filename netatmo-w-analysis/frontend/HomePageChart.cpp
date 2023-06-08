@@ -19,14 +19,14 @@ HomePageChart::HomePageChart(DatabaseHandler *dbHandler, QString tableName) : QC
     // provisional - range needs to be adapted to the scale
     xAxis->setTickCount(5);
 
-    series = new QLineSeries();
-    fillSeries();
-
     QString unitWithTrailingSpace = " °C";
-
     yAxis = new QValueAxis();
     yAxis->setLabelFormat(QString("%.1f") + unitWithTrailingSpace);
 //    yAxis->setTickType(QValueAxis::TicksDynamic);
+
+    series = new QLineSeries();
+    fillSeries();
+
     chart = new QChart();
 
     chart->legend()->hide();
@@ -60,4 +60,12 @@ void HomePageChart::fillSeries() {
 
     xAxis->setRange(QDateTime::fromSecsSinceEpoch(chartStart),
                     QDateTime::fromSecsSinceEpoch(chartStart + 4 * 3600));
+    setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
+}
+
+void HomePageChart::setYAxisRange(double maxValue, double minValue) {
+    double difference = maxValue - minValue;
+    maxValue += 0.1 * difference;
+    minValue -= 0.1 * difference;
+    yAxis->setRange(minValue, maxValue);
 }
