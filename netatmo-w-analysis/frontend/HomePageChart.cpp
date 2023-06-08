@@ -22,7 +22,7 @@ HomePageChart::HomePageChart(DatabaseHandler *dbHandler, QString tableName) : QC
     QString unitWithTrailingSpace = " °C";
     yAxis = new QValueAxis();
     yAxis->setLabelFormat(QString("%.1f") + unitWithTrailingSpace);
-//    yAxis->setTickType(QValueAxis::TicksDynamic);
+    yAxis->setTickType(QValueAxis::TicksDynamic);
 
     series = new QLineSeries();
     fillSeries();
@@ -68,4 +68,15 @@ void HomePageChart::setYAxisRange(double maxValue, double minValue) {
     maxValue += 0.1 * difference;
     minValue -= 0.1 * difference;
     yAxis->setRange(minValue, maxValue);
+    setYAxisTicks(maxValue, minValue);
+}
+
+void HomePageChart::setYAxisTicks(double maxValue, double minValue) {
+    double difference = maxValue - minValue;
+    if (difference < 0.7) {
+        yAxis->setTickInterval(0.1);
+    }
+    else {
+        yAxis->setTickInterval(0.5);
+    }
 }

@@ -10,6 +10,7 @@ public:
     HomePageChart(DatabaseHandler *dbHandler, QString tableName);
     void fillSeries();
     void setYAxisRange(double maxValue, double minValue);
+    void setYAxisTicks(double maxValue, double minValue);
 
 private:
     QLineSeries *series;
