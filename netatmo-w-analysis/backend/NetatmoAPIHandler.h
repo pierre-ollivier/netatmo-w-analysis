@@ -29,11 +29,13 @@ public slots:
     void postCurrentConditionsRequest(QString accessToken);
     void postFullOutdoorDailyRequest(int dateBegin, int dateEnd, QString scale, QString accessToken);
     void postFullIndoorDailyRequest(int dateBegin, int dateEnd, QString scale, QString accessToken);
+    void postChartRequest(int dateBegin, QString scale, QString accessToken);
 
     void retrieveTokens(QNetworkReply*);
     void retrieveCurrentConditions(QNetworkReply*);
     void retrieveFullDailyOutdoorConditions(QNetworkReply*);
     void retrieveFullDailyIndoorConditions(QNetworkReply*);
+    void retrieveChartRequest(QNetworkReply*);
 
     APIMonitor* getAPIMonitor();
     int getTimeBetweenRequests();
@@ -93,6 +95,7 @@ private:
     QNetworkAccessManager *currentConditionsManager;
     QNetworkAccessManager *dailyFullOutdoorRequestManager;
     QNetworkAccessManager *dailyFullIndoorRequestManager;
+    QNetworkAccessManager *chartRequestManager;
 
     APIMonitor *apiMonitor;
 
