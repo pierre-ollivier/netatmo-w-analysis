@@ -76,7 +76,31 @@ void HomePageChart::setYAxisTicks(double maxValue, double minValue) {
     if (difference < 0.7) {
         yAxis->setTickInterval(0.1);
     }
-    else {
+    else if (difference < 1.3) {
+        yAxis->setTickInterval(0.2);
+    }
+    else if (difference < 2.0) {
+        yAxis->setTickInterval(0.4);
+    }
+    else if (difference < 3.1) {
         yAxis->setTickInterval(0.5);
+    }
+    else if (difference < 6.1) {
+        yAxis->setTickInterval(1.0);
+    }
+    else if (difference < 12) {
+        yAxis->setTickInterval(2.0);
+    }
+    else if (difference < 15) {
+        yAxis->setTickInterval(2.5);
+    }
+    else if (difference < 31) {
+        yAxis->setTickInterval(5.0);
+    }
+    else if (difference < 61) {
+        yAxis->setTickInterval(10);
+    }
+    else {
+        yAxis->setTickInterval(20);
     }
 }
