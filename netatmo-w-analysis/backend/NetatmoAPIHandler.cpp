@@ -325,8 +325,8 @@ void NetatmoAPIHandler::retrieveChartRequest(QNetworkReply *reply) {
             QJsonValue value = tb.value(key);
             double temperature = value[0].toDouble();
             int humidity = int(0.5 + value[1].toDouble());
-            temperatureList.append(QPointF(1000 * key.toInt(), temperature));
-            humidityList.append(QPointF(1000 * key.toInt(), humidity));
+            temperatureList.append(QPointF(1000 * key.toLongLong(), temperature));
+            humidityList.append(QPointF(1000 * key.toLongLong(), humidity));
         }
         emit temperatureListRetrieved(temperatureList);
         emit humidityListRetrieved(humidityList);
