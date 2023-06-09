@@ -312,6 +312,8 @@ void NetatmoAPIHandler::retrieveFullDailyIndoorConditions(QNetworkReply *reply) 
 }
 
 void NetatmoAPIHandler::retrieveChartRequest(QNetworkReply *reply) {
+    QList<QPointF> temperatureList = QList<QPointF>();
+    QList<QPointF> humidityList = QList<QPointF>();
     QByteArray bytes = reply->readAll();
     QJsonDocument js = QJsonDocument::fromJson(bytes);
     QJsonObject tb = js["body"].toObject();
@@ -321,9 +323,12 @@ void NetatmoAPIHandler::retrieveChartRequest(QNetworkReply *reply) {
     else if (bytes.size() >= 1) {
         foreach (const QString &key, tb.keys()) {
             QJsonValue value = tb.value(key);
-            double t = value[0].toDouble();
-            int rh = int(0.5 + value[1].toDouble());
-            // TODO
+            double temperature = value[0].toDouble();
+            int humidity = int(0.5 + value[1].toDouble());
+            temperatureList.append(QPointF(1000 * key.toInt(), temperature));
+            humidityList.append(QPointF(1000 * key.toInt(), humidity));
         }
+        emit temperatureListRetrieved(temperatureList);
+        emit humidityListRetrieved(humidityList);
     }
 }
