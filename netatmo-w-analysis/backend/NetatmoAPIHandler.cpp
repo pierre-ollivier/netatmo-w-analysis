@@ -10,6 +10,7 @@ NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequest
     dailyFullOutdoorRequestManager = new QNetworkAccessManager();
     dailyFullIndoorRequestManager = new QNetworkAccessManager();
     outdoorChartRequestManager = new QNetworkAccessManager();
+    indoorChartRequestManager = new QNetworkAccessManager();
 
     apiMonitor = monitor;
 
@@ -17,7 +18,8 @@ NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequest
     connect(currentConditionsManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveCurrentConditions(QNetworkReply *)));
     connect(dailyFullOutdoorRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveFullDailyOutdoorConditions(QNetworkReply *)));
     connect(dailyFullIndoorRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveFullDailyIndoorConditions(QNetworkReply *)));
-    connect(outdoorChartRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveChartRequest(QNetworkReply *)));
+    connect(outdoorChartRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveOutdoorChartRequest(QNetworkReply *)));
+    connect(indoorChartRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveIndoorChartRequest(QNetworkReply *)));
 
     currentConditionsTimer = new QTimer();
     if (timeBetweenRequests > 0) {
@@ -168,6 +170,26 @@ void NetatmoAPIHandler::postOutdoorChartRequest(int date_begin, QString scale, Q
     outdoorChartRequestManager->post(request, params.query().toUtf8());
 }
 
+void NetatmoAPIHandler::postIndoorChartRequest(int date_begin, QString scale, QString accessToken) {
+    if (accessToken == "") qDebug() << "Warning: undefined access token in NetatmoAPIHandler";
+    extern const QString mainDeviceId;
+    extern const QString outdoorModuleId;
+
+    QUrl url("https://api.netatmo.com/api/getmeasure?");
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    QUrlQuery params;
+    params.addQueryItem("access_token", accessToken.toUtf8());
+    params.addQueryItem("device_id", mainDeviceId);
+    params.addQueryItem("module_id", mainDeviceId);
+    params.addQueryItem("scale", scale);
+    params.addQueryItem("type", "temperature,humidity");
+    params.addQueryItem("date_begin", QString::number(date_begin));
+    params.addQueryItem("optimize", "false");
+    params.addQueryItem("real_time", "true");
+    indoorChartRequestManager->post(request, params.query().toUtf8());
+}
+
 void NetatmoAPIHandler::retrieveTokens(QNetworkReply *reply) {
     QByteArray bytes = reply->readAll();
     if (bytes.contains("error")) {
@@ -314,7 +336,7 @@ void NetatmoAPIHandler::retrieveFullDailyIndoorConditions(QNetworkReply *reply) 
     }
 }
 
-void NetatmoAPIHandler::retrieveChartRequest(QNetworkReply *reply) {
+void NetatmoAPIHandler::retrieveOutdoorChartRequest(QNetworkReply *reply) {
     QList<QPointF> temperatureList = QList<QPointF>();
     QList<QPointF> humidityList = QList<QPointF>();
     QByteArray bytes = reply->readAll();
@@ -331,7 +353,29 @@ void NetatmoAPIHandler::retrieveChartRequest(QNetworkReply *reply) {
             temperatureList.append(QPointF(1000 * key.toLongLong(), temperature));
             humidityList.append(QPointF(1000 * key.toLongLong(), humidity));
         }
-        emit temperatureListRetrieved(temperatureList);
-        emit humidityListRetrieved(humidityList);
+        emit outdoorTemperatureListRetrieved(temperatureList);
+        emit outdoorHumidityListRetrieved(humidityList);
+    }
+}
+
+void NetatmoAPIHandler::retrieveIndoorChartRequest(QNetworkReply *reply) {
+    QList<QPointF> temperatureList = QList<QPointF>();
+    QList<QPointF> humidityList = QList<QPointF>();
+    QByteArray bytes = reply->readAll();
+    QJsonDocument js = QJsonDocument::fromJson(bytes);
+    QJsonObject tb = js["body"].toObject();
+    if (bytes.contains("error")) {
+        qDebug() << "ERROR with chart request" << bytes;
+    }
+    else if (bytes.size() >= 1) {
+        foreach (const QString &key, tb.keys()) {
+            QJsonValue value = tb.value(key);
+            double temperature = value[0].toDouble();
+            int humidity = int(0.5 + value[1].toDouble());
+            temperatureList.append(QPointF(1000 * key.toLongLong(), temperature));
+            humidityList.append(QPointF(1000 * key.toLongLong(), humidity));
+        }
+        emit indoorTemperatureListRetrieved(temperatureList);
+        emit indoorHumidityListRetrieved(humidityList);
     }
 }

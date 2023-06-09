@@ -4,10 +4,11 @@
 
 extern QString PATH_TO_COPY_DATABASE;
 
-HomePageChart::HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName) : QChartView()
+HomePageChart::HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName, bool indoor) : QChartView()
 {
     _tableName = tableName;
     _apiHandler = apiHandler;
+    _indoor = indoor;
 
     locale = new QLocale(QLocale::system());
 
@@ -31,14 +32,23 @@ HomePageChart::HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName) :
     setChart(chart);
     setFixedSize(400, 300);
 
-    connect(_apiHandler, SIGNAL(temperatureListRetrieved(QList<QPointF>)), SLOT(drawChart(QList<QPointF>)));
+    if (indoor) connect(_apiHandler, SIGNAL(indoorTemperatureListRetrieved(QList<QPointF>)), SLOT(drawChart(QList<QPointF>)));
+    else connect(_apiHandler, SIGNAL(outdoorTemperatureListRetrieved(QList<QPointF>)), SLOT(drawChart(QList<QPointF>)));
 }
 
-void HomePageChart::gatherChartData(QString accessToken) {
-    _apiHandler->postOutdoorChartRequest(
-                QDateTime::currentDateTime().toSecsSinceEpoch() - 4 * 3600,
-                "max",
-                accessToken);
+void HomePageChart::gatherChartData(QString accessToken, bool indoor) {
+    if (indoor) {
+        _apiHandler->postIndoorChartRequest(
+                    QDateTime::currentDateTime().toSecsSinceEpoch() - 4 * 3600,
+                    "max",
+                    accessToken);
+    }
+    else {
+        _apiHandler->postOutdoorChartRequest(
+                    QDateTime::currentDateTime().toSecsSinceEpoch() - 4 * 3600,
+                    "max",
+                    accessToken);
+    }
 }
 
 void HomePageChart::drawChart(QList<QPointF> points) {
