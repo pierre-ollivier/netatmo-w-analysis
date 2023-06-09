@@ -4,10 +4,10 @@
 
 extern QString PATH_TO_COPY_DATABASE;
 
-HomePageChart::HomePageChart(DatabaseHandler *dbHandler, QString tableName) : QChartView()
+HomePageChart::HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName) : QChartView()
 {
     _tableName = tableName;
-    _dbHandler = dbHandler;
+    _apiHandler = apiHandler;
 
     locale = new QLocale(QLocale::system());
 
@@ -25,11 +25,63 @@ HomePageChart::HomePageChart(DatabaseHandler *dbHandler, QString tableName) : QC
     yAxis->setTickType(QValueAxis::TicksDynamic);
 
     series = new QLineSeries();
-    fillSeries();
+//    fillSeries();
 
     chart = new QChart();
 
     chart->legend()->hide();
+//    chart->addAxis(xAxis, Qt::AlignBottom);
+//    chart->addSeries(series);
+//    chart->addAxis(yAxis, Qt::AlignLeft);
+    chart->setLocalizeNumbers(true);
+
+//    series->attachAxis(xAxis);
+//    series->attachAxis(yAxis);
+
+    setChart(chart);
+    setFixedSize(400, 300);
+
+    connect(_apiHandler, SIGNAL(temperatureListRetrieved(QList<QPointF>)), SLOT(drawChart(QList<QPointF>)));
+    _apiHandler->postChartRequest(
+                QDateTime::currentDateTime().toSecsSinceEpoch() - 4 * 3600,
+                "max",
+                _apiHandler->getAccessToken());
+}
+
+void HomePageChart::gatherChartData(QString accessToken) {
+    _apiHandler->postChartRequest(
+                QDateTime::currentDateTime().toSecsSinceEpoch() - 4 * 3600,
+                "max",
+                accessToken);
+}
+
+void HomePageChart::drawChart(QList<QPointF> points) {
+//    int inttimelimit = QString::number(QDateTime::currentDateTime().toSecsSinceEpoch() - 4 * 3600);
+    int inttimelimit = 1685556000;
+    int chartStart = inttimelimit - (inttimelimit % 1800);
+    QString timelimit = QString::number(inttimelimit);
+
+    maxOfSeries = QVariant();
+    minOfSeries = QVariant();
+
+//    for (ExtTimestampRecord record: records) {
+//        series->append(1000 * record.timestamp(), record.temperature());
+//        if (maxOfSeries.isNull() || record.temperature() > maxOfSeries.toDouble()) maxOfSeries = record.temperature();
+//        if (minOfSeries.isNull() || record.temperature() < minOfSeries.toDouble()) minOfSeries = record.temperature();
+//    }
+
+    series->clear();
+    series->append(points);
+
+    for (QPointF point: points) {
+        if (maxOfSeries.isNull() || point.y() > maxOfSeries.toDouble()) maxOfSeries = point.y();
+        if (minOfSeries.isNull() || point.y() < minOfSeries.toDouble()) minOfSeries = point.y();
+    }
+
+    xAxis->setRange(QDateTime::fromSecsSinceEpoch(chartStart),
+                    QDateTime::fromSecsSinceEpoch(chartStart + 4 * 3600));
+    setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
+
     chart->addAxis(xAxis, Qt::AlignBottom);
     chart->addSeries(series);
     chart->addAxis(yAxis, Qt::AlignLeft);
@@ -39,28 +91,6 @@ HomePageChart::HomePageChart(DatabaseHandler *dbHandler, QString tableName) : QC
     series->attachAxis(yAxis);
 
     setChart(chart);
-    setFixedSize(400, 300);
-}
-
-void HomePageChart::fillSeries() {
-//    int inttimelimit = QString::number(QDateTime::currentDateTime().toSecsSinceEpoch() - 4 * 3600);
-    int inttimelimit = 1685556000;
-    int chartStart = inttimelimit - (inttimelimit % 1800);
-    QString timelimit = QString::number(inttimelimit);
-    std::vector<ExtTimestampRecord> records = _dbHandler->getExtTimestampRecordsFromDatabase(
-                "SELECT * from " + _tableName + " where timestamp >= " + timelimit, 0);
-    maxOfSeries = QVariant();
-    minOfSeries = QVariant();
-
-    for (ExtTimestampRecord record: records) {
-        series->append(1000 * record.timestamp(), record.temperature());
-        if (maxOfSeries.isNull() || record.temperature() > maxOfSeries.toDouble()) maxOfSeries = record.temperature();
-        if (minOfSeries.isNull() || record.temperature() < minOfSeries.toDouble()) minOfSeries = record.temperature();
-    }
-
-    xAxis->setRange(QDateTime::fromSecsSinceEpoch(chartStart),
-                    QDateTime::fromSecsSinceEpoch(chartStart + 4 * 3600));
-    setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
 }
 
 void HomePageChart::setYAxisRange(double maxValue, double minValue) {

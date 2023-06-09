@@ -87,8 +87,8 @@ void MainWindow::buildButtons() {
 }
 
 void MainWindow::buildCharts() {
-    indoorChart = new HomePageChart(dbHandlerCopy, "IndoorTimestampRecords");
-    outdoorChart = new HomePageChart(dbHandlerCopy, "OutdoorTimestampRecords");
+    indoorChart = new HomePageChart(apiHandler, "IndoorTimestampRecords");
+    outdoorChart = new HomePageChart(apiHandler, "OutdoorTimestampRecords");
 }
 
 void MainWindow::buildLayouts() {
@@ -145,6 +145,8 @@ void MainWindow::setAccessToken(QString newAccessToken) {
     accessToken = newAccessToken;
     oldDataUploader->setAccessToken(accessToken);
     addDataFromCurrentMonths();
+    indoorChart->gatherChartData(accessToken);
+    outdoorChart->gatherChartData(accessToken);
 }
 
 void MainWindow::addDataFromCurrentMonths() {
