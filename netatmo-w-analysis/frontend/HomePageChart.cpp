@@ -25,13 +25,8 @@ HomePageChart::HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName) :
     chart = new QChart();
 
     chart->legend()->hide();
-//    chart->addAxis(xAxis, Qt::AlignBottom);
     chart->addSeries(series);
-//    chart->addAxis(yAxis, Qt::AlignLeft);
     chart->setLocalizeNumbers(true);
-
-//    series->attachAxis(xAxis);
-//    series->attachAxis(yAxis);
 
     setChart(chart);
     setFixedSize(400, 300);
@@ -66,14 +61,17 @@ void HomePageChart::drawChart(QList<QPointF> points) {
                     QDateTime::currentDateTime());
     setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
 
-    chart->addAxis(xAxis, Qt::AlignBottom);
-    chart->addAxis(yAxis, Qt::AlignLeft);
+    if (chart->axes().length() == 0) {
+        chart->addAxis(xAxis, Qt::AlignBottom);
+        chart->addAxis(yAxis, Qt::AlignLeft);
+    }
+
     chart->setLocalizeNumbers(true);
 
-    series->attachAxis(xAxis);
-    series->attachAxis(yAxis);
-
-    setChart(chart);
+    if (series->attachedAxes().length() == 0) {
+        series->attachAxis(xAxis);
+        series->attachAxis(yAxis);
+    }
 }
 
 void HomePageChart::setYAxisRange(double maxValue, double minValue) {
