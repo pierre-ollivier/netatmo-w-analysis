@@ -35,7 +35,7 @@ HomePageChart::HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName) :
 }
 
 void HomePageChart::gatherChartData(QString accessToken) {
-    _apiHandler->postChartRequest(
+    _apiHandler->postOutdoorChartRequest(
                 QDateTime::currentDateTime().toSecsSinceEpoch() - 4 * 3600,
                 "max",
                 accessToken);
