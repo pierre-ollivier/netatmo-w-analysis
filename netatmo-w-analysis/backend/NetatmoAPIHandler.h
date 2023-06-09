@@ -31,12 +31,14 @@ public slots:
     void postFullOutdoorDailyRequest(int dateBegin, int dateEnd, QString scale, QString accessToken);
     void postFullIndoorDailyRequest(int dateBegin, int dateEnd, QString scale, QString accessToken);
     void postOutdoorChartRequest(int dateBegin, QString scale, QString accessToken);
+    void postIndoorChartRequest(int dateBegin, QString scale, QString accessToken);
 
     void retrieveTokens(QNetworkReply*);
     void retrieveCurrentConditions(QNetworkReply*);
     void retrieveFullDailyOutdoorConditions(QNetworkReply*);
     void retrieveFullDailyIndoorConditions(QNetworkReply*);
-    void retrieveChartRequest(QNetworkReply*);
+    void retrieveIndoorChartRequest(QNetworkReply*);
+    void retrieveOutdoorChartRequest(QNetworkReply*);
 
     APIMonitor* getAPIMonitor();
     int getTimeBetweenRequests();
@@ -85,8 +87,10 @@ signals:
     void intTimestampRecordRetrieved(IntTimestampRecord);
 
     // CHART SERIES
-    void temperatureListRetrieved(QList<QPointF>);
-    void humidityListRetrieved(QList<QPointF>);
+    void outdoorTemperatureListRetrieved(QList<QPointF>);
+    void outdoorHumidityListRetrieved(QList<QPointF>);
+    void indoorTemperatureListRetrieved(QList<QPointF>);
+    void indoorHumidityListRetrieved(QList<QPointF>);
 
     // OTHER
 
@@ -100,6 +104,7 @@ private:
     QNetworkAccessManager *currentConditionsManager;
     QNetworkAccessManager *dailyFullOutdoorRequestManager;
     QNetworkAccessManager *dailyFullIndoorRequestManager;
+    QNetworkAccessManager *indoorChartRequestManager;
     QNetworkAccessManager *outdoorChartRequestManager;
 
     APIMonitor *apiMonitor;

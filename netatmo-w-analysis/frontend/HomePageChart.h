@@ -9,11 +9,11 @@ class HomePageChart : public QChartView
     Q_OBJECT
 
 public:
-    HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName);
+    HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName, bool indoor);
 //    void fillSeries();
 
 public slots:
-    void gatherChartData(QString accessToken);
+    void gatherChartData(QString accessToken, bool indoor);
     void drawChart(QList<QPointF> temperatureList);
     void setYAxisRange(double maxValue, double minValue);
     void setYAxisTicks(double maxValue, double minValue);
@@ -34,6 +34,8 @@ private:
 
     QVariant maxOfSeries = QVariant();
     QVariant minOfSeries = QVariant();
+
+    bool _indoor;
 
 };
 
