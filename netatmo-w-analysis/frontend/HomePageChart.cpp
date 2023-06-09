@@ -26,7 +26,7 @@ HomePageChart::HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName) :
 
     chart->legend()->hide();
 //    chart->addAxis(xAxis, Qt::AlignBottom);
-//    chart->addSeries(series);
+    chart->addSeries(series);
 //    chart->addAxis(yAxis, Qt::AlignLeft);
     chart->setLocalizeNumbers(true);
 
@@ -67,7 +67,6 @@ void HomePageChart::drawChart(QList<QPointF> points) {
     setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
 
     chart->addAxis(xAxis, Qt::AlignBottom);
-    chart->addSeries(series);
     chart->addAxis(yAxis, Qt::AlignLeft);
     chart->setLocalizeNumbers(true);
 
