@@ -9,6 +9,7 @@
 #include <QNetworkAccessManager>
 #include <QDateTime>
 #include <QTimer>
+#include <QPointF>
 #include "APIMonitor.h"
 #include "../types/ExtTimestampRecord.h"
 #include "../types/IntTimestampRecord.h"
@@ -82,6 +83,10 @@ signals:
     // TIMESTAMP RECORD
     void extTimestampRecordRetrieved(ExtTimestampRecord);
     void intTimestampRecordRetrieved(IntTimestampRecord);
+
+    // CHART SERIES
+    void temperatureListRetrieved(QList<QPointF>);
+    void humidityListRetrieved(QList<QPointF>);
 
     // OTHER
 
