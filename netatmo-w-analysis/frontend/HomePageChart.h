@@ -2,15 +2,23 @@
 #define HOMEPAGECHART_H
 
 #include <QtCharts>
-#include "../netatmo-w-analysis/backend/DatabaseHandler.h"
+#include "../netatmo-w-analysis/backend/NetatmoAPIHandler.h"
 
 class HomePageChart : public QChartView
 {
+    Q_OBJECT
+
 public:
-    HomePageChart(DatabaseHandler *dbHandler, QString tableName);
-    void fillSeries();
+    HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName);
+//    void fillSeries();
+
+public slots:
+    void gatherChartData(QString accessToken);
+    void drawChart(QList<QPointF> temperatureList);
     void setYAxisRange(double maxValue, double minValue);
     void setYAxisTicks(double maxValue, double minValue);
+
+signals:
 
 private:
     QLineSeries *series;
@@ -20,7 +28,7 @@ private:
 
     QLocale *locale;
 
-    DatabaseHandler *_dbHandler;
+    NetatmoAPIHandler *_apiHandler;
 
     QString _tableName;
 
