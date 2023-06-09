@@ -32,10 +32,6 @@ HomePageChart::HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName) :
     setFixedSize(400, 300);
 
     connect(_apiHandler, SIGNAL(temperatureListRetrieved(QList<QPointF>)), SLOT(drawChart(QList<QPointF>)));
-    _apiHandler->postChartRequest(
-                QDateTime::currentDateTime().toSecsSinceEpoch() - 4 * 3600,
-                "max",
-                _apiHandler->getAccessToken());
 }
 
 void HomePageChart::gatherChartData(QString accessToken) {
