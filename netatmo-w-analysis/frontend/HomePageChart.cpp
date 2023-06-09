@@ -78,8 +78,8 @@ void HomePageChart::drawChart(QList<QPointF> points) {
         if (minOfSeries.isNull() || point.y() < minOfSeries.toDouble()) minOfSeries = point.y();
     }
 
-    xAxis->setRange(QDateTime::fromSecsSinceEpoch(chartStart),
-                    QDateTime::fromSecsSinceEpoch(chartStart + 4 * 3600));
+    xAxis->setRange(QDateTime::currentDateTime().addSecs(-4 * 3600),
+                    QDateTime::currentDateTime());
     setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
 
     chart->addAxis(xAxis, Qt::AlignBottom);
