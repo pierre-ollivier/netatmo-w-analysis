@@ -52,6 +52,14 @@ void HomePageChart::gatherChartData(QString accessToken, bool indoor) {
     }
 }
 
+void HomePageChart::drawChart(QList<TimestampRecord> records) {
+    QList<QPointF> points = QList<QPointF>();
+    for (TimestampRecord record : records) {
+        points.append(QPointF(1000 * record.timestamp(), record.temperature()));
+    }
+    drawChart(points);
+}
+
 void HomePageChart::drawChart(QList<QPointF> points) {
     maxOfSeries = QVariant();
     minOfSeries = QVariant();

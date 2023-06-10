@@ -3,6 +3,7 @@
 
 #include <QtCharts>
 #include "../netatmo-w-analysis/backend/NetatmoAPIHandler.h"
+#include "../types/TimestampRecord.h"
 
 class HomePageChart : public QChartView
 {
@@ -15,6 +16,7 @@ public:
 public slots:
     void gatherChartData(QString accessToken, bool indoor);
     void drawChart(QList<QPointF> temperatureList);
+    void drawChart(QList<TimestampRecord> records);
     void setYAxisRange(double maxValue, double minValue);
     void setYAxisTicks(double maxValue, double minValue);
 
