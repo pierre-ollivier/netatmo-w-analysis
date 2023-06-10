@@ -39,13 +39,13 @@ HomePageChart::HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName, b
 void HomePageChart::gatherChartData(QString accessToken, bool indoor) {
     if (indoor) {
         _apiHandler->postIndoorChartRequest(
-                    QDateTime::currentDateTime().toSecsSinceEpoch() - 4 * 3600,
+                    QDateTime::currentDateTime().toSecsSinceEpoch() - 4 * 3600 - 600,
                     "max",
                     accessToken);
     }
     else {
         _apiHandler->postOutdoorChartRequest(
-                    QDateTime::currentDateTime().toSecsSinceEpoch() - 4 * 3600,
+                    QDateTime::currentDateTime().toSecsSinceEpoch() - 4 * 3600 - 600,
                     "max",
                     accessToken);
     }
