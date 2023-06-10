@@ -14,7 +14,7 @@ HomePageChart::HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName, b
 
     xAxis = new QDateTimeAxis();
     xAxis->setFormat("hh:mm");
-    xAxis->setTickCount(5);
+    xAxis->setTickCount(9);
 
     QString unitWithTrailingSpace = " °C";
     yAxis = new QValueAxis();
@@ -30,7 +30,7 @@ HomePageChart::HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName, b
     chart->setLocalizeNumbers(true);
 
     setChart(chart);
-    setFixedSize(400, 300);
+    setFixedSize(500, 300);
 
     if (indoor) connect(_apiHandler, SIGNAL(indoorTemperatureListRetrieved(QList<QPointF>)), SLOT(drawChart(QList<QPointF>)));
     else connect(_apiHandler, SIGNAL(outdoorTemperatureListRetrieved(QList<QPointF>)), SLOT(drawChart(QList<QPointF>)));
