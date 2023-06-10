@@ -11,7 +11,6 @@ class HomePageChart : public QChartView
 
 public:
     HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName, bool indoor);
-//    void fillSeries();
 
 public slots:
     void gatherChartData(QString accessToken, bool indoor);

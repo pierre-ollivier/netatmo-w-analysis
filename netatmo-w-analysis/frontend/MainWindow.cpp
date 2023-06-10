@@ -91,9 +91,52 @@ void MainWindow::buildButtons() {
 void MainWindow::buildCharts() {
     indoorChart = new HomePageChart(apiHandler, "IndoorTimestampRecords", true);
     outdoorChart = new HomePageChart(apiHandler, "OutdoorTimestampRecords", false);
+
+    h4Option = new QRadioButton("4 heures");
+    h24Option = new QRadioButton("24 heures");
+    h192Option = new QRadioButton("8 jours");
+    h4Option->setChecked(true);
+//    QObject::connect(h4Option, SIGNAL(clicked(bool)), this, SLOT(getData4h()));
+//    QObject::connect(h24Option, SIGNAL(clicked(bool)), this, SLOT(getData24h()));
+//    QObject::connect(h192Option, SIGNAL(clicked(bool)), this, SLOT(getData192h()));
+
+//    QObject::connect(h4Option, SIGNAL(clicked(bool)), this, SLOT(getData4hInt()));
+//    QObject::connect(h24Option, SIGNAL(clicked(bool)), this, SLOT(getData24hInt()));
+//    QObject::connect(h192Option, SIGNAL(clicked(bool)), this, SLOT(getData192hInt()));
+
+    temperatureOption = new QRadioButton("Température");
+    humidityOption = new QRadioButton("Humidité");
+    dewPointOption = new QRadioButton("Point de rosée");
+    humidexOption = new QRadioButton("Humidex");
+    temperatureOption->setChecked(true);
+//    QObject::connect(temperatureOption, SIGNAL(clicked(bool)), this, SLOT(getDataNh()));
+//    QObject::connect(humidityOption, SIGNAL(clicked(bool)), this, SLOT(getDataNh()));
+//    QObject::connect(dewPointOption, SIGNAL(clicked(bool)), this, SLOT(getDataNh()));
+//    QObject::connect(humidexOption, SIGNAL(clicked(bool)), this, SLOT(getDataNh()));
+//    QObject::connect(temperatureOption, SIGNAL(clicked(bool)), this, SLOT(getDataNhInt()));
+//    QObject::connect(humidityOption, SIGNAL(clicked(bool)), this, SLOT(getDataNhInt()));
+//    QObject::connect(dewPointOption, SIGNAL(clicked(bool)), this, SLOT(getDataNhInt()));
+//    QObject::connect(humidexOption, SIGNAL(clicked(bool)), this, SLOT(getDataNhInt()));
 }
 
 void MainWindow::buildLayouts() {
+    chartsDurationOptionsLayout = new QHBoxLayout();
+    chartsDurationOptionsLayout->addWidget(h4Option, 0, Qt::AlignCenter);
+    chartsDurationOptionsLayout->addWidget(h24Option, 0, Qt::AlignCenter);
+    chartsDurationOptionsLayout->addWidget(h192Option, 0, Qt::AlignCenter);
+
+    chartsDurationOptionsGroupBox = new QGroupBox("");
+    chartsDurationOptionsGroupBox->setLayout(chartsDurationOptionsLayout);
+
+    chartsMeasurementOptionsLayout = new QHBoxLayout();
+    chartsMeasurementOptionsLayout->addWidget(temperatureOption, 0, Qt::AlignCenter);
+    chartsMeasurementOptionsLayout->addWidget(humidityOption, 0, Qt::AlignCenter);
+    chartsMeasurementOptionsLayout->addWidget(dewPointOption, 0, Qt::AlignCenter);
+    chartsMeasurementOptionsLayout->addWidget(humidexOption, 0, Qt::AlignCenter);
+
+    chartsMeasurementOptionsGroupBox = new QGroupBox("");
+    chartsMeasurementOptionsGroupBox->setLayout(chartsMeasurementOptionsLayout);
+
     mainLayout = new QGridLayout();
     mainLayout->addWidget(currentExtTempLabel, 1, 0, 2, 1);
     mainLayout->addWidget(statusLabel, 0, 0);
@@ -106,6 +149,8 @@ void MainWindow::buildLayouts() {
     mainLayout->addWidget(currentMaxIntTempLabel, 3, 3);
     mainLayout->addWidget(currentMinIntTempLabel, 4, 3);
     mainLayout->addWidget(indoorChart, 3, 1, 2, 2);
+    mainLayout->addWidget(chartsDurationOptionsGroupBox, 5, 1, 1, 2);
+    mainLayout->addWidget(chartsMeasurementOptionsGroupBox, 6, 1, 1, 2);
 
     // set window's layout
     mainWidget->setLayout(mainLayout);

@@ -11,6 +11,7 @@
 #include <QTimer>
 #include <QPointF>
 #include "APIMonitor.h"
+#include "../types/TimestampRecord.h"
 #include "../types/ExtTimestampRecord.h"
 #include "../types/IntTimestampRecord.h"
 #include "../types/ExtDailyRecord.h"
@@ -91,6 +92,8 @@ signals:
     void outdoorHumidityListRetrieved(QList<QPointF>);
     void indoorTemperatureListRetrieved(QList<QPointF>);
     void indoorHumidityListRetrieved(QList<QPointF>);
+    void outdoorRecordListRetrieved(QList<TimestampRecord>);
+    void indoorRecordListRetrieved(QList<TimestampRecord>);
 
     // OTHER
 
