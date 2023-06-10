@@ -222,26 +222,33 @@ void NetatmoAPIHandler::retrieveCurrentConditions(QNetworkReply *reply) {
         extCurrentMinTemperature = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["min_temp"].toDouble();
         extCurrentMaxTemperature = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["max_temp"].toDouble();
         extCurrentHumidity = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["Humidity"].toInt();
-        extCurrentUTCTime = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["time_utc"].toInt();
         extCurrentMinTemperatureTime = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["date_min_temp"].toInt();
         extCurrentMaxTemperatureTime = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["date_max_temp"].toInt();
+
+        if (extCurrentUTCTime != js["body"]["devices"][0]["modules"][0]["dashboard_data"]["time_utc"].toInt()) {
+            extCurrentUTCTime = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["time_utc"].toInt();
+            emit extUTCTimeChanged(extCurrentUTCTime);
+        }
 
         intCurrentTemperature = js["body"]["devices"][0]["dashboard_data"]["Temperature"].toDouble();
         intCurrentMinTemperature = js["body"]["devices"][0]["dashboard_data"]["min_temp"].toDouble();
         intCurrentMaxTemperature = js["body"]["devices"][0]["dashboard_data"]["max_temp"].toDouble();
         intCurrentHumidity = js["body"]["devices"][0]["dashboard_data"]["Humidity"].toInt();
-        intCurrentUTCTime = js["body"]["devices"][0]["dashboard_data"]["time_utc"].toInt();
         intCurrentMinTemperatureTime = js["body"]["devices"][0]["dashboard_data"]["date_min_temp"].toInt();
         intCurrentMaxTemperatureTime = js["body"]["devices"][0]["dashboard_data"]["date_max_temp"].toInt();
         intCurrentPressure = js["body"]["devices"][0]["dashboard_data"]["Pressure"].toDouble();
         intCurrentCO2 = js["body"]["devices"][0]["dashboard_data"]["CO2"].toInt();
         intCurrentNoise = js["body"]["devices"][0]["dashboard_data"]["Noise"].toInt();
 
+        if (intCurrentUTCTime != js["body"]["devices"][0]["dashboard_data"]["time_utc"].toInt()) {
+            intCurrentUTCTime = js["body"]["devices"][0]["dashboard_data"]["time_utc"].toInt();
+            emit intUTCTimeChanged(intCurrentUTCTime);
+        }
+
         emit extTemperatureChanged(extCurrentTemperature);
         emit extMinTemperatureChanged(extCurrentMinTemperature);
         emit extMaxTemperatureChanged(extCurrentMaxTemperature);
         emit extHumidityChanged(extCurrentHumidity);
-        emit extUTCTimeChanged(extCurrentUTCTime);
         emit extMinTemperatureTimeChanged(extCurrentMinTemperatureTime);
         emit extMaxTemperatureTimeChanged(extCurrentMaxTemperatureTime);
 
@@ -249,7 +256,6 @@ void NetatmoAPIHandler::retrieveCurrentConditions(QNetworkReply *reply) {
         emit intMinTemperatureChanged(intCurrentMinTemperature);
         emit intMaxTemperatureChanged(intCurrentMaxTemperature);
         emit intHumidityChanged(intCurrentHumidity);
-        emit intUTCTimeChanged(intCurrentUTCTime);
         emit intMinTemperatureTimeChanged(intCurrentMinTemperatureTime);
         emit intMaxTemperatureTimeChanged(intCurrentMaxTemperatureTime);
 
