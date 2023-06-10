@@ -54,6 +54,7 @@ void HomePageChart::gatherChartData(QString accessToken, bool indoor) {
 void HomePageChart::drawChart(QList<QPointF> points) {
     maxOfSeries = QVariant();
     minOfSeries = QVariant();
+    long long maxTimestamp = 0;
 
     series->clear();
     series->append(points);
@@ -61,10 +62,11 @@ void HomePageChart::drawChart(QList<QPointF> points) {
     for (QPointF point: points) {
         if (maxOfSeries.isNull() || point.y() > maxOfSeries.toDouble()) maxOfSeries = point.y();
         if (minOfSeries.isNull() || point.y() < minOfSeries.toDouble()) minOfSeries = point.y();
+        if (point.x() > maxTimestamp) maxTimestamp = point.x();
     }
 
-    xAxis->setRange(QDateTime::currentDateTime().addSecs(-4 * 3600),
-                    QDateTime::currentDateTime());
+    xAxis->setRange(QDateTime::fromMSecsSinceEpoch(maxTimestamp).addMSecs(-7 * 1800000 - maxTimestamp % 1800000),
+                    QDateTime::fromMSecsSinceEpoch(maxTimestamp).addMSecs(1800000 - maxTimestamp % 1800000));
     setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
 
     if (chart->axes().length() == 0) {
