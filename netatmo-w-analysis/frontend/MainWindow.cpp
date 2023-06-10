@@ -57,6 +57,8 @@ void MainWindow::buildAPIHandler() {
             this, SLOT(updateMinIntTemperatureTime(int)));
     connect(apiHandler, SIGNAL(intMaxTemperatureTimeChanged(int)),
             this, SLOT(updateMaxIntTemperatureTime(int)));
+    connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), SLOT(updateOutdoorChart()));
+    connect(apiHandler, SIGNAL(intUTCTimeChanged(int)), SLOT(updateIndoorChart()));
 }
 
 void MainWindow::buildLabels() {
@@ -145,8 +147,16 @@ void MainWindow::setAccessToken(QString newAccessToken) {
     accessToken = newAccessToken;
     oldDataUploader->setAccessToken(accessToken);
     addDataFromCurrentMonths();
-    indoorChart->gatherChartData(accessToken, true);
-    outdoorChart->gatherChartData(accessToken, false);
+    updateIndoorChart();
+    updateOutdoorChart();
+}
+
+void MainWindow::updateIndoorChart() {
+    if (accessToken != "") indoorChart->gatherChartData(accessToken, true);
+}
+
+void MainWindow::updateOutdoorChart() {
+    if (accessToken != "") outdoorChart->gatherChartData(accessToken, false);
 }
 
 void MainWindow::addDataFromCurrentMonths() {

@@ -49,6 +49,9 @@ public slots:
     void updateActualisationDate(QDateTime timestamp);
     void updateRequestCounts();
 
+    void updateIndoorChart();
+    void updateOutdoorChart();
+
     void addMonthData();
     void addMultipleMonthsData();
 
@@ -59,6 +62,9 @@ public slots:
     void displayYearlyReport();
 
     void addDataFromCurrentMonths();
+
+signals:
+
 
 private:
     // labels
