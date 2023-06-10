@@ -33,8 +33,10 @@ HomePageChart::HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName, b
     setChart(chart);
     setFixedSize(500, 300);
 
-    if (indoor) connect(_apiHandler, SIGNAL(indoorTemperatureListRetrieved(QList<QPointF>)), SLOT(drawChart(QList<QPointF>)));
-    else connect(_apiHandler, SIGNAL(outdoorTemperatureListRetrieved(QList<QPointF>)), SLOT(drawChart(QList<QPointF>)));
+    if (indoor) connect(_apiHandler, SIGNAL(indoorRecordListRetrieved(QList<TimestampRecord>)),
+                        SLOT(drawChart(QList<TimestampRecord>)));
+    else connect(_apiHandler, SIGNAL(outdoorRecordListRetrieved(QList<TimestampRecord>)),
+                 SLOT(drawChart(QList<TimestampRecord>)));
 }
 
 void HomePageChart::gatherChartData(QString accessToken, bool indoor) {

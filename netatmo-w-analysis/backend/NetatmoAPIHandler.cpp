@@ -343,8 +343,7 @@ void NetatmoAPIHandler::retrieveFullDailyIndoorConditions(QNetworkReply *reply) 
 }
 
 void NetatmoAPIHandler::retrieveOutdoorChartRequest(QNetworkReply *reply) {
-    QList<QPointF> temperatureList = QList<QPointF>();
-    QList<QPointF> humidityList = QList<QPointF>();
+    QList<TimestampRecord> recordsList = QList<TimestampRecord>();
     QByteArray bytes = reply->readAll();
     QJsonDocument js = QJsonDocument::fromJson(bytes);
     QJsonObject tb = js["body"].toObject();
@@ -356,17 +355,14 @@ void NetatmoAPIHandler::retrieveOutdoorChartRequest(QNetworkReply *reply) {
             QJsonValue value = tb.value(key);
             double temperature = value[0].toDouble();
             int humidity = int(0.5 + value[1].toDouble());
-            temperatureList.append(QPointF(1000 * key.toLongLong(), temperature));
-            humidityList.append(QPointF(1000 * key.toLongLong(), humidity));
+            recordsList.append(TimestampRecord(key.toLongLong(), temperature, humidity));
         }
-        emit outdoorTemperatureListRetrieved(temperatureList);
-        emit outdoorHumidityListRetrieved(humidityList);
+        emit outdoorRecordListRetrieved(recordsList);
     }
 }
 
 void NetatmoAPIHandler::retrieveIndoorChartRequest(QNetworkReply *reply) {
-    QList<QPointF> temperatureList = QList<QPointF>();
-    QList<QPointF> humidityList = QList<QPointF>();
+    QList<TimestampRecord> recordsList = QList<TimestampRecord>();
     QByteArray bytes = reply->readAll();
     QJsonDocument js = QJsonDocument::fromJson(bytes);
     QJsonObject tb = js["body"].toObject();
@@ -378,10 +374,8 @@ void NetatmoAPIHandler::retrieveIndoorChartRequest(QNetworkReply *reply) {
             QJsonValue value = tb.value(key);
             double temperature = value[0].toDouble();
             int humidity = int(0.5 + value[1].toDouble());
-            temperatureList.append(QPointF(1000 * key.toLongLong(), temperature));
-            humidityList.append(QPointF(1000 * key.toLongLong(), humidity));
+            recordsList.append(TimestampRecord(key.toLongLong(), temperature, humidity));
         }
-        emit indoorTemperatureListRetrieved(temperatureList);
-        emit indoorHumidityListRetrieved(humidityList);
+        emit indoorRecordListRetrieved(recordsList);
     }
 }

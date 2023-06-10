@@ -108,6 +108,21 @@ private:
     QAction *displayMonthlyReportAction;
     QAction *displayYearlyReportAction;
 
+    //chart options
+    QRadioButton *h4Option;
+    QRadioButton *h24Option;
+    QRadioButton *h192Option;
+    QHBoxLayout *chartsDurationOptionsLayout;
+    QGroupBox *chartsDurationOptionsGroupBox;
+
+    QRadioButton *temperatureOption;
+    QRadioButton *humidityOption;
+    QRadioButton *dewPointOption;
+    QRadioButton *humidexOption;
+    QHBoxLayout *chartsMeasurementOptionsLayout;
+    QGroupBox *chartsMeasurementOptionsGroupBox;
+
+
 };
 
 #endif // MAINWINDOW_H
