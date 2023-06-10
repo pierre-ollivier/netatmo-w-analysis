@@ -15,6 +15,7 @@ HomePageChart::HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName, b
     xAxis = new QDateTimeAxis();
     xAxis->setFormat("hh:mm");
     xAxis->setTickCount(9);
+    xAxis->setLineVisible(false);
 
     QString unitWithTrailingSpace = " °C";
     yAxis = new QValueAxis();
