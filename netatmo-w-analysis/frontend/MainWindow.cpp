@@ -201,7 +201,7 @@ void MainWindow::updateIndoorChart() {
 }
 
 void MainWindow::updateOutdoorChart() {
-    if (accessToken != "") outdoorChart->gatherChartData(accessToken, "dewPoint", false, 24);
+    if (accessToken != "") outdoorChart->gatherChartData(accessToken, "dewPoint", false, 192);
 }
 
 void MainWindow::addDataFromCurrentMonths() {

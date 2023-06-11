@@ -97,6 +97,11 @@ void HomePageChart::drawChart(QList<QPointF> points) {
                     .addMSecs(timeBetweenXTicksInMs - maxTimestamp % timeBetweenXTicksInMs));
     setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
 
+    if (timeBetweenXTicksInMs >= 1000 * 86400) {
+        xAxis->setFormat("dd/MM");
+    }
+    else xAxis->setFormat("hh:mm");
+
     if (_measurementType == "temperature") {
         yAxis->setLabelFormat(QString("%.1f") + " °C");
     }
