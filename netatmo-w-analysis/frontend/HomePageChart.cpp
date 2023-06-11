@@ -42,16 +42,22 @@ HomePageChart::HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName, b
 void HomePageChart::gatherChartData(QString accessToken, QString measurementType, bool indoor, int durationInHours) {
     _measurementType = measurementType;
     _durationInHours = durationInHours;
+    QString scale = "max";
+
+    if (durationInHours > 48) {
+        scale = "30min";
+    }
+
     if (indoor) {
         _apiHandler->postIndoorChartRequest(
                     QDateTime::currentDateTime().toSecsSinceEpoch() - durationInHours * 3600 - 600,
-                    "max",
+                    scale,
                     accessToken);
     }
     else {
         _apiHandler->postOutdoorChartRequest(
                     QDateTime::currentDateTime().toSecsSinceEpoch() - durationInHours * 3600 - 600,
-                    "max",
+                    scale,
                     accessToken);
     }
 }
