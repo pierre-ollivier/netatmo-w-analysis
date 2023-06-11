@@ -96,27 +96,19 @@ void MainWindow::buildCharts() {
     h24Option = new QRadioButton("24 heures");
     h192Option = new QRadioButton("8 jours");
     h4Option->setChecked(true);
-//    QObject::connect(h4Option, SIGNAL(clicked(bool)), this, SLOT(getData4h()));
-//    QObject::connect(h24Option, SIGNAL(clicked(bool)), this, SLOT(getData24h()));
-//    QObject::connect(h192Option, SIGNAL(clicked(bool)), this, SLOT(getData192h()));
-
-//    QObject::connect(h4Option, SIGNAL(clicked(bool)), this, SLOT(getData4hInt()));
-//    QObject::connect(h24Option, SIGNAL(clicked(bool)), this, SLOT(getData24hInt()));
-//    QObject::connect(h192Option, SIGNAL(clicked(bool)), this, SLOT(getData192hInt()));
+    QObject::connect(h4Option, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
+    QObject::connect(h24Option, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
+    QObject::connect(h192Option, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
 
     temperatureOption = new QRadioButton("Température");
     humidityOption = new QRadioButton("Humidité");
     dewPointOption = new QRadioButton("Point de rosée");
     humidexOption = new QRadioButton("Humidex");
     temperatureOption->setChecked(true);
-//    QObject::connect(temperatureOption, SIGNAL(clicked(bool)), this, SLOT(getDataNh()));
-//    QObject::connect(humidityOption, SIGNAL(clicked(bool)), this, SLOT(getDataNh()));
-//    QObject::connect(dewPointOption, SIGNAL(clicked(bool)), this, SLOT(getDataNh()));
-//    QObject::connect(humidexOption, SIGNAL(clicked(bool)), this, SLOT(getDataNh()));
-//    QObject::connect(temperatureOption, SIGNAL(clicked(bool)), this, SLOT(getDataNhInt()));
-//    QObject::connect(humidityOption, SIGNAL(clicked(bool)), this, SLOT(getDataNhInt()));
-//    QObject::connect(dewPointOption, SIGNAL(clicked(bool)), this, SLOT(getDataNhInt()));
-//    QObject::connect(humidexOption, SIGNAL(clicked(bool)), this, SLOT(getDataNhInt()));
+    QObject::connect(temperatureOption, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
+    QObject::connect(humidityOption, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
+    QObject::connect(dewPointOption, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
+    QObject::connect(humidexOption, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
 }
 
 void MainWindow::buildLayouts() {
@@ -429,4 +421,16 @@ void MainWindow::displayMonthlyReport() {
 void MainWindow::displayYearlyReport() {
     YearlyReport *report = new YearlyReport();
     report->show();
+}
+
+void MainWindow::changeChartsOptions() {
+    if (temperatureOption->isChecked()) _measurementType = "temperature";
+    if (humidityOption->isChecked()) _measurementType = "humidity";
+    if (dewPointOption->isChecked()) _measurementType = "dewPoint";
+    if (humidexOption->isChecked()) _measurementType = "humidex";
+    if (h4Option->isChecked()) _durationInHours = 4;
+    if (h24Option->isChecked()) _durationInHours = 24;
+    if (h192Option->isChecked()) _durationInHours = 192;
+    updateOutdoorChart();
+    updateIndoorChart();
 }
