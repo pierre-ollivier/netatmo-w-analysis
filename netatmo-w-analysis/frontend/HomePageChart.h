@@ -39,6 +39,8 @@ private:
 
     bool _indoor;
 
+    int _durationInHours = 4;
+
 };
 
 #endif // HOMEPAGECHART_H
