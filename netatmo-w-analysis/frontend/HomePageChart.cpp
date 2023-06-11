@@ -39,16 +39,17 @@ HomePageChart::HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName, b
                  SLOT(drawChart(QList<TimestampRecord>)));
 }
 
-void HomePageChart::gatherChartData(QString accessToken, bool indoor) {
+void HomePageChart::gatherChartData(QString accessToken, QString measurementType, bool indoor, int durationInHours) {
+    _measurementType = measurementType;
     if (indoor) {
         _apiHandler->postIndoorChartRequest(
-                    QDateTime::currentDateTime().toSecsSinceEpoch() - 4 * 3600 - 600,
+                    QDateTime::currentDateTime().toSecsSinceEpoch() - durationInHours * 3600 - 600,
                     "max",
                     accessToken);
     }
     else {
         _apiHandler->postOutdoorChartRequest(
-                    QDateTime::currentDateTime().toSecsSinceEpoch() - 4 * 3600 - 600,
+                    QDateTime::currentDateTime().toSecsSinceEpoch() - durationInHours * 3600 - 600,
                     "max",
                     accessToken);
     }
@@ -57,7 +58,18 @@ void HomePageChart::gatherChartData(QString accessToken, bool indoor) {
 void HomePageChart::drawChart(QList<TimestampRecord> records) {
     QList<QPointF> points = QList<QPointF>();
     for (TimestampRecord record : records) {
-        points.append(QPointF(1000 * record.timestamp(), record.temperature()));
+        if (_measurementType == "temperature") {
+            points.append(QPointF(1000 * record.timestamp(), record.temperature()));
+        }
+        else if (_measurementType == "humidity") {
+            points.append(QPointF(1000 * record.timestamp(), record.humidity()));
+        }
+        else if (_measurementType == "dewPoint") {
+            points.append(QPointF(1000 * record.timestamp(), record.dewPoint()));
+        }
+        else if (_measurementType == "humidex") {
+            points.append(QPointF(1000 * record.timestamp(), record.humidex()));
+        }
     }
     drawChart(points);
 }
