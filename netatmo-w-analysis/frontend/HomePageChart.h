@@ -13,7 +13,7 @@ public:
     HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName, bool indoor);
 
 public slots:
-    void gatherChartData(QString accessToken, bool indoor);
+    void gatherChartData(QString accessToken, QString measurementType, bool indoor, int durationInHours = 4);
     void drawChart(QList<QPointF> temperatureList);
     void drawChart(QList<TimestampRecord> records);
     void setYAxisRange(double maxValue, double minValue);
@@ -32,6 +32,7 @@ private:
     NetatmoAPIHandler *_apiHandler;
 
     QString _tableName;
+    QString _measurementType = "temperature";
 
     QVariant maxOfSeries = QVariant();
     QVariant minOfSeries = QVariant();
