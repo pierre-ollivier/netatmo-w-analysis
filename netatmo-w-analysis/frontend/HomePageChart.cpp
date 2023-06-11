@@ -42,6 +42,7 @@ HomePageChart::HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName, b
 void HomePageChart::gatherChartData(QString accessToken, QString measurementType, bool indoor, int durationInHours) {
     _measurementType = measurementType;
     _durationInHours = durationInHours;
+    int dateBegin = QDateTime::currentDateTime().toSecsSinceEpoch() - durationInHours * 3600 - 600;
     QString scale = "max";
 
     if (durationInHours > 48) {
@@ -50,13 +51,13 @@ void HomePageChart::gatherChartData(QString accessToken, QString measurementType
 
     if (indoor) {
         _apiHandler->postIndoorChartRequest(
-                    QDateTime::currentDateTime().toSecsSinceEpoch() - durationInHours * 3600 - 600,
+                    dateBegin,
                     scale,
                     accessToken);
     }
     else {
         _apiHandler->postOutdoorChartRequest(
-                    QDateTime::currentDateTime().toSecsSinceEpoch() - durationInHours * 3600 - 600,
+                    dateBegin,
                     scale,
                     accessToken);
     }
@@ -95,6 +96,11 @@ void HomePageChart::drawChart(QList<QPointF> points) {
 
     int timeBetweenXTicksInMs = _durationInHours * 3600 * 1000 / 8;
     maxTimestamp += timeBetweenXTicksInMs - maxTimestamp % timeBetweenXTicksInMs;
+
+    if (_durationInHours > 48) {
+        maxTimestamp -= QDateTime::currentDateTime().offsetFromUtc() * 1000;
+    }
+
     minTimestamp = maxTimestamp - 8 * timeBetweenXTicksInMs;
 
     xAxis->setRange(QDateTime::fromMSecsSinceEpoch(minTimestamp),
