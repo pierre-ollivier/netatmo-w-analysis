@@ -197,11 +197,11 @@ void MainWindow::setAccessToken(QString newAccessToken) {
 }
 
 void MainWindow::updateIndoorChart() {
-    if (accessToken != "") indoorChart->gatherChartData(accessToken, "humidity", true);
+    if (accessToken != "") indoorChart->gatherChartData(accessToken, "humidity", true, 24);
 }
 
 void MainWindow::updateOutdoorChart() {
-    if (accessToken != "") outdoorChart->gatherChartData(accessToken, "humidity", false);
+    if (accessToken != "") outdoorChart->gatherChartData(accessToken, "dewPoint", false, 24);
 }
 
 void MainWindow::addDataFromCurrentMonths() {
