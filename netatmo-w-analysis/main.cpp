@@ -10,17 +10,17 @@ extern const QString PATH_TO_COPY_DATABASE;
 extern const QString APP_PATH;
 
 int main(int argc, char *argv[]) {
-    QApplication app(argc, argv);
-    MainWindow mainWin;
-    mainWin.show();
-    mainWin.setWindowTitle("netatmo-w-analysis v" + VERSION);
-
-    executeAllPlaygroundFunctions();
 
     bool valid = QFile::copy(APP_PATH + "/" + PATH_TO_PROD_DATABASE,
                              APP_PATH + "/" + PATH_TO_COPY_DATABASE);
 
     if (valid) {
+        QApplication app(argc, argv);
+        MainWindow mainWin;
+        mainWin.show();
+        mainWin.setWindowTitle("netatmo-w-analysis v" + VERSION);
+
+        executeAllPlaygroundFunctions();
         int result = app.exec();
         QFile copyDatabase(APP_PATH + "/" + PATH_TO_COPY_DATABASE);
         copyDatabase.close();

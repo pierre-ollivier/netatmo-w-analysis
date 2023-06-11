@@ -9,6 +9,8 @@ NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequest
     currentConditionsManager = new QNetworkAccessManager();
     dailyFullOutdoorRequestManager = new QNetworkAccessManager();
     dailyFullIndoorRequestManager = new QNetworkAccessManager();
+    outdoorChartRequestManager = new QNetworkAccessManager();
+    indoorChartRequestManager = new QNetworkAccessManager();
 
     apiMonitor = monitor;
 
@@ -16,6 +18,8 @@ NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequest
     connect(currentConditionsManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveCurrentConditions(QNetworkReply *)));
     connect(dailyFullOutdoorRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveFullDailyOutdoorConditions(QNetworkReply *)));
     connect(dailyFullIndoorRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveFullDailyIndoorConditions(QNetworkReply *)));
+    connect(outdoorChartRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveOutdoorChartRequest(QNetworkReply *)));
+    connect(indoorChartRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveIndoorChartRequest(QNetworkReply *)));
 
     currentConditionsTimer = new QTimer();
     if (timeBetweenRequests > 0) {
@@ -146,6 +150,46 @@ void NetatmoAPIHandler::postFullOutdoorDailyRequest(int date_begin, int date_end
     apiMonitor->addTimestamp();
 }
 
+void NetatmoAPIHandler::postOutdoorChartRequest(int date_begin, QString scale, QString accessToken) {
+    if (accessToken == "") qDebug() << "Warning: undefined access token in NetatmoAPIHandler";
+    extern const QString mainDeviceId;
+    extern const QString outdoorModuleId;
+
+    QUrl url("https://api.netatmo.com/api/getmeasure?");
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    QUrlQuery params;
+    params.addQueryItem("access_token", accessToken.toUtf8());
+    params.addQueryItem("device_id", mainDeviceId);
+    params.addQueryItem("module_id", outdoorModuleId);
+    params.addQueryItem("scale", scale);
+    params.addQueryItem("type", "temperature,humidity");
+    params.addQueryItem("date_begin", QString::number(date_begin));
+    params.addQueryItem("optimize", "false");
+    params.addQueryItem("real_time", "true");
+    outdoorChartRequestManager->post(request, params.query().toUtf8());
+}
+
+void NetatmoAPIHandler::postIndoorChartRequest(int date_begin, QString scale, QString accessToken) {
+    if (accessToken == "") qDebug() << "Warning: undefined access token in NetatmoAPIHandler";
+    extern const QString mainDeviceId;
+    extern const QString outdoorModuleId;
+
+    QUrl url("https://api.netatmo.com/api/getmeasure?");
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    QUrlQuery params;
+    params.addQueryItem("access_token", accessToken.toUtf8());
+    params.addQueryItem("device_id", mainDeviceId);
+    params.addQueryItem("module_id", mainDeviceId);
+    params.addQueryItem("scale", scale);
+    params.addQueryItem("type", "temperature,humidity");
+    params.addQueryItem("date_begin", QString::number(date_begin));
+    params.addQueryItem("optimize", "false");
+    params.addQueryItem("real_time", "true");
+    indoorChartRequestManager->post(request, params.query().toUtf8());
+}
+
 void NetatmoAPIHandler::retrieveTokens(QNetworkReply *reply) {
     QByteArray bytes = reply->readAll();
     if (bytes.contains("error")) {
@@ -178,26 +222,33 @@ void NetatmoAPIHandler::retrieveCurrentConditions(QNetworkReply *reply) {
         extCurrentMinTemperature = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["min_temp"].toDouble();
         extCurrentMaxTemperature = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["max_temp"].toDouble();
         extCurrentHumidity = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["Humidity"].toInt();
-        extCurrentUTCTime = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["time_utc"].toInt();
         extCurrentMinTemperatureTime = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["date_min_temp"].toInt();
         extCurrentMaxTemperatureTime = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["date_max_temp"].toInt();
+
+        if (extCurrentUTCTime != js["body"]["devices"][0]["modules"][0]["dashboard_data"]["time_utc"].toInt()) {
+            extCurrentUTCTime = js["body"]["devices"][0]["modules"][0]["dashboard_data"]["time_utc"].toInt();
+            emit extUTCTimeChanged(extCurrentUTCTime);
+        }
 
         intCurrentTemperature = js["body"]["devices"][0]["dashboard_data"]["Temperature"].toDouble();
         intCurrentMinTemperature = js["body"]["devices"][0]["dashboard_data"]["min_temp"].toDouble();
         intCurrentMaxTemperature = js["body"]["devices"][0]["dashboard_data"]["max_temp"].toDouble();
         intCurrentHumidity = js["body"]["devices"][0]["dashboard_data"]["Humidity"].toInt();
-        intCurrentUTCTime = js["body"]["devices"][0]["dashboard_data"]["time_utc"].toInt();
         intCurrentMinTemperatureTime = js["body"]["devices"][0]["dashboard_data"]["date_min_temp"].toInt();
         intCurrentMaxTemperatureTime = js["body"]["devices"][0]["dashboard_data"]["date_max_temp"].toInt();
         intCurrentPressure = js["body"]["devices"][0]["dashboard_data"]["Pressure"].toDouble();
         intCurrentCO2 = js["body"]["devices"][0]["dashboard_data"]["CO2"].toInt();
         intCurrentNoise = js["body"]["devices"][0]["dashboard_data"]["Noise"].toInt();
 
+        if (intCurrentUTCTime != js["body"]["devices"][0]["dashboard_data"]["time_utc"].toInt()) {
+            intCurrentUTCTime = js["body"]["devices"][0]["dashboard_data"]["time_utc"].toInt();
+            emit intUTCTimeChanged(intCurrentUTCTime);
+        }
+
         emit extTemperatureChanged(extCurrentTemperature);
         emit extMinTemperatureChanged(extCurrentMinTemperature);
         emit extMaxTemperatureChanged(extCurrentMaxTemperature);
         emit extHumidityChanged(extCurrentHumidity);
-        emit extUTCTimeChanged(extCurrentUTCTime);
         emit extMinTemperatureTimeChanged(extCurrentMinTemperatureTime);
         emit extMaxTemperatureTimeChanged(extCurrentMaxTemperatureTime);
 
@@ -205,7 +256,6 @@ void NetatmoAPIHandler::retrieveCurrentConditions(QNetworkReply *reply) {
         emit intMinTemperatureChanged(intCurrentMinTemperature);
         emit intMaxTemperatureChanged(intCurrentMaxTemperature);
         emit intHumidityChanged(intCurrentHumidity);
-        emit intUTCTimeChanged(intCurrentUTCTime);
         emit intMinTemperatureTimeChanged(intCurrentMinTemperatureTime);
         emit intMaxTemperatureTimeChanged(intCurrentMaxTemperatureTime);
 
@@ -222,7 +272,7 @@ void NetatmoAPIHandler::retrieveFullDailyOutdoorConditions(QNetworkReply *reply)
     QJsonDocument js = QJsonDocument::fromJson(bytes);
     QJsonObject tb = js["body"].toObject();
     if (bytes.contains("error")) {
-        qDebug() << "ERROR with current conditions" << bytes;
+        qDebug() << "ERROR with full daily outdoor conditions" << bytes;
     }
 
     else if (bytes.size() >= 1) {
@@ -254,7 +304,7 @@ void NetatmoAPIHandler::retrieveFullDailyIndoorConditions(QNetworkReply *reply) 
     QJsonDocument js = QJsonDocument::fromJson(bytes);
     QJsonObject tb = js["body"].toObject();
     if (bytes.contains("error")) {
-        qDebug() << "ERROR with current conditions" << bytes;
+        qDebug() << "ERROR with full daily indoor conditions" << bytes;
     }
 
     else if (bytes.size() >= 1) {
@@ -289,5 +339,43 @@ void NetatmoAPIHandler::retrieveFullDailyIndoorConditions(QNetworkReply *reply) 
                         )
             );
         }
+    }
+}
+
+void NetatmoAPIHandler::retrieveOutdoorChartRequest(QNetworkReply *reply) {
+    QList<TimestampRecord> recordsList = QList<TimestampRecord>();
+    QByteArray bytes = reply->readAll();
+    QJsonDocument js = QJsonDocument::fromJson(bytes);
+    QJsonObject tb = js["body"].toObject();
+    if (bytes.contains("error")) {
+        qDebug() << "ERROR with chart request" << bytes;
+    }
+    else if (bytes.size() >= 1) {
+        foreach (const QString &key, tb.keys()) {
+            QJsonValue value = tb.value(key);
+            double temperature = value[0].toDouble();
+            int humidity = int(0.5 + value[1].toDouble());
+            recordsList.append(TimestampRecord(key.toLongLong(), temperature, humidity));
+        }
+        emit outdoorRecordListRetrieved(recordsList);
+    }
+}
+
+void NetatmoAPIHandler::retrieveIndoorChartRequest(QNetworkReply *reply) {
+    QList<TimestampRecord> recordsList = QList<TimestampRecord>();
+    QByteArray bytes = reply->readAll();
+    QJsonDocument js = QJsonDocument::fromJson(bytes);
+    QJsonObject tb = js["body"].toObject();
+    if (bytes.contains("error")) {
+        qDebug() << "ERROR with chart request" << bytes;
+    }
+    else if (bytes.size() >= 1) {
+        foreach (const QString &key, tb.keys()) {
+            QJsonValue value = tb.value(key);
+            double temperature = value[0].toDouble();
+            int humidity = int(0.5 + value[1].toDouble());
+            recordsList.append(TimestampRecord(key.toLongLong(), temperature, humidity));
+        }
+        emit indoorRecordListRetrieved(recordsList);
     }
 }

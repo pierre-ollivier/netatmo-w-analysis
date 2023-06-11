@@ -9,7 +9,9 @@
 #include <QNetworkAccessManager>
 #include <QDateTime>
 #include <QTimer>
+#include <QPointF>
 #include "APIMonitor.h"
+#include "../types/TimestampRecord.h"
 #include "../types/ExtTimestampRecord.h"
 #include "../types/IntTimestampRecord.h"
 #include "../types/ExtDailyRecord.h"
@@ -29,11 +31,15 @@ public slots:
     void postCurrentConditionsRequest(QString accessToken);
     void postFullOutdoorDailyRequest(int dateBegin, int dateEnd, QString scale, QString accessToken);
     void postFullIndoorDailyRequest(int dateBegin, int dateEnd, QString scale, QString accessToken);
+    void postOutdoorChartRequest(int dateBegin, QString scale, QString accessToken);
+    void postIndoorChartRequest(int dateBegin, QString scale, QString accessToken);
 
     void retrieveTokens(QNetworkReply*);
     void retrieveCurrentConditions(QNetworkReply*);
     void retrieveFullDailyOutdoorConditions(QNetworkReply*);
     void retrieveFullDailyIndoorConditions(QNetworkReply*);
+    void retrieveIndoorChartRequest(QNetworkReply*);
+    void retrieveOutdoorChartRequest(QNetworkReply*);
 
     APIMonitor* getAPIMonitor();
     int getTimeBetweenRequests();
@@ -81,6 +87,14 @@ signals:
     void extTimestampRecordRetrieved(ExtTimestampRecord);
     void intTimestampRecordRetrieved(IntTimestampRecord);
 
+    // CHART SERIES
+    void outdoorTemperatureListRetrieved(QList<QPointF>);
+    void outdoorHumidityListRetrieved(QList<QPointF>);
+    void indoorTemperatureListRetrieved(QList<QPointF>);
+    void indoorHumidityListRetrieved(QList<QPointF>);
+    void outdoorRecordListRetrieved(QList<TimestampRecord>);
+    void indoorRecordListRetrieved(QList<TimestampRecord>);
+
     // OTHER
 
     void currentTimeChanged(QDateTime);
@@ -93,6 +107,8 @@ private:
     QNetworkAccessManager *currentConditionsManager;
     QNetworkAccessManager *dailyFullOutdoorRequestManager;
     QNetworkAccessManager *dailyFullIndoorRequestManager;
+    QNetworkAccessManager *indoorChartRequestManager;
+    QNetworkAccessManager *outdoorChartRequestManager;
 
     APIMonitor *apiMonitor;
 
