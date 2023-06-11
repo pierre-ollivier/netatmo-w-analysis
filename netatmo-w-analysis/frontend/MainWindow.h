@@ -7,10 +7,12 @@
 #include <QPushButton>
 #include <QGridLayout>
 #include <QMenuBar>
+#include <QtCharts>
 #include "../netatmo-w-analysis/backend/NetatmoAPIHandler.h"
 #include "../netatmo-w-analysis/backend/DatabaseHandler.h"
 #include "../netatmo-w-analysis/backend/APIMonitor.h"
 #include "../netatmo-w-analysis/backend/OldDataUploader.h"
+#include "../netatmo-w-analysis/frontend/HomePageChart.h"
 
 
 class MainWindow : public QMainWindow
@@ -23,6 +25,7 @@ public:
     void buildAPIHandler();
     void buildLabels();
     void buildButtons();
+    void buildCharts();
     void buildLayouts();
     void createMenus();
     void createActions();
@@ -46,6 +49,9 @@ public slots:
     void updateActualisationDate(QDateTime timestamp);
     void updateRequestCounts();
 
+    void updateIndoorChart(QString measurementType = "", int durationInHours = 0);
+    void updateOutdoorChart(QString measurementType = "", int durationInHours = 0);
+
     void addMonthData();
     void addMultipleMonthsData();
 
@@ -56,6 +62,10 @@ public slots:
     void displayYearlyReport();
 
     void addDataFromCurrentMonths();
+    void changeChartsOptions();
+
+signals:
+
 
 private:
     // labels
@@ -76,13 +86,16 @@ private:
     //other (provisional)
     NetatmoAPIHandler *apiHandler;
 
-    //database handler
-    DatabaseHandler *dbHandler;
+    //database handlers
+    DatabaseHandler *dbHandlerProd;
+    DatabaseHandler *dbHandlerCopy;
 
     //other (provisional)
     QString accessToken = "";
     QLocale *deviceLocale;
     APIMonitor *apiMonitor;
+    HomePageChart *indoorChart;
+    HomePageChart *outdoorChart;
 
     //data uploader
     OldDataUploader *oldDataUploader;
@@ -95,6 +108,25 @@ private:
     QAction *updateDailyOutdoorDatabaseAction;
     QAction *displayMonthlyReportAction;
     QAction *displayYearlyReportAction;
+
+    //chart options
+    QRadioButton *h4Option;
+    QRadioButton *h24Option;
+    QRadioButton *h192Option;
+    QHBoxLayout *chartsDurationOptionsLayout;
+    QGroupBox *chartsDurationOptionsGroupBox;
+
+    QRadioButton *temperatureOption;
+    QRadioButton *humidityOption;
+    QRadioButton *dewPointOption;
+    QRadioButton *humidexOption;
+    QHBoxLayout *chartsMeasurementOptionsLayout;
+    QGroupBox *chartsMeasurementOptionsGroupBox;
+
+    QString _measurementType = "temperature";
+    int _durationInHours = 4;
+
+
 };
 
 #endif // MAINWINDOW_H

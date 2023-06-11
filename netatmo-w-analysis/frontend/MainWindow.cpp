@@ -20,7 +20,8 @@ MainWindow::MainWindow()
     deviceLocale = new QLocale();
     apiMonitor = new APIMonitor();
     apiHandler = new NetatmoAPIHandler(apiMonitor, 20000);
-    dbHandler = new DatabaseHandler(PATH_TO_PROD_DATABASE);
+    dbHandlerProd = new DatabaseHandler(PATH_TO_PROD_DATABASE);
+    dbHandlerCopy = new DatabaseHandler(PATH_TO_COPY_DATABASE);
     oldDataUploader = new OldDataUploader(apiHandler);
     buildWindow();
 }
@@ -29,6 +30,7 @@ void MainWindow::buildWindow() {
     buildAPIHandler();
     buildLabels();
     buildButtons();
+    buildCharts();
     buildLayouts();
     createActions();
     createMenus();
@@ -55,6 +57,8 @@ void MainWindow::buildAPIHandler() {
             this, SLOT(updateMinIntTemperatureTime(int)));
     connect(apiHandler, SIGNAL(intMaxTemperatureTimeChanged(int)),
             this, SLOT(updateMaxIntTemperatureTime(int)));
+    connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), SLOT(updateOutdoorChart()));
+    connect(apiHandler, SIGNAL(intUTCTimeChanged(int)), SLOT(updateIndoorChart()));
 }
 
 void MainWindow::buildLabels() {
@@ -84,19 +88,61 @@ void MainWindow::buildButtons() {
             apiHandler, SLOT(postCurrentConditionsRequest()));
 }
 
+void MainWindow::buildCharts() {
+    indoorChart = new HomePageChart(apiHandler, "IndoorTimestampRecords", true);
+    outdoorChart = new HomePageChart(apiHandler, "OutdoorTimestampRecords", false);
+
+    h4Option = new QRadioButton("4 heures");
+    h24Option = new QRadioButton("24 heures");
+    h192Option = new QRadioButton("8 jours");
+    h4Option->setChecked(true);
+    QObject::connect(h4Option, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
+    QObject::connect(h24Option, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
+    QObject::connect(h192Option, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
+
+    temperatureOption = new QRadioButton("Température");
+    humidityOption = new QRadioButton("Humidité");
+    dewPointOption = new QRadioButton("Point de rosée");
+    humidexOption = new QRadioButton("Humidex");
+    temperatureOption->setChecked(true);
+    QObject::connect(temperatureOption, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
+    QObject::connect(humidityOption, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
+    QObject::connect(dewPointOption, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
+    QObject::connect(humidexOption, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
+}
+
 void MainWindow::buildLayouts() {
+    chartsDurationOptionsLayout = new QHBoxLayout();
+    chartsDurationOptionsLayout->addWidget(h4Option, 0, Qt::AlignCenter);
+    chartsDurationOptionsLayout->addWidget(h24Option, 0, Qt::AlignCenter);
+    chartsDurationOptionsLayout->addWidget(h192Option, 0, Qt::AlignCenter);
+
+    chartsDurationOptionsGroupBox = new QGroupBox("");
+    chartsDurationOptionsGroupBox->setLayout(chartsDurationOptionsLayout);
+
+    chartsMeasurementOptionsLayout = new QHBoxLayout();
+    chartsMeasurementOptionsLayout->addWidget(temperatureOption, 0, Qt::AlignCenter);
+    chartsMeasurementOptionsLayout->addWidget(humidityOption, 0, Qt::AlignCenter);
+    chartsMeasurementOptionsLayout->addWidget(dewPointOption, 0, Qt::AlignCenter);
+    chartsMeasurementOptionsLayout->addWidget(humidexOption, 0, Qt::AlignCenter);
+
+    chartsMeasurementOptionsGroupBox = new QGroupBox("");
+    chartsMeasurementOptionsGroupBox->setLayout(chartsMeasurementOptionsLayout);
+
     mainLayout = new QGridLayout();
     mainLayout->addWidget(currentExtTempLabel, 1, 0, 2, 1);
     mainLayout->addWidget(statusLabel, 0, 0);
 //    mainLayout->addWidget(labelExtremes, 0, 1, 1, 2);
     mainLayout->addWidget(actualisationButton, 0, 3);
-//    mainLayout->addWidget(vuegp, 1, 1, 2, 2);
+    mainLayout->addWidget(outdoorChart, 1, 1, 2, 2);
     mainLayout->addWidget(currentMaxExtTempLabel, 1, 3);
     mainLayout->addWidget(currentMinExtTempLabel, 2, 3);
     mainLayout->addWidget(currentIntTempLabel, 3, 0, 2, 1);
     mainLayout->addWidget(currentMaxIntTempLabel, 3, 3);
     mainLayout->addWidget(currentMinIntTempLabel, 4, 3);
-//    mainLayout->addWidget(vuegpint, 3, 1, 2, 2);
+    mainLayout->addWidget(indoorChart, 3, 1, 2, 2);
+    mainLayout->addWidget(chartsDurationOptionsGroupBox, 5, 1, 1, 2);
+    mainLayout->addWidget(chartsMeasurementOptionsGroupBox, 6, 1, 1, 2);
 
     // set window's layout
     mainWidget->setLayout(mainLayout);
@@ -138,11 +184,25 @@ void MainWindow::setAccessToken(QString newAccessToken) {
     accessToken = newAccessToken;
     oldDataUploader->setAccessToken(accessToken);
     addDataFromCurrentMonths();
+    updateIndoorChart();
+    updateOutdoorChart();
+}
+
+void MainWindow::updateIndoorChart(QString measurementType, int durationInHours) {
+    if (measurementType == "") measurementType = _measurementType;
+    if (durationInHours == 0) durationInHours = _durationInHours;
+    if (accessToken != "") indoorChart->gatherChartData(accessToken, measurementType, true, durationInHours);
+}
+
+void MainWindow::updateOutdoorChart(QString measurementType, int durationInHours) {
+    if (measurementType == "") measurementType = _measurementType;
+    if (durationInHours == 0) durationInHours = _durationInHours;
+    if (accessToken != "") outdoorChart->gatherChartData(accessToken, measurementType, false, durationInHours);
 }
 
 void MainWindow::addDataFromCurrentMonths() {
-    QDate lastAddedOutdoorDate = dbHandler->getLatestDateTimeFromDatabase("OutdoorDailyRecords").date();
-    QDate lastAddedIndoorDate = dbHandler->getLatestDateTimeFromDatabase("IndoorDailyRecords").date();
+    QDate lastAddedOutdoorDate = dbHandlerProd->getLatestDateTimeFromDatabase("OutdoorDailyRecords").date();
+    QDate lastAddedIndoorDate = dbHandlerProd->getLatestDateTimeFromDatabase("IndoorDailyRecords").date();
 
     oldDataUploader->addDataFromCurrentMonths(lastAddedOutdoorDate.addDays(1),
                                               QDate::currentDate(), false);
@@ -253,10 +313,10 @@ void MainWindow::addMonthData() {
 
     if (response == QMessageBox::Yes) {
         if (isIndoorData) {
-            dbHandler->postFromIndoorCsv(fileName, "IndoorTimestampRecords");
+            dbHandlerProd->postFromIndoorCsv(fileName, "IndoorTimestampRecords");
         }
         else {
-            dbHandler->postFromOutdoorCsv(fileName, "OutdoorTimestampRecords");
+            dbHandlerProd->postFromOutdoorCsv(fileName, "OutdoorTimestampRecords");
         }
     }
     else if (response == QMessageBox::No) QMessageBox::warning(this, "Annulation", "Opération annulée.");
@@ -287,14 +347,14 @@ void MainWindow::addMultipleMonthsData() {
 
     if (response == QMessageBox::Yes) {
         if (isIndoorData) {
-            dbHandler->postFromMultipleIndoorCsv(
+            dbHandlerProd->postFromMultipleIndoorCsv(
                         "D:/Mes programmes/RegressionTemperature/Données Netatmo/Intérieur",
                         "IndoorTimestampRecords",
                         beginDate,
                         endDate);
         }
         else {
-            dbHandler->postFromMultipleOutdoorCsv(
+            dbHandlerProd->postFromMultipleOutdoorCsv(
                         "D:/Mes programmes/RegressionTemperature/Données Netatmo",
                         "OutdoorTimestampRecords",
                         beginDate,
@@ -321,7 +381,7 @@ void MainWindow::updateDailyIndoorDatabase() {
     int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
 
     if (response == QMessageBox::Yes) {
-        dbHandler->updateIndoorDailyRecords(
+        dbHandlerProd->updateIndoorDailyRecords(
                     QDate::fromString(beginDate, "dd/MM/yyyy"),
                     QDate::fromString(endDate, "dd/MM/yyyy"));
     }
@@ -345,7 +405,7 @@ void MainWindow::updateDailyOutdoorDatabase() {
     int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
 
     if (response == QMessageBox::Yes) {
-        dbHandler->updateOutdoorDailyRecords(
+        dbHandlerProd->updateOutdoorDailyRecords(
                     QDate::fromString(beginDate, "dd/MM/yyyy"),
                     QDate::fromString(endDate, "dd/MM/yyyy"));
     }
@@ -361,4 +421,16 @@ void MainWindow::displayMonthlyReport() {
 void MainWindow::displayYearlyReport() {
     YearlyReport *report = new YearlyReport();
     report->show();
+}
+
+void MainWindow::changeChartsOptions() {
+    if (temperatureOption->isChecked()) _measurementType = "temperature";
+    if (humidityOption->isChecked()) _measurementType = "humidity";
+    if (dewPointOption->isChecked()) _measurementType = "dewPoint";
+    if (humidexOption->isChecked()) _measurementType = "humidex";
+    if (h4Option->isChecked()) _durationInHours = 4;
+    if (h24Option->isChecked()) _durationInHours = 24;
+    if (h192Option->isChecked()) _durationInHours = 192;
+    updateOutdoorChart();
+    updateIndoorChart();
 }
