@@ -84,23 +84,29 @@ void HomePageChart::drawChart(QList<TimestampRecord> records) {
 void HomePageChart::drawChart(QList<QPointF> points) {
     maxOfSeries = QVariant();
     minOfSeries = QVariant();
-    long long maxTimestamp = 0;
+    long long minTimestamp = 0, maxTimestamp = 0;
 
     series->clear();
     series->append(points);
 
     for (QPointF point: points) {
-        if (maxOfSeries.isNull() || point.y() > maxOfSeries.toDouble()) maxOfSeries = point.y();
-        if (minOfSeries.isNull() || point.y() < minOfSeries.toDouble()) minOfSeries = point.y();
         if (point.x() > maxTimestamp) maxTimestamp = point.x();
     }
 
     int timeBetweenXTicksInMs = _durationInHours * 3600 * 1000 / 8;
+    maxTimestamp += timeBetweenXTicksInMs - maxTimestamp % timeBetweenXTicksInMs;
+    minTimestamp = maxTimestamp - 8 * timeBetweenXTicksInMs;
 
-    xAxis->setRange(QDateTime::fromMSecsSinceEpoch(maxTimestamp)
-                    .addMSecs(-7 * timeBetweenXTicksInMs - maxTimestamp % timeBetweenXTicksInMs),
-                    QDateTime::fromMSecsSinceEpoch(maxTimestamp)
-                    .addMSecs(timeBetweenXTicksInMs - maxTimestamp % timeBetweenXTicksInMs));
+    xAxis->setRange(QDateTime::fromMSecsSinceEpoch(minTimestamp),
+                    QDateTime::fromMSecsSinceEpoch(maxTimestamp));
+
+    for (QPointF point: points) {
+        if (point.x() >= minTimestamp && point.x() <= maxTimestamp) {
+            if (maxOfSeries.isNull() || point.y() > maxOfSeries.toDouble()) maxOfSeries = point.y();
+            if (minOfSeries.isNull() || point.y() < minOfSeries.toDouble()) minOfSeries = point.y();
+        }
+    }
+
     setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
 
     if (timeBetweenXTicksInMs >= 1000 * 86400) {
