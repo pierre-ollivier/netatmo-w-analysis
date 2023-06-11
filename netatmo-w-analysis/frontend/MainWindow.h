@@ -62,6 +62,7 @@ public slots:
     void displayYearlyReport();
 
     void addDataFromCurrentMonths();
+    void changeChartsOptions();
 
 signals:
 
