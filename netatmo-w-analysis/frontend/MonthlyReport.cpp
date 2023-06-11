@@ -21,7 +21,7 @@ MonthlyReport::MonthlyReport() : QWidget()
 
     view = new QTableView();
     view->setModel(model);
-    view->setFixedWidth(450);
+    view->setFixedWidth(451);
 
     model->setHorizontalHeaderLabels(QStringList({"T. min.", "T. max.", "T. moy."}));
 
