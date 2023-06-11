@@ -196,12 +196,16 @@ void MainWindow::setAccessToken(QString newAccessToken) {
     updateOutdoorChart();
 }
 
-void MainWindow::updateIndoorChart() {
-    if (accessToken != "") indoorChart->gatherChartData(accessToken, "humidity", true, 24);
+void MainWindow::updateIndoorChart(QString measurementType, int durationInHours) {
+    if (measurementType == "") measurementType = _measurementType;
+    if (durationInHours == 0) durationInHours = _durationInHours;
+    if (accessToken != "") indoorChart->gatherChartData(accessToken, measurementType, true, durationInHours);
 }
 
-void MainWindow::updateOutdoorChart() {
-    if (accessToken != "") outdoorChart->gatherChartData(accessToken, "dewPoint", false, 192);
+void MainWindow::updateOutdoorChart(QString measurementType, int durationInHours) {
+    if (measurementType == "") measurementType = _measurementType;
+    if (durationInHours == 0) durationInHours = _durationInHours;
+    if (accessToken != "") outdoorChart->gatherChartData(accessToken, measurementType, false, durationInHours);
 }
 
 void MainWindow::addDataFromCurrentMonths() {

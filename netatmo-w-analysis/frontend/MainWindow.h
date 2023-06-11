@@ -49,8 +49,8 @@ public slots:
     void updateActualisationDate(QDateTime timestamp);
     void updateRequestCounts();
 
-    void updateIndoorChart();
-    void updateOutdoorChart();
+    void updateIndoorChart(QString measurementType = "", int durationInHours = 0);
+    void updateOutdoorChart(QString measurementType = "", int durationInHours = 0);
 
     void addMonthData();
     void addMultipleMonthsData();
@@ -121,6 +121,9 @@ private:
     QRadioButton *humidexOption;
     QHBoxLayout *chartsMeasurementOptionsLayout;
     QGroupBox *chartsMeasurementOptionsGroupBox;
+
+    QString _measurementType = "temperature";
+    int _durationInHours = 4;
 
 
 };
