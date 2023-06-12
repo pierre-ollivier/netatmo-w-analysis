@@ -399,7 +399,8 @@ int DailyStatisticsCalculator::getMinNoiseFromDate(QDate date) {
     const long long firstTimestamp = getFirstTimestampFromDate(date);
     const long long lastTimestamp = firstTimestamp + 86400;
     QString query = "SELECT min(noise) FROM " + indoorOrOutdoor + "TimestampRecords";
-    query += " WHERE timestamp BETWEEN " + QString::number(firstTimestamp) + " AND " + QString::number(lastTimestamp);
+    query += " WHERE noise > 0";
+    query += " AND timestamp BETWEEN " + QString::number(firstTimestamp) + " AND " + QString::number(lastTimestamp);
     return dbHandler->getResultFromDatabase(query).toInt();
 }
 
