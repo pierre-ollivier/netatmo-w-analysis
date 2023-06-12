@@ -186,6 +186,7 @@ void NetatmoAPIHandler::postOutdoorChartRequest(int date_begin, QString scale, Q
     params.addQueryItem("optimize", "false");
     params.addQueryItem("real_time", "true");
     outdoorChartRequestManager->post(request, params.query().toUtf8());
+    apiMonitor->addTimestamp();
 }
 
 void NetatmoAPIHandler::postIndoorChartRequest(int date_begin, QString scale, QString accessToken) {
@@ -206,6 +207,7 @@ void NetatmoAPIHandler::postIndoorChartRequest(int date_begin, QString scale, QS
     params.addQueryItem("optimize", "false");
     params.addQueryItem("real_time", "true");
     indoorChartRequestManager->post(request, params.query().toUtf8());
+    apiMonitor->addTimestamp();
 }
 
 void NetatmoAPIHandler::retrieveTokens(QNetworkReply *reply) {
