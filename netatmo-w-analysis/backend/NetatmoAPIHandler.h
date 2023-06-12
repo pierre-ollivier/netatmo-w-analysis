@@ -27,6 +27,7 @@ public:
 
 public slots:
     void postTokensRequest();
+    void postRefreshTokenRequest();
     void postCurrentConditionsRequest();
     void postCurrentConditionsRequest(QString accessToken);
     void postFullOutdoorDailyRequest(int dateBegin, int dateEnd, QString scale, QString accessToken);

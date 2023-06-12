@@ -56,7 +56,7 @@ void NetatmoAPIHandler::postTokensRequest() {
     extern const QString clientId;
     extern const QString clientSecret;
 
-    QUrl url("https://api.netatmo.com/oauth2/token");
+    QUrl url("https://api.netatmo.com/oauth2/token"); // deprecated but still fine for personal use
     QNetworkRequest request(url);
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
@@ -68,6 +68,24 @@ void NetatmoAPIHandler::postTokensRequest() {
     params.addQueryItem("username", username);
     params.addQueryItem("password", password);
     params.addQueryItem("scope", "read_station");
+    tokensManager->post(request, params.query().toUtf8());
+    apiMonitor->addTimestamp();
+}
+
+void NetatmoAPIHandler::postRefreshTokenRequest() {
+    extern const QString clientId;
+    extern const QString clientSecret;
+
+    QUrl url("https://api.netatmo.com/oauth2/token");
+    QNetworkRequest request(url);
+
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+
+    QUrlQuery params;
+    params.addQueryItem("grant_type", "refresh_token");
+    params.addQueryItem("refresh_token", refreshToken);
+    params.addQueryItem("client_id", clientId);
+    params.addQueryItem("client_secret", clientSecret);
     tokensManager->post(request, params.query().toUtf8());
     apiMonitor->addTimestamp();
 }
@@ -168,6 +186,7 @@ void NetatmoAPIHandler::postOutdoorChartRequest(int date_begin, QString scale, Q
     params.addQueryItem("optimize", "false");
     params.addQueryItem("real_time", "true");
     outdoorChartRequestManager->post(request, params.query().toUtf8());
+    apiMonitor->addTimestamp();
 }
 
 void NetatmoAPIHandler::postIndoorChartRequest(int date_begin, QString scale, QString accessToken) {
@@ -188,6 +207,7 @@ void NetatmoAPIHandler::postIndoorChartRequest(int date_begin, QString scale, QS
     params.addQueryItem("optimize", "false");
     params.addQueryItem("real_time", "true");
     indoorChartRequestManager->post(request, params.query().toUtf8());
+    apiMonitor->addTimestamp();
 }
 
 void NetatmoAPIHandler::retrieveTokens(QNetworkReply *reply) {
