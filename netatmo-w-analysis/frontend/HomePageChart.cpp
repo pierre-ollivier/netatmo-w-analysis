@@ -95,7 +95,13 @@ void HomePageChart::drawChart(QList<QPointF> points) {
     }
 
     int timeBetweenXTicksInMs = _durationInHours * 3600 * 1000 / 8;
-    maxTimestamp += timeBetweenXTicksInMs - maxTimestamp % timeBetweenXTicksInMs;
+    int maxShiftOfMaxTimestamp =
+            _durationInHours == 4? 30 * 60 * 1000:
+            _durationInHours == 24? 3600 * 1000:
+            _durationInHours == 192? 86400 * 1000:
+            timeBetweenXTicksInMs;
+
+    maxTimestamp += maxShiftOfMaxTimestamp - maxTimestamp % maxShiftOfMaxTimestamp;
 
     if (_durationInHours > 48) {
         maxTimestamp -= QDateTime::currentDateTime().offsetFromUtc() * 1000;
