@@ -135,7 +135,7 @@ double DailyStatisticsCalculator::getMaxDewPointFromDate(QDate date, bool indoor
     const QString indoorOrOutdoor = indoor? "Indoor" : "Outdoor";
     const long long firstTimestamp = getFirstTimestampFromDate(date);
     const long long lastTimestamp = firstTimestamp + 86400;
-    QString query = "SELECT max(round(dewPoint, 3)) FROM " + indoorOrOutdoor + "TimestampRecords";
+    QString query = "SELECT max(round(dewPoint, 6)) FROM " + indoorOrOutdoor + "TimestampRecords";
     query += " WHERE timestamp BETWEEN " + QString::number(firstTimestamp) + " AND " + QString::number(lastTimestamp);
     return dbHandler->getResultFromDatabase(query).toDouble();
 }
@@ -145,7 +145,7 @@ long long DailyStatisticsCalculator::getMaxDewPointTimestampFromDate(QDate date,
     const long long firstTimestamp = getFirstTimestampFromDate(date);
     const long long lastTimestamp = firstTimestamp + 86400;
     QString query = "SELECT min(timestamp) FROM " + indoorOrOutdoor + "TimestampRecords";
-    query += " WHERE round(dewPoint, 3) = " + QString::number(maxDewPoint)
+    query += " WHERE round(dewPoint, 6) = " + QString::number(maxDewPoint)
            + " AND timestamp BETWEEN " + QString::number(firstTimestamp) + " AND " + QString::number(lastTimestamp);
     return dbHandler->getResultFromDatabase(query).toLongLong();
 }
@@ -161,7 +161,7 @@ double DailyStatisticsCalculator::getMinDewPointFromDate(QDate date, bool indoor
     const QString indoorOrOutdoor = indoor? "Indoor" : "Outdoor";
     const long long firstTimestamp = getFirstTimestampFromDate(date);
     const long long lastTimestamp = firstTimestamp + 86400;
-    QString query = "SELECT min(round(dewPoint, 3)) FROM " + indoorOrOutdoor + "TimestampRecords";
+    QString query = "SELECT min(round(dewPoint, 6)) FROM " + indoorOrOutdoor + "TimestampRecords";
     query += " WHERE timestamp BETWEEN " + QString::number(firstTimestamp) + " AND " + QString::number(lastTimestamp);
     return dbHandler->getResultFromDatabase(query).toDouble();
 }
@@ -171,7 +171,7 @@ long long DailyStatisticsCalculator::getMinDewPointTimestampFromDate(QDate date,
     const long long firstTimestamp = getFirstTimestampFromDate(date);
     const long long lastTimestamp = firstTimestamp + 86400;
     QString query = "SELECT min(timestamp) FROM " + indoorOrOutdoor + "TimestampRecords";
-    query += " WHERE round(dewPoint, 3) = " + QString::number(minDewPoint)
+    query += " WHERE round(dewPoint, 6) = " + QString::number(minDewPoint)
            + " AND timestamp BETWEEN " + QString::number(firstTimestamp) + " AND " + QString::number(lastTimestamp);
     return dbHandler->getResultFromDatabase(query).toLongLong();
 }
@@ -195,7 +195,7 @@ double DailyStatisticsCalculator::getMaxHumidexFromDate(QDate date, bool indoor)
     const QString indoorOrOutdoor = indoor? "Indoor" : "Outdoor";
     const long long firstTimestamp = getFirstTimestampFromDate(date);
     const long long lastTimestamp = firstTimestamp + 86400;
-    QString query = "SELECT max(round(humidex, 3)) FROM " + indoorOrOutdoor + "TimestampRecords";
+    QString query = "SELECT max(round(humidex, 6)) FROM " + indoorOrOutdoor + "TimestampRecords";
     query += " WHERE timestamp BETWEEN " + QString::number(firstTimestamp) + " AND " + QString::number(lastTimestamp);
     return dbHandler->getResultFromDatabase(query).toDouble();
 }
@@ -206,7 +206,7 @@ long long DailyStatisticsCalculator::getMaxHumidexTimestampFromDate(QDate date, 
     const long long firstTimestamp = getFirstTimestampFromDate(date);
     const long long lastTimestamp = firstTimestamp + 86400;
     QString query = "SELECT min(timestamp) FROM " + indoorOrOutdoor + "TimestampRecords";
-    query += " WHERE round(humidex, 3) = " + QString::number(maxHumidex)
+    query += " WHERE round(humidex, 6) = " + QString::number(maxHumidex)
            + " AND timestamp BETWEEN " + QString::number(firstTimestamp) + " AND " + QString::number(lastTimestamp);
     return dbHandler->getResultFromDatabase(query).toLongLong();
 }
@@ -222,7 +222,7 @@ double DailyStatisticsCalculator::getMinHumidexFromDate(QDate date, bool indoor)
     const QString indoorOrOutdoor = indoor? "Indoor" : "Outdoor";
     const long long firstTimestamp = getFirstTimestampFromDate(date);
     const long long lastTimestamp = firstTimestamp + 86400;
-    QString query = "SELECT min(round(humidex, 3)) FROM " + indoorOrOutdoor + "TimestampRecords";
+    QString query = "SELECT min(round(humidex, 6)) FROM " + indoorOrOutdoor + "TimestampRecords";
     query += " WHERE timestamp BETWEEN " + QString::number(firstTimestamp) + " AND " + QString::number(lastTimestamp);
     return dbHandler->getResultFromDatabase(query).toDouble();
 }
@@ -232,7 +232,7 @@ long long DailyStatisticsCalculator::getMinHumidexTimestampFromDate(QDate date, 
     const long long firstTimestamp = getFirstTimestampFromDate(date);
     const long long lastTimestamp = firstTimestamp + 86400;
     QString query = "SELECT min(timestamp) FROM " + indoorOrOutdoor + "TimestampRecords";
-    query += " WHERE round(humidex, 3) = " + QString::number(minHumidex)
+    query += " WHERE round(humidex, 6) = " + QString::number(minHumidex)
            + " AND timestamp BETWEEN " + QString::number(firstTimestamp) + " AND " + QString::number(lastTimestamp);
     return dbHandler->getResultFromDatabase(query).toLongLong();
 }
@@ -399,7 +399,8 @@ int DailyStatisticsCalculator::getMinNoiseFromDate(QDate date) {
     const long long firstTimestamp = getFirstTimestampFromDate(date);
     const long long lastTimestamp = firstTimestamp + 86400;
     QString query = "SELECT min(noise) FROM " + indoorOrOutdoor + "TimestampRecords";
-    query += " WHERE timestamp BETWEEN " + QString::number(firstTimestamp) + " AND " + QString::number(lastTimestamp);
+    query += " WHERE noise > 0";
+    query += " AND timestamp BETWEEN " + QString::number(firstTimestamp) + " AND " + QString::number(lastTimestamp);
     return dbHandler->getResultFromDatabase(query).toInt();
 }
 

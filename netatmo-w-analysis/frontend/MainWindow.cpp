@@ -181,6 +181,7 @@ void MainWindow::createMenus() {
 }
 
 void MainWindow::setAccessToken(QString newAccessToken) {
+    QTimer::singleShot(170 * 60 * 1000, apiHandler, SLOT(postRefreshTokenRequest()));
     accessToken = newAccessToken;
     oldDataUploader->setAccessToken(accessToken);
     addDataFromCurrentMonths();
@@ -308,8 +309,18 @@ void MainWindow::addMonthData() {
     QString q = "Confirmer la saisie ? \n\n";
     q += "Nom du fichier : " + fileName.mid(56) + "\n";
 
-    int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
     bool isIndoorData = (fileName.size() > 7 && fileName[fileName.size() - 12] == 'C');
+
+    if (isIndoorData) {
+        q += "Dernière date dans la base de données intérieures : ";
+        q += dbHandlerProd->getLatestDateTimeFromDatabase("IndoorTimestampRecords").date().toString("dd/MM/yyyy");
+    }
+    else {
+        q += "Dernière date dans la base de données extérieures : ";
+        q += dbHandlerProd->getLatestDateTimeFromDatabase("OutdoorTimestampRecords").date().toString("dd/MM/yyyy");
+    }
+
+    int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
 
     if (response == QMessageBox::Yes) {
         if (isIndoorData) {
@@ -377,6 +388,8 @@ void MainWindow::updateDailyIndoorDatabase() {
     QString q = "Confirmer la saisie ? \n\n";
     q += "Date de début : " + beginDate + "\n";
     q += "Date de fin : " + endDate;
+    q += "Dernière date dans la base de données intérieures : ";
+    q += dbHandlerProd->getLatestDateTimeFromDatabase("IndoorDailyRecords").date().toString("dd/MM/yyyy");
 
     int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
 
@@ -401,6 +414,8 @@ void MainWindow::updateDailyOutdoorDatabase() {
     QString q = "Confirmer la saisie ? \n\n";
     q += "Date de début : " + beginDate + "\n";
     q += "Date de fin : " + endDate;
+    q += "Dernière date dans la base de données extérieures : ";
+    q += dbHandlerProd->getLatestDateTimeFromDatabase("OutdoorDailyRecords").date().toString("dd/MM/yyyy");
 
     int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
 
