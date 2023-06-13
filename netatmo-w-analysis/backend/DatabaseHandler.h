@@ -34,6 +34,8 @@ public:
     std::vector<ExtDailyRecord> getExtDailyRecordsFromDatabase(QString query, int N = 1);
 
     QVariant getResultFromDatabase(QString query);
+    std::vector<QVariant> getResultsFromDatabase(QString query);
+
     QDateTime getLatestDateTimeFromDatabase(QString tableName);
 
     void updateOutdoorDailyRecords(QDate beginDate, QDate endDate, bool verbose = true);
