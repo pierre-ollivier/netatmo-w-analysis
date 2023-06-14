@@ -8,7 +8,11 @@ class NormalComputer
 {
 public:
     NormalComputer(DatabaseHandler *dbHandler);
-    double normalMaximalTemperatureByMovingAverage(QString tableName, QDate date, int daysCount);
+    double normalMeasurementByMovingAverage(
+            QString tableName,
+            QDate date,
+            QString measurement,
+            int daysCount);
 
 private:
     DatabaseHandler *_dbHandler;
