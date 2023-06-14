@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include "../netatmo-w-analysis/frontend/MonthlyReport.h"
 #include "../netatmo-w-analysis/frontend/YearlyReport.h"
+#include "../netatmo-w-analysis/frontend/NormalsVisualizer.h"
 #include "../netatmo-w-analysis/backend/APIMonitor.h"
 #include "../netatmo-w-analysis/backend/NormalComputer.h"
 #include "../types/ExtTimestampRecord.h"
@@ -455,13 +456,19 @@ void MainWindow::changeChartsOptions() {
 }
 
 void MainWindow::showNormals() {
-    // provisional
     NormalComputer computer = NormalComputer(dbHandlerProd);
+    QList<QPointF> points = QList<QPointF>();
+
     for (QDate date = QDate(2020, 1, 1); date.year() < 2021; date = date.addDays(1)) {
-        qDebug() << date
-                 << computer.normalMeasurementByMovingAverage("OutdoorDailyRecords",
+        long long x = QDateTime(date).toMSecsSinceEpoch();
+        // to be adapted
+        double y = computer.normalMeasurementByMovingAverage("OutdoorDailyRecords",
                                                               date,
                                                               "maxTemperature",
-                                                              15);
+                                                              61);
+        points.append(QPointF(x, y));
     }
+    NormalsVisualizer *visualizer = new NormalsVisualizer();
+    visualizer->drawChart(points);
+    visualizer->show();
 }
