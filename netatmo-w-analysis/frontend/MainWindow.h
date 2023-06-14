@@ -64,6 +64,8 @@ public slots:
     void addDataFromCurrentMonths();
     void changeChartsOptions();
 
+    void showNormals();
+
 signals:
 
 
@@ -108,6 +110,7 @@ private:
     QAction *updateDailyOutdoorDatabaseAction;
     QAction *displayMonthlyReportAction;
     QAction *displayYearlyReportAction;
+    QAction *normalsAction;
 
     //chart options
     QRadioButton *h4Option;
