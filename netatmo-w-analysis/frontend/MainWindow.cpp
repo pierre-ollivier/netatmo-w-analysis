@@ -6,6 +6,7 @@
 #include "../netatmo-w-analysis/frontend/MonthlyReport.h"
 #include "../netatmo-w-analysis/frontend/YearlyReport.h"
 #include "../netatmo-w-analysis/backend/APIMonitor.h"
+#include "../netatmo-w-analysis/backend/NormalComputer.h"
 #include "../types/ExtTimestampRecord.h"
 
 extern QString PATH_TO_PROD_DATABASE;
@@ -187,6 +188,16 @@ void MainWindow::setAccessToken(QString newAccessToken) {
     addDataFromCurrentMonths();
     updateIndoorChart();
     updateOutdoorChart();
+
+    // the following code is provisional
+//    NormalComputer computer = NormalComputer(dbHandlerProd);
+//    for (QDate date = QDate(2020, 1, 1); date.year() < 2021; date = date.addDays(1)) {
+//        qDebug() << date
+//                 << computer.normalMeasurementByMovingAverage("OutdoorDailyRecords",
+//                                                              date,
+//                                                              "minDewPoint",
+//                                                              31);
+//    }
 }
 
 void MainWindow::updateIndoorChart(QString measurementType, int durationInHours) {
