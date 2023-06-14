@@ -166,6 +166,8 @@ void MainWindow::createActions() {
     connect(displayMonthlyReportAction, SIGNAL(triggered()), SLOT(displayMonthlyReport()));
     displayYearlyReportAction = new QAction("Climatologie générale");
     connect(displayYearlyReportAction, SIGNAL(triggered()), SLOT(displayYearlyReport()));
+    normalsAction = new QAction("Normales");
+    connect(normalsAction, SIGNAL(triggered()), SLOT(showNormals()));
 }
 
 void MainWindow::createMenus() {
@@ -179,6 +181,7 @@ void MainWindow::createMenus() {
     QMenu *climatologyMenu = menuBar->addMenu(tr("&Climatologie"));
     climatologyMenu->addAction(displayMonthlyReportAction);
     climatologyMenu->addAction(displayYearlyReportAction);
+    climatologyMenu->addAction(normalsAction);
 }
 
 void MainWindow::setAccessToken(QString newAccessToken) {
@@ -188,16 +191,6 @@ void MainWindow::setAccessToken(QString newAccessToken) {
     addDataFromCurrentMonths();
     updateIndoorChart();
     updateOutdoorChart();
-
-    // the following code is provisional
-//    NormalComputer computer = NormalComputer(dbHandlerProd);
-//    for (QDate date = QDate(2020, 1, 1); date.year() < 2021; date = date.addDays(1)) {
-//        qDebug() << date
-//                 << computer.normalMeasurementByMovingAverage("OutdoorDailyRecords",
-//                                                              date,
-//                                                              "minDewPoint",
-//                                                              31);
-//    }
 }
 
 void MainWindow::updateIndoorChart(QString measurementType, int durationInHours) {
@@ -459,4 +452,16 @@ void MainWindow::changeChartsOptions() {
     if (h192Option->isChecked()) _durationInHours = 192;
     updateOutdoorChart();
     updateIndoorChart();
+}
+
+void MainWindow::showNormals() {
+    // provisional
+    NormalComputer computer = NormalComputer(dbHandlerProd);
+    for (QDate date = QDate(2020, 1, 1); date.year() < 2021; date = date.addDays(1)) {
+        qDebug() << date
+                 << computer.normalMeasurementByMovingAverage("OutdoorDailyRecords",
+                                                              date,
+                                                              "maxTemperature",
+                                                              15);
+    }
 }
