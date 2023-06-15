@@ -2,11 +2,12 @@
 #define NORMALSVISUALIZER_H
 
 #include <QtCharts>
+#include "../netatmo-w-analysis/backend/NormalComputer.h"
 
 class NormalsVisualizer : public QChartView
 {
 public:
-    NormalsVisualizer();
+    NormalsVisualizer(NormalComputer *computer);
     void drawChart(QList<QPointF> points);
 
     void setYAxisRange(double maxValue, double minValue);
@@ -20,6 +21,7 @@ private:
     QValueAxis *yAxis;
     QLineSeries *series;
 
+    NormalComputer *_computer;
     QString _measurementType = "temperature";
 };
 
