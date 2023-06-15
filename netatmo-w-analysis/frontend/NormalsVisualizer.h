@@ -8,6 +8,7 @@
 
 class NormalsVisualizer : public QWidget
 {
+    Q_OBJECT
 public:
     NormalsVisualizer(NormalComputer *computer);
 
@@ -18,6 +19,9 @@ public:
     void setYAxisTicks(double maxValue, double minValue);
 
     void setMeasurementType(QString measurementType);
+
+public slots:
+    void changeChartOptions();
 
 private:
     QChart *chart;

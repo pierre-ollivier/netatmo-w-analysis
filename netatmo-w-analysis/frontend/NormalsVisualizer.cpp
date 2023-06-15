@@ -34,10 +34,19 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     humidexOption = new QRadioButton("Humidex");
     temperatureOption->setChecked(true);
 
+    QObject::connect(temperatureOption, SIGNAL(clicked(bool)), this, SLOT(changeChartOptions()));
+    QObject::connect(humidityOption, SIGNAL(clicked(bool)), this, SLOT(changeChartOptions()));
+    QObject::connect(dewPointOption, SIGNAL(clicked(bool)), this, SLOT(changeChartOptions()));
+    QObject::connect(humidexOption, SIGNAL(clicked(bool)), this, SLOT(changeChartOptions()));
+
     maxOption = new QRadioButton("Maximum");
     minOption = new QRadioButton("Minimum");
     avgOption = new QRadioButton("Moyenne");
     maxOption->setChecked(true);
+
+    QObject::connect(minOption, SIGNAL(clicked(bool)), this, SLOT(changeChartOptions()));
+    QObject::connect(maxOption, SIGNAL(clicked(bool)), this, SLOT(changeChartOptions()));
+    QObject::connect(avgOption, SIGNAL(clicked(bool)), this, SLOT(changeChartOptions()));
 
 
     measurementsLayout = new QHBoxLayout();
@@ -62,10 +71,7 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     mainLayout->addWidget(measurementsGroupBox, 1, 0);
     mainLayout->addWidget(operationsGroupBox, 2, 0);
     setLayout(mainLayout);
-
-    QList<QPointF> points = createChartData("OutdoorDailyRecords", "minTemperature", 41);
-    setMeasurementType("temperature");
-    drawChart(points);
+    changeChartOptions();
 
 }
 
@@ -166,4 +172,19 @@ void NormalsVisualizer::setYAxisTicks(double maxValue, double minValue) {
 
 void NormalsVisualizer::setMeasurementType(QString measurementType) {
     _measurementType = measurementType;
+}
+
+void NormalsVisualizer::changeChartOptions() {
+    QString measurementType = "";
+    if (maxOption->isChecked()) measurementType += "max";
+    if (minOption->isChecked()) measurementType += "min";
+    if (avgOption->isChecked()) measurementType += "avg";
+
+    if (temperatureOption->isChecked()) {measurementType += "Temperature"; setMeasurementType("temperature");}
+    if (humidityOption->isChecked()) {measurementType += "Humidity"; setMeasurementType("humidity");}
+    if (dewPointOption->isChecked()) {measurementType += "DewPoint"; setMeasurementType("dewPoint");}
+    if (humidexOption->isChecked()) {measurementType += "Humidex"; setMeasurementType("humidex");}
+
+    QList<QPointF> points = createChartData("OutdoorDailyRecords", measurementType, 41);
+    drawChart(points);
 }
