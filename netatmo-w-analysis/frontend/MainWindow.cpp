@@ -469,6 +469,7 @@ void MainWindow::showNormals() {
         points.append(QPointF(x, y));
     }
     NormalsVisualizer *visualizer = new NormalsVisualizer();
+    visualizer->setMeasurementType("humidity");
     visualizer->drawChart(points);
     visualizer->show();
 }

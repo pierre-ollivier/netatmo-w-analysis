@@ -12,13 +12,15 @@ public:
     void setYAxisRange(double maxValue, double minValue);
     void setYAxisTicks(double maxValue, double minValue);
 
+    void setMeasurementType(QString measurementType);
+
 private:
     QChart *chart;
     QDateTimeAxis *xAxis;
     QValueAxis *yAxis;
     QLineSeries *series;
 
-    QString _measurementType = "humidity";
+    QString _measurementType = "temperature";
 };
 
 #endif // NORMALSVISUALIZER_H

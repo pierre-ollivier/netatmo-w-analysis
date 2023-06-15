@@ -28,38 +28,13 @@ NormalsVisualizer::NormalsVisualizer() : QChartView()
 void NormalsVisualizer::drawChart(QList<QPointF> points) {
     QVariant maxOfSeries = QVariant();
     QVariant minOfSeries = QVariant();
-//    long long minTimestamp = 0, maxTimestamp = 0;
 
     series->clear();
     series->append(points);
 
-//    for (QPointF point: points) {
-//        if (point.x() > maxTimestamp) maxTimestamp = point.x();
-//    }
-
-//    int timeBetweenXTicksInMs = _durationInHours * 3600 * 1000 / 8;
-//    int maxShiftOfMaxTimestamp =
-//            _durationInHours == 4? 30 * 60 * 1000:
-//            _durationInHours == 24? 3600 * 1000:
-//            _durationInHours == 192? 86400 * 1000:
-//            timeBetweenXTicksInMs;
-
-//    maxTimestamp += maxShiftOfMaxTimestamp - maxTimestamp % maxShiftOfMaxTimestamp;
-
-//    if (_durationInHours > 48) {
-//        maxTimestamp -= QDateTime::currentDateTime().offsetFromUtc() * 1000;
-//    }
-
-//    minTimestamp = maxTimestamp - 8 * timeBetweenXTicksInMs;
-
-//    xAxis->setRange(QDateTime::fromMSecsSinceEpoch(minTimestamp),
-//                    QDateTime::fromMSecsSinceEpoch(maxTimestamp));
-
     for (QPointF point: points) {
-//        if (point.x() >= minTimestamp && point.x() <= maxTimestamp) {
-            if (maxOfSeries.isNull() || point.y() > maxOfSeries.toDouble()) maxOfSeries = point.y();
-            if (minOfSeries.isNull() || point.y() < minOfSeries.toDouble()) minOfSeries = point.y();
-//        }
+        if (maxOfSeries.isNull() || point.y() > maxOfSeries.toDouble()) maxOfSeries = point.y();
+        if (minOfSeries.isNull() || point.y() < minOfSeries.toDouble()) minOfSeries = point.y();
     }
 
     setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
@@ -130,4 +105,8 @@ void NormalsVisualizer::setYAxisTicks(double maxValue, double minValue) {
     else {
         yAxis->setTickInterval(20);
     }
+}
+
+void NormalsVisualizer::setMeasurementType(QString measurementType) {
+    _measurementType = measurementType;
 }
