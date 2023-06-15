@@ -41,8 +41,6 @@ public:
     void updateOutdoorDailyRecords(QDate beginDate, QDate endDate, bool verbose = true);
     void updateIndoorDailyRecords(QDate beginDate, QDate endDate, bool verbose = true);
 
-//    void postOutdoorDailyRequest(long long beginTimestamp, long long endTimestamp, QString tableName = "OutdoorDailyRecords");
-
 private:
     QString _pathToDatabase;
 };
