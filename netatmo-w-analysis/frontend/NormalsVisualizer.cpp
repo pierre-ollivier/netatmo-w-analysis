@@ -26,8 +26,8 @@ NormalsVisualizer::NormalsVisualizer() : QChartView()
 }
 
 void NormalsVisualizer::drawChart(QList<QPointF> points) {
-//    maxOfSeries = QVariant();
-//    minOfSeries = QVariant();
+    QVariant maxOfSeries = QVariant();
+    QVariant minOfSeries = QVariant();
 //    long long minTimestamp = 0, maxTimestamp = 0;
 
     series->clear();
@@ -55,14 +55,14 @@ void NormalsVisualizer::drawChart(QList<QPointF> points) {
 //    xAxis->setRange(QDateTime::fromMSecsSinceEpoch(minTimestamp),
 //                    QDateTime::fromMSecsSinceEpoch(maxTimestamp));
 
-//    for (QPointF point: points) {
+    for (QPointF point: points) {
 //        if (point.x() >= minTimestamp && point.x() <= maxTimestamp) {
-//            if (maxOfSeries.isNull() || point.y() > maxOfSeries.toDouble()) maxOfSeries = point.y();
-//            if (minOfSeries.isNull() || point.y() < minOfSeries.toDouble()) minOfSeries = point.y();
+            if (maxOfSeries.isNull() || point.y() > maxOfSeries.toDouble()) maxOfSeries = point.y();
+            if (minOfSeries.isNull() || point.y() < minOfSeries.toDouble()) minOfSeries = point.y();
 //        }
-//    }
+    }
 
-//    setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
+    setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
 
 //    if (timeBetweenXTicksInMs >= 1000 * 86400) {
 //        xAxis->setFormat("dd/MM");
@@ -92,5 +92,47 @@ void NormalsVisualizer::drawChart(QList<QPointF> points) {
     if (series->attachedAxes().length() == 0) {
         series->attachAxis(xAxis);
         series->attachAxis(yAxis);
+    }
+}
+
+void NormalsVisualizer::setYAxisRange(double maxValue, double minValue) {
+    double difference = maxValue - minValue;
+    maxValue += 0.1 * difference;
+    minValue -= 0.1 * difference;
+    yAxis->setRange(minValue, maxValue);
+    setYAxisTicks(maxValue, minValue);
+}
+
+void NormalsVisualizer::setYAxisTicks(double maxValue, double minValue) {
+    double difference = maxValue - minValue;
+    if (difference < 0.7 && _measurementType != "humidity") {
+        yAxis->setTickInterval(0.1);
+    }
+    else if (difference < 1.3 && _measurementType != "humidity") {
+        yAxis->setTickInterval(0.2);
+    }
+    else if (difference < 2.0 && _measurementType != "humidity") {
+        yAxis->setTickInterval(0.4);
+    }
+    else if (difference < 3.1 && _measurementType != "humidity") {
+        yAxis->setTickInterval(0.5);
+    }
+    else if (difference < 6.1) {
+        yAxis->setTickInterval(1.0);
+    }
+    else if (difference < 12) {
+        yAxis->setTickInterval(2.0);
+    }
+    else if (difference < 15 && _measurementType != "humidity") {
+        yAxis->setTickInterval(2.5);
+    }
+    else if (difference < 31) {
+        yAxis->setTickInterval(5.0);
+    }
+    else if (difference < 61) {
+        yAxis->setTickInterval(10);
+    }
+    else {
+        yAxis->setTickInterval(20);
     }
 }
