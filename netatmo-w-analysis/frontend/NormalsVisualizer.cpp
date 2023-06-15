@@ -1,7 +1,9 @@
 #include "NormalsVisualizer.h"
 
-NormalsVisualizer::NormalsVisualizer() : QChartView()
+NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QChartView()
 {
+    _computer = computer;
+
     xAxis = new QDateTimeAxis();
     xAxis->setFormat("dd/MM");
     xAxis->setTickCount(13);
@@ -23,6 +25,24 @@ NormalsVisualizer::NormalsVisualizer() : QChartView()
     chart->setLocalizeNumbers(true);
 
     setChart(chart);
+
+
+
+    QList<QPointF> points = QList<QPointF>();
+
+    for (QDate date = QDate(2020, 1, 1); date.year() < 2021; date = date.addDays(1)) {
+        long long x = QDateTime(date).toMSecsSinceEpoch();
+        // to be adapted
+        double y = _computer->normalMeasurementByMovingAverage("OutdoorDailyRecords",
+                                                               date,
+                                                               "maxHumidity",
+                                                               61);
+        points.append(QPointF(x, y));
+    }
+
+    setMeasurementType("humidity");
+    drawChart(points);
+
 }
 
 void NormalsVisualizer::drawChart(QList<QPointF> points) {

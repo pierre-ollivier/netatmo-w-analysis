@@ -457,19 +457,7 @@ void MainWindow::changeChartsOptions() {
 
 void MainWindow::showNormals() {
     NormalComputer computer = NormalComputer(dbHandlerProd);
-    QList<QPointF> points = QList<QPointF>();
 
-    for (QDate date = QDate(2020, 1, 1); date.year() < 2021; date = date.addDays(1)) {
-        long long x = QDateTime(date).toMSecsSinceEpoch();
-        // to be adapted
-        double y = computer.normalMeasurementByMovingAverage("OutdoorDailyRecords",
-                                                              date,
-                                                              "maxHumidity",
-                                                              61);
-        points.append(QPointF(x, y));
-    }
-    NormalsVisualizer *visualizer = new NormalsVisualizer();
-    visualizer->setMeasurementType("humidity");
-    visualizer->drawChart(points);
+    NormalsVisualizer *visualizer = new NormalsVisualizer(&computer);
     visualizer->show();
 }
