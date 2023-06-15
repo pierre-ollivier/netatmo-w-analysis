@@ -63,21 +63,23 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     mainLayout->addWidget(operationsGroupBox, 2, 0);
     setLayout(mainLayout);
 
-    QList<QPointF> points = QList<QPointF>();
-
-    for (QDate date = QDate(2020, 1, 1); date.year() < 2021; date = date.addDays(1)) {
-        long long x = QDateTime(date).toMSecsSinceEpoch();
-        // to be adapted
-        double y = _computer->normalMeasurementByMovingAverage("OutdoorDailyRecords",
-                                                               date,
-                                                               "maxHumidity",
-                                                               61);
-        points.append(QPointF(x, y));
-    }
-
-    setMeasurementType("humidity");
+    QList<QPointF> points = createChartData("OutdoorDailyRecords", "minTemperature", 41);
+    setMeasurementType("temperature");
     drawChart(points);
 
+}
+
+QList<QPointF> NormalsVisualizer::createChartData(QString tableName, QString measurement, int daysCount) {
+    QList<QPointF> points = QList<QPointF>();
+    for (QDate date = QDate(2020, 1, 1); date.year() < 2021; date = date.addDays(1)) {
+        long long x = QDateTime(date).toMSecsSinceEpoch();
+        double y = _computer->normalMeasurementByMovingAverage(tableName,
+                                                               date,
+                                                               measurement,
+                                                               daysCount);
+        points.append(QPointF(x, y));
+    }
+    return points;
 }
 
 void NormalsVisualizer::drawChart(QList<QPointF> points) {
