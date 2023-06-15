@@ -1,8 +1,10 @@
 #include "NormalsVisualizer.h"
 
-NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QChartView()
+NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
 {
     _computer = computer;
+
+    view = new QChartView();
 
     xAxis = new QDateTimeAxis();
     xAxis->setFormat("dd/MM");
@@ -24,9 +26,42 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QChartView()
     chart->addSeries(series);
     chart->setLocalizeNumbers(true);
 
-    setChart(chart);
+    view->setChart(chart);
+
+    temperatureOption = new QRadioButton("Température");
+    humidityOption = new QRadioButton("Humidité");
+    dewPointOption = new QRadioButton("Point de rosée");
+    humidexOption = new QRadioButton("Humidex");
+    temperatureOption->setChecked(true);
+
+    maxOption = new QRadioButton("Maximum");
+    minOption = new QRadioButton("Minimum");
+    avgOption = new QRadioButton("Moyenne");
+    maxOption->setChecked(true);
 
 
+    measurementsLayout = new QHBoxLayout();
+    measurementsLayout->addWidget(temperatureOption, 0, Qt::AlignCenter);
+    measurementsLayout->addWidget(humidityOption, 0, Qt::AlignCenter);
+    measurementsLayout->addWidget(dewPointOption, 0, Qt::AlignCenter);
+    measurementsLayout->addWidget(humidexOption, 0, Qt::AlignCenter);
+
+    measurementsGroupBox = new QGroupBox("");
+    measurementsGroupBox->setLayout(measurementsLayout);
+
+    operationsLayout = new QHBoxLayout();
+    operationsLayout->addWidget(maxOption, 0, Qt::AlignCenter);
+    operationsLayout->addWidget(minOption, 0, Qt::AlignCenter);
+    operationsLayout->addWidget(avgOption, 0, Qt::AlignCenter);
+
+    operationsGroupBox = new QGroupBox("");
+    operationsGroupBox->setLayout(operationsLayout);
+
+    mainLayout = new QGridLayout();
+    mainLayout->addWidget(view, 0, 0);
+    mainLayout->addWidget(measurementsGroupBox, 1, 0);
+    mainLayout->addWidget(operationsGroupBox, 2, 0);
+    setLayout(mainLayout);
 
     QList<QPointF> points = QList<QPointF>();
 
