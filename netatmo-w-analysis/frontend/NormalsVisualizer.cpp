@@ -12,7 +12,7 @@ NormalsVisualizer::NormalsVisualizer() : QChartView()
     yAxis = new QValueAxis();
     yAxis->setLabelFormat(QString("%.1f") + unitWithTrailingSpace);
     yAxis->setRange(0, 30);
-//    yAxis->setTickType(QValueAxis::TicksDynamic);
+    yAxis->setTickType(QValueAxis::TicksDynamic);
 
     series = new QLineSeries();
 
@@ -64,7 +64,7 @@ void NormalsVisualizer::drawChart(QList<QPointF> points) {
 
     setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
 
-//    if (timeBetweenXTicksInMs >= 1000 * 86400) {
+//    if (timeBetweenXTicksInMs >= 1000 * 86400) {s
 //        xAxis->setFormat("dd/MM");
 //    }
 //    else xAxis->setFormat("hh:mm");
