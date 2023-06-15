@@ -464,7 +464,7 @@ void MainWindow::showNormals() {
         // to be adapted
         double y = computer.normalMeasurementByMovingAverage("OutdoorDailyRecords",
                                                               date,
-                                                              "maxTemperature",
+                                                              "maxHumidity",
                                                               61);
         points.append(QPointF(x, y));
     }
