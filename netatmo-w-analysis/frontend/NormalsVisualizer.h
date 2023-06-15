@@ -18,7 +18,7 @@ private:
     QValueAxis *yAxis;
     QLineSeries *series;
 
-    QString _measurementType = "temperature";
+    QString _measurementType = "humidity";
 };
 
 #endif // NORMALSVISUALIZER_H

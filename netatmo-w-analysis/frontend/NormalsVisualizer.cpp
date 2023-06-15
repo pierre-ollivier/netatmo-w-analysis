@@ -64,23 +64,18 @@ void NormalsVisualizer::drawChart(QList<QPointF> points) {
 
     setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
 
-//    if (timeBetweenXTicksInMs >= 1000 * 86400) {s
-//        xAxis->setFormat("dd/MM");
-//    }
-//    else xAxis->setFormat("hh:mm");
-
-//    if (_measurementType == "temperature") {
-//        yAxis->setLabelFormat(QString("%.1f") + " °C");
-//    }
-//    else if (_measurementType == "humidity") {
-//        yAxis->setLabelFormat(QString("%.0f") + " %");
-//    }
-//    else if (_measurementType == "dewPoint") {
-//        yAxis->setLabelFormat(QString("%.1f") + " °C");
-//    }
-//    else if (_measurementType == "humidex") {
-//        yAxis->setLabelFormat(QString("%.1f") + "");
-//    }
+    if (_measurementType == "temperature") {
+        yAxis->setLabelFormat(QString("%.1f") + " °C");
+    }
+    else if (_measurementType == "humidity") {
+        yAxis->setLabelFormat(QString("%.0f") + " %");
+    }
+    else if (_measurementType == "dewPoint") {
+        yAxis->setLabelFormat(QString("%.1f") + " °C");
+    }
+    else if (_measurementType == "humidex") {
+        yAxis->setLabelFormat(QString("%.1f") + "");
+    }
 
     if (chart->axes().length() == 0) {
         chart->addAxis(xAxis, Qt::AlignBottom);
