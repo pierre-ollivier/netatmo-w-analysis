@@ -56,6 +56,11 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     connect(maxOption, SIGNAL(clicked(bool)), SLOT(changeChartOptions()));
     connect(avgOption, SIGNAL(clicked(bool)), SLOT(changeChartOptions()));
 
+    stdev0Option = new QRadioButton("0");
+    stdev1Option = new QRadioButton("1");
+    stdev2Option = new QRadioButton("2");
+    stdev0Option->setChecked(true);
+
     indoorOrOutdoorCheckBox = new QCheckBox("Intérieur");
     connect(indoorOrOutdoorCheckBox, SIGNAL(clicked()), SLOT(changeChartOptions()));
 
@@ -87,10 +92,20 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     operationsGroupBox = new QGroupBox("");
     operationsGroupBox->setLayout(operationsLayout);
 
+    stdevLayout = new QHBoxLayout();
+    stdevLayout->addWidget(new QLabel("Écarts-types : "), 0, Qt::AlignLeft);
+    stdevLayout->addWidget(stdev0Option, 0, Qt::AlignCenter);
+    stdevLayout->addWidget(stdev1Option, 0, Qt::AlignCenter);
+    stdevLayout->addWidget(stdev2Option, 0, Qt::AlignCenter);
+
+    stdevGroupBox = new QGroupBox();
+    stdevGroupBox->setLayout(stdevLayout);
+
     mainLayout = new QGridLayout();
     mainLayout->addWidget(view, 0, 0);
     mainLayout->addWidget(measurementsGroupBox, 1, 0);
     mainLayout->addWidget(operationsGroupBox, 2, 0);
+    mainLayout->addWidget(stdevGroupBox, 3, 0);
     setLayout(mainLayout);
     changeChartOptions();
 

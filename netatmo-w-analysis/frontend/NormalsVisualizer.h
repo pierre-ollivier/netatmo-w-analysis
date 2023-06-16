@@ -51,6 +51,12 @@ private:
     QHBoxLayout *measurementsLayout;
     QGroupBox *measurementsGroupBox;
 
+    QRadioButton *stdev0Option;
+    QRadioButton *stdev1Option;
+    QRadioButton *stdev2Option;
+    QHBoxLayout *stdevLayout;
+    QGroupBox *stdevGroupBox;
+
     QCheckBox *indoorOrOutdoorCheckBox;
     QSlider *daysSlider;
 
