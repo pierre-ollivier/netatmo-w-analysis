@@ -31,6 +31,13 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
         chart->addSeries(series);
     }
 
+    drawSeries = QMap<int, bool>();
+    drawSeries.insert(-2, false);
+    drawSeries.insert(-1, false);
+    drawSeries.insert(0, true);
+    drawSeries.insert(1, false);
+    drawSeries.insert(2, false);
+
 //    chart->addSeries(series);
     chart->setLocalizeNumbers(true);
 
@@ -171,6 +178,54 @@ void NormalsVisualizer::drawChart(QList<QPointF> points) {
         seriesMap->value(0)->attachAxis(xAxis);
         seriesMap->value(0)->attachAxis(yAxis);
     }
+}
+
+void NormalsVisualizer::drawChart(QMap<int, QList<QPointF>> pointsMap) {
+    QVariant maxOfSeries = QVariant();
+    QVariant minOfSeries = QVariant();
+
+    if (_measurementType == "temperature") {
+        yAxis->setLabelFormat(QString("%.1f") + " °C");
+    }
+    else if (_measurementType == "humidity") {
+        yAxis->setLabelFormat(QString("%.0f") + " %");
+    }
+    else if (_measurementType == "dewPoint") {
+        yAxis->setLabelFormat(QString("%.1f") + " °C");
+    }
+    else if (_measurementType == "humidex") {
+        yAxis->setLabelFormat(QString("%.1f") + "");
+    }
+
+    if (chart->axes().length() == 0) {
+        chart->addAxis(xAxis, Qt::AlignBottom);
+        chart->addAxis(yAxis, Qt::AlignLeft);
+    }
+
+    chart->setLocalizeNumbers(true);
+
+    for (int stdCount = -2; stdCount <= 2; stdCount++) {
+        if (drawSeries.value(stdCount)) {
+
+            QList<QPointF> points = pointsMap.value(stdCount);
+            seriesMap->value(stdCount)->clear();
+            seriesMap->value(stdCount)->append(points);
+
+            for (QPointF point: points) {
+                if (maxOfSeries.isNull() || point.y() > maxOfSeries.toDouble()) maxOfSeries = point.y();
+                if (minOfSeries.isNull() || point.y() < minOfSeries.toDouble()) minOfSeries = point.y();
+            }
+
+//            setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
+
+            if (seriesMap->value(stdCount)->attachedAxes().length() == 0) {
+                seriesMap->value(stdCount)->attachAxis(xAxis);
+                seriesMap->value(stdCount)->attachAxis(yAxis);
+            }
+        }
+    }
+
+    setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
 }
 
 void NormalsVisualizer::setYAxisRange(double maxValue, double minValue) {
