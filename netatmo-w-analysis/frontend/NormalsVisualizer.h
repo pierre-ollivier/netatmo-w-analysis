@@ -46,6 +46,9 @@ private:
     QHBoxLayout *measurementsLayout;
     QGroupBox *measurementsGroupBox;
 
+    QCheckBox *indoorOrOutdoorCheckBox;
+    QSlider *daysSlider;
+
     QGridLayout *mainLayout;
 };
 
