@@ -48,20 +48,30 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     QObject::connect(maxOption, SIGNAL(clicked(bool)), this, SLOT(changeChartOptions()));
     QObject::connect(avgOption, SIGNAL(clicked(bool)), this, SLOT(changeChartOptions()));
 
+    indoorOrOutdoorCheckBox = new QCheckBox("Intérieur");
+    daysSlider = new QSlider();
+    daysSlider->setOrientation(Qt::Horizontal);
+    daysSlider->setRange(1, 121);
+    daysSlider->setTickInterval(20);
+    daysSlider->setTickPosition(QSlider::TicksBelow);
+    daysSlider->setValue(41);
+    daysSlider->setMinimumWidth(200);
 
     measurementsLayout = new QHBoxLayout();
     measurementsLayout->addWidget(temperatureOption, 0, Qt::AlignCenter);
     measurementsLayout->addWidget(humidityOption, 0, Qt::AlignCenter);
     measurementsLayout->addWidget(dewPointOption, 0, Qt::AlignCenter);
     measurementsLayout->addWidget(humidexOption, 0, Qt::AlignCenter);
+    measurementsLayout->addWidget(indoorOrOutdoorCheckBox, 0, Qt::AlignCenter);
 
     measurementsGroupBox = new QGroupBox("");
     measurementsGroupBox->setLayout(measurementsLayout);
 
     operationsLayout = new QHBoxLayout();
-    operationsLayout->addWidget(maxOption, 0, Qt::AlignCenter);
-    operationsLayout->addWidget(minOption, 0, Qt::AlignCenter);
-    operationsLayout->addWidget(avgOption, 0, Qt::AlignCenter);
+    operationsLayout->addWidget(maxOption, 1, Qt::AlignCenter);
+    operationsLayout->addWidget(minOption, 1, Qt::AlignCenter);
+    operationsLayout->addWidget(avgOption, 1, Qt::AlignCenter);
+    operationsLayout->addWidget(daysSlider, 2, Qt::AlignCenter);
 
     operationsGroupBox = new QGroupBox("");
     operationsGroupBox->setLayout(operationsLayout);
