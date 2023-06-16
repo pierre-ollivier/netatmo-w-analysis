@@ -12,7 +12,10 @@ class NormalsVisualizer : public QWidget
 public:
     NormalsVisualizer(NormalComputer *computer);
 
-    QList<QPointF> createChartData(QString tableName, QString measurement, int daysCount);
+    QList<QPointF> createChartData(QString tableName,
+                                   QString measurement,
+                                   int daysCount,
+                                   int standardDeviations = 0);
     void drawChart(QList<QPointF> points);
 
     void setYAxisRange(double maxValue, double minValue);

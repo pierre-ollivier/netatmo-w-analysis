@@ -14,6 +14,12 @@ public:
             QString measurement,
             int daysCount);
 
+    double stdevMeasurementByMovingAverage(
+            QString tableName,
+            QDate date,
+            QString measurement,
+            int daysCount);
+
 private:
     DatabaseHandler *_dbHandler;
 };
