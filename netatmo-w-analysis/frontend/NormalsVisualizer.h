@@ -31,7 +31,9 @@ private:
     QChartView *view;
     QDateTimeAxis *xAxis;
     QValueAxis *yAxis;
-    QLineSeries *series;
+//    QLineSeries *series;
+
+    QMap<int, QLineSeries *> *seriesMap;
 
     NormalComputer *_computer;
     QString _measurementType = "temperature";

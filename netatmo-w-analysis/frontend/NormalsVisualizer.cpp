@@ -18,12 +18,20 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     yAxis->setRange(0, 30);
     yAxis->setTickType(QValueAxis::TicksDynamic);
 
-    series = new QLineSeries();
+//    series = new QLineSeries();
 
     chart = new QChart();
-
     chart->legend()->hide();
-    chart->addSeries(series);
+
+    seriesMap = new QMap<int, QLineSeries *>();
+
+    for (int stdCount = -2; stdCount <= 2; stdCount++) {
+        QLineSeries *series = new QLineSeries();
+        seriesMap->insert(stdCount, series);
+        chart->addSeries(series);
+    }
+
+//    chart->addSeries(series);
     chart->setLocalizeNumbers(true);
 
     view->setChart(chart);
@@ -114,8 +122,8 @@ void NormalsVisualizer::drawChart(QList<QPointF> points) {
     QVariant maxOfSeries = QVariant();
     QVariant minOfSeries = QVariant();
 
-    series->clear();
-    series->append(points);
+    seriesMap->value(0)->clear();
+    seriesMap->value(0)->append(points);
 
     for (QPointF point: points) {
         if (maxOfSeries.isNull() || point.y() > maxOfSeries.toDouble()) maxOfSeries = point.y();
@@ -144,9 +152,9 @@ void NormalsVisualizer::drawChart(QList<QPointF> points) {
 
     chart->setLocalizeNumbers(true);
 
-    if (series->attachedAxes().length() == 0) {
-        series->attachAxis(xAxis);
-        series->attachAxis(yAxis);
+    if (seriesMap->value(0)->attachedAxes().length() == 0) {
+        seriesMap->value(0)->attachAxis(xAxis);
+        seriesMap->value(0)->attachAxis(yAxis);
     }
 }
 
