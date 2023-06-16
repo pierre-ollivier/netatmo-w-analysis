@@ -34,21 +34,23 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     humidexOption = new QRadioButton("Humidex");
     temperatureOption->setChecked(true);
 
-    QObject::connect(temperatureOption, SIGNAL(clicked(bool)), this, SLOT(changeChartOptions()));
-    QObject::connect(humidityOption, SIGNAL(clicked(bool)), this, SLOT(changeChartOptions()));
-    QObject::connect(dewPointOption, SIGNAL(clicked(bool)), this, SLOT(changeChartOptions()));
-    QObject::connect(humidexOption, SIGNAL(clicked(bool)), this, SLOT(changeChartOptions()));
+    connect(temperatureOption, SIGNAL(clicked(bool)), SLOT(changeChartOptions()));
+    connect(humidityOption, SIGNAL(clicked(bool)), SLOT(changeChartOptions()));
+    connect(dewPointOption, SIGNAL(clicked(bool)), SLOT(changeChartOptions()));
+    connect(humidexOption, SIGNAL(clicked(bool)), SLOT(changeChartOptions()));
 
     maxOption = new QRadioButton("Maximum");
     minOption = new QRadioButton("Minimum");
     avgOption = new QRadioButton("Moyenne");
     maxOption->setChecked(true);
 
-    QObject::connect(minOption, SIGNAL(clicked(bool)), this, SLOT(changeChartOptions()));
-    QObject::connect(maxOption, SIGNAL(clicked(bool)), this, SLOT(changeChartOptions()));
-    QObject::connect(avgOption, SIGNAL(clicked(bool)), this, SLOT(changeChartOptions()));
+    connect(minOption, SIGNAL(clicked(bool)), SLOT(changeChartOptions()));
+    connect(maxOption, SIGNAL(clicked(bool)), SLOT(changeChartOptions()));
+    connect(avgOption, SIGNAL(clicked(bool)), SLOT(changeChartOptions()));
 
     indoorOrOutdoorCheckBox = new QCheckBox("Intérieur");
+    connect(indoorOrOutdoorCheckBox, SIGNAL(clicked()), SLOT(changeChartOptions()));
+
     daysSlider = new QSlider();
     daysSlider->setOrientation(Qt::Horizontal);
     daysSlider->setRange(1, 121);
@@ -56,6 +58,7 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     daysSlider->setTickPosition(QSlider::TicksBelow);
     daysSlider->setValue(41);
     daysSlider->setMinimumWidth(200);
+    connect(daysSlider, SIGNAL(valueChanged(int)), SLOT(changeChartOptions()));
 
     measurementsLayout = new QHBoxLayout();
     measurementsLayout->addWidget(temperatureOption, 0, Qt::AlignCenter);
@@ -185,6 +188,7 @@ void NormalsVisualizer::setMeasurementType(QString measurementType) {
 }
 
 void NormalsVisualizer::changeChartOptions() {
+    QString tableName = indoorOrOutdoorCheckBox->isChecked() ? "IndoorDailyRecords" : "OutdoorDailyRecords";
     QString measurementType = "";
     if (maxOption->isChecked()) measurementType += "max";
     if (minOption->isChecked()) measurementType += "min";
@@ -195,6 +199,6 @@ void NormalsVisualizer::changeChartOptions() {
     if (dewPointOption->isChecked()) {measurementType += "DewPoint"; setMeasurementType("dewPoint");}
     if (humidexOption->isChecked()) {measurementType += "Humidex"; setMeasurementType("humidex");}
 
-    QList<QPointF> points = createChartData("OutdoorDailyRecords", measurementType, 41);
+    QList<QPointF> points = createChartData(tableName, measurementType, daysSlider->value());
     drawChart(points);
 }
