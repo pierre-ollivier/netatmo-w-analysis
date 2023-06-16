@@ -88,7 +88,10 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
 
 }
 
-QList<QPointF> NormalsVisualizer::createChartData(QString tableName, QString measurement, int daysCount) {
+QList<QPointF> NormalsVisualizer::createChartData(QString tableName,
+                                                  QString measurement,
+                                                  int daysCount,
+                                                  int standardDeviations) {
     QList<QPointF> points = QList<QPointF>();
     for (QDate date = QDate(2020, 1, 1); date.year() < 2021; date = date.addDays(1)) {
         long long x = QDateTime(date).toMSecsSinceEpoch();
@@ -96,6 +99,12 @@ QList<QPointF> NormalsVisualizer::createChartData(QString tableName, QString mea
                                                                date,
                                                                measurement,
                                                                daysCount);
+        if (standardDeviations != 0) {
+            y += standardDeviations * _computer->stdevMeasurementByMovingAverage(tableName,
+                                                                                 date,
+                                                                                 measurement,
+                                                                                 daysCount);
+        }
         points.append(QPointF(x, y));
     }
     return points;
