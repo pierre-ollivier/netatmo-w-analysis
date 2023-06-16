@@ -1,4 +1,5 @@
 #include "NormalComputer.h"
+#include <cmath>
 
 NormalComputer::NormalComputer(DatabaseHandler *dbHandler)
 {
@@ -38,7 +39,8 @@ double NormalComputer::stdevMeasurementByMovingAverage(
         QString measurement,
         int daysCount) {
 
-    QString query = "SELECT STDEV(" + measurement + ") FROM " + tableName + " ";
+    QString query = "SELECT AVG(" + measurement + " * " + measurement + ") "
+                    "- AVG(" + measurement + ") * AVG(" + measurement + ") FROM " + tableName + " ";
     int dayGap = daysCount / 2; // number of days on each side
     QDate beginDate = date.addDays(-dayGap), endDate = date.addDays(dayGap);
 
@@ -56,5 +58,5 @@ double NormalComputer::stdevMeasurementByMovingAverage(
                 + QString::number(100 * endDate.month() + endDate.day());
     }
 
-    return _dbHandler->getResultFromDatabase(query).toDouble();
+    return std::sqrt(_dbHandler->getResultFromDatabase(query).toDouble());
 }

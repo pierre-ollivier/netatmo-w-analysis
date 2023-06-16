@@ -33,9 +33,9 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
 
     drawSeries = QMap<int, bool>();
     drawSeries.insert(-2, false);
-    drawSeries.insert(-1, false);
+    drawSeries.insert(-1, true);
     drawSeries.insert(0, true);
-    drawSeries.insert(1, false);
+    drawSeries.insert(1, true);
     drawSeries.insert(2, false);
 
 //    chart->addSeries(series);
@@ -286,6 +286,12 @@ void NormalsVisualizer::changeChartOptions() {
     if (dewPointOption->isChecked()) {measurementType += "DewPoint"; setMeasurementType("dewPoint");}
     if (humidexOption->isChecked()) {measurementType += "Humidex"; setMeasurementType("humidex");}
 
-    QList<QPointF> points = createChartData(tableName, measurementType, daysSlider->value());
-    drawChart(points);
+//    QList<QPointF> points = createChartData(tableName, measurementType, daysSlider->value());
+    QMap<int, QList<QPointF>> pointsMap = QMap<int, QList<QPointF>>();
+    for (int stdCount = -2; stdCount <= 2; stdCount++) {
+        QList<QPointF> points = createChartData(tableName, measurementType, daysSlider->value(), stdCount);
+        pointsMap.insert(stdCount, points);
+    }
+//    drawChart(points);
+    drawChart(pointsMap);
 }
