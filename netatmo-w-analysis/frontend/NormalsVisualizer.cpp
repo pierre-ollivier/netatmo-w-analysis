@@ -76,6 +76,10 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     stdev2Option = new QRadioButton("2");
     stdev0Option->setChecked(true);
 
+    connect(stdev0Option, SIGNAL(clicked(bool)), SLOT(changeChartOptions()));
+    connect(stdev1Option, SIGNAL(clicked(bool)), SLOT(changeChartOptions()));
+    connect(stdev2Option, SIGNAL(clicked(bool)), SLOT(changeChartOptions()));
+
     indoorOrOutdoorCheckBox = new QCheckBox("Intérieur");
     connect(indoorOrOutdoorCheckBox, SIGNAL(clicked()), SLOT(changeChartOptions()));
 
@@ -204,6 +208,12 @@ void NormalsVisualizer::drawChart(QMap<int, QList<QPointF>> pointsMap) {
     else if (_measurementType == "humidex") {
         yAxis->setLabelFormat(QString("%.1f") + "");
     }
+
+    drawSeries[-2] = stdev2Option->isChecked();
+    drawSeries[2] = stdev2Option->isChecked();
+    drawSeries[-1] = stdev2Option->isChecked() || stdev1Option->isChecked();
+    drawSeries[1] = stdev2Option->isChecked() || stdev1Option->isChecked();
+    drawSeries[0] = true;
 
     if (chart->axes().length() == 0) {
         chart->addAxis(xAxis, Qt::AlignBottom);
