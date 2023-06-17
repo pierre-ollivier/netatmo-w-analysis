@@ -26,15 +26,15 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     seriesMap = new QMap<int, QLineSeries *>();
 
     colorSeries = QMap<int, QColor>();
-    colorSeries.insert(-2, QColor(0, 0, 80));
+    colorSeries.insert(-2, QColor(0, 0, 150));
     colorSeries.insert(-1, QColor(30, 30, 255));
     colorSeries.insert(0, QColor(1, 1, 1));
     colorSeries.insert(1, QColor(255, 30, 30));
-    colorSeries.insert(2, QColor(80, 0, 0));
+    colorSeries.insert(2, QColor(150, 0, 0));
 
     for (int stdCount = -2; stdCount <= 2; stdCount++) {
         QLineSeries *series = new QLineSeries();
-        series->setColor(colorSeries.value(stdCount));
+        series->setPen(QPen(QBrush(colorSeries.value(stdCount)), 2));
         seriesMap->insert(stdCount, series);
         chart->addSeries(series);
     }
