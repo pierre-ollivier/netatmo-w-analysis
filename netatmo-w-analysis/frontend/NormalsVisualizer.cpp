@@ -6,19 +6,27 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
 
     view = new QChartView();
 
-    xAxis = new QDateTimeAxis();
-    xAxis->setFormat("dd/MM");
-    xAxis->setTickCount(13);
-    xAxis->setLineVisible(false);
-    xAxis->setRange(QDateTime(QDate(2020, 1, 1)), QDateTime(QDate(2020, 12, 31)));
+    xAxis = new QCategoryAxis();
+    xAxis->setMin(QDateTime(QDate(2020, 1, 1)).toMSecsSinceEpoch());
+    xAxis->setMax(QDateTime(QDate(2021, 1, 1)).toMSecsSinceEpoch());
+    xAxis->append("J", QDateTime(QDate(2020, 2, 1)).toMSecsSinceEpoch());
+    xAxis->append("F", QDateTime(QDate(2020, 3, 1)).toMSecsSinceEpoch());
+    xAxis->append("M", QDateTime(QDate(2020, 4, 1)).toMSecsSinceEpoch());
+    xAxis->append("A", QDateTime(QDate(2020, 5, 1)).toMSecsSinceEpoch());
+    xAxis->append(" M ", QDateTime(QDate(2020, 6, 1)).toMSecsSinceEpoch());
+    xAxis->append(" J ", QDateTime(QDate(2020, 7, 1)).toMSecsSinceEpoch());
+    xAxis->append("  J  ", QDateTime(QDate(2020, 8, 1)).toMSecsSinceEpoch());
+    xAxis->append(" A ", QDateTime(QDate(2020, 9, 1)).toMSecsSinceEpoch());
+    xAxis->append("S", QDateTime(QDate(2020, 10, 1)).toMSecsSinceEpoch());
+    xAxis->append("O", QDateTime(QDate(2020, 11, 1)).toMSecsSinceEpoch());
+    xAxis->append("N", QDateTime(QDate(2020, 12, 1)).toMSecsSinceEpoch());
+    xAxis->append("D", QDateTime(QDate(2021, 1, 1)).toMSecsSinceEpoch());
 
     QString unitWithTrailingSpace = " °C";
     yAxis = new QValueAxis();
     yAxis->setLabelFormat(QString("%.1f") + unitWithTrailingSpace);
     yAxis->setRange(0, 30);
     yAxis->setTickType(QValueAxis::TicksDynamic);
-
-//    series = new QLineSeries();
 
     chart = new QChart();
     chart->legend()->hide();
@@ -46,7 +54,6 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     drawSeries.insert(1, true);
     drawSeries.insert(2, false);
 
-//    chart->addSeries(series);
     chart->setLocalizeNumbers(true);
 
     view->setChart(chart);
@@ -152,46 +159,6 @@ QList<QPointF> NormalsVisualizer::createChartData(QString tableName,
     return points;
 }
 
-void NormalsVisualizer::drawChart(QList<QPointF> points) {
-    QVariant maxOfSeries = QVariant();
-    QVariant minOfSeries = QVariant();
-
-    seriesMap->value(0)->clear();
-    seriesMap->value(0)->append(points);
-
-    for (QPointF point: points) {
-        if (maxOfSeries.isNull() || point.y() > maxOfSeries.toDouble()) maxOfSeries = point.y();
-        if (minOfSeries.isNull() || point.y() < minOfSeries.toDouble()) minOfSeries = point.y();
-    }
-
-    setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
-
-    if (_measurementType == "temperature") {
-        yAxis->setLabelFormat(QString("%.1f") + " °C");
-    }
-    else if (_measurementType == "humidity") {
-        yAxis->setLabelFormat(QString("%.0f") + " %");
-    }
-    else if (_measurementType == "dewPoint") {
-        yAxis->setLabelFormat(QString("%.1f") + " °C");
-    }
-    else if (_measurementType == "humidex") {
-        yAxis->setLabelFormat(QString("%.1f") + "");
-    }
-
-    if (chart->axes().length() == 0) {
-        chart->addAxis(xAxis, Qt::AlignBottom);
-        chart->addAxis(yAxis, Qt::AlignLeft);
-    }
-
-    chart->setLocalizeNumbers(true);
-
-    if (seriesMap->value(0)->attachedAxes().length() == 0) {
-        seriesMap->value(0)->attachAxis(xAxis);
-        seriesMap->value(0)->attachAxis(yAxis);
-    }
-}
-
 void NormalsVisualizer::drawChart(QMap<int, QList<QPointF>> pointsMap) {
     QVariant maxOfSeries = QVariant();
     QVariant minOfSeries = QVariant();
@@ -233,8 +200,6 @@ void NormalsVisualizer::drawChart(QMap<int, QList<QPointF>> pointsMap) {
                 if (maxOfSeries.isNull() || point.y() > maxOfSeries.toDouble()) maxOfSeries = point.y();
                 if (minOfSeries.isNull() || point.y() < minOfSeries.toDouble()) minOfSeries = point.y();
             }
-
-//            setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
 
             if (seriesMap->value(stdCount)->attachedAxes().length() == 0) {
                 seriesMap->value(stdCount)->attachAxis(xAxis);
@@ -304,12 +269,10 @@ void NormalsVisualizer::changeChartOptions() {
     if (dewPointOption->isChecked()) {measurementType += "DewPoint"; setMeasurementType("dewPoint");}
     if (humidexOption->isChecked()) {measurementType += "Humidex"; setMeasurementType("humidex");}
 
-//    QList<QPointF> points = createChartData(tableName, measurementType, daysSlider->value());
     QMap<int, QList<QPointF>> pointsMap = QMap<int, QList<QPointF>>();
     for (int stdCount = -2; stdCount <= 2; stdCount++) {
         QList<QPointF> points = createChartData(tableName, measurementType, daysSlider->value(), stdCount);
         pointsMap.insert(stdCount, points);
     }
-//    drawChart(points);
     drawChart(pointsMap);
 }
