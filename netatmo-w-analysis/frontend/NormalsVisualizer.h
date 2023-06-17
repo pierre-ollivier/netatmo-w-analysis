@@ -16,7 +16,6 @@ public:
                                    QString measurement,
                                    int daysCount,
                                    int standardDeviations = 0);
-    void drawChart(QList<QPointF> points);
     void drawChart(QMap<int, QList<QPointF>> pointsMap);
 
     void setYAxisRange(double maxValue, double minValue);
@@ -30,9 +29,8 @@ public slots:
 private:
     QChart *chart;
     QChartView *view;
-    QDateTimeAxis *xAxis;
+    QCategoryAxis *xAxis;
     QValueAxis *yAxis;
-//    QLineSeries *series;
 
     QMap<int, QLineSeries *> *seriesMap;
     QMap<int, bool> drawSeries;
