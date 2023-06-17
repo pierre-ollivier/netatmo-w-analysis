@@ -7,20 +7,20 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     view = new QChartView();
 
     xAxis = new QCategoryAxis();
-    xAxis->setMin(QDateTime(QDate(2020, 1, 1)).toMSecsSinceEpoch());
-    xAxis->setMax(QDateTime(QDate(2021, 1, 1)).toMSecsSinceEpoch());
-    xAxis->append("J", QDateTime(QDate(2020, 2, 1)).toMSecsSinceEpoch());
-    xAxis->append("F", QDateTime(QDate(2020, 3, 1)).toMSecsSinceEpoch());
-    xAxis->append("M", QDateTime(QDate(2020, 4, 1)).toMSecsSinceEpoch());
-    xAxis->append("A", QDateTime(QDate(2020, 5, 1)).toMSecsSinceEpoch());
-    xAxis->append(" M ", QDateTime(QDate(2020, 6, 1)).toMSecsSinceEpoch());
-    xAxis->append(" J ", QDateTime(QDate(2020, 7, 1)).toMSecsSinceEpoch());
-    xAxis->append("  J  ", QDateTime(QDate(2020, 8, 1)).toMSecsSinceEpoch());
-    xAxis->append(" A ", QDateTime(QDate(2020, 9, 1)).toMSecsSinceEpoch());
-    xAxis->append("S", QDateTime(QDate(2020, 10, 1)).toMSecsSinceEpoch());
-    xAxis->append("O", QDateTime(QDate(2020, 11, 1)).toMSecsSinceEpoch());
-    xAxis->append("N", QDateTime(QDate(2020, 12, 1)).toMSecsSinceEpoch());
-    xAxis->append("D", QDateTime(QDate(2021, 1, 1)).toMSecsSinceEpoch());
+    xAxis->setMin(QDateTime(QDate(2019, 12, 31), QTime(12, 0)).toMSecsSinceEpoch());
+    xAxis->setMax(QDateTime(QDate(2020, 12, 31), QTime(12, 0)).toMSecsSinceEpoch());
+    xAxis->append("J"    , QDateTime(QDate(2020, 1, 31), QTime(12, 0)).toMSecsSinceEpoch());
+    xAxis->append("F"    , QDateTime(QDate(2020, 2, 29), QTime(12, 0)).toMSecsSinceEpoch());
+    xAxis->append("M"    , QDateTime(QDate(2020, 3, 31), QTime(12, 0)).toMSecsSinceEpoch());
+    xAxis->append("A"    , QDateTime(QDate(2020, 4, 30), QTime(12, 0)).toMSecsSinceEpoch());
+    xAxis->append(" M "  , QDateTime(QDate(2020, 5, 31), QTime(12, 0)).toMSecsSinceEpoch());
+    xAxis->append(" J "  , QDateTime(QDate(2020, 6, 30), QTime(12, 0)).toMSecsSinceEpoch());
+    xAxis->append("  J  ", QDateTime(QDate(2020, 7, 31), QTime(12, 0)).toMSecsSinceEpoch());
+    xAxis->append(" A "  , QDateTime(QDate(2020, 8, 31), QTime(12, 0)).toMSecsSinceEpoch());
+    xAxis->append("S"    , QDateTime(QDate(2020, 9, 30), QTime(12, 0)).toMSecsSinceEpoch());
+    xAxis->append("O"    , QDateTime(QDate(2020, 10, 31), QTime(12, 0)).toMSecsSinceEpoch());
+    xAxis->append("N"    , QDateTime(QDate(2020, 11, 30), QTime(12, 0)).toMSecsSinceEpoch());
+    xAxis->append("D"    , QDateTime(QDate(2020, 12, 31), QTime(12, 0)).toMSecsSinceEpoch());
 
     QString unitWithTrailingSpace = " °C";
     yAxis = new QValueAxis();
