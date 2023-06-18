@@ -34,25 +34,16 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
 
     seriesMap = new QMap<int, QLineSeries *>();
 
-    colorSeries = QMap<int, QColor>();
-    colorSeries.insert(-2, QColor(0, 0, 150));
-    colorSeries.insert(-1, QColor(30, 30, 255));
-    colorSeries.insert(0, QColor(1, 1, 1));
-    colorSeries.insert(1, QColor(255, 30, 30));
-    colorSeries.insert(2, QColor(150, 0, 0));
-
     for (int stdCount = -2; stdCount <= 2; stdCount++) {
         QLineSeries *series = new QLineSeries();
-        series->setPen(QPen(QBrush(colorSeries.value(stdCount)), 2));
         seriesMap->insert(stdCount, series);
-//        chart->addSeries(series);
     }
 
     colorAreaSeries = QMap<double, QColor>();
-    colorAreaSeries.insert(-1.5, QColor(0, 0, 150));
-    colorAreaSeries.insert(-0.5, QColor(30, 30, 255));
-    colorAreaSeries.insert(0.5, QColor(255, 30, 30));
-    colorAreaSeries.insert(1.5, QColor(150, 0, 0));
+    colorAreaSeries.insert(-1.5, QColor(0, 0, 150, 80));
+    colorAreaSeries.insert(-0.5, QColor(30, 30, 255, 80));
+    colorAreaSeries.insert(0.5, QColor(255, 30, 30, 80));
+    colorAreaSeries.insert(1.5, QColor(150, 0, 0, 80));
 
     areaSeriesMap = new QMap<double, QAreaSeries *>();
 
@@ -60,6 +51,7 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
         QAreaSeries *areaSeries = new QAreaSeries(seriesMap->value(stdCount + 1), seriesMap->value(stdCount));
         areaSeries->setColor(colorAreaSeries.value(stdCount + 0.5));
         areaSeries->setBorderColor(colorAreaSeries.value(stdCount + 0.5));
+        areaSeries->setPen(QPen(QBrush(), 0));
         areaSeriesMap->insert(stdCount + 0.5, areaSeries);
         chart->addSeries(areaSeries);
     }
