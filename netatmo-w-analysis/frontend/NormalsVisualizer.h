@@ -36,6 +36,9 @@ private:
     QMap<int, bool> drawSeries;
     QMap<int, QColor> colorSeries;
 
+    QAreaSeries *topAreaSeries;
+    QAreaSeries *bottomAreaSeries;
+
     NormalComputer *_computer;
     QString _measurementType = "temperature";
 

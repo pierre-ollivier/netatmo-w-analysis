@@ -47,6 +47,12 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
         chart->addSeries(series);
     }
 
+    topAreaSeries = new QAreaSeries();
+    bottomAreaSeries = new QAreaSeries();
+
+    chart->addSeries(topAreaSeries);
+    chart->addSeries(bottomAreaSeries);
+
     drawSeries = QMap<int, bool>();
     drawSeries.insert(-2, false);
     drawSeries.insert(-1, true);
