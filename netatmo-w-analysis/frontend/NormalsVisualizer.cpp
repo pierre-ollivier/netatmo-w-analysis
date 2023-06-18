@@ -58,6 +58,8 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
 
     for (int stdCount = -2; stdCount < 2; stdCount++) {
         QAreaSeries *areaSeries = new QAreaSeries(seriesMap->value(stdCount + 1), seriesMap->value(stdCount));
+        areaSeries->setColor(colorAreaSeries.value(stdCount + 0.5));
+        areaSeries->setBorderColor(colorAreaSeries.value(stdCount + 0.5));
         areaSeriesMap->insert(stdCount + 0.5, areaSeries);
         chart->addSeries(areaSeries);
     }
