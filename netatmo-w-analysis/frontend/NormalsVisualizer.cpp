@@ -1,4 +1,5 @@
 #include "NormalsVisualizer.h"
+#include <QPair>
 
 NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
 {
@@ -44,14 +45,22 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
         QLineSeries *series = new QLineSeries();
         series->setPen(QPen(QBrush(colorSeries.value(stdCount)), 2));
         seriesMap->insert(stdCount, series);
-        chart->addSeries(series);
+//        chart->addSeries(series);
     }
 
-    topAreaSeries = new QAreaSeries();
-    bottomAreaSeries = new QAreaSeries();
+    colorAreaSeries = QMap<double, QColor>();
+    colorAreaSeries.insert(-1.5, QColor(0, 0, 150));
+    colorAreaSeries.insert(-0.5, QColor(30, 30, 255));
+    colorAreaSeries.insert(0.5, QColor(255, 30, 30));
+    colorAreaSeries.insert(1.5, QColor(150, 0, 0));
 
-    chart->addSeries(topAreaSeries);
-    chart->addSeries(bottomAreaSeries);
+    areaSeriesMap = new QMap<double, QAreaSeries *>();
+
+    for (int stdCount = -2; stdCount < 2; stdCount++) {
+        QAreaSeries *areaSeries = new QAreaSeries(seriesMap->value(stdCount + 1), seriesMap->value(stdCount));
+        areaSeriesMap->insert(stdCount + 0.5, areaSeries);
+        chart->addSeries(areaSeries);
+    }
 
     drawSeries = QMap<int, bool>();
     drawSeries.insert(-2, false);
@@ -146,7 +155,7 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
 QList<QPointF> NormalsVisualizer::createChartData(QString tableName,
                                                   QString measurement,
                                                   int daysCount,
-                                                  int standardDeviations) {
+                                                  double standardDeviations) {
     QList<QPointF> points = QList<QPointF>();
     for (QDate date = QDate(2020, 1, 1); date.year() < 2021; date = date.addDays(1)) {
         long long x = QDateTime(date).toMSecsSinceEpoch();
@@ -195,29 +204,42 @@ void NormalsVisualizer::drawChart(QMap<int, QList<QPointF>> pointsMap) {
 
     chart->setLocalizeNumbers(true);
 
+//    for (int stdCount = -2; stdCount <= 2; stdCount++) {
+//        if (drawSeries.value(stdCount)) {
+
+//            QList<QPointF> points = pointsMap.value(stdCount);
+//            seriesMap->value(stdCount)->clear();
+//            seriesMap->value(stdCount)->append(points);
+
+//            for (QPointF point: points) {
+//                if (maxOfSeries.isNull() || point.y() > maxOfSeries.toDouble()) maxOfSeries = point.y();
+//                if (minOfSeries.isNull() || point.y() < minOfSeries.toDouble()) minOfSeries = point.y();
+//            }
+
+//            if (seriesMap->value(stdCount)->attachedAxes().length() == 0) {
+//                seriesMap->value(stdCount)->attachAxis(xAxis);
+//                seriesMap->value(stdCount)->attachAxis(yAxis);
+//            }
+//        }
+//        else {
+//            seriesMap->value(stdCount)->clear();
+//        }
+//    }
     for (int stdCount = -2; stdCount <= 2; stdCount++) {
-        if (drawSeries.value(stdCount)) {
+        QList<QPointF> points = pointsMap.value(stdCount);
+        seriesMap->value(stdCount)->clear();
+        seriesMap->value(stdCount)->append(points);
+    }
 
-            QList<QPointF> points = pointsMap.value(stdCount);
-            seriesMap->value(stdCount)->clear();
-            seriesMap->value(stdCount)->append(points);
-
-            for (QPointF point: points) {
-                if (maxOfSeries.isNull() || point.y() > maxOfSeries.toDouble()) maxOfSeries = point.y();
-                if (minOfSeries.isNull() || point.y() < minOfSeries.toDouble()) minOfSeries = point.y();
-            }
-
-            if (seriesMap->value(stdCount)->attachedAxes().length() == 0) {
-                seriesMap->value(stdCount)->attachAxis(xAxis);
-                seriesMap->value(stdCount)->attachAxis(yAxis);
-            }
-        }
-        else {
-            seriesMap->value(stdCount)->clear();
+    for (double stdCount = -1.5; stdCount <= 1.5; stdCount += 1) {
+        if (areaSeriesMap->value(stdCount)->attachedAxes().length() == 0) {
+            areaSeriesMap->value(stdCount)->attachAxis(xAxis);
+            areaSeriesMap->value(stdCount)->attachAxis(yAxis);
         }
     }
 
-    setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
+//    setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
+    setYAxisRange(35, 5);
 }
 
 void NormalsVisualizer::setYAxisRange(double maxValue, double minValue) {

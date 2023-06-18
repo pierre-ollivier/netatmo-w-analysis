@@ -15,7 +15,7 @@ public:
     QList<QPointF> createChartData(QString tableName,
                                    QString measurement,
                                    int daysCount,
-                                   int standardDeviations = 0);
+                                   double standardDeviations = 0);
     void drawChart(QMap<int, QList<QPointF>> pointsMap);
 
     void setYAxisRange(double maxValue, double minValue);
@@ -36,8 +36,8 @@ private:
     QMap<int, bool> drawSeries;
     QMap<int, QColor> colorSeries;
 
-    QAreaSeries *topAreaSeries;
-    QAreaSeries *bottomAreaSeries;
+    QMap<double, QAreaSeries *> *areaSeriesMap;
+    QMap<double, QColor> colorAreaSeries;
 
     NormalComputer *_computer;
     QString _measurementType = "temperature";
