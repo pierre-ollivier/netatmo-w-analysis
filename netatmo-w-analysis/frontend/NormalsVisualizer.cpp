@@ -84,6 +84,10 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
         drawSeries.insert(stdCount, false);
     }
 
+    currentYearSeries = new QLineSeries();
+    currentYearSeries->setPen(QPen(QBrush(Qt::black), 2));
+    chart->addSeries(currentYearSeries);
+
     chart->setLocalizeNumbers(true);
 
     view->setChart(chart);
@@ -183,7 +187,22 @@ QList<QPointF> NormalsVisualizer::createChartData(QList<double> averages,
     return points;
 }
 
-void NormalsVisualizer::drawChart(QMap<int, QList<QPointF>> pointsMap) {
+QList<QPointF> NormalsVisualizer::createCurrentYearData(QString tableName, QString measurement) {
+    QList<QPointF> result = QList<QPointF>();
+    QList<double> currentYearData = _computer->createValuesFromCurrentYear(tableName, measurement);
+    QDate xDate = QDate(2020, 1, 1);
+
+    for (double value : currentYearData) {
+        result.append(QPointF(QDateTime(xDate, QTime(0, 0)).toMSecsSinceEpoch(), value));
+        xDate = xDate.addDays(1);
+        if (xDate == QDate(2020, 2, 29) && !QDate::isLeapYear(QDate::currentDate().year())) {
+            xDate = xDate.addDays(1);
+        }
+    }
+    return result;
+}
+
+void NormalsVisualizer::drawChart(QMap<int, QList<QPointF>> pointsMap, QList<QPointF> currentYearPoints) {
     QVariant maxOfSeries = QVariant();
     QVariant minOfSeries = QVariant();
 
@@ -234,6 +253,14 @@ void NormalsVisualizer::drawChart(QMap<int, QList<QPointF>> pointsMap) {
             areaSeriesMap->value(stdCount)->attachAxis(xAxis);
             areaSeriesMap->value(stdCount)->attachAxis(yAxis);
         }
+    }
+
+    currentYearSeries->clear();
+    currentYearSeries->append(currentYearPoints);
+
+    if (currentYearSeries->attachedAxes().length() == 0) {
+        currentYearSeries->attachAxis(xAxis);
+        currentYearSeries->attachAxis(yAxis);
     }
 
     setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
@@ -309,5 +336,7 @@ void NormalsVisualizer::changeChartOptions() {
         QList<QPointF> points = createChartData(averages, standardDeviation, stdCount);
         pointsMap.insert(stdCount, points);
     }
-    drawChart(pointsMap);
+
+    QList<QPointF> currentYearPoints = createCurrentYearData(tableName, measurementType);
+    drawChart(pointsMap, currentYearPoints);
 }
