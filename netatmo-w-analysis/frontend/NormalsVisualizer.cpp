@@ -168,6 +168,21 @@ QList<QPointF> NormalsVisualizer::createChartData(QString tableName,
     return points;
 }
 
+QList<QPointF> NormalsVisualizer::createChartData(QList<double> averages,
+                                                  QList<double> standardDeviation,
+                                                  double standardDeviations) {
+    QList<QPointF> points = QList<QPointF>();
+    for (QDate date = QDate(2020, 1, 1); date.year() < 2021; date = date.addDays(1)) {
+        long long x = QDateTime(date).toMSecsSinceEpoch();
+        double y = averages.value(date.dayOfYear() - 1);
+        if (standardDeviations != 0)
+            y += standardDeviations * standardDeviation.value(date.dayOfYear() - 1);
+
+        points.append(QPointF(x, y));
+    }
+    return points;
+}
+
 void NormalsVisualizer::drawChart(QMap<int, QList<QPointF>> pointsMap) {
     QVariant maxOfSeries = QVariant();
     QVariant minOfSeries = QVariant();
@@ -295,8 +310,16 @@ void NormalsVisualizer::changeChartOptions() {
     if (humidexOption->isChecked()) {measurementType += "Humidex"; setMeasurementType("humidex");}
 
     QMap<int, QList<QPointF>> pointsMap = QMap<int, QList<QPointF>>();
+
+    QList<double> averages = _computer->createAveragesList(tableName,
+                                                           measurementType,
+                                                           daysSlider->value());
+    QList<double> standardDeviation = _computer->createStandardDeviationList(tableName,
+                                                                             measurementType,
+                                                                             daysSlider->value());
     for (int stdCount = -2; stdCount <= 2; stdCount++) {
-        QList<QPointF> points = createChartData(tableName, measurementType, daysSlider->value(), stdCount);
+//        QList<QPointF> points = createChartData(tableName, measurementType, daysSlider->value(), stdCount);
+        QList<QPointF> points = createChartData(averages, standardDeviation, stdCount);
         pointsMap.insert(stdCount, points);
     }
     drawChart(pointsMap);

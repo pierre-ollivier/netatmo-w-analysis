@@ -16,6 +16,10 @@ public:
                                    QString measurement,
                                    int daysCount,
                                    double standardDeviations = 0);
+    QList<QPointF> createChartData(QList<double> averages,
+                                   QList<double> standardDeviation = QList<double>(),
+                                   double standardDeviations = 0);
+
     void drawChart(QMap<int, QList<QPointF>> pointsMap);
 
     void setYAxisRange(double maxValue, double minValue);
