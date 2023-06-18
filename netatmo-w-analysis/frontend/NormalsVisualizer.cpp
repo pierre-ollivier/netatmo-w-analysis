@@ -32,36 +32,44 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     chart = new QChart();
     chart->legend()->hide();
 
-    seriesMap = new QMap<int, QLineSeries *>();
+    seriesMap = new QMap<double, QLineSeries *>();
 
-    for (int stdCount = -2; stdCount <= 2; stdCount++) {
+    for (int stdCount = -2000; stdCount <= 2000; stdCount += 200) {
         QLineSeries *series = new QLineSeries();
         seriesMap->insert(stdCount, series);
     }
 
-    colorAreaSeries = QMap<double, QColor>();
-    colorAreaSeries.insert(-1.5, QColor(0, 0, 150, 80));
-    colorAreaSeries.insert(-0.5, QColor(30, 30, 255, 80));
-    colorAreaSeries.insert(0.5, QColor(255, 30, 30, 80));
-    colorAreaSeries.insert(1.5, QColor(150, 0, 0, 80));
+    for (int stdCount = -1900; stdCount < 1100; stdCount += 200) {
+        colorAreaSeries.insert(stdCount, QColor(0, 0, 0, 0));
+    }
+
+    for (int i = 0; i < 5; i++) {
+        colorAreaSeries.insert(1100 + 200 * i, QColor(255, 255 - 51 * i, 0, 80));
+    }
+//    colorAreaSeries.insert(0.5, QColor(255, 30, 30, 80));
+//    colorAreaSeries.insert(1.5, QColor(150, 0, 0, 80));
 
     areaSeriesMap = new QMap<double, QAreaSeries *>();
 
-    for (int stdCount = -2; stdCount < 2; stdCount++) {
-        QAreaSeries *areaSeries = new QAreaSeries(seriesMap->value(stdCount + 1), seriesMap->value(stdCount));
-        areaSeries->setColor(colorAreaSeries.value(stdCount + 0.5));
-        areaSeries->setBorderColor(colorAreaSeries.value(stdCount + 0.5));
+    for (int stdCount = -2000; stdCount < 2000; stdCount += 200) {
+        QAreaSeries *areaSeries = new QAreaSeries(seriesMap->value(stdCount + 200), seriesMap->value(stdCount));
+        areaSeries->setColor(colorAreaSeries.value(stdCount + 100));
+        areaSeries->setBorderColor(colorAreaSeries.value(stdCount + 100));
         areaSeries->setPen(QPen(QBrush(), 0));
-        areaSeriesMap->insert(stdCount + 0.5, areaSeries);
+        areaSeriesMap->insert(stdCount + 100, areaSeries);
         chart->addSeries(areaSeries);
     }
+    qDebug() << areaSeriesMap->keys();
 
-    drawSeries = QMap<int, bool>();
-    drawSeries.insert(-2, false);
-    drawSeries.insert(-1, true);
-    drawSeries.insert(0, true);
-    drawSeries.insert(1, true);
-    drawSeries.insert(2, false);
+    drawSeries = QMap<double, bool>();
+//    drawSeries.insert(-2, false);
+//    drawSeries.insert(-1, true);
+//    drawSeries.insert(0, true);
+//    drawSeries.insert(1, true);
+//    drawSeries.insert(2, false);
+    for (int stdCount = -2000; stdCount <= 2000; stdCount += 200) {
+        drawSeries.insert(stdCount, true); // provisional
+    }
 
     chart->setLocalizeNumbers(true);
 
@@ -148,13 +156,14 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
 
 QList<QPointF> NormalsVisualizer::createChartData(QList<double> averages,
                                                   QList<double> standardDeviation,
-                                                  double standardDeviations) {
+                                                  int standardDeviationsThousands) {
     QList<QPointF> points = QList<QPointF>();
     for (QDate date = QDate(2020, 1, 1); date.year() < 2021; date = date.addDays(1)) {
         long long x = QDateTime(date).toMSecsSinceEpoch();
         double y = averages.value(date.dayOfYear() - 1);
-        if (standardDeviations != 0)
-            y += standardDeviations * standardDeviation.value(date.dayOfYear() - 1);
+        if (standardDeviationsThousands != 0)
+            y += standardDeviationsThousands * 0.001
+                    * standardDeviation.value(date.dayOfYear() - 1);
 
         points.append(QPointF(x, y));
     }
@@ -178,11 +187,11 @@ void NormalsVisualizer::drawChart(QMap<int, QList<QPointF>> pointsMap) {
         yAxis->setLabelFormat(QString("%.1f") + "");
     }
 
-    drawSeries[-2] = stdev2Option->isChecked();
-    drawSeries[2] = stdev2Option->isChecked();
-    drawSeries[-1] = stdev2Option->isChecked() || stdev1Option->isChecked();
-    drawSeries[1] = stdev2Option->isChecked() || stdev1Option->isChecked();
-    drawSeries[0] = true;
+//    drawSeries[-2] = stdev2Option->isChecked();
+//    drawSeries[2] = stdev2Option->isChecked();
+//    drawSeries[-1] = stdev2Option->isChecked() || stdev1Option->isChecked();
+//    drawSeries[1] = stdev2Option->isChecked() || stdev1Option->isChecked();
+//    drawSeries[0] = true;
 
     if (chart->axes().length() == 0) {
         chart->addAxis(xAxis, Qt::AlignBottom);
@@ -191,7 +200,7 @@ void NormalsVisualizer::drawChart(QMap<int, QList<QPointF>> pointsMap) {
 
     chart->setLocalizeNumbers(true);
 
-    for (int stdCount = -2; stdCount <= 2; stdCount++) {
+    for (int stdCount = -2000; stdCount <= 2000; stdCount += 200) {
         if (drawSeries.value(stdCount)) {
             QList<QPointF> points = pointsMap.value(stdCount);
             for (QPointF point: points) {
@@ -201,13 +210,13 @@ void NormalsVisualizer::drawChart(QMap<int, QList<QPointF>> pointsMap) {
         }
     }
 
-    for (int stdCount = -2; stdCount <= 2; stdCount++) {
+    for (int stdCount = -2000; stdCount <= 2000; stdCount += 200) {
         QList<QPointF> points = pointsMap.value(stdCount);
         seriesMap->value(stdCount)->clear();
         seriesMap->value(stdCount)->append(points);
     }
 
-    for (double stdCount = -1.5; stdCount <= 1.5; stdCount += 1) {
+    for (int stdCount = -1900; stdCount <= 1900; stdCount += 200) {
         if (areaSeriesMap->value(stdCount)->attachedAxes().length() == 0) {
             areaSeriesMap->value(stdCount)->attachAxis(xAxis);
             areaSeriesMap->value(stdCount)->attachAxis(yAxis);
@@ -283,7 +292,7 @@ void NormalsVisualizer::changeChartOptions() {
     QList<double> standardDeviation = _computer->createStandardDeviationList(tableName,
                                                                              measurementType,
                                                                              daysSlider->value());
-    for (int stdCount = -2; stdCount <= 2; stdCount++) {
+    for (int stdCount = -2000; stdCount <= 2000; stdCount += 200) {
         QList<QPointF> points = createChartData(averages, standardDeviation, stdCount);
         pointsMap.insert(stdCount, points);
     }

@@ -14,7 +14,7 @@ public:
 
     QList<QPointF> createChartData(QList<double> averages,
                                    QList<double> standardDeviation = QList<double>(),
-                                   double standardDeviations = 0);
+                                   int standardDeviationsThousands = 0);
 
     void drawChart(QMap<int, QList<QPointF>> pointsMap);
 
@@ -32,8 +32,8 @@ private:
     QCategoryAxis *xAxis;
     QValueAxis *yAxis;
 
-    QMap<int, QLineSeries *> *seriesMap;
-    QMap<int, bool> drawSeries;
+    QMap<double, QLineSeries *> *seriesMap;
+    QMap<double, bool> drawSeries;
 
     QMap<double, QAreaSeries *> *areaSeriesMap;
     QMap<double, QColor> colorAreaSeries;
