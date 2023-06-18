@@ -212,6 +212,9 @@ void NormalsVisualizer::drawChart(QMap<int, QList<QPointF>> pointsMap) {
                 seriesMap->value(stdCount)->attachAxis(yAxis);
             }
         }
+        else {
+            seriesMap->value(stdCount)->clear();
+        }
     }
 
     setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
