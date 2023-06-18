@@ -43,8 +43,12 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
         colorAreaSeries.insert(stdCount, QColor(0, 0, 0, 0));
     }
 
-    for (int i = 0; i < 5; i++) {
-        colorAreaSeries.insert(1100 + 200 * i, QColor(255, 255 - 51 * i, 0, 80));
+    for (int stdCount = 100; stdCount < 1100; stdCount += 200) {
+        colorAreaSeries.insert(stdCount, QColor(255, 255, 255 - 51 * (stdCount - 100) / 200, 80));
+    }
+
+    for (int stdCount = 1100; stdCount < 2100; stdCount += 200) {
+        colorAreaSeries.insert(stdCount, QColor(255, 255 - 51 * (stdCount - 1100) / 200, 0, 80));
     }
 //    colorAreaSeries.insert(0.5, QColor(255, 30, 30, 80));
 //    colorAreaSeries.insert(1.5, QColor(150, 0, 0, 80));
