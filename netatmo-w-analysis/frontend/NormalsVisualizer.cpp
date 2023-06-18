@@ -128,7 +128,7 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     operationsGroupBox->setLayout(operationsLayout);
 
     stdevLayout = new QHBoxLayout();
-    stdevLayout->addWidget(new QLabel("Écarts-types : "), 0, Qt::AlignLeft);
+    stdevLayout->addWidget(new QLabel("Échelle d'affichage : "), 0, Qt::AlignLeft);
     stdevLayout->addWidget(stdev0Option, 0, Qt::AlignCenter);
     stdevLayout->addWidget(stdev1Option, 0, Qt::AlignCenter);
     stdevLayout->addWidget(stdev2Option, 0, Qt::AlignCenter);
@@ -191,27 +191,16 @@ void NormalsVisualizer::drawChart(QMap<int, QList<QPointF>> pointsMap) {
 
     chart->setLocalizeNumbers(true);
 
-//    for (int stdCount = -2; stdCount <= 2; stdCount++) {
-//        if (drawSeries.value(stdCount)) {
+    for (int stdCount = -2; stdCount <= 2; stdCount++) {
+        if (drawSeries.value(stdCount)) {
+            QList<QPointF> points = pointsMap.value(stdCount);
+            for (QPointF point: points) {
+                if (maxOfSeries.isNull() || point.y() > maxOfSeries.toDouble()) maxOfSeries = point.y();
+                if (minOfSeries.isNull() || point.y() < minOfSeries.toDouble()) minOfSeries = point.y();
+            }
+        }
+    }
 
-//            QList<QPointF> points = pointsMap.value(stdCount);
-//            seriesMap->value(stdCount)->clear();
-//            seriesMap->value(stdCount)->append(points);
-
-//            for (QPointF point: points) {
-//                if (maxOfSeries.isNull() || point.y() > maxOfSeries.toDouble()) maxOfSeries = point.y();
-//                if (minOfSeries.isNull() || point.y() < minOfSeries.toDouble()) minOfSeries = point.y();
-//            }
-
-//            if (seriesMap->value(stdCount)->attachedAxes().length() == 0) {
-//                seriesMap->value(stdCount)->attachAxis(xAxis);
-//                seriesMap->value(stdCount)->attachAxis(yAxis);
-//            }
-//        }
-//        else {
-//            seriesMap->value(stdCount)->clear();
-//        }
-//    }
     for (int stdCount = -2; stdCount <= 2; stdCount++) {
         QList<QPointF> points = pointsMap.value(stdCount);
         seriesMap->value(stdCount)->clear();
@@ -225,8 +214,7 @@ void NormalsVisualizer::drawChart(QMap<int, QList<QPointF>> pointsMap) {
         }
     }
 
-//    setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
-    setYAxisRange(35, 5);
+    setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
 }
 
 void NormalsVisualizer::setYAxisRange(double maxValue, double minValue) {
