@@ -40,7 +40,10 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     }
 
     for (int stdCount = -1900; stdCount < -900; stdCount += 200) {
-        colorAreaSeries.insert(stdCount, QColor(0, 0, 0, 0));
+        colorAreaSeries.insert(stdCount, QColor(0,
+                                                51 * (stdCount + 1900) / 200,
+                                                255,
+                                                80));
     }
 
     for (int stdCount = -900; stdCount < 100; stdCount += 200) {
