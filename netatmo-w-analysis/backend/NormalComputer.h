@@ -27,6 +27,9 @@ public:
                                               QString measurement,
                                               int daysCount);
 
+    QList<double> createValuesFromCurrentYear(QString tableName,
+                                              QString measurement);
+
 private:
     DatabaseHandler *_dbHandler;
 };

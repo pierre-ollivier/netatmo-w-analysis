@@ -16,7 +16,9 @@ public:
                                    QList<double> standardDeviation = QList<double>(),
                                    int standardDeviationsThousands = 0);
 
-    void drawChart(QMap<int, QList<QPointF>> pointsMap);
+    QList<QPointF> createCurrentYearData(QString tableName, QString measurement);
+
+    void drawChart(QMap<int, QList<QPointF>> pointsMap, QList<QPointF> currentYearPoints);
 
     void setYAxisRange(double maxValue, double minValue);
     void setYAxisTicks(double maxValue, double minValue);
@@ -37,6 +39,8 @@ private:
 
     QMap<double, QAreaSeries *> *areaSeriesMap;
     QMap<double, QColor> colorAreaSeries;
+
+    QLineSeries *currentYearSeries;
 
     NormalComputer *_computer;
     QString _measurementType = "temperature";
