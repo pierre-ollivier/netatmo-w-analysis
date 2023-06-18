@@ -62,13 +62,9 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     qDebug() << areaSeriesMap->keys();
 
     drawSeries = QMap<double, bool>();
-//    drawSeries.insert(-2, false);
-//    drawSeries.insert(-1, true);
-//    drawSeries.insert(0, true);
-//    drawSeries.insert(1, true);
-//    drawSeries.insert(2, false);
+
     for (int stdCount = -2000; stdCount <= 2000; stdCount += 200) {
-        drawSeries.insert(stdCount, true); // provisional
+        drawSeries.insert(stdCount, false);
     }
 
     chart->setLocalizeNumbers(true);
@@ -187,11 +183,11 @@ void NormalsVisualizer::drawChart(QMap<int, QList<QPointF>> pointsMap) {
         yAxis->setLabelFormat(QString("%.1f") + "");
     }
 
-//    drawSeries[-2] = stdev2Option->isChecked();
-//    drawSeries[2] = stdev2Option->isChecked();
-//    drawSeries[-1] = stdev2Option->isChecked() || stdev1Option->isChecked();
-//    drawSeries[1] = stdev2Option->isChecked() || stdev1Option->isChecked();
-//    drawSeries[0] = true;
+    drawSeries[-2000] = stdev2Option->isChecked();
+    drawSeries[2000] = stdev2Option->isChecked();
+    drawSeries[-1000] = stdev2Option->isChecked() || stdev1Option->isChecked();
+    drawSeries[1000] = stdev2Option->isChecked() || stdev1Option->isChecked();
+    drawSeries[0] = true;
 
     if (chart->axes().length() == 0) {
         chart->addAxis(xAxis, Qt::AlignBottom);
@@ -201,7 +197,7 @@ void NormalsVisualizer::drawChart(QMap<int, QList<QPointF>> pointsMap) {
     chart->setLocalizeNumbers(true);
 
     for (int stdCount = -2000; stdCount <= 2000; stdCount += 200) {
-        if (drawSeries.value(stdCount)) {
+        if (drawSeries.contains(stdCount) && drawSeries.value(stdCount)) {
             QList<QPointF> points = pointsMap.value(stdCount);
             for (QPointF point: points) {
                 if (maxOfSeries.isNull() || point.y() > maxOfSeries.toDouble()) maxOfSeries = point.y();
