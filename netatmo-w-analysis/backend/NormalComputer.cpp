@@ -60,3 +60,27 @@ double NormalComputer::stdevMeasurementByMovingAverage(
 
     return std::sqrt(_dbHandler->getResultFromDatabase(query).toDouble());
 }
+
+QList<double> NormalComputer::createAveragesList(QString tableName, QString measurement, int daysCount) {
+    QList<double> result = QList<double>();
+    for (QDate date = QDate(2020, 1, 1); date.year() < 2021; date = date.addDays(1)) {
+        result.append(normalMeasurementByMovingAverage(
+                          tableName,
+                          date,
+                          measurement,
+                          daysCount));
+    }
+    return result;
+}
+
+QList<double> NormalComputer::createStandardDeviationList(QString tableName, QString measurement, int daysCount) {
+    QList<double> result = QList<double>();
+    for (QDate date = QDate(2020, 1, 1); date.year() < 2021; date = date.addDays(1)) {
+        result.append(stdevMeasurementByMovingAverage(
+                          tableName,
+                          date,
+                          measurement,
+                          daysCount));
+    }
+    return result;
+}

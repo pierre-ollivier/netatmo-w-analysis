@@ -19,6 +19,13 @@ public:
             QDate date,
             QString measurement,
             int daysCount);
+    QList<double> createAveragesList(QString tableName,
+                                     QString measurement,
+                                     int daysCount);
+
+    QList<double> createStandardDeviationList(QString tableName,
+                                              QString measurement,
+                                              int daysCount);
 
 private:
     DatabaseHandler *_dbHandler;
