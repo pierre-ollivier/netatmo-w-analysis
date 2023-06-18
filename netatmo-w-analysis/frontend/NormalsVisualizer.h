@@ -12,10 +12,6 @@ class NormalsVisualizer : public QWidget
 public:
     NormalsVisualizer(NormalComputer *computer);
 
-    QList<QPointF> createChartData(QString tableName,
-                                   QString measurement,
-                                   int daysCount,
-                                   double standardDeviations = 0);
     QList<QPointF> createChartData(QList<double> averages,
                                    QList<double> standardDeviation = QList<double>(),
                                    double standardDeviations = 0);

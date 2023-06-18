@@ -146,28 +146,6 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
 
 }
 
-QList<QPointF> NormalsVisualizer::createChartData(QString tableName,
-                                                  QString measurement,
-                                                  int daysCount,
-                                                  double standardDeviations) {
-    QList<QPointF> points = QList<QPointF>();
-    for (QDate date = QDate(2020, 1, 1); date.year() < 2021; date = date.addDays(1)) {
-        long long x = QDateTime(date).toMSecsSinceEpoch();
-        double y = _computer->normalMeasurementByMovingAverage(tableName,
-                                                               date,
-                                                               measurement,
-                                                               daysCount);
-        if (standardDeviations != 0) {
-            y += standardDeviations * _computer->stdevMeasurementByMovingAverage(tableName,
-                                                                                 date,
-                                                                                 measurement,
-                                                                                 daysCount);
-        }
-        points.append(QPointF(x, y));
-    }
-    return points;
-}
-
 QList<QPointF> NormalsVisualizer::createChartData(QList<double> averages,
                                                   QList<double> standardDeviation,
                                                   double standardDeviations) {
@@ -318,7 +296,6 @@ void NormalsVisualizer::changeChartOptions() {
                                                                              measurementType,
                                                                              daysSlider->value());
     for (int stdCount = -2; stdCount <= 2; stdCount++) {
-//        QList<QPointF> points = createChartData(tableName, measurementType, daysSlider->value(), stdCount);
         QList<QPointF> points = createChartData(averages, standardDeviation, stdCount);
         pointsMap.insert(stdCount, points);
     }
