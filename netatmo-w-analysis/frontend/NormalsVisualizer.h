@@ -34,7 +34,6 @@ private:
 
     QMap<int, QLineSeries *> *seriesMap;
     QMap<int, bool> drawSeries;
-    QMap<int, QColor> colorSeries;
 
     QMap<double, QAreaSeries *> *areaSeriesMap;
     QMap<double, QColor> colorAreaSeries;
