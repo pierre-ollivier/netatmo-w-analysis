@@ -36,7 +36,7 @@ public:
     QVariant getResultFromDatabase(QString query);
     std::vector<QVariant> getResultsFromDatabase(QString query);
 
-    QDateTime getLatestDateTimeFromDatabase(QString tableName);
+    QDateTime getLatestDateTimeFromDatabase(QString tableName, QString measurement = "");
 
     void updateOutdoorDailyRecords(QDate beginDate, QDate endDate, bool verbose = true);
     void updateIndoorDailyRecords(QDate beginDate, QDate endDate, bool verbose = true);
