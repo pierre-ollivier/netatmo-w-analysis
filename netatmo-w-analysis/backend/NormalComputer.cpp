@@ -89,8 +89,9 @@ QList<double> NormalComputer::createValuesFromCurrentYear(QString tableName, QSt
     QList<double> result = QList<double>();
     QDate date = QDate::currentDate();
     QDate firstDayOfCurrentYear = date.addDays(1 - date.dayOfYear());
+    QDate lastDate = _dbHandler->getLatestDateTimeFromDatabase(tableName).date();
 
-    for (QDate d = firstDayOfCurrentYear; d < date; d = d.addDays(1)) {
+    for (QDate d = firstDayOfCurrentYear; d <= lastDate; d = d.addDays(1)) {
         QString query = "SELECT " + measurement + " FROM " + tableName + " ";
         query += "WHERE day = " + QString::number(d.day()) + " ";
         query += "AND month = " + QString::number(d.month()) + " ";
