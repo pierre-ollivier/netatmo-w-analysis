@@ -258,6 +258,11 @@ void NormalsVisualizer::drawChart(QMap<int, QList<QPointF>> pointsMap, QList<QPo
     currentYearSeries->clear();
     currentYearSeries->append(currentYearPoints);
 
+    for (QPointF point: currentYearPoints) {
+        if (maxOfSeries.isNull() || point.y() > maxOfSeries.toDouble()) maxOfSeries = point.y();
+        if (minOfSeries.isNull() || point.y() < minOfSeries.toDouble()) minOfSeries = point.y();
+    }
+
     if (currentYearSeries->attachedAxes().length() == 0) {
         currentYearSeries->attachAxis(xAxis);
         currentYearSeries->attachAxis(yAxis);
