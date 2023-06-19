@@ -456,7 +456,7 @@ void MainWindow::changeChartsOptions() {
 }
 
 void MainWindow::showNormals() {
-    NormalComputer *computer = new NormalComputer(dbHandlerProd);
+    NormalComputer *computer = new NormalComputer(dbHandlerCopy);
     NormalsVisualizer *visualizer = new NormalsVisualizer(computer);
     visualizer->show();
 }
