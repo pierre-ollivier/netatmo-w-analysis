@@ -104,6 +104,7 @@ signals:
 
     void extDailyRecordRetrieved(ExtDailyRecord);
     void intDailyRecordRetrieved(IntDailyRecord);
+    void ext3hRecordsRetrieved(QMap<QDate, std::tuple<double, double>>);
 
 private:
     QNetworkAccessManager *tokensManager;

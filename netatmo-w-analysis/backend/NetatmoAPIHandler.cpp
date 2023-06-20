@@ -426,6 +426,7 @@ void NetatmoAPIHandler::retrieveIndoorChartRequest(QNetworkReply *reply) {
 
 void NetatmoAPIHandler::retrieve3hOutdoorChartRequest(QNetworkReply *reply) {
     // we assume that the time of the initial date is 18 UTC
+    QMap<QDate, std::tuple<double, double>> result = QMap<QDate, std::tuple<double, double>>();
     QByteArray bytes = reply->readAll();
     QJsonDocument js = QJsonDocument::fromJson(bytes);
     QJsonObject tb = js["body"].toObject();
@@ -433,14 +434,43 @@ void NetatmoAPIHandler::retrieve3hOutdoorChartRequest(QNetworkReply *reply) {
         qDebug() << "ERROR with chart request" << bytes;
     }
     else if (bytes.size() >= 1) {
+        double provisionalMinTemperature = 1000, provisionalMaxTemperature = 1000;
+        long long provisionalMaxTemperatureTimestamp = 0, provisionalMinTemperatureTimestamp = 0;
+        int numberOfRecords = 0;
         foreach (const QString &key, tb.keys()) {
+            long long timestamp = key.toLongLong();
             QJsonValue value = tb.value(key);
             double maxTemperature = value[0].toDouble();
             double minTemperature = value[1].toDouble();
             long long maxTemperatureTimestamp = value[2].toInt();
             long long minTemperatureTimestamp = value[3].toInt();
-            // TODO
+
+            if (maxTemperature > provisionalMaxTemperature) {
+                provisionalMaxTemperature = maxTemperature;
+                provisionalMaxTemperatureTimestamp = maxTemperatureTimestamp;
+            }
+            if (minTemperature < provisionalMinTemperature) {
+                provisionalMinTemperature = minTemperature;
+                provisionalMinTemperatureTimestamp = minTemperatureTimestamp;
+            }
+
+            numberOfRecords++;
+            if (numberOfRecords % 8 == 0) {
+                // add a new minimal temperature for the current day
+                QDate date = QDateTime::fromSecsSinceEpoch(timestamp).date();
+                result.insert(date, {provisionalMinTemperature, 0});
+                provisionalMinTemperature = 1000;
+                provisionalMinTemperatureTimestamp = 0;
+            }
+            else if (numberOfRecords % 8 == 4) {
+                // add a new maximal temperature for the current day - 1
+                QDate date = QDateTime::fromSecsSinceEpoch(timestamp).date().addDays(-1);
+                double minTemperatureOfDate = std::get<0>(result[date]);
+                result[date] = {minTemperatureOfDate, provisionalMaxTemperature};
+                provisionalMaxTemperature = 1000;
+                provisionalMaxTemperatureTimestamp = 0;
+            }
         }
-        // TODO emit
+        emit ext3hRecordsRetrieved(result);
     }
 }
