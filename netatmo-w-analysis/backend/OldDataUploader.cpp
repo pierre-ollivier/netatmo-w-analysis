@@ -15,6 +15,9 @@ OldDataUploader::OldDataUploader(NetatmoAPIHandler* apiHandler, QString accessTo
             SLOT(addIntTimestampRecordToCopyDatabase(IntTimestampRecord)));
     connect(apiHandler, SIGNAL(extDailyRecordRetrieved(ExtDailyRecord)), SLOT(logExtDailyRecord(ExtDailyRecord)));
     connect(apiHandler, SIGNAL(intDailyRecordRetrieved(IntDailyRecord)), SLOT(logIntDailyRecord(IntDailyRecord)));
+    connect(apiHandler,
+            SIGNAL(ext3hRecordsRetrieved(QMap<QDate, std::tuple<double, double>>)),
+            SLOT(log3hRecords(QMap<QDate, std::tuple<double, double>>)));
 }
 
 void OldDataUploader::addDataFromCurrentMonths(QDate beginDate, QDate endDate, bool indoor) {
@@ -50,11 +53,36 @@ void OldDataUploader::setAccessToken(QString accessToken) {
 void OldDataUploader::logExtDailyRecord(ExtDailyRecord record) {
     QString tableName = "OutdoorDailyRecords";
     DatabaseHandler dbHandler(PATH_TO_COPY_DATABASE);
-    dbHandler.postOutdoorDailyRecord(record, tableName);
+    QDate date = record.date();
+    if (extendedRecordsMap.contains(date)) {
+        extendedRecordsMap[date].setExtDailyRecord(record);
+        dbHandler.postOutdoorDailyRecord(extendedRecordsMap[date].extDailyRecord(), tableName);
+    }
+    else {
+        extendedRecordsMap.insert(date, ExtendedExtDailyRecord());
+        extendedRecordsMap[date].setExtDailyRecord(record);
+    }
 }
 
 void OldDataUploader::logIntDailyRecord(IntDailyRecord record) {
     QString tableName = "IndoorDailyRecords";
     DatabaseHandler dbHandler(PATH_TO_COPY_DATABASE);
     dbHandler.postIndoorDailyRecord(record, tableName);
+}
+
+void OldDataUploader::log3hRecords(QMap<QDate, std::tuple<double, double>> records) {
+    QString tableName = "OutdoorDailyRecords";
+    DatabaseHandler dbHandler(PATH_TO_COPY_DATABASE);
+    for (QDate date : records.keys()) {
+        if (extendedRecordsMap.contains(date)) {
+            extendedRecordsMap[date].setMinTemperature(std::get<0>(records[date]));
+            extendedRecordsMap[date].setMaxTemperature(std::get<1>(records[date]));
+            dbHandler.postOutdoorDailyRecord(extendedRecordsMap[date].extDailyRecord(), tableName);
+        }
+        else {
+            extendedRecordsMap.insert(date, ExtendedExtDailyRecord());
+            extendedRecordsMap[date].setMinTemperature(std::get<0>(records[date]));
+            extendedRecordsMap[date].setMaxTemperature(std::get<1>(records[date]));
+        }
+    }
 }

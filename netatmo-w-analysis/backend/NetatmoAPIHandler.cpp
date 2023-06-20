@@ -21,7 +21,7 @@ NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequest
     connect(dailyFullIndoorRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveFullDailyIndoorConditions(QNetworkReply *)));
     connect(outdoorChartRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveOutdoorChartRequest(QNetworkReply *)));
     connect(indoorChartRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveIndoorChartRequest(QNetworkReply *)));
-    connect(outdoor3hRequestManager, SIGNAL(finished(QNetworReply *)), SLOT(retrieve3hOutdoorChartRequest(QNetworReply *)));
+    connect(outdoor3hRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieve3hOutdoorChartRequest(QNetworkReply *)));
 
     currentConditionsTimer = new QTimer();
     if (timeBetweenRequests > 0) {
