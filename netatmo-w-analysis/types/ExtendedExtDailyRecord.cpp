@@ -1,5 +1,5 @@
 #include "ExtendedExtDailyRecord.h"
-
+#include <QDebug>
 ExtendedExtDailyRecord::ExtendedExtDailyRecord()
 {
 
@@ -27,8 +27,8 @@ bool ExtendedExtDailyRecord::allDefined() {
     return extDailyRecordDefined() && maxTemperatureDefined() && minTemperatureDefined();
 }
 
-void ExtendedExtDailyRecord::setExtDailyRecord(ExtDailyRecord record) {
-    _extDailyRecord = &record;
+void ExtendedExtDailyRecord::setExtDailyRecord(ExtDailyRecord *record) {
+    _extDailyRecord = record;
     _extDailyRecordDefined = true;
 }
 void ExtendedExtDailyRecord::setMinTemperature(double minTemperature) {

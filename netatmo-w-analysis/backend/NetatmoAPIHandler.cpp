@@ -182,8 +182,8 @@ void NetatmoAPIHandler::post3hDailyRequest(int dateBegin, int dateEnd, QString a
     params.addQueryItem("access_token", accessToken.toUtf8());
     params.addQueryItem("device_id", mainDeviceId);
     params.addQueryItem("module_id", outdoorModuleId);
-    params.addQueryItem("scale", "3h");
-    params.addQueryItem("type", "max_temp,min_temp,date_max_temp,date_min_temp");
+    params.addQueryItem("scale", "3hours");
+    params.addQueryItem("type", "max_temp,min_temp");
     params.addQueryItem("date_begin", QString::number(dateBegin));
     params.addQueryItem("date_end", QString::number(dateEnd));
     params.addQueryItem("optimize", "false");
@@ -467,7 +467,7 @@ void NetatmoAPIHandler::retrieve3hOutdoorChartRequest(QNetworkReply *reply) {
                 QDate date = QDateTime::fromSecsSinceEpoch(timestamp).date().addDays(-1);
                 double minTemperatureOfDate = std::get<0>(result[date]);
                 result[date] = {minTemperatureOfDate, provisionalMaxTemperature};
-                provisionalMaxTemperature = 1000;
+                provisionalMaxTemperature = -1000;
                 provisionalMaxTemperatureTimestamp = 0;
             }
         }

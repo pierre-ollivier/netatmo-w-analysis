@@ -80,6 +80,8 @@ public:
     QTime maxHumidexTime();
     QTime minHumidexTime();
 
+    void setDate(QDate date);
+
     void setMaxTemperature(double maxTemperature);
     void setMinTemperature(double minTemperature);
 

@@ -16,7 +16,7 @@ public:
     bool maxTemperatureDefined();
     bool allDefined();
 
-    void setExtDailyRecord(ExtDailyRecord record);
+    void setExtDailyRecord(ExtDailyRecord *record);
     void setMinTemperature(double minTemperature);
     void setMaxTemperature(double maxTemperature);
 
