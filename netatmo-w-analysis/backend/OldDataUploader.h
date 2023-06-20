@@ -9,6 +9,7 @@
 #include "../types/IntTimestampRecord.h"
 #include "../types/ExtDailyRecord.h"
 #include "../types/IntDailyRecord.h"
+#include "../types/ExtendedExtDailyRecord.h"
 
 class OldDataUploader : public QObject
 {
@@ -25,12 +26,14 @@ public slots:
 
     void logExtDailyRecord(ExtDailyRecord);
     void logIntDailyRecord(IntDailyRecord);
+    void log3hRecords(QMap<QDate, std::tuple<double, double>> records);
 
 private:
     NetatmoAPIHandler *_apiHandler;
     QString _accessToken;
     QDate _beginDate = QDate();
     QDate _endDate = QDate();
+    QMap<QDate, ExtendedExtDailyRecord> extendedRecordsMap = QMap<QDate, ExtendedExtDailyRecord>();
     int numberOfExtBatchesToRetrieve = 0;
     int numberOfIntBatchesToRetrieve = 0;
 };
