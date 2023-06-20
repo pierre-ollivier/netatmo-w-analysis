@@ -33,7 +33,7 @@ private:
     QString _accessToken;
     QDate _beginDate = QDate();
     QDate _endDate = QDate();
-    QMap<QDate, ExtendedExtDailyRecord> extendedRecordsMap = QMap<QDate, ExtendedExtDailyRecord>();
+    QMap<QDate, ExtendedExtDailyRecord *> extendedRecordsMap = QMap<QDate, ExtendedExtDailyRecord *>();
     int numberOfExtBatchesToRetrieve = 0;
     int numberOfIntBatchesToRetrieve = 0;
 };

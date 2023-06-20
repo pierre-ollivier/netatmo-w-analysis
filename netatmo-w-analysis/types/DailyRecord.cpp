@@ -177,6 +177,10 @@ QTime DailyRecord::minHumidexTime() {
     return timestampToTime(_minHumidexTimestamp);
 }
 
+void DailyRecord::setDate(QDate date) {
+    _date = date;
+}
+
 void DailyRecord::setMaxTemperature(double maxTemperature) {
     _maxTemperature = maxTemperature;
 }
