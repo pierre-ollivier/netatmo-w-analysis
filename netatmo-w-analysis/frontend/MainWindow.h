@@ -26,6 +26,7 @@ public:
     void buildLabels();
     void buildButtons();
     void buildCharts();
+    void buildEphemerisPanel();
     void buildLayouts();
     void createMenus();
     void createActions();
@@ -125,6 +126,10 @@ private:
     QRadioButton *humidexOption;
     QHBoxLayout *chartsMeasurementOptionsLayout;
     QGroupBox *chartsMeasurementOptionsGroupBox;
+
+    // right panel with ephemeris
+    QGroupBox *ephemerisGroupBox;
+    QGridLayout *ephemerisLayout;
 
     QString _measurementType = "temperature";
     int _durationInHours = 4;
