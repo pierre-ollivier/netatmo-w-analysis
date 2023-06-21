@@ -336,7 +336,7 @@ void NormalsVisualizer::changeChartOptions() {
     if (humidexOption->isChecked()) {operationType = "Humidex"; setMeasurementType("humidex");}
 
     if (diffOption->isChecked()) {
-        measurementType = "max" + operationType + "- min" + operationType;
+        measurementType = "(max" + operationType + " - min" + operationType + ")";
     }
     else {
         measurementType += operationType;
