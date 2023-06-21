@@ -106,11 +106,13 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     maxOption = new QRadioButton("Maximum");
     minOption = new QRadioButton("Minimum");
     avgOption = new QRadioButton("Moyenne");
+    diffOption = new QRadioButton("Différence");
     maxOption->setChecked(true);
 
     connect(minOption, SIGNAL(clicked(bool)), SLOT(changeChartOptions()));
     connect(maxOption, SIGNAL(clicked(bool)), SLOT(changeChartOptions()));
     connect(avgOption, SIGNAL(clicked(bool)), SLOT(changeChartOptions()));
+    connect(diffOption, SIGNAL(clicked(bool)), SLOT(changeChartOptions()));
 
     stdev0Option = new QRadioButton("0");
     stdev1Option = new QRadioButton("1");
@@ -147,6 +149,7 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     operationsLayout->addWidget(maxOption, 1, Qt::AlignCenter);
     operationsLayout->addWidget(minOption, 1, Qt::AlignCenter);
     operationsLayout->addWidget(avgOption, 1, Qt::AlignCenter);
+    operationsLayout->addWidget(diffOption, 1, Qt::AlignCenter);
     operationsLayout->addWidget(daysSlider, 2, Qt::AlignCenter);
 
     operationsGroupBox = new QGroupBox("");
@@ -322,14 +325,22 @@ void NormalsVisualizer::setMeasurementType(QString measurementType) {
 void NormalsVisualizer::changeChartOptions() {
     QString tableName = indoorOrOutdoorCheckBox->isChecked() ? "IndoorDailyRecords" : "OutdoorDailyRecords";
     QString measurementType = "";
+    QString operationType = "";
     if (maxOption->isChecked()) measurementType += "max";
     if (minOption->isChecked()) measurementType += "min";
     if (avgOption->isChecked()) measurementType += "avg";
 
-    if (temperatureOption->isChecked()) {measurementType += "Temperature"; setMeasurementType("temperature");}
-    if (humidityOption->isChecked()) {measurementType += "Humidity"; setMeasurementType("humidity");}
-    if (dewPointOption->isChecked()) {measurementType += "DewPoint"; setMeasurementType("dewPoint");}
-    if (humidexOption->isChecked()) {measurementType += "Humidex"; setMeasurementType("humidex");}
+    if (temperatureOption->isChecked()) {operationType = "Temperature"; setMeasurementType("temperature");}
+    if (humidityOption->isChecked()) {operationType = "Humidity"; setMeasurementType("humidity");}
+    if (dewPointOption->isChecked()) {operationType = "DewPoint"; setMeasurementType("dewPoint");}
+    if (humidexOption->isChecked()) {operationType = "Humidex"; setMeasurementType("humidex");}
+
+    if (diffOption->isChecked()) {
+        measurementType = "max" + operationType + "- min" + operationType;
+    }
+    else {
+        measurementType += operationType;
+    }
 
     QMap<int, QList<QPointF>> pointsMap = QMap<int, QList<QPointF>>();
 
