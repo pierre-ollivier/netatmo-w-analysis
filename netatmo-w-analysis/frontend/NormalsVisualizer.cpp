@@ -169,6 +169,8 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     setLayout(mainLayout);
     changeChartOptions();
 
+    setMinimumSize(1000, 700);
+
 }
 
 QList<QPointF> NormalsVisualizer::createChartData(QList<double> averages,
