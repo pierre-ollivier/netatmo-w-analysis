@@ -33,6 +33,7 @@ void MainWindow::buildWindow() {
     buildLabels();
     buildButtons();
     buildCharts();
+    buildEphemerisPanel();
     buildLayouts();
     createActions();
     createMenus();
@@ -113,6 +114,13 @@ void MainWindow::buildCharts() {
     QObject::connect(humidexOption, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
 }
 
+void MainWindow::buildEphemerisPanel() {
+    ephemerisLayout = new QGridLayout();
+    ephemerisGroupBox = new QGroupBox("Statistiques pour un _ _");
+    ephemerisGroupBox->setLayout(ephemerisLayout);
+    ephemerisGroupBox->setAlignment(Qt::AlignHCenter);
+}
+
 void MainWindow::buildLayouts() {
     chartsDurationOptionsLayout = new QHBoxLayout();
     chartsDurationOptionsLayout->addWidget(h4Option, 0, Qt::AlignCenter);
@@ -145,6 +153,7 @@ void MainWindow::buildLayouts() {
     mainLayout->addWidget(indoorChart, 3, 1, 2, 2);
     mainLayout->addWidget(chartsDurationOptionsGroupBox, 5, 1, 1, 2);
     mainLayout->addWidget(chartsMeasurementOptionsGroupBox, 6, 1, 1, 2);
+    mainLayout->addWidget(ephemerisGroupBox, 1, 4, 5, 1);
 
     // set window's layout
     mainWidget->setLayout(mainLayout);
@@ -230,6 +239,7 @@ void MainWindow::updateLastMeasurementDate(int timestamp) {
     QDateTime dt = QDateTime();
     dt.setSecsSinceEpoch(timestamp);
     statusLabel->setText(statusLabel->text().replace(9, 19, dt.toString("dd/MM/yyyy hh:mm:ss")));
+    ephemerisGroupBox->setTitle("Statistiques pour un " + dt.toString("dd MMMM"));
 }
 
 void MainWindow::updateActualisationDate(QDateTime timestamp) {
