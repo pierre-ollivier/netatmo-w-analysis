@@ -48,6 +48,7 @@ private:
     QRadioButton *maxOption;
     QRadioButton *minOption;
     QRadioButton *avgOption;
+    QRadioButton *diffOption;
     QHBoxLayout *operationsLayout;
     QGroupBox *operationsGroupBox;
 
