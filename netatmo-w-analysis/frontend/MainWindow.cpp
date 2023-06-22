@@ -115,10 +115,7 @@ void MainWindow::buildCharts() {
 }
 
 void MainWindow::buildEphemerisPanel() {
-    ephemerisLayout = new QGridLayout();
-    ephemerisGroupBox = new QGroupBox("Statistiques pour un _ _");
-    ephemerisGroupBox->setLayout(ephemerisLayout);
-    ephemerisGroupBox->setAlignment(Qt::AlignHCenter);
+    ephemerisPanel = new EphemerisPanel();
 }
 
 void MainWindow::buildLayouts() {
@@ -153,7 +150,7 @@ void MainWindow::buildLayouts() {
     mainLayout->addWidget(indoorChart, 3, 1, 2, 2);
     mainLayout->addWidget(chartsDurationOptionsGroupBox, 5, 1, 1, 2);
     mainLayout->addWidget(chartsMeasurementOptionsGroupBox, 6, 1, 1, 2);
-    mainLayout->addWidget(ephemerisGroupBox, 1, 4, 5, 1);
+    mainLayout->addWidget(ephemerisPanel, 1, 4, 5, 1);
 
     // set window's layout
     mainWidget->setLayout(mainLayout);
@@ -239,7 +236,7 @@ void MainWindow::updateLastMeasurementDate(int timestamp) {
     QDateTime dt = QDateTime();
     dt.setSecsSinceEpoch(timestamp);
     statusLabel->setText(statusLabel->text().replace(9, 19, dt.toString("dd/MM/yyyy hh:mm:ss")));
-    ephemerisGroupBox->setTitle("Statistiques pour un " + dt.toString("dd MMMM"));
+    ephemerisPanel->setDate(dt.date());
 }
 
 void MainWindow::updateActualisationDate(QDateTime timestamp) {
