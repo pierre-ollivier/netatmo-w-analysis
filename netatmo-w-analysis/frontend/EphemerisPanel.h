@@ -1,9 +1,12 @@
 #ifndef EPHEMERISPANEL_H
 #define EPHEMERISPANEL_H
 
-#include <QGroupBox>
-#include <QGridLayout>
 #include <QDate>
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QLabel>
+#include <QLocale>
+#include "../backend/DatabaseHandler.h"
 
 class EphemerisPanel : public QGroupBox
 {
@@ -13,8 +16,10 @@ public:
     void setDate(QDate date);
 
 private:
+    QLabel *txxLabel;
+    QLocale *deviceLocale;
     QGridLayout *layout;
-
+    DatabaseHandler *dbHandler;
 };
 
 #endif // EPHEMERISPANEL_H
