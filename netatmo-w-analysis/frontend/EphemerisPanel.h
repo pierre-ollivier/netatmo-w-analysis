@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QLocale>
 #include "../backend/DatabaseHandler.h"
+#include "../backend/NormalComputer.h"
 
 class EphemerisPanel : public QGroupBox
 {
@@ -23,6 +24,7 @@ private:
     QLocale *deviceLocale;
     QGridLayout *layout;
     DatabaseHandler *dbHandler;
+    NormalComputer *normalComputer;
 };
 
 #endif // EPHEMERISPANEL_H
