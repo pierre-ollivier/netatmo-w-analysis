@@ -3,6 +3,7 @@ QT += core
 
 HEADERS += \
     $$PWD/CustomItemDelegate.h \
+    $$PWD/EphemerisPanel.h \
     $$PWD/HomePageChart.h \
     $$PWD/MainWindow.h \
     $$PWD/MonthlyReport.h \
@@ -12,6 +13,7 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/CustomItemDelegate.cpp \
+    $$PWD/EphemerisPanel.cpp \
     $$PWD/HomePageChart.cpp \
     $$PWD/MainWindow.cpp \
     $$PWD/MonthlyReport.cpp \
