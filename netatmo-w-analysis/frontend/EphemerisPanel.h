@@ -17,6 +17,9 @@ public:
 
 private:
     QLabel *txxLabel;
+    QLabel *tnnLabel;
+    QLabel *txmLabel;
+    QLabel *tnmLabel;
     QLocale *deviceLocale;
     QGridLayout *layout;
     DatabaseHandler *dbHandler;
