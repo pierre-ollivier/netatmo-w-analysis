@@ -23,6 +23,7 @@ EphemerisPanel::EphemerisPanel() : QGroupBox()
     layout->addWidget(tnmLabel, 4, 2);
 
     dbHandler = new DatabaseHandler(PATH_TO_PROD_DATABASE);
+    normalComputer = new NormalComputer(dbHandler);
 
     setTitle("Statistiques pour un _ _");
     setLayout(layout);
@@ -44,4 +45,17 @@ void EphemerisPanel::setDate(QDate date) {
                 "AND day = " + QString::number(date.day())).toDouble();
     tnnLabel->setText(deviceLocale->toString(tnn, 'f', 1) + " °C");
 
+    double txm = normalComputer->normalMeasurementByMovingAverage(
+                "OutdoorDailyRecords",
+                date,
+                "maxTemperature",
+                41);
+    txmLabel->setText(deviceLocale->toString(txm, 'f', 1) + " °C");
+
+    double tnm = normalComputer->normalMeasurementByMovingAverage(
+                "OutdoorDailyRecords",
+                date,
+                "minTemperature",
+                41);
+    tnmLabel->setText(deviceLocale->toString(tnm, 'f', 1) + " °C");
 }
