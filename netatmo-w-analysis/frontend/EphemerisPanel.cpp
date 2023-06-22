@@ -26,7 +26,7 @@ EphemerisPanel::EphemerisPanel() : QGroupBox()
     normalComputer = new NormalComputer(dbHandler);
 
     setTitle("Statistiques pour un _ _");
-    setFont(QFont("Arial", 13));
+    setFont(QFont("Arial", 12));
     setLayout(layout);
     setAlignment(Qt::AlignHCenter);
 }
@@ -59,4 +59,18 @@ void EphemerisPanel::setDate(QDate date) {
                 "minTemperature",
                 41);
     tnmLabel->setText("<font color = \"#209fdf\">" + deviceLocale->toString(tnm, 'f', 1) + "</font> °C");
+
+    int txxYear = dbHandler->getResultFromDatabase(
+                "SELECT year FROM OutdoorDailyRecords "
+                "WHERE day = " + QString::number(date.day()) + " "
+                "AND month = " + QString::number(date.month()) + " "
+                "AND maxTemperature = " + QString::number(txx)).toInt();
+    txxLabel->setText(txxLabel->text() + " (" +QString::number(txxYear) + ")");
+
+    int tnnYear = dbHandler->getResultFromDatabase(
+                "SELECT year FROM OutdoorDailyRecords "
+                "WHERE day = " + QString::number(date.day()) + " "
+                "AND month = " + QString::number(date.month()) + " "
+                "AND minTemperature = " + QString::number(tnn)).toInt();
+    tnnLabel->setText(tnnLabel->text() + " (" +QString::number(tnnYear) + ")");
 }
