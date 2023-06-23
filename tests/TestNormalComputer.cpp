@@ -88,7 +88,50 @@ void TestNormalComputer::testNormalMeasurementByMovingAverageIndoor() {
 }
 
 void TestNormalComputer::testNormalMeasurementByMovingAverageOutdoor() {
+    NormalComputer normalComputer(new DatabaseHandler("testdb.db")); // TODO: change this
+    QCOMPARE(normalComputer.normalMeasurementByMovingAverage(
+                 "OutdoorDailyRecords",
+                 QDate(2023, 4, 10),
+                 "minTemperature",
+                 5), (12.9 + 13.6 + 13.6 + 14.7 + 15.2 + 5.8 + 7.4 + 8.5 + 5.2 + 4) / 10);
+    QCOMPARE(normalComputer.normalMeasurementByMovingAverage(
+                 "OutdoorDailyRecords",
+                 QDate(2023, 4, 10),
+                 "maxTemperature",
+                 5), 19.55);
 
+    QCOMPARE(normalComputer.normalMeasurementByMovingAverage(
+                 "OutdoorDailyRecords",
+                 QDate(2023, 4, 10),
+                 "minHumidity",
+                 5), 36.3);
+    QCOMPARE(normalComputer.normalMeasurementByMovingAverage(
+                 "OutdoorDailyRecords",
+                 QDate(2023, 4, 10),
+                 "maxHumidity",
+                 5), 70.1);
+
+    QCOMPARE(normalComputer.normalMeasurementByMovingAverage(
+                 "OutdoorDailyRecords",
+                 QDate(2023, 4, 10),
+                 "minDewPoint",
+                 5), 1.8063);
+    QCOMPARE(normalComputer.normalMeasurementByMovingAverage(
+                 "OutdoorDailyRecords",
+                 QDate(2023, 4, 10),
+                 "maxDewPoint",
+                 5), 7.334);
+
+    QCOMPARE(normalComputer.normalMeasurementByMovingAverage(
+                 "OutdoorDailyRecords",
+                 QDate(2023, 4, 10),
+                 "minHumidex",
+                 5), 9.0436);
+    QCOMPARE(normalComputer.normalMeasurementByMovingAverage(
+                 "OutdoorDailyRecords",
+                 QDate(2023, 4, 10),
+                 "maxHumidex",
+                 5), 19.1757);
 }
 
 void TestNormalComputer::testStdevMeasurementByMovingAverageIndoor() {
