@@ -29,6 +29,16 @@ EphemerisPanel::EphemerisPanel() : QGroupBox()
     setFont(QFont("Arial", 12));
     setLayout(layout);
     setAlignment(Qt::AlignHCenter);
+    setStyleSheet(
+                "QGroupBox {"
+                "  border: 2px solid gray;"
+                "  border-radius: 15px;"
+                "  margin-top: 10px;"
+                "}"
+                "QGroupBox::title {"
+                "  subcontrol-origin: margin;"
+                "  subcontrol-position: top center;"
+                "}");
 }
 
 void EphemerisPanel::setDate(QDate date) {
