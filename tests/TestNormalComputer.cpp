@@ -1,5 +1,6 @@
 #include "TestNormalComputer.h"
 #include <QTest>
+#include <math.h>
 #include "../netatmo-w-analysis/backend/NormalComputer.h"
 
 TestNormalComputer::TestNormalComputer()
@@ -135,7 +136,12 @@ void TestNormalComputer::testNormalMeasurementByMovingAverageOutdoor() {
 }
 
 void TestNormalComputer::testStdevMeasurementByMovingAverageIndoor() {
-
+    NormalComputer normalComputer(new DatabaseHandler("testdb.db")); // TODO: change this
+    QCOMPARE(normalComputer.stdevMeasurementByMovingAverage(
+                 "IndoorDailyRecords",
+                 QDate(2023, 10, 10),
+                 "minHumidity",
+                 5), std::sqrt((0.04 + 0.04 + 4.84 + 0.64 + 3.24) / 5));
 }
 
 void TestNormalComputer::testStdevMeasurementByMovingAverageOutdoor() {
