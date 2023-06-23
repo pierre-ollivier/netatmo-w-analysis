@@ -5,7 +5,9 @@
 #include <QFileDialog>
 #include "../netatmo-w-analysis/frontend/MonthlyReport.h"
 #include "../netatmo-w-analysis/frontend/YearlyReport.h"
+#include "../netatmo-w-analysis/frontend/NormalsVisualizer.h"
 #include "../netatmo-w-analysis/backend/APIMonitor.h"
+#include "../netatmo-w-analysis/backend/NormalComputer.h"
 #include "../types/ExtTimestampRecord.h"
 
 extern QString PATH_TO_PROD_DATABASE;
@@ -31,6 +33,7 @@ void MainWindow::buildWindow() {
     buildLabels();
     buildButtons();
     buildCharts();
+    buildEphemerisPanel();
     buildLayouts();
     createActions();
     createMenus();
@@ -111,6 +114,10 @@ void MainWindow::buildCharts() {
     QObject::connect(humidexOption, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
 }
 
+void MainWindow::buildEphemerisPanel() {
+    ephemerisPanel = new EphemerisPanel();
+}
+
 void MainWindow::buildLayouts() {
     chartsDurationOptionsLayout = new QHBoxLayout();
     chartsDurationOptionsLayout->addWidget(h4Option, 0, Qt::AlignCenter);
@@ -143,6 +150,7 @@ void MainWindow::buildLayouts() {
     mainLayout->addWidget(indoorChart, 3, 1, 2, 2);
     mainLayout->addWidget(chartsDurationOptionsGroupBox, 5, 1, 1, 2);
     mainLayout->addWidget(chartsMeasurementOptionsGroupBox, 6, 1, 1, 2);
+    mainLayout->addWidget(ephemerisPanel, 1, 4, 5, 1);
 
     // set window's layout
     mainWidget->setLayout(mainLayout);
@@ -165,6 +173,8 @@ void MainWindow::createActions() {
     connect(displayMonthlyReportAction, SIGNAL(triggered()), SLOT(displayMonthlyReport()));
     displayYearlyReportAction = new QAction("Climatologie générale");
     connect(displayYearlyReportAction, SIGNAL(triggered()), SLOT(displayYearlyReport()));
+    normalsAction = new QAction("Normales");
+    connect(normalsAction, SIGNAL(triggered()), SLOT(showNormals()));
 }
 
 void MainWindow::createMenus() {
@@ -178,6 +188,7 @@ void MainWindow::createMenus() {
     QMenu *climatologyMenu = menuBar->addMenu(tr("&Climatologie"));
     climatologyMenu->addAction(displayMonthlyReportAction);
     climatologyMenu->addAction(displayYearlyReportAction);
+    climatologyMenu->addAction(normalsAction);
 }
 
 void MainWindow::setAccessToken(QString newAccessToken) {
@@ -225,6 +236,7 @@ void MainWindow::updateLastMeasurementDate(int timestamp) {
     QDateTime dt = QDateTime();
     dt.setSecsSinceEpoch(timestamp);
     statusLabel->setText(statusLabel->text().replace(9, 19, dt.toString("dd/MM/yyyy hh:mm:ss")));
+    ephemerisPanel->setDate(dt.date());
 }
 
 void MainWindow::updateActualisationDate(QDateTime timestamp) {
@@ -448,4 +460,10 @@ void MainWindow::changeChartsOptions() {
     if (h192Option->isChecked()) _durationInHours = 192;
     updateOutdoorChart();
     updateIndoorChart();
+}
+
+void MainWindow::showNormals() {
+    NormalComputer *computer = new NormalComputer(dbHandlerCopy);
+    NormalsVisualizer *visualizer = new NormalsVisualizer(computer);
+    visualizer->show();
 }

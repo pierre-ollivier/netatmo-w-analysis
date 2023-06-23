@@ -13,6 +13,7 @@
 #include "../netatmo-w-analysis/backend/APIMonitor.h"
 #include "../netatmo-w-analysis/backend/OldDataUploader.h"
 #include "../netatmo-w-analysis/frontend/HomePageChart.h"
+#include "../netatmo-w-analysis/frontend/EphemerisPanel.h"
 
 
 class MainWindow : public QMainWindow
@@ -26,6 +27,7 @@ public:
     void buildLabels();
     void buildButtons();
     void buildCharts();
+    void buildEphemerisPanel();
     void buildLayouts();
     void createMenus();
     void createActions();
@@ -63,6 +65,8 @@ public slots:
 
     void addDataFromCurrentMonths();
     void changeChartsOptions();
+
+    void showNormals();
 
 signals:
 
@@ -108,6 +112,7 @@ private:
     QAction *updateDailyOutdoorDatabaseAction;
     QAction *displayMonthlyReportAction;
     QAction *displayYearlyReportAction;
+    QAction *normalsAction;
 
     //chart options
     QRadioButton *h4Option;
@@ -122,6 +127,9 @@ private:
     QRadioButton *humidexOption;
     QHBoxLayout *chartsMeasurementOptionsLayout;
     QGroupBox *chartsMeasurementOptionsGroupBox;
+
+    // right panel with ephemeris
+    EphemerisPanel *ephemerisPanel;
 
     QString _measurementType = "temperature";
     int _durationInHours = 4;

@@ -2,13 +2,15 @@
 #include <QTest>
 #include "../netatmo-w-analysis/backend/DatabaseHandler.h"
 
+extern const QString PATH_TO_TEST_DATABASE;
+
 TestDatabaseHandler::TestDatabaseHandler()
 {
 
 }
 
 void TestDatabaseHandler::testGetTimestampRecordsFromDatabase() {
-    DatabaseHandler dbHandler("testdb.db");
+    DatabaseHandler dbHandler(PATH_TO_TEST_DATABASE);
     std::vector<IntTimestampRecord> records = dbHandler.getIntTimestampRecordsFromDatabase(
                 "SELECT * from IndoorTimestampRecords WHERE date = \"05/10/2019\" ORDER BY id", 2);
     QCOMPARE(records[0].temperature(), 19.8);
@@ -21,7 +23,7 @@ void TestDatabaseHandler::testGetTimestampRecordsFromDatabase() {
 }
 
 void TestDatabaseHandler::testGetDailyRecordsFromDatabase() {
-    DatabaseHandler dbHandler("testdb.db");
+    DatabaseHandler dbHandler(PATH_TO_TEST_DATABASE);
     std::vector<IntDailyRecord> records = dbHandler.getIntDailyRecordsFromDatabase(
                 "SELECT * from IndoorDailyRecords WHERE weekNumber = 41 ORDER BY id", -1);
     QCOMPARE(records.size(), 7);
@@ -36,7 +38,7 @@ void TestDatabaseHandler::testGetDailyRecordsFromDatabase() {
 }
 
 void TestDatabaseHandler::testGetResultFromDatabase() {
-    DatabaseHandler dbHandler("testdb.db");
+    DatabaseHandler dbHandler(PATH_TO_TEST_DATABASE);
     QCOMPARE(dbHandler.getResultFromDatabase(
                  "SELECT max(maxTemperature) from OutdoorDailyRecords where year = 2020"), 38.4);
     QCOMPARE(dbHandler.getResultFromDatabase(
@@ -50,7 +52,7 @@ void TestDatabaseHandler::testGetResultFromDatabase() {
 }
 
 void TestDatabaseHandler::testGetLatestDateTimeFromDatabase() {
-    DatabaseHandler dbHandler("testdb.db");
+    DatabaseHandler dbHandler(PATH_TO_TEST_DATABASE);
     QCOMPARE(dbHandler.getLatestDateTimeFromDatabase("IndoorDailyRecords"),
              QDateTime(QDate(2019, 11, 19)));
     QCOMPARE(dbHandler.getLatestDateTimeFromDatabase("OutdoorDailyRecords"),

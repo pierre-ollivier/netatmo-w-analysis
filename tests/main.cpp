@@ -2,6 +2,7 @@
 #include "TestDatabaseHandler.h"
 #include "TestDailyStatisticsCalculator.h"
 #include "TestDailyAverageCalculator.h"
+#include "TestNormalComputer.h"
 #include <QtTest/QtTest>
 
 int main(int argc, char *argv[])
@@ -15,5 +16,6 @@ int main(int argc, char *argv[])
     runTests(new TestDatabaseHandler);
     runTests(new TestDailyStatisticsCalculator);
     runTests(new TestDailyAverageCalculator);
+    runTests(new TestNormalComputer);
     return status;
 }
