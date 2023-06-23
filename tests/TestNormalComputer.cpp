@@ -145,5 +145,11 @@ void TestNormalComputer::testStdevMeasurementByMovingAverageIndoor() {
 }
 
 void TestNormalComputer::testStdevMeasurementByMovingAverageOutdoor() {
-
+    NormalComputer normalComputer(new DatabaseHandler("testdb.db")); // TODO: change this
+    QCOMPARE(normalComputer.stdevMeasurementByMovingAverage(
+                 "OutdoorDailyRecords",
+                 QDate(2023, 4, 10),
+                 "maxHumidity",
+                 5), std::sqrt((65.61 + 123.21 + 50.41 + 102.01 + 259.21
+                                + 37.21 + 118.81 + 436.81 + 436.81 + 34.81) / 10));
 }
