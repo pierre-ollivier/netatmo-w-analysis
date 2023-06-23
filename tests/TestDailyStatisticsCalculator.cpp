@@ -73,9 +73,9 @@ void TestDailyStatisticsCalculator::testGetMaxDewPointFromDate() {
 }
 void TestDailyStatisticsCalculator::testGetMaxDewPointTimestampFromDate() {
     QCOMPARE(calculator->getMaxDewPointTimestampFromDate(QDate(2019, 10, 12)), 1570896877);
-    QCOMPARE(calculator->getMaxDewPointTimestampFromDate(QDate(2019, 10, 12), 15.564), 1570896877);
+    QCOMPARE(calculator->getMaxDewPointTimestampFromDate(QDate(2019, 10, 12), 15.564404), 1570896877);
     QCOMPARE(calculator->getMaxDewPointTimestampFromDate(QDate(2019, 10, 12), true), 1570911815);
-    QCOMPARE(calculator->getMaxDewPointTimestampFromDate(QDate(2019, 10, 12), 16.18, true), 1570911815);
+    QCOMPARE(calculator->getMaxDewPointTimestampFromDate(QDate(2019, 10, 12), 16.179987, true), 1570911815);
 }
 
 void TestDailyStatisticsCalculator::testGetMinDewPointFromDate() {
@@ -86,7 +86,7 @@ void TestDailyStatisticsCalculator::testGetMinDewPointTimestampFromDate() {
     QCOMPARE(calculator->getMinDewPointTimestampFromDate(QDate(2019, 10, 13)), 1571003461);
     QCOMPARE(calculator->getMinDewPointTimestampFromDate(QDate(2019, 10, 13), 12.697232), 1571003461);
     QCOMPARE(calculator->getMinDewPointTimestampFromDate(QDate(2019, 10, 13), true), 1570950713);
-    QCOMPARE(calculator->getMinDewPointTimestampFromDate(QDate(2019, 10, 13), 14.396, true), 1570950713);
+    QCOMPARE(calculator->getMinDewPointTimestampFromDate(QDate(2019, 10, 13), 14.395680, true), 1570950713);
 }
 
 void TestDailyStatisticsCalculator::testGetAvgDewPointFromDate() {
@@ -104,7 +104,7 @@ void TestDailyStatisticsCalculator::testGetMaxHumidexTimestampFromDate() {
     QCOMPARE(calculator->getMaxHumidexTimestampFromDate(QDate(2019, 10, 15)), 1571090620);
     QCOMPARE(calculator->getMaxHumidexTimestampFromDate(QDate(2019, 10, 15), 20.150983), 1571090620);
     QCOMPARE(calculator->getMaxHumidexTimestampFromDate(QDate(2019, 10, 15), true), 1571091259);
-    QCOMPARE(calculator->getMaxHumidexTimestampFromDate(QDate(2019, 10, 15), 26.833, true), 1571091259);
+    QCOMPARE(calculator->getMaxHumidexTimestampFromDate(QDate(2019, 10, 15), 26.832875, true), 1571091259);
 }
 
 void TestDailyStatisticsCalculator::testGetMinHumidexFromDate() {
@@ -115,7 +115,7 @@ void TestDailyStatisticsCalculator::testGetMinHumidexTimestampFromDate() {
     QCOMPARE(calculator->getMinHumidexTimestampFromDate(QDate(2019, 10, 16)), 1571180754);
     QCOMPARE(calculator->getMinHumidexTimestampFromDate(QDate(2019, 10, 16), 13.580892), 1571180754);
     QCOMPARE(calculator->getMinHumidexTimestampFromDate(QDate(2019, 10, 16), true), 1571207405);
-    QCOMPARE(calculator->getMinHumidexTimestampFromDate(QDate(2019, 10, 16), 21.941, true), 1571207405);
+    QCOMPARE(calculator->getMinHumidexTimestampFromDate(QDate(2019, 10, 16), 21.940586, true), 1571207405);
 }
 
 void TestDailyStatisticsCalculator::testGetAvgHumidexFromDate() {
