@@ -1,10 +1,12 @@
 #include "TestDailyAverageCalculator.h"
 #include <QTest>
 
+extern const QString PATH_TO_TEST_DATABASE;
+
 TestDailyAverageCalculator::TestDailyAverageCalculator()
 {
-    indoorCalculator = new DailyAverageCalculator("testdb.db", true);
-    outdoorCalculator = new DailyAverageCalculator("testdb.db", false);
+    indoorCalculator = new DailyAverageCalculator(PATH_TO_TEST_DATABASE, true);
+    outdoorCalculator = new DailyAverageCalculator(PATH_TO_TEST_DATABASE, false);
 }
 
 void TestDailyAverageCalculator::testGetFirstMeasurementFromDate() {

@@ -2,9 +2,11 @@
 #include <QTest>
 #include <QDate>
 
+extern const QString PATH_TO_TEST_DATABASE;
+
 TestDailyStatisticsCalculator::TestDailyStatisticsCalculator()
 {
-    calculator = new DailyStatisticsCalculator("testdb.db");
+    calculator = new DailyStatisticsCalculator(PATH_TO_TEST_DATABASE);
 }
 
 //temperature

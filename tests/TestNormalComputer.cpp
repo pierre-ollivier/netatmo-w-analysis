@@ -3,13 +3,15 @@
 #include <math.h>
 #include "../netatmo-w-analysis/backend/NormalComputer.h"
 
+extern const QString PATH_TO_TEST_DATABASE;
+
 TestNormalComputer::TestNormalComputer()
 {
 
 }
 
 void TestNormalComputer::testNormalMeasurementByMovingAverageIndoor() {
-    NormalComputer normalComputer(new DatabaseHandler("testdb.db")); // TODO: change this
+    NormalComputer normalComputer(new DatabaseHandler(PATH_TO_TEST_DATABASE));
     QCOMPARE(normalComputer.normalMeasurementByMovingAverage(
                  "IndoorDailyRecords",
                  QDate(2023, 10, 10),
@@ -89,7 +91,7 @@ void TestNormalComputer::testNormalMeasurementByMovingAverageIndoor() {
 }
 
 void TestNormalComputer::testNormalMeasurementByMovingAverageOutdoor() {
-    NormalComputer normalComputer(new DatabaseHandler("testdb.db")); // TODO: change this
+    NormalComputer normalComputer(new DatabaseHandler(PATH_TO_TEST_DATABASE));
     QCOMPARE(normalComputer.normalMeasurementByMovingAverage(
                  "OutdoorDailyRecords",
                  QDate(2023, 4, 10),
@@ -136,7 +138,7 @@ void TestNormalComputer::testNormalMeasurementByMovingAverageOutdoor() {
 }
 
 void TestNormalComputer::testStdevMeasurementByMovingAverageIndoor() {
-    NormalComputer normalComputer(new DatabaseHandler("testdb.db")); // TODO: change this
+    NormalComputer normalComputer(new DatabaseHandler(PATH_TO_TEST_DATABASE));
     QCOMPARE(normalComputer.stdevMeasurementByMovingAverage(
                  "IndoorDailyRecords",
                  QDate(2023, 10, 10),
@@ -145,7 +147,7 @@ void TestNormalComputer::testStdevMeasurementByMovingAverageIndoor() {
 }
 
 void TestNormalComputer::testStdevMeasurementByMovingAverageOutdoor() {
-    NormalComputer normalComputer(new DatabaseHandler("testdb.db")); // TODO: change this
+    NormalComputer normalComputer(new DatabaseHandler(PATH_TO_TEST_DATABASE));
     QCOMPARE(normalComputer.stdevMeasurementByMovingAverage(
                  "OutdoorDailyRecords",
                  QDate(2023, 4, 10),
