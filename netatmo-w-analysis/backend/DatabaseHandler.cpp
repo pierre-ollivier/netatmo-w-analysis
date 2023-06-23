@@ -741,6 +741,29 @@ QVariant DatabaseHandler::getResultFromDatabase(QString query) {
     return QVariant();
 }
 
+std::vector<QVariant> DatabaseHandler::getResultsFromDatabase(QString query) {
+    std::vector<QVariant> result = std::vector<QVariant>();
+    db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    QSqlQuery _query(db);
+
+    if (!db.open()) {
+        qDebug() << "Database open error";
+    }
+    if (!db.isOpen() ) {
+        qDebug() << "Database is not open";
+    }
+    if (_query.exec(query)) {
+        while (_query.next()) {
+            result.push_back(_query.value(0));
+        }
+    }
+    else {
+        qDebug() << "Invalid query:" << query;
+    }
+    db.close();
+    return result;
+}
+
 void DatabaseHandler::updateOutdoorDailyRecords(QDate beginDate, QDate endDate, bool verbose) {
     DailyStatisticsCalculator dailyCalculator = DailyStatisticsCalculator(_pathToDatabase);
     QProgressDialog progress("Ajout des nouvelles données...", "Annuler", beginDate.toJulianDay(), endDate.toJulianDay());
@@ -822,10 +845,12 @@ void DatabaseHandler::updateIndoorDailyRecords(QDate beginDate, QDate endDate, b
     }
 }
 
-QDateTime DatabaseHandler::getLatestDateTimeFromDatabase(QString tableName) {
+QDateTime DatabaseHandler::getLatestDateTimeFromDatabase(QString tableName, QString measurement) {
+    if (measurement == "") measurement = "date";
     if (tableName == QString("OutdoorDailyRecords") || tableName == "IndoorDailyRecords") {
         QString latestDate = getResultFromDatabase(
                     "SELECT date from " + tableName + " "
+                    "WHERE " + measurement + " IS NOT NULL "
                     "ORDER BY year desc, month desc, day desc "
                     "LIMIT 1").toString();
         return QDateTime(QDate::fromString(latestDate, "dd/MM/yyyy"));
@@ -833,11 +858,13 @@ QDateTime DatabaseHandler::getLatestDateTimeFromDatabase(QString tableName) {
     else {
         QString latestDate = getResultFromDatabase(
                     "SELECT date from " + tableName + " "
+                    "WHERE " + measurement + " IS NOT NULL "
                     "ORDER BY year desc, month desc, day desc "
                     "LIMIT 1").toString();
         QString latestTime = getResultFromDatabase(
                     "SELECT time from " + tableName + " "
                     "WHERE date = \"" + latestDate + "\" "
+                    "AND " + measurement + " IS NOT NULL "
                     "ORDER BY hour desc, minute desc, second desc "
                     "LIMIT 1").toString();
         return QDateTime(QDate::fromString(latestDate, "dd/MM/yyyy"), QTime::fromString(latestTime, "hh:mm:ss"));

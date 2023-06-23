@@ -4,6 +4,7 @@ HEADERS += \
     $$PWD/DailyStatisticsCalculator.h \
     $$PWD/DatabaseHandler.h \
     $$PWD/NetatmoAPIHandler.h \
+    $$PWD/NormalComputer.h \
     $$PWD/OldDataUploader.h
 
 SOURCES += \
@@ -12,4 +13,5 @@ SOURCES += \
     $$PWD/DailyStatisticsCalculator.cpp \
     $$PWD/DatabaseHandler.cpp \
     $$PWD/NetatmoAPIHandler.cpp \
+    $$PWD/NormalComputer.cpp \
     $$PWD/OldDataUploader.cpp
