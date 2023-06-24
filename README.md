@@ -45,7 +45,12 @@ Le rapport annuel de climatologie quotidienne est un tableau associé à un para
 
 # Stockage interne des données
 
-Les données sont stockées dans la base de données. Celle-ci contient plusieurs tables :
+Les données sont stockées dans deux bases de données :
+- Une base de données, dite de « production » qui contient les données calculées à partir des fichiers chargés tous les mois. Les données de production sont fiables et définitives.
+- Une base de données, dite de « copie » qui est une copie de la base de données de production, à laquelle on ajoute une partie des données du mois courant (température et humidité maximales et minimales déterminées à partir des normes en vigueur, estimation de la température et de l'humidité moyennes).
+- Il existe une troisième base de données, dite de « test » qui permet de s'assurer que tout va bien mais qui n'est pas utilisée en tant que telle par le programme.
+
+Chaque base de données contient plusieurs tables :
 
 ### sqlite-sequence
 Cette table est utilisée pour s'assurer de l'unicité des identifiants dans les autres tables.
