@@ -13,7 +13,23 @@ Trois menus sont disponibles :
 - Menu Données : c'est ici que les opérations relatives aux données sont disponibles. Il est possible d'ajouter, à partir d'un fichier .csv, les données d'un mois (données toutes les 5 minutes) ou encore de compléter la base de données qui compile, pour chaque journée, les valeurs moyennes et extrêmes de chaque paramètre mesuré ou calculé.
 - Menu Climatologie : c'est ici qu'il est possible d'accéder aux résumés mensuels et annuels pour chaque paramètre. Le menu Climatologie donne également accès à la fenêtre Normales.
 
-## Données
+# Menu Données
+
+## Normales
+
+La page Normales donne accès à une représentation graphique d'un paramètre de mesure donné (température, humidité, point de rosée ou encore humidex) au fil de l'année en cours, ainsi que son écartement vis-à-vis de la normale de chaque jour (moyenne du paramètre sélectionné sur toutes les années précédentes, dans les X jours autour dudit jour).
+
+Quatre options sont proposées pour chaque paramètre : valeur maximale sur une journée (en prenant en compte, dans le cas précis de la température extérieure, les normes de fenêtre temporelle de calcul), valeur minimale, valeur moyenne ou encore amplitude (différence entre le maximum et le minimum). 
+
+Il est possible de choisir entre les données intérieures et les données extérieures.
+
+# Menu Climatologie
+
+## Rapport mensuel
+
+## Rapport annuel
+
+# Stockage interne des données
 
 Les données sont stockées dans la base de données. Celle-ci contient plusieurs tables :
 
@@ -76,11 +92,3 @@ Cette table agrège les données du module extérieur à l'échelle d'une journ�
 - l'humidex maximal et son heure de première occurrence,
 - l'humidex minimal et son heure de première occurrence,
 - l'humidex moyen.
-
-## Normales
-
-La page Normales donne accès à une représentation graphique d'un paramètre de mesure donné (température, humidité, point de rosée ou encore humidex) au fil de l'année en cours, ainsi que son écartement vis-à-vis de la normale de chaque jour (moyenne du paramètre sélectionné sur toutes les années précédentes, dans les X jours autour dudit jour).
-
-Quatre options sont proposées pour chaque paramètre : valeur maximale sur une journée (en prenant en compte, dans le cas précis de la température extérieure, les normes de fenêtre temporelle de calcul), valeur minimale, valeur moyenne ou encore amplitude (différence entre le maximum et le minimum). 
-
-Il est possible de choisir entre les données intérieures et les données extérieures.
