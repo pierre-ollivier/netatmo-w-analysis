@@ -76,3 +76,11 @@ Cette table agrège les données du module extérieur à l'échelle d'une journ�
 - l'humidex maximal et son heure de première occurrence,
 - l'humidex minimal et son heure de première occurrence,
 - l'humidex moyen.
+
+## Normales
+
+La page Normales donne accès à une représentation graphique d'un paramètre de mesure donné (température, humidité, point de rosée ou encore humidex) au fil de l'année en cours, ainsi que son écartement vis-à-vis de la normale de chaque jour (moyenne du paramètre sélectionné sur toutes les années précédentes, dans les X jours autour dudit jour).
+
+Quatre options sont proposées pour chaque paramètre : valeur maximale sur une journée (en prenant en compte, dans le cas précis de la température extérieure, les normes de fenêtre temporelle de calcul), valeur minimale, valeur moyenne ou encore amplitude (différence entre le maximum et le minimum). 
+
+Il est possible de choisir entre les données intérieures et les données extérieures.
