@@ -27,7 +27,21 @@ Il est possible de choisir entre les données intérieures et les données exté
 
 ## Rapport mensuel
 
+Le rapport mensuel donne les valeurs minimales, maximales et moyennes d'un paramètre (à choisir parmi température, humidité, point de rosée, humidex et pression ; en intérieur ou en extérieur - dans le cas de la pression, les données seront identiques à l'intérieur et à l'extérieur).
+
+La fenêtre de rapport mensuel est interactive et permet de changer de mois, que ce soit en naviguant vers le mois précédent ou suivant ou en sélectionnant soi-même un mois parmi les mois contenant des mesures.
+
+L'absence de données pour un mois ou un jour précis est prise en compte dans l'affichage.
+
 ## Rapport annuel
+
+Le rapport annuel de climatologie quotidienne est un tableau associé à un paramètre de mesure, à choisir parmi température, humidité, point de rosée, humidex ou pression. Pour chaque jour de l'année, les valeurs suivantes sont calculées et affichées :
+- le minimum du minimum sur la journée du paramètre, ainsi que l'année concernée
+- le maximum du minimum sur la journée du paramètre, ainsi que l'année concernée
+- le minimum du maximum sur la journée du paramètre, ainsi que l'année concernée
+- le maximum du maximum sur la journée du paramètre, ainsi que l'année concernée
+- la valeur moyenne du minimum du paramètre
+- la valeur moyenne du maximum du paramètre.
 
 # Stockage interne des données
 
