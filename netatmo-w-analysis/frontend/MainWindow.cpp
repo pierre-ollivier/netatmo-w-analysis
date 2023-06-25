@@ -475,6 +475,6 @@ void MainWindow::showNormals() {
 }
 
 void MainWindow::exploreData() {
-    DataExplorator *explorator = new DataExplorator();
+    DataExplorator *explorator = new DataExplorator(dbHandlerProd);
     explorator->show();
 }

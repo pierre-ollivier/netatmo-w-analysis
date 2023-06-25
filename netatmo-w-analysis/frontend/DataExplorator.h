@@ -5,17 +5,22 @@
 #include <QGridLayout>
 #include <QStandardItemModel>
 #include <QTableView>
+#include "../backend/DatabaseHandler.h"
 
 class DataExplorator : public QWidget
 {
 public:
-    DataExplorator();
+    DataExplorator(DatabaseHandler *dbHandler);
+
+    void fillBoard();
 
 private:
     QGridLayout *layout;
 
     QTableView *mainView;
     QStandardItemModel *mainModel;
+
+    DatabaseHandler *_dbHandler;
 };
 
 #endif // DATAEXPLORATOR_H
