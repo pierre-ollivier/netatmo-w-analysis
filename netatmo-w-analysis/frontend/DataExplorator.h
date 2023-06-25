@@ -2,6 +2,7 @@
 #define DATAEXPLORATOR_H
 
 #include <QWidget>
+#include <QLocale>
 #include <QGridLayout>
 #include <QStandardItemModel>
 #include <QTableView>
@@ -16,6 +17,8 @@ public:
 
 private:
     QGridLayout *layout;
+
+    QLocale *deviceLocale;
 
     QTableView *mainView;
     QStandardItemModel *mainModel;
