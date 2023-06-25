@@ -17,6 +17,8 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     layout->addWidget(mainView, 1, 1);
     setLayout(layout);
 
+    setMinimumSize(400, 400);
+
     fillBoard();
 }
 
@@ -36,4 +38,5 @@ void DataExplorator::fillBoard() {
         mainModel->item(i, 0)->setText(deviceLocale->toString(maxTemperatures[i].toDouble(), 'f', 1) + unitWithLeadingSpace);
         mainModel->item(i, 1)->setText(maxTemperaturesDates[i].toString());
     }
+    mainView->resizeColumnsToContents();
 }
