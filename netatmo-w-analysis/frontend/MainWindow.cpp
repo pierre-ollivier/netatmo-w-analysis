@@ -3,6 +3,7 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QFileDialog>
+#include "../netatmo-w-analysis/frontend/DataExplorator.h"
 #include "../netatmo-w-analysis/frontend/MonthlyReport.h"
 #include "../netatmo-w-analysis/frontend/YearlyReport.h"
 #include "../netatmo-w-analysis/frontend/NormalsVisualizer.h"
@@ -474,5 +475,6 @@ void MainWindow::showNormals() {
 }
 
 void MainWindow::exploreData() {
-
+    DataExplorator *explorator = new DataExplorator();
+    explorator->show();
 }
