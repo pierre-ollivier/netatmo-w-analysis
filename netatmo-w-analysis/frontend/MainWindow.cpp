@@ -169,6 +169,9 @@ void MainWindow::createActions() {
     updateDailyOutdoorDatabaseAction = new QAction("Mettre à jour la base de données quotidiennes extérieures");
     connect(updateDailyOutdoorDatabaseAction, SIGNAL(triggered()), SLOT(updateDailyOutdoorDatabase()));
 
+    exploreDataAction = new QAction("Explorer les données");
+    connect(exploreDataAction, SIGNAL(triggered()), SLOT(exploreData()));
+
     displayMonthlyReportAction = new QAction("Rapport mensuel");
     connect(displayMonthlyReportAction, SIGNAL(triggered()), SLOT(displayMonthlyReport()));
     displayYearlyReportAction = new QAction("Climatologie générale");
@@ -180,11 +183,13 @@ void MainWindow::createActions() {
 void MainWindow::createMenus() {
     QMenu *networkMenu = menuBar->addMenu(tr("&Réseau"));
     networkMenu->addAction(requestCountsAction);
-    QMenu *dataMenu = menuBar->addMenu(tr("Données"));
-    dataMenu->addAction(addMonthDataAction);
-    dataMenu->addAction(addMultipleMonthsDataAction);
-    dataMenu->addAction(updateDailyIndoorDatabaseAction);
-    dataMenu->addAction(updateDailyOutdoorDatabaseAction);
+    QMenu *handleDataMenu = menuBar->addMenu(tr("&Gestion des données"));
+    handleDataMenu->addAction(addMonthDataAction);
+    handleDataMenu->addAction(addMultipleMonthsDataAction);
+    handleDataMenu->addAction(updateDailyIndoorDatabaseAction);
+    handleDataMenu->addAction(updateDailyOutdoorDatabaseAction);
+    QMenu *exploreDataMenu = menuBar->addMenu(tr("&Exploration des données"));
+    exploreDataMenu->addAction(exploreDataAction);
     QMenu *climatologyMenu = menuBar->addMenu(tr("&Climatologie"));
     climatologyMenu->addAction(displayMonthlyReportAction);
     climatologyMenu->addAction(displayYearlyReportAction);
@@ -466,4 +471,8 @@ void MainWindow::showNormals() {
     NormalComputer *computer = new NormalComputer(dbHandlerCopy);
     NormalsVisualizer *visualizer = new NormalsVisualizer(computer);
     visualizer->show();
+}
+
+void MainWindow::exploreData() {
+
 }

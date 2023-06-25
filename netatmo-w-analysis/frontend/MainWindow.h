@@ -60,6 +60,8 @@ public slots:
     void updateDailyIndoorDatabase();
     void updateDailyOutdoorDatabase();
 
+    void exploreData();
+
     void displayMonthlyReport();
     void displayYearlyReport();
 
@@ -110,6 +112,7 @@ private:
     QAction *addMultipleMonthsDataAction;
     QAction *updateDailyIndoorDatabaseAction;
     QAction *updateDailyOutdoorDatabaseAction;
+    QAction *exploreDataAction;
     QAction *displayMonthlyReportAction;
     QAction *displayYearlyReportAction;
     QAction *normalsAction;
