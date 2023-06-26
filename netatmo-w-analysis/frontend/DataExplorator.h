@@ -2,9 +2,11 @@
 #define DATAEXPLORATOR_H
 
 #include <QWidget>
+#include <QCheckBox>
 #include <QComboBox>
 #include <QLocale>
 #include <QGridLayout>
+#include <QRadioButton>
 #include <QStandardItemModel>
 #include <QTableView>
 #include "../backend/DatabaseHandler.h"
@@ -41,6 +43,15 @@ private:
     QStandardItemModel *mainModelMin;
 
     QComboBox *monthComboBox;
+
+    QHBoxLayout *optionsLayout;
+
+    QRadioButton *temperatureRadioButton;
+    QRadioButton *humidityRadioButton;
+    QRadioButton *dewPointRadioButton;
+    QRadioButton *humidexRadioButton;
+    QRadioButton *pressureRadioButton;
+    QCheckBox *interiorCheckBox;
 
     DatabaseHandler *_dbHandler;
 };

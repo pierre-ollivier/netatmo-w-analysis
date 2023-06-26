@@ -27,11 +27,30 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     mainViewMin = new QTableView();
     mainViewMin->setModel(mainModelMin);
 
+    temperatureRadioButton = new QRadioButton("Température");
+    humidityRadioButton = new QRadioButton("Humidité");
+    dewPointRadioButton = new QRadioButton("Point de rosée");
+    humidexRadioButton = new QRadioButton("Humidex");
+    pressureRadioButton = new QRadioButton("Pression");
+
+    temperatureRadioButton->setChecked(true);
+
+    interiorCheckBox = new QCheckBox("Intérieur");
+
+    optionsLayout = new QHBoxLayout();
+    optionsLayout->addWidget(temperatureRadioButton);
+    optionsLayout->addWidget(humidityRadioButton);
+    optionsLayout->addWidget(dewPointRadioButton);
+    optionsLayout->addWidget(humidexRadioButton);
+    optionsLayout->addWidget(pressureRadioButton);
+    optionsLayout->addWidget(interiorCheckBox);
+
     layout = new QGridLayout();
     layout->addWidget(mainViewMax, 1, 1);
     layout->addWidget(mainViewMin, 1, 2);
     layout->addWidget(new QLabel("Mois : "), 2, 1);
     layout->addWidget(monthComboBox, 2, 2);
+    layout->addLayout(optionsLayout, 3, 1, 1, 2);
     setLayout(layout);
 
     setMinimumSize(700, 400);
