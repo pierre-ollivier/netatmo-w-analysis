@@ -33,6 +33,7 @@ public slots:
             QString order = "DESC");
 
     QString measurementCapitalizedFromRadioButtons();
+    QString unitWithLeadingSpaceFromRadioButtons();
 
 private:
     QGridLayout *layout;
