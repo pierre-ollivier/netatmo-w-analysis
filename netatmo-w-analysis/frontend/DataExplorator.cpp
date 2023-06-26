@@ -48,8 +48,14 @@ void DataExplorator::fillBoard() {
     for (int i = 0; i < 5; i++) {
         mainModel->setItem(i, 0, new QStandardItem());
         mainModel->setItem(i, 1, new QStandardItem());
+        mainModel->setVerticalHeaderItem(i, new QStandardItem(QString::number(i + 1)));
         mainModel->item(i, 0)->setText(deviceLocale->toString(maxTemperatures[i].toDouble(), 'f', 1) + unitWithLeadingSpace);
         mainModel->item(i, 1)->setText(maxTemperaturesDates[i].toString());
+        if (i >= 1) {
+            if (maxTemperatures[i] == maxTemperatures[i - 1]) {
+                mainModel->verticalHeaderItem(i)->setText(mainModel->verticalHeaderItem(i - 1)->text());
+            }
+        }
     }
     mainView->resizeColumnsToContents();
 }
