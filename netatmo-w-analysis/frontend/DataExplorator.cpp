@@ -68,7 +68,7 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 void DataExplorator::fillBoards() {
     QString monthCondition = "";
     QString operation = "max";
-    QString measurementCapitalized = "Temperature";
+    QString measurementCapitalized = measurementCapitalizedFromRadioButtons();
     if (monthComboBox->currentIndex() > 0) {
         monthCondition = "WHERE month = " + QString::number(monthComboBox->currentIndex());
     }
@@ -131,4 +131,13 @@ std::vector<QVariant> DataExplorator::getValuesDates(
     return _dbHandler->getResultsFromDatabase(
                 "SELECT date FROM OutdoorDailyRecords " + monthCondition + " "
                 "ORDER BY " + operation + measurementCapitalized + " " + order + ", year, day LIMIT 5");
+}
+
+QString DataExplorator::measurementCapitalizedFromRadioButtons() {
+    if (temperatureRadioButton->isChecked()) return "Temperature";
+    if (humidityRadioButton->isChecked()) return "Humidity";
+    if (dewPointRadioButton->isChecked()) return "DewPoint";
+    if (humidexRadioButton->isChecked()) return "Humidex";
+    if (pressureRadioButton->isChecked()) return "Pressure";
+    return "";
 }
