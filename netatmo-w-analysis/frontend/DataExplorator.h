@@ -19,16 +19,26 @@ public:
 public slots:
     void fillBoard();
 
-    std::vector<QVariant> getValues(QString operation, QString measurementCapitalized, QString monthCondition);
-    std::vector<QVariant> getValuesDates(QString operation, QString measurementCapitalized, QString monthCondition);
+    std::vector<QVariant> getValues(
+            QString operation,
+            QString measurementCapitalized,
+            QString monthCondition,
+            QString order = "ASC");
+    std::vector<QVariant> getValuesDates(
+            QString operation,
+            QString measurementCapitalized,
+            QString monthCondition,
+            QString order = "DESC");
 
 private:
     QGridLayout *layout;
 
     QLocale *deviceLocale;
 
-    QTableView *mainView;
-    QStandardItemModel *mainModel;
+    QTableView *mainViewMax;
+    QTableView *mainViewMin;
+    QStandardItemModel *mainModelMax;
+    QStandardItemModel *mainModelMin;
 
     QComboBox *monthComboBox;
 
