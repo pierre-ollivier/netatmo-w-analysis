@@ -19,7 +19,7 @@ public:
     DataExplorator(DatabaseHandler *dbHandler);
 
 public slots:
-    void fillBoard();
+    void fillBoards();
 
     std::vector<QVariant> getValues(
             QString operation,

@@ -11,7 +11,7 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     monthComboBox->addItems({"Année complète", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
                              "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"});
     monthComboBox->setCurrentIndex(QDate::currentDate().month());
-    connect(monthComboBox, SIGNAL(currentIndexChanged(int)), SLOT(fillBoard()));
+    connect(monthComboBox, SIGNAL(currentIndexChanged(int)), SLOT(fillBoards()));
 
     mainModelMax = new QStandardItemModel(5, 2);
     mainModelMax->setHorizontalHeaderLabels(
@@ -45,6 +45,13 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     optionsLayout->addWidget(pressureRadioButton);
     optionsLayout->addWidget(interiorCheckBox);
 
+    connect(temperatureRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
+    connect(humidityRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
+    connect(dewPointRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
+    connect(humidexRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
+    connect(pressureRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
+    connect(interiorCheckBox, SIGNAL(clicked()), SLOT(fillBoards()));
+
     layout = new QGridLayout();
     layout->addWidget(mainViewMax, 1, 1);
     layout->addWidget(mainViewMin, 1, 2);
@@ -55,10 +62,10 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 
     setMinimumSize(700, 400);
 
-    fillBoard();
+    fillBoards();
 }
 
-void DataExplorator::fillBoard() {
+void DataExplorator::fillBoards() {
     QString monthCondition = "";
     QString operation = "max";
     QString measurementCapitalized = "Temperature";
