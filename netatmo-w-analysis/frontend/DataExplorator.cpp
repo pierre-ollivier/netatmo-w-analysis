@@ -81,13 +81,16 @@ void DataExplorator::fillBoards() {
     std::vector<QVariant> minMeasurementsDates = getValuesDates(
                 operation, measurementCapitalized, monthCondition, "ASC");
 
-    QString unitWithLeadingSpace = " °C";
+    QString unitWithLeadingSpace = unitWithLeadingSpaceFromRadioButtons();
+    int decimalCount = humidityRadioButton->isChecked() ? 0 : 1;
 
     for (int i = 0; i < 5; i++) {
         mainModelMax->setItem(i, 0, new QStandardItem());
         mainModelMax->setItem(i, 1, new QStandardItem());
         mainModelMax->setVerticalHeaderItem(i, new QStandardItem(QString::number(i + 1)));
-        mainModelMax->item(i, 0)->setText(deviceLocale->toString(maxMeasurements[i].toDouble(), 'f', 1) + unitWithLeadingSpace);
+        mainModelMax->item(i, 0)->setText(
+                    deviceLocale->toString(
+                        maxMeasurements[i].toDouble(), 'f', decimalCount) + unitWithLeadingSpace);
         mainModelMax->item(i, 1)->setText(maxMeasurementsDates[i].toString());
         if (i >= 1) {
             if (maxMeasurements[i] == maxMeasurements[i - 1]) {
@@ -98,7 +101,9 @@ void DataExplorator::fillBoards() {
         mainModelMin->setItem(i, 0, new QStandardItem());
         mainModelMin->setItem(i, 1, new QStandardItem());
         mainModelMin->setVerticalHeaderItem(i, new QStandardItem(QString::number(i + 1)));
-        mainModelMin->item(i, 0)->setText(deviceLocale->toString(minMeasurements[i].toDouble(), 'f', 1) + unitWithLeadingSpace);
+        mainModelMin->item(i, 0)->setText(
+                    deviceLocale->toString(
+                        minMeasurements[i].toDouble(), 'f', decimalCount) + unitWithLeadingSpace);
         mainModelMin->item(i, 1)->setText(minMeasurementsDates[i].toString());
         if (i >= 1) {
             if (minMeasurements[i] == minMeasurements[i - 1]) {
@@ -119,7 +124,7 @@ std::vector<QVariant> DataExplorator::getValues(
 
     return _dbHandler->getResultsFromDatabase(
                 "SELECT " + operation + measurementCapitalized + " FROM OutdoorDailyRecords " + monthCondition + " "
-                "ORDER BY " + operation + measurementCapitalized + " " + order + ", year, day LIMIT 5");
+                "ORDER BY " + operation + measurementCapitalized + " " + order + ", year, month, day LIMIT 5");
 }
 
 std::vector<QVariant> DataExplorator::getValuesDates(
@@ -130,7 +135,7 @@ std::vector<QVariant> DataExplorator::getValuesDates(
 
     return _dbHandler->getResultsFromDatabase(
                 "SELECT date FROM OutdoorDailyRecords " + monthCondition + " "
-                "ORDER BY " + operation + measurementCapitalized + " " + order + ", year, day LIMIT 5");
+                "ORDER BY " + operation + measurementCapitalized + " " + order + ", year, month, day LIMIT 5");
 }
 
 QString DataExplorator::measurementCapitalizedFromRadioButtons() {
@@ -139,5 +144,14 @@ QString DataExplorator::measurementCapitalizedFromRadioButtons() {
     if (dewPointRadioButton->isChecked()) return "DewPoint";
     if (humidexRadioButton->isChecked()) return "Humidex";
     if (pressureRadioButton->isChecked()) return "Pressure";
+    return "";
+}
+
+QString DataExplorator::unitWithLeadingSpaceFromRadioButtons() {
+    if (temperatureRadioButton->isChecked()) return " °C";
+    if (humidityRadioButton->isChecked()) return " %";
+    if (dewPointRadioButton->isChecked()) return " °C";
+    if (humidexRadioButton->isChecked()) return "";
+    if (pressureRadioButton->isChecked()) return " hPa";
     return "";
 }
