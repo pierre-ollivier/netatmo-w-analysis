@@ -19,6 +19,9 @@ public:
 public slots:
     void fillBoard();
 
+    std::vector<QVariant> getValues(QString operation, QString measurementCapitalized, QString monthCondition);
+    std::vector<QVariant> getValuesDates(QString operation, QString measurementCapitalized, QString monthCondition);
+
 private:
     QGridLayout *layout;
 

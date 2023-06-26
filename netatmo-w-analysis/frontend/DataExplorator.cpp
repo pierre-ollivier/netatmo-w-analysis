@@ -33,15 +33,13 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 
 void DataExplorator::fillBoard() {
     QString monthCondition = "";
+    QString measurementCapitalized = "Temperature";
+    QString operation = "max";
     if (monthComboBox->currentIndex() > 0) {
         monthCondition = "WHERE month = " + QString::number(monthComboBox->currentIndex());
     }
-    std::vector<QVariant> maxTemperatures = _dbHandler->getResultsFromDatabase(
-                "SELECT maxTemperature FROM OutdoorDailyRecords " + monthCondition + " "
-                "ORDER BY maxTemperature DESC, year, day LIMIT 5");
-    std::vector<QVariant> maxTemperaturesDates = _dbHandler->getResultsFromDatabase(
-                "SELECT date FROM OutdoorDailyRecords " + monthCondition + " "
-                "ORDER BY maxTemperature DESC, year, day LIMIT 5");
+    std::vector<QVariant> maxTemperatures = getValues(operation, measurementCapitalized, monthCondition);
+    std::vector<QVariant> maxTemperaturesDates = getValuesDates(operation, measurementCapitalized, monthCondition);
 
     QString unitWithLeadingSpace = " °C";
 
@@ -58,4 +56,20 @@ void DataExplorator::fillBoard() {
         }
     }
     mainView->resizeColumnsToContents();
+}
+
+std::vector<QVariant> DataExplorator::getValues(
+        QString operation, QString measurementCapitalized, QString monthCondition) {
+
+    return _dbHandler->getResultsFromDatabase(
+                "SELECT " + operation + measurementCapitalized + " FROM OutdoorDailyRecords " + monthCondition + " "
+                "ORDER BY " + operation + measurementCapitalized + " DESC, year, day LIMIT 5");
+}
+
+std::vector<QVariant> DataExplorator::getValuesDates(
+        QString operation, QString measurementCapitalized, QString monthCondition) {
+
+    return _dbHandler->getResultsFromDatabase(
+                "SELECT date FROM OutdoorDailyRecords " + monthCondition + " "
+                "ORDER BY " + operation + measurementCapitalized + " DESC, year, day LIMIT 5");
 }
