@@ -32,6 +32,8 @@ public slots:
             QString monthCondition,
             QString order = "DESC");
 
+    QString measurementCapitalizedFromRadioButtons();
+
 private:
     QGridLayout *layout;
 
