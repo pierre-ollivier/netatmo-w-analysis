@@ -36,6 +36,7 @@ public slots:
     QString measurementCapitalizedFromRadioButtons();
     QString operationFromRadioButtons();
     QString unitWithLeadingSpaceFromRadioButtons();
+    QString databaseFromCheckBox();
 
 private:
     QGridLayout *layout;
