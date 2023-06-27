@@ -28,6 +28,7 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     mainViewMin = new QTableView();
     mainViewMin->setModel(mainModelMin);
 
+    measurementsGroupBox = new QGroupBox();
     temperatureRadioButton = new QRadioButton("Température");
     humidityRadioButton = new QRadioButton("Humidité");
     dewPointRadioButton = new QRadioButton("Point de rosée");
@@ -36,12 +37,13 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 
     temperatureRadioButton->setChecked(true);
 
+    operationsGroupBox = new QGroupBox();
     maximumRadioButton = new QRadioButton("Maximum");
     minimumRadioButton = new QRadioButton("Minimum");
     averageRadioButton = new QRadioButton("Moyenne");
     differenceRadioButton = new QRadioButton("Amplitude");
 
-//    maximumRadioButton->setChecked(true);
+    maximumRadioButton->setChecked(true);
 
     interiorCheckBox = new QCheckBox("Intérieur");
 
@@ -53,11 +55,15 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     optionsLayout->addWidget(pressureRadioButton);
     optionsLayout->addWidget(interiorCheckBox);
 
+    measurementsGroupBox->setLayout(optionsLayout);
+
     operationsLayout = new QVBoxLayout();
     operationsLayout->addWidget(maximumRadioButton);
     operationsLayout->addWidget(minimumRadioButton);
     operationsLayout->addWidget(averageRadioButton);
     operationsLayout->addWidget(differenceRadioButton);
+
+    operationsGroupBox->setLayout(operationsLayout);
 
     connect(temperatureRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
     connect(humidityRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
@@ -75,8 +81,8 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     layout->addWidget(mainViewMin, 1, 3);
     layout->addWidget(new QLabel("Mois : "), 2, 1);
     layout->addWidget(monthComboBox, 2, 2);
-    layout->addLayout(optionsLayout, 3, 1, 1, 2);
-    layout->addLayout(operationsLayout, 2, 3, 3, 1);
+    layout->addWidget(measurementsGroupBox, 3, 1, 1, 2);
+    layout->addWidget(operationsGroupBox, 2, 3, 3, 1);
     setLayout(layout);
 
     setMinimumSize(900, 400);
