@@ -48,12 +48,19 @@ private:
     QComboBox *monthComboBox;
 
     QHBoxLayout *optionsLayout;
+    QVBoxLayout *operationsLayout;
 
     QRadioButton *temperatureRadioButton;
     QRadioButton *humidityRadioButton;
     QRadioButton *dewPointRadioButton;
     QRadioButton *humidexRadioButton;
     QRadioButton *pressureRadioButton;
+
+    QRadioButton *maximumRadioButton;
+    QRadioButton *minimumRadioButton;
+    QRadioButton *averageRadioButton;
+    QRadioButton *differenceRadioButton;
+
     QCheckBox *interiorCheckBox;
 
     DatabaseHandler *_dbHandler;
