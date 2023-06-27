@@ -1,4 +1,5 @@
 #include "DataExplorator.h"
+#include <QDebug>
 #include <QLabel>
 
 DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
@@ -35,6 +36,13 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 
     temperatureRadioButton->setChecked(true);
 
+    maximumRadioButton = new QRadioButton("Maximum");
+    minimumRadioButton = new QRadioButton("Minimum");
+    averageRadioButton = new QRadioButton("Moyenne");
+    differenceRadioButton = new QRadioButton("Amplitude");
+
+//    maximumRadioButton->setChecked(true);
+
     interiorCheckBox = new QCheckBox("Intérieur");
 
     optionsLayout = new QHBoxLayout();
@@ -45,22 +53,33 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     optionsLayout->addWidget(pressureRadioButton);
     optionsLayout->addWidget(interiorCheckBox);
 
+    operationsLayout = new QVBoxLayout();
+    operationsLayout->addWidget(maximumRadioButton);
+    operationsLayout->addWidget(minimumRadioButton);
+    operationsLayout->addWidget(averageRadioButton);
+    operationsLayout->addWidget(differenceRadioButton);
+
     connect(temperatureRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
     connect(humidityRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
     connect(dewPointRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
     connect(humidexRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
     connect(pressureRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
+    connect(maximumRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
+    connect(minimumRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
+    connect(averageRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
+    connect(differenceRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
     connect(interiorCheckBox, SIGNAL(clicked()), SLOT(fillBoards()));
 
     layout = new QGridLayout();
     layout->addWidget(mainViewMax, 1, 1);
-    layout->addWidget(mainViewMin, 1, 2);
+    layout->addWidget(mainViewMin, 1, 3);
     layout->addWidget(new QLabel("Mois : "), 2, 1);
     layout->addWidget(monthComboBox, 2, 2);
     layout->addLayout(optionsLayout, 3, 1, 1, 2);
+    layout->addLayout(operationsLayout, 2, 3, 3, 1);
     setLayout(layout);
 
-    setMinimumSize(700, 400);
+    setMinimumSize(900, 400);
 
     fillBoards();
 }
@@ -144,7 +163,8 @@ QString DataExplorator::measurementCapitalizedFromRadioButtons() {
     if (dewPointRadioButton->isChecked()) return "DewPoint";
     if (humidexRadioButton->isChecked()) return "Humidex";
     if (pressureRadioButton->isChecked()) return "Pressure";
-    return "";
+    qDebug() << "Default measurement picked. None of the option buttons is checked.";
+    return "Temperature";
 }
 
 QString DataExplorator::unitWithLeadingSpaceFromRadioButtons() {
@@ -153,5 +173,5 @@ QString DataExplorator::unitWithLeadingSpaceFromRadioButtons() {
     if (dewPointRadioButton->isChecked()) return " °C";
     if (humidexRadioButton->isChecked()) return "";
     if (pressureRadioButton->isChecked()) return " hPa";
-    return "";
+    return " °C";
 }
