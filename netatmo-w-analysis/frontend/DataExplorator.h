@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QGroupBox>
 #include <QLocale>
 #include <QGridLayout>
 #include <QRadioButton>
@@ -50,12 +51,14 @@ private:
     QHBoxLayout *optionsLayout;
     QVBoxLayout *operationsLayout;
 
+    QGroupBox *measurementsGroupBox;
     QRadioButton *temperatureRadioButton;
     QRadioButton *humidityRadioButton;
     QRadioButton *dewPointRadioButton;
     QRadioButton *humidexRadioButton;
     QRadioButton *pressureRadioButton;
 
+    QGroupBox *operationsGroupBox;
     QRadioButton *maximumRadioButton;
     QRadioButton *minimumRadioButton;
     QRadioButton *averageRadioButton;
