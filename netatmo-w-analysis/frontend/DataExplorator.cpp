@@ -170,13 +170,14 @@ std::vector<QVariant> DataExplorator::getValuesDates(
     if (operation != "diff") {
         return _dbHandler->getResultsFromDatabase(
                     "SELECT date FROM OutdoorDailyRecords " + monthCondition + " "
-                    "ORDER BY " + operation + measurementCapitalized + " " + order + ", year, month, day LIMIT 5");
+                    "ORDER BY " + operation + measurementCapitalized + " " + order + ", "
+                    "year ASC, month ASC, day ASC LIMIT 5");
     }
 
     return _dbHandler->getResultsFromDatabase(
                 "SELECT date FROM OutdoorDailyRecords " + monthCondition + " "
                 "ORDER BY (max" + measurementCapitalized + " - min" + measurementCapitalized + ") "
-                + order + ", year, month, day LIMIT 5");
+                + order + ", year ASC, month ASC, day ASC LIMIT 5");
 }
 
 QString DataExplorator::measurementCapitalizedFromRadioButtons() {
@@ -193,6 +194,7 @@ QString DataExplorator::operationFromRadioButtons() {
     if (minimumRadioButton->isChecked()) return "min";
     if (averageRadioButton->isChecked()) return "avg";
     if (differenceRadioButton->isChecked()) return "diff";
+    return "";
 }
 
 QString DataExplorator::unitWithLeadingSpaceFromRadioButtons() {
@@ -202,4 +204,11 @@ QString DataExplorator::unitWithLeadingSpaceFromRadioButtons() {
     if (humidexRadioButton->isChecked()) return "";
     if (pressureRadioButton->isChecked()) return " hPa";
     return "";
+}
+
+QString DataExplorator::databaseFromCheckBox() {
+    if (interiorCheckBox->isChecked() || pressureRadioButton->isChecked()) {
+        return "IndoorDailyRecords";
+    }
+    return "OutdoorDailyRecords";
 }
