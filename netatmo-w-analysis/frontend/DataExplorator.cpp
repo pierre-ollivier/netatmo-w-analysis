@@ -92,7 +92,7 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 
 void DataExplorator::fillBoards() {
     QString monthCondition = "";
-    QString operation = "max";
+    QString operation = operationFromRadioButtons();
     QString measurementCapitalized = measurementCapitalizedFromRadioButtons();
     if (monthComboBox->currentIndex() > 0) {
         monthCondition = "WHERE month = " + QString::number(monthComboBox->currentIndex());
@@ -147,9 +147,18 @@ std::vector<QVariant> DataExplorator::getValues(
         QString monthCondition,
         QString order) {
 
+    if (operation != "diff") {
+        return _dbHandler->getResultsFromDatabase(
+                    "SELECT " + operation + measurementCapitalized + " FROM OutdoorDailyRecords " + monthCondition + " "
+                    "ORDER BY " + operation + measurementCapitalized + " " + order + ", year, month, day LIMIT 5");
+    }
+
     return _dbHandler->getResultsFromDatabase(
-                "SELECT " + operation + measurementCapitalized + " FROM OutdoorDailyRecords " + monthCondition + " "
-                "ORDER BY " + operation + measurementCapitalized + " " + order + ", year, month, day LIMIT 5");
+                "SELECT (max" + measurementCapitalized + " - min" + measurementCapitalized + ") "
+                "FROM OutdoorDailyRecords " + monthCondition + " "
+                "ORDER BY (max" + measurementCapitalized + " - min" + measurementCapitalized + ") "
+                + order + ", year, month, day LIMIT 5");
+
 }
 
 std::vector<QVariant> DataExplorator::getValuesDates(
@@ -158,9 +167,16 @@ std::vector<QVariant> DataExplorator::getValuesDates(
         QString monthCondition,
         QString order) {
 
+    if (operation != "diff") {
+        return _dbHandler->getResultsFromDatabase(
+                    "SELECT date FROM OutdoorDailyRecords " + monthCondition + " "
+                    "ORDER BY " + operation + measurementCapitalized + " " + order + ", year, month, day LIMIT 5");
+    }
+
     return _dbHandler->getResultsFromDatabase(
                 "SELECT date FROM OutdoorDailyRecords " + monthCondition + " "
-                "ORDER BY " + operation + measurementCapitalized + " " + order + ", year, month, day LIMIT 5");
+                "ORDER BY (max" + measurementCapitalized + " - min" + measurementCapitalized + ") "
+                + order + ", year, month, day LIMIT 5");
 }
 
 QString DataExplorator::measurementCapitalizedFromRadioButtons() {
@@ -169,8 +185,14 @@ QString DataExplorator::measurementCapitalizedFromRadioButtons() {
     if (dewPointRadioButton->isChecked()) return "DewPoint";
     if (humidexRadioButton->isChecked()) return "Humidex";
     if (pressureRadioButton->isChecked()) return "Pressure";
-    qDebug() << "Default measurement picked. None of the option buttons is checked.";
-    return "Temperature";
+    return "";
+}
+
+QString DataExplorator::operationFromRadioButtons() {
+    if (maximumRadioButton->isChecked()) return "max";
+    if (minimumRadioButton->isChecked()) return "min";
+    if (averageRadioButton->isChecked()) return "avg";
+    if (differenceRadioButton->isChecked()) return "diff";
 }
 
 QString DataExplorator::unitWithLeadingSpaceFromRadioButtons() {
@@ -179,5 +201,5 @@ QString DataExplorator::unitWithLeadingSpaceFromRadioButtons() {
     if (dewPointRadioButton->isChecked()) return " °C";
     if (humidexRadioButton->isChecked()) return "";
     if (pressureRadioButton->isChecked()) return " hPa";
-    return " °C";
+    return "";
 }
