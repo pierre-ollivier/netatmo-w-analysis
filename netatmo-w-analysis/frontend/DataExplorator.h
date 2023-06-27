@@ -34,6 +34,7 @@ public slots:
             QString order = "DESC");
 
     QString measurementCapitalizedFromRadioButtons();
+    QString operationFromRadioButtons();
     QString unitWithLeadingSpaceFromRadioButtons();
 
 private:
