@@ -23,11 +23,13 @@ public slots:
     void fillBoards();
 
     std::vector<QVariant> getValues(
+            QString databaseName,
             QString operation,
             QString measurementCapitalized,
             QString monthCondition,
             QString order = "ASC");
     std::vector<QVariant> getValuesDates(
+            QString databaseName,
             QString operation,
             QString measurementCapitalized,
             QString monthCondition,
