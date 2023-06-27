@@ -95,9 +95,18 @@ void DataExplorator::fillBoards() {
     QString monthCondition = "";
     QString operation = operationFromRadioButtons();
     QString measurementCapitalized = measurementCapitalizedFromRadioButtons();
-    if (monthComboBox->currentIndex() > 0) {
+
+    if (monthComboBox->currentIndex() > 0 && pressureRadioButton->isChecked()) {
+        monthCondition = "WHERE month = " + QString::number(monthComboBox->currentIndex()) + " "
+                         "AND minPressure > 900";
+    }
+    else if (monthComboBox->currentIndex() > 0) {
         monthCondition = "WHERE month = " + QString::number(monthComboBox->currentIndex());
     }
+    else if (pressureRadioButton->isChecked()) {
+        monthCondition = "WHERE minPressure > 900";
+    }
+
     std::vector<QVariant> maxMeasurements = getValues(
                 databaseName, operation, measurementCapitalized, monthCondition, "DESC");
     std::vector<QVariant> maxMeasurementsDates = getValuesDates(
