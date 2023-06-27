@@ -91,6 +91,7 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 }
 
 void DataExplorator::fillBoards() {
+    QString databaseName = databaseFromCheckBox();
     QString monthCondition = "";
     QString operation = operationFromRadioButtons();
     QString measurementCapitalized = measurementCapitalizedFromRadioButtons();
@@ -98,13 +99,13 @@ void DataExplorator::fillBoards() {
         monthCondition = "WHERE month = " + QString::number(monthComboBox->currentIndex());
     }
     std::vector<QVariant> maxMeasurements = getValues(
-                operation, measurementCapitalized, monthCondition, "DESC");
+                databaseName, operation, measurementCapitalized, monthCondition, "DESC");
     std::vector<QVariant> maxMeasurementsDates = getValuesDates(
-                operation, measurementCapitalized, monthCondition, "DESC");
+                databaseName, operation, measurementCapitalized, monthCondition, "DESC");
     std::vector<QVariant> minMeasurements = getValues(
-                operation, measurementCapitalized, monthCondition, "ASC");
+                databaseName, operation, measurementCapitalized, monthCondition, "ASC");
     std::vector<QVariant> minMeasurementsDates = getValuesDates(
-                operation, measurementCapitalized, monthCondition, "ASC");
+                databaseName, operation, measurementCapitalized, monthCondition, "ASC");
 
     QString unitWithLeadingSpace = unitWithLeadingSpaceFromRadioButtons();
     int decimalCount = humidityRadioButton->isChecked() ? 0 : 1;
@@ -142,6 +143,7 @@ void DataExplorator::fillBoards() {
 }
 
 std::vector<QVariant> DataExplorator::getValues(
+        QString databaseName,
         QString operation,
         QString measurementCapitalized,
         QString monthCondition,
@@ -149,19 +151,22 @@ std::vector<QVariant> DataExplorator::getValues(
 
     if (operation != "diff") {
         return _dbHandler->getResultsFromDatabase(
-                    "SELECT " + operation + measurementCapitalized + " FROM OutdoorDailyRecords " + monthCondition + " "
-                    "ORDER BY " + operation + measurementCapitalized + " " + order + ", year, month, day LIMIT 5");
+                    "SELECT " + operation + measurementCapitalized + " "
+                    "FROM " + databaseName + " " + monthCondition + " "
+                    "ORDER BY " + operation + measurementCapitalized + " "
+                    + order + ", year, month, day LIMIT 5");
     }
 
     return _dbHandler->getResultsFromDatabase(
                 "SELECT (max" + measurementCapitalized + " - min" + measurementCapitalized + ") "
-                "FROM OutdoorDailyRecords " + monthCondition + " "
+                "FROM " + databaseName + " " + monthCondition + " "
                 "ORDER BY (max" + measurementCapitalized + " - min" + measurementCapitalized + ") "
                 + order + ", year, month, day LIMIT 5");
 
 }
 
 std::vector<QVariant> DataExplorator::getValuesDates(
+        QString databaseName,
         QString operation,
         QString measurementCapitalized,
         QString monthCondition,
@@ -169,13 +174,13 @@ std::vector<QVariant> DataExplorator::getValuesDates(
 
     if (operation != "diff") {
         return _dbHandler->getResultsFromDatabase(
-                    "SELECT date FROM OutdoorDailyRecords " + monthCondition + " "
+                    "SELECT date FROM " + databaseName + " " + monthCondition + " "
                     "ORDER BY " + operation + measurementCapitalized + " " + order + ", "
                     "year ASC, month ASC, day ASC LIMIT 5");
     }
 
     return _dbHandler->getResultsFromDatabase(
-                "SELECT date FROM OutdoorDailyRecords " + monthCondition + " "
+                "SELECT date FROM " + databaseName + " " + monthCondition + " "
                 "ORDER BY (max" + measurementCapitalized + " - min" + measurementCapitalized + ") "
                 + order + ", year ASC, month ASC, day ASC LIMIT 5");
 }
