@@ -7,6 +7,7 @@
 #include <QGroupBox>
 #include <QLocale>
 #include <QGridLayout>
+#include <QPushButton>
 #include <QRadioButton>
 #include <QStandardItemModel>
 #include <QTableView>
@@ -70,9 +71,14 @@ private:
     QRadioButton *averageRadioButton;
     QRadioButton *differenceRadioButton;
 
+    QPushButton *moreResultsButton;
+    QPushButton *lessResultsButton;
+
     QCheckBox *interiorCheckBox;
 
     DatabaseHandler *_dbHandler;
+
+    int numberOfResults = 5;
 };
 
 #endif // DATAEXPLORATOR_H
