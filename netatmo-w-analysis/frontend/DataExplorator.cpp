@@ -246,8 +246,9 @@ QString DataExplorator::databaseFromCheckBox() {
 }
 
 void DataExplorator::displayMoreResults() {
-    numberOfResults += 5;
-    for (int i = 0; i < 5; i++) {
+    int increment = numberOfResults < 20 ? 5 : numberOfResults < 50 ? 10 : 25;
+    numberOfResults += increment;
+    for (int i = 0; i < increment; i++) {
         mainModelMax->appendRow(new QStandardItem());
         mainModelMin->appendRow(new QStandardItem());
     }
