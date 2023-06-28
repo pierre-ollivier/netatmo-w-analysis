@@ -29,19 +29,22 @@ public slots:
             QString measurementCapitalized,
             QString monthCondition,
             QString order = "ASC",
-            int limit = 5);
+            int limit = 0);
     std::vector<QVariant> getValuesDates(
             QString databaseName,
             QString operation,
             QString measurementCapitalized,
             QString monthCondition,
             QString order = "DESC",
-            int limit = 5);
+            int limit = 0);
 
     QString measurementCapitalizedFromRadioButtons();
     QString operationFromRadioButtons();
     QString unitWithLeadingSpaceFromRadioButtons();
     QString databaseFromCheckBox();
+
+    void displayMoreResults();
+    void displayLessResults();
 
 private:
     QGridLayout *layout;

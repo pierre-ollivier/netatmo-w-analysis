@@ -50,6 +50,9 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     moreResultsButton = new QPushButton("Plus...");
     lessResultsButton = new QPushButton("Moins...");
 
+    connect(moreResultsButton, SIGNAL(clicked()), SLOT(displayMoreResults()));
+    connect(lessResultsButton, SIGNAL(clicked()), SLOT(displayLessResults()));
+
     optionsLayout = new QHBoxLayout();
     optionsLayout->addWidget(temperatureRadioButton);
     optionsLayout->addWidget(humidityRadioButton);
@@ -124,7 +127,7 @@ void DataExplorator::fillBoards() {
     QString unitWithLeadingSpace = unitWithLeadingSpaceFromRadioButtons();
     int decimalCount = humidityRadioButton->isChecked() ? 0 : 1;
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < numberOfResults; i++) {
         mainModelMax->setItem(i, 0, new QStandardItem());
         mainModelMax->setItem(i, 1, new QStandardItem());
         mainModelMax->setVerticalHeaderItem(i, new QStandardItem(QString::number(i + 1)));
@@ -164,6 +167,7 @@ std::vector<QVariant> DataExplorator::getValues(
         QString order,
         int limit) {
 
+    if (limit == 0) limit = numberOfResults;
     if (operation != "diff") {
         return _dbHandler->getResultsFromDatabase(
                     "SELECT " + operation + measurementCapitalized + " "
@@ -188,6 +192,7 @@ std::vector<QVariant> DataExplorator::getValuesDates(
         QString order,
         int limit) {
 
+    if (limit == 0) limit = numberOfResults;
     if (operation != "diff") {
         return _dbHandler->getResultsFromDatabase(
                     "SELECT date FROM " + databaseName + " " + monthCondition + " "
@@ -232,4 +237,17 @@ QString DataExplorator::databaseFromCheckBox() {
         return "IndoorDailyRecords";
     }
     return "OutdoorDailyRecords";
+}
+
+void DataExplorator::displayMoreResults() {
+    numberOfResults += 5;
+    for (int i = 0; i < 5; i++) {
+        mainModelMax->appendRow(new QStandardItem());
+        mainModelMin->appendRow(new QStandardItem());
+    }
+    fillBoards();
+}
+
+void DataExplorator::displayLessResults() {
+
 }
