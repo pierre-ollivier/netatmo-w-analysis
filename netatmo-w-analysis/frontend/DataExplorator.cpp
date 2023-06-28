@@ -156,21 +156,22 @@ std::vector<QVariant> DataExplorator::getValues(
         QString operation,
         QString measurementCapitalized,
         QString monthCondition,
-        QString order) {
+        QString order,
+        int limit) {
 
     if (operation != "diff") {
         return _dbHandler->getResultsFromDatabase(
                     "SELECT " + operation + measurementCapitalized + " "
                     "FROM " + databaseName + " " + monthCondition + " "
                     "ORDER BY " + operation + measurementCapitalized + " "
-                    + order + ", year, month, day LIMIT 5");
+                    + order + ", year, month, day LIMIT " + QString::number(limit));
     }
 
     return _dbHandler->getResultsFromDatabase(
                 "SELECT (max" + measurementCapitalized + " - min" + measurementCapitalized + ") "
                 "FROM " + databaseName + " " + monthCondition + " "
                 "ORDER BY (max" + measurementCapitalized + " - min" + measurementCapitalized + ") "
-                + order + ", year, month, day LIMIT 5");
+                + order + ", year, month, day LIMIT " + QString::number(limit));
 
 }
 
@@ -179,19 +180,20 @@ std::vector<QVariant> DataExplorator::getValuesDates(
         QString operation,
         QString measurementCapitalized,
         QString monthCondition,
-        QString order) {
+        QString order,
+        int limit) {
 
     if (operation != "diff") {
         return _dbHandler->getResultsFromDatabase(
                     "SELECT date FROM " + databaseName + " " + monthCondition + " "
                     "ORDER BY " + operation + measurementCapitalized + " " + order + ", "
-                    "year ASC, month ASC, day ASC LIMIT 5");
+                    "year ASC, month ASC, day ASC LIMIT " + QString::number(limit));
     }
 
     return _dbHandler->getResultsFromDatabase(
                 "SELECT date FROM " + databaseName + " " + monthCondition + " "
                 "ORDER BY (max" + measurementCapitalized + " - min" + measurementCapitalized + ") "
-                + order + ", year ASC, month ASC, day ASC LIMIT 5");
+                + order + ", year ASC, month ASC, day ASC LIMIT " + QString::number(limit));
 }
 
 QString DataExplorator::measurementCapitalizedFromRadioButtons() {

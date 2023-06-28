@@ -27,13 +27,15 @@ public slots:
             QString operation,
             QString measurementCapitalized,
             QString monthCondition,
-            QString order = "ASC");
+            QString order = "ASC",
+            int limit = 5);
     std::vector<QVariant> getValuesDates(
             QString databaseName,
             QString operation,
             QString measurementCapitalized,
             QString monthCondition,
-            QString order = "DESC");
+            QString order = "DESC",
+            int limit = 5);
 
     QString measurementCapitalizedFromRadioButtons();
     QString operationFromRadioButtons();
