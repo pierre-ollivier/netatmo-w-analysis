@@ -47,6 +47,9 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 
     interiorCheckBox = new QCheckBox("Intérieur");
 
+    moreResultsButton = new QPushButton("Plus...");
+    lessResultsButton = new QPushButton("Moins...");
+
     optionsLayout = new QHBoxLayout();
     optionsLayout->addWidget(temperatureRadioButton);
     optionsLayout->addWidget(humidityRadioButton);
@@ -79,10 +82,12 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     layout = new QGridLayout();
     layout->addWidget(mainViewMax, 1, 1);
     layout->addWidget(mainViewMin, 1, 3);
-    layout->addWidget(new QLabel("Mois : "), 2, 1);
-    layout->addWidget(monthComboBox, 2, 2);
-    layout->addWidget(measurementsGroupBox, 3, 1, 1, 2);
-    layout->addWidget(operationsGroupBox, 2, 3, 3, 1);
+    layout->addWidget(moreResultsButton, 2, 1);
+    layout->addWidget(lessResultsButton, 2, 3);
+    layout->addWidget(new QLabel("Mois : "), 3, 1);
+    layout->addWidget(monthComboBox, 3, 2);
+    layout->addWidget(measurementsGroupBox, 4, 1, 1, 2);
+    layout->addWidget(operationsGroupBox, 3, 3, 3, 1);
     setLayout(layout);
 
     setMinimumSize(900, 400);
