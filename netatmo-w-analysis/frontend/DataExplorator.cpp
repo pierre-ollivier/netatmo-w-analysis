@@ -247,18 +247,19 @@ QString DataExplorator::databaseFromCheckBox() {
 
 void DataExplorator::displayMoreResults() {
     int increment = numberOfResults < 20 ? 5 : numberOfResults < 50 ? 10 : 25;
+    // TODO check that there are still results to display
     numberOfResults += increment;
-    for (int i = 0; i < increment; i++) {
-        mainModelMax->appendRow(new QStandardItem());
-        mainModelMin->appendRow(new QStandardItem());
-    }
+    mainModelMax->insertRows(mainModelMax->rowCount() - 1, increment);
+    mainModelMin->insertRows(mainModelMax->rowCount() - 1, increment);
     fillBoards();
 }
 
 void DataExplorator::displayLessResults() {
     int decrement = numberOfResults > 50 ? 25 : numberOfResults > 20 ? 10 : 5;
-    numberOfResults -= decrement;
-    mainModelMax->removeRows(mainModelMax->rowCount() - decrement, decrement);
-    mainModelMin->removeRows(mainModelMin->rowCount() - decrement, decrement);
-    fillBoards();
+    if (numberOfResults > decrement) {
+        numberOfResults -= decrement;
+        mainModelMax->removeRows(mainModelMax->rowCount() - decrement, decrement);
+        mainModelMin->removeRows(mainModelMin->rowCount() - decrement, decrement);
+        fillBoards();
+    }
 }
