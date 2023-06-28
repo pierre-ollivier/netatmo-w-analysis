@@ -256,5 +256,9 @@ void DataExplorator::displayMoreResults() {
 }
 
 void DataExplorator::displayLessResults() {
-
+    int decrement = numberOfResults > 50 ? 25 : numberOfResults > 20 ? 10 : 5;
+    numberOfResults -= decrement;
+    mainModelMax->removeRows(mainModelMax->rowCount() - decrement, decrement);
+    mainModelMin->removeRows(mainModelMin->rowCount() - decrement, decrement);
+    fillBoards();
 }
