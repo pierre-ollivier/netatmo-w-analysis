@@ -104,15 +104,21 @@ void DataExplorator::fillBoards() {
     QString operation = operationFromRadioButtons();
     QString measurementCapitalized = measurementCapitalizedFromRadioButtons();
 
-    if (monthComboBox->currentIndex() > 0 && pressureRadioButton->isChecked()) {
-        monthCondition = "WHERE month = " + QString::number(monthComboBox->currentIndex()) + " "
-                         "AND minPressure > 900";
+    if (dewPointRadioButton->isChecked()) {
+        monthCondition = "WHERE minDewPoint IS NOT NULL";
     }
-    else if (monthComboBox->currentIndex() > 0) {
-        monthCondition = "WHERE month = " + QString::number(monthComboBox->currentIndex());
+    else if (humidexRadioButton->isChecked()) {
+        monthCondition = "WHERE minHumidex IS NOT NULL";
     }
     else if (pressureRadioButton->isChecked()) {
         monthCondition = "WHERE minPressure > 900";
+    }
+
+    if (monthComboBox->currentIndex() > 0 && monthCondition != "") {
+        monthCondition += " AND month = " + QString::number(monthComboBox->currentIndex());
+    }
+    else if (monthComboBox->currentIndex() > 0) {
+        monthCondition = "WHERE month = " + QString::number(monthComboBox->currentIndex());
     }
 
     std::vector<QVariant> maxMeasurements = getValues(
