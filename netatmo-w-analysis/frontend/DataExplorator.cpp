@@ -97,7 +97,7 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     layout->addWidget(operationsGroupBox, 3, 3, 3, 1);
     setLayout(layout);
 
-    setMinimumSize(900, 400);
+    setMinimumSize(800, 700);
 
     fillBoards();
 }
