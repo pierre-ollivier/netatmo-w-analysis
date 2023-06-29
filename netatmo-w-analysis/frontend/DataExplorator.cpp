@@ -136,6 +136,7 @@ void DataExplorator::fillBoards() {
 
     QString unitWithLeadingSpace = unitWithLeadingSpaceFromRadioButtons();
     int decimalCount = humidityRadioButton->isChecked() ? 0 : 1;
+    displayHeadersFromRadioButtons();
 
     for (int i = 0; i < numberOfResults; i++) {
         mainModelMax->setItem(i, 0, new QStandardItem());
@@ -247,6 +248,53 @@ QString DataExplorator::databaseFromCheckBox() {
         return "IndoorDailyRecords";
     }
     return "OutdoorDailyRecords";
+}
+
+void DataExplorator::displayHeadersFromRadioButtons() {
+    QString measurement = "de la température";
+    QString measurementPlusOperation = "de la température maximale";
+    QString article = "";
+
+    if (temperatureRadioButton->isChecked()) {
+        measurement = "température";
+        article = "de la ";
+    }
+    else if (humidityRadioButton->isChecked()) {
+        measurement = "humidité";
+        article = "de l'";
+    }
+    else if (dewPointRadioButton->isChecked()) {
+        measurement = "point de rosée";
+        article = "du ";
+    }
+    else if (humidexRadioButton->isChecked()) {
+        measurement = "humidex";
+        article = "de l'";
+    }
+    else {
+        measurement = "pression";
+        article = "de la ";
+    }
+
+    if (maximumRadioButton->isChecked()) {
+        measurementPlusOperation = measurement + " max.";
+        mainModelMax->horizontalHeaderItem(0)->setText("Max. " + article + measurementPlusOperation);
+        mainModelMin->horizontalHeaderItem(0)->setText("Min. " + article + measurementPlusOperation);
+    }
+    else if (minimumRadioButton->isChecked()) {
+        measurementPlusOperation = measurement + " min.";
+        mainModelMax->horizontalHeaderItem(0)->setText("Max. " + article + measurementPlusOperation);
+        mainModelMin->horizontalHeaderItem(0)->setText("Min. " + article + measurementPlusOperation);
+    }
+    else if (averageRadioButton->isChecked()) {
+        measurementPlusOperation = measurement + " moy.";
+        mainModelMax->horizontalHeaderItem(0)->setText("Max. " + article + measurementPlusOperation);
+        mainModelMin->horizontalHeaderItem(0)->setText("Min. " + article + measurementPlusOperation);
+    }
+    else {
+        mainModelMax->horizontalHeaderItem(0)->setText("Var. max. " + article + measurement);
+        mainModelMin->horizontalHeaderItem(0)->setText("Var. min. " + article + measurement);
+    }
 }
 
 void DataExplorator::displayMoreResults() {
