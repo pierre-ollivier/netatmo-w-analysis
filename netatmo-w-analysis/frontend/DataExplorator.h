@@ -43,6 +43,8 @@ public slots:
     QString unitWithLeadingSpaceFromRadioButtons();
     QString databaseFromCheckBox();
 
+    void displayHeadersFromRadioButtons();
+
     void displayMoreResults();
     void displayLessResults();
 
