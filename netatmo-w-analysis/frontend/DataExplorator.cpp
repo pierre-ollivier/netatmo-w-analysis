@@ -67,11 +67,11 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 
     measurementsGroupBox->setLayout(optionsLayout);
 
-    operationsLayout = new QVBoxLayout();
-    operationsLayout->addWidget(maximumRadioButton);
-    operationsLayout->addWidget(minimumRadioButton);
-    operationsLayout->addWidget(averageRadioButton);
-    operationsLayout->addWidget(differenceRadioButton);
+    operationsLayout = new QGridLayout();
+    operationsLayout->addWidget(maximumRadioButton, 0, 0);
+    operationsLayout->addWidget(minimumRadioButton, 1, 0);
+    operationsLayout->addWidget(averageRadioButton, 0, 1);
+    operationsLayout->addWidget(differenceRadioButton, 1, 1);
 
     operationsGroupBox->setLayout(operationsLayout);
 
@@ -88,13 +88,13 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 
     layout = new QGridLayout();
     layout->addWidget(mainViewMax, 1, 1);
-    layout->addWidget(mainViewMin, 1, 3);
+    layout->addWidget(mainViewMin, 1, 4);
     layout->addWidget(moreResultsButton, 2, 1);
-    layout->addWidget(lessResultsButton, 2, 3);
-    layout->addWidget(new QLabel("Mois : "), 3, 1);
-    layout->addWidget(monthComboBox, 3, 2);
-    layout->addWidget(measurementsGroupBox, 4, 1, 1, 2);
-    layout->addWidget(operationsGroupBox, 3, 3, 3, 1);
+    layout->addWidget(lessResultsButton, 2, 4);
+    layout->addWidget(new QLabel("Mois : "), 2, 2);
+    layout->addWidget(monthComboBox, 2, 3);
+    layout->addWidget(measurementsGroupBox, 3, 1, 1, 3);
+    layout->addWidget(operationsGroupBox, 3, 4);
     setLayout(layout);
 
     setMinimumSize(800, 700);
