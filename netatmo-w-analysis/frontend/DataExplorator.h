@@ -48,6 +48,10 @@ public slots:
     void displayMoreResults();
     void displayLessResults();
 
+    QColor temperatureColor(double temperature);
+    QColor humidityColor(double humidity);
+    QColor pressureColor(double pressure);
+
 private:
     QGridLayout *layout;
 
