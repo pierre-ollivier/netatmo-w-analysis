@@ -65,7 +65,7 @@ private:
     QComboBox *monthComboBox;
 
     QHBoxLayout *optionsLayout;
-    QVBoxLayout *operationsLayout;
+    QGridLayout *operationsLayout;
 
     QGroupBox *measurementsGroupBox;
     QRadioButton *temperatureRadioButton;
