@@ -1,6 +1,7 @@
 #include "DataExplorator.h"
 #include <QDebug>
 #include <QLabel>
+#include "../frontend/CustomItemDelegate.h"
 
 DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 {
@@ -26,11 +27,13 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     mainViewMax->setModel(mainModelMax);
     mainViewMax->setFixedWidth(370);
     mainViewMax->setColumnWidth(0, 220);
+    mainViewMax->setItemDelegate(new CustomItemDelegate());
 
     mainViewMin = new QTableView();
     mainViewMin->setModel(mainModelMin);
     mainViewMin->setFixedWidth(370);
     mainViewMin->setColumnWidth(0, 220);
+    mainViewMin->setItemDelegate(new CustomItemDelegate());
 
     measurementsGroupBox = new QGroupBox();
     temperatureRadioButton = new QRadioButton("Température");
