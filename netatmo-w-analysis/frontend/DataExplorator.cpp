@@ -16,17 +16,21 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 
     mainModelMax = new QStandardItemModel(5, 2);
     mainModelMax->setHorizontalHeaderLabels(
-                   QStringList({"Température maximale", "Date"}));
+                   QStringList({"Max. de la température max.", "Date"}));
 
     mainModelMin = new QStandardItemModel(5, 2);
     mainModelMin->setHorizontalHeaderLabels(
-                   QStringList({"Température minimale", "Date"}));
+                   QStringList({"Min. de la température max.", "Date"}));
 
     mainViewMax = new QTableView();
     mainViewMax->setModel(mainModelMax);
+    mainViewMax->setFixedWidth(370);
+    mainViewMax->setColumnWidth(0, 220);
 
     mainViewMin = new QTableView();
     mainViewMin->setModel(mainModelMin);
+    mainViewMin->setFixedWidth(370);
+    mainViewMin->setColumnWidth(0, 220);
 
     measurementsGroupBox = new QGroupBox();
     temperatureRadioButton = new QRadioButton("Température");
@@ -247,7 +251,7 @@ QString DataExplorator::databaseFromCheckBox() {
 
 void DataExplorator::displayMoreResults() {
     int increment = numberOfResults < 20 ? 5 : numberOfResults < 50 ? 10 : 25;
-    // TODO check that there are still results to display
+    // TODO check that there are still results to display (to compute and recalculate each time)
     numberOfResults += increment;
     mainModelMax->insertRows(mainModelMax->rowCount() - 1, increment);
     mainModelMin->insertRows(mainModelMax->rowCount() - 1, increment);
