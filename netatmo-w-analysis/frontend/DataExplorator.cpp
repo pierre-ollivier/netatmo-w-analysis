@@ -324,17 +324,12 @@ void DataExplorator::displayHeadersFromRadioButtons() {
 void DataExplorator::displayMoreResults() {
     const int maximumNumberOfRecords = maxNumberOfRecords(interiorCheckBox->isChecked());
     int increment = numberOfResults < 20 ? 5 : numberOfResults < 50 ? 10 : numberOfResults < 150 ? 25 : 50;
-    if (numberOfResults >= maximumNumberOfRecords) increment = 0;
-
-    numberOfResults += increment;
-
-    if (numberOfResults > maximumNumberOfRecords) {
-        increment = std::max(0, maximumNumberOfRecords - numberOfResults + increment);
+    if (numberOfResults < maximumNumberOfRecords) {
+        numberOfResults += increment;
+        mainModelMax->setRowCount(std::min(maximumNumberOfRecords, numberOfResults));
+        mainModelMin->setRowCount(std::min(maximumNumberOfRecords, numberOfResults));
+        fillBoards();
     }
-
-    mainModelMax->insertRows(numberOfResults - increment, increment);
-    mainModelMin->insertRows(numberOfResults - increment, increment);
-    fillBoards();
 }
 
 void DataExplorator::displayLessResults() {
