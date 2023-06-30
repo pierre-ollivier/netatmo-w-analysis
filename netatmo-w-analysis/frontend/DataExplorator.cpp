@@ -355,13 +355,26 @@ int DataExplorator::maxNumberOfRecords(bool indoor) {
     QString operation = operationFromRadioButtons();
     QString measurementCapitalized = measurementCapitalizedFromRadioButtons();
     QString condition = conditionFromWidgets();
-    if (indoor || measurementCapitalized == "Pressure") {
-        return _dbHandler->getResultFromDatabase("SELECT COUNT(" + operation + measurementCapitalized + ") "
-                                                 "FROM IndoorDailyRecords " + condition).toInt();
+    indoor = indoor || measurementCapitalized == "Pressure";
+    QString tableName = indoor ? "IndoorDailyRecords" : "OutdoorDailyRecords";
+
+    if (operation == "diff") {
+        QString extendedCondition = "min" + measurementCapitalized + " IS NOT NULL "
+                                    "AND max" + measurementCapitalized + " IS NOT NULL ";
+        if (condition == "") {
+            condition = "WHERE " + extendedCondition;
+        }
+        else {
+            condition += " AND " + extendedCondition;
+        }
+        return _dbHandler->getResultFromDatabase(
+                    "SELECT COUNT(*) FROM ("
+                    "SELECT min" + measurementCapitalized + ", max" + measurementCapitalized + " "
+                    "FROM " + tableName + " " + condition + ")").toInt();
     }
     else {
         return _dbHandler->getResultFromDatabase("SELECT COUNT(" + operation + measurementCapitalized + ") "
-                                                 "FROM OutdoorDailyRecords " + condition).toInt();
+                                                 "FROM " + tableName + " " + condition).toInt();
     }
 }
 
