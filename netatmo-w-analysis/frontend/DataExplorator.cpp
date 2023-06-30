@@ -322,10 +322,11 @@ void DataExplorator::displayHeadersFromRadioButtons() {
 }
 
 void DataExplorator::displayMoreResults() {
-    int increment = numberOfResults < 20 ? 5 : numberOfResults < 50 ? 10 : numberOfResults < 150 ? 25 : 50;
-    // TODO check that there are still results to display (to compute and recalculate each time)
-    numberOfResults += increment;
     const int maximumNumberOfRecords = maxNumberOfRecords(interiorCheckBox->isChecked());
+    int increment = numberOfResults < 20 ? 5 : numberOfResults < 50 ? 10 : numberOfResults < 150 ? 25 : 50;
+    if (numberOfResults >= maximumNumberOfRecords) increment = 0;
+
+    numberOfResults += increment;
 
     if (numberOfResults > maximumNumberOfRecords) {
         increment = std::max(0, maximumNumberOfRecords - numberOfResults + increment);
@@ -337,11 +338,12 @@ void DataExplorator::displayMoreResults() {
 }
 
 void DataExplorator::displayLessResults() {
+    const int maximumNumberOfRecords = maxNumberOfRecords(interiorCheckBox->isChecked());
     int decrement = numberOfResults > 150 ? 50 : numberOfResults > 50 ? 25 : numberOfResults > 20 ? 10 : 5;
     if (numberOfResults > decrement) {
         numberOfResults -= decrement;
-        mainModelMax->removeRows(numberOfResults, decrement);
-        mainModelMin->removeRows(numberOfResults, decrement);
+        mainModelMax->setRowCount(std::min(maximumNumberOfRecords, numberOfResults));
+        mainModelMin->setRowCount(std::min(maximumNumberOfRecords, numberOfResults));
         fillBoards();
     }
 }
