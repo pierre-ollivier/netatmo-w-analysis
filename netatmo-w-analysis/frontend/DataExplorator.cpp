@@ -355,7 +355,7 @@ int DataExplorator::maxNumberOfRecords(bool indoor) {
     QString operation = operationFromRadioButtons();
     QString measurementCapitalized = measurementCapitalizedFromRadioButtons();
     QString condition = conditionFromWidgets();
-    if (indoor) {
+    if (indoor || measurementCapitalized == "Pressure") {
         return _dbHandler->getResultFromDatabase("SELECT COUNT(" + operation + measurementCapitalized + ") "
                                                  "FROM IndoorDailyRecords " + condition).toInt();
     }
@@ -419,5 +419,8 @@ QColor DataExplorator::humidityColor(double humidity) {
 }
 
 QColor DataExplorator::pressureColor(double pressure) {
+    if (pressure < 100) { // this is a pressure difference
+        return pressureColor(pressure + 990);
+    }
     return temperatureColor(-15 + (pressure - 960) * 60 / 126);
 }
