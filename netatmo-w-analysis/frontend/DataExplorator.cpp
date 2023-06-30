@@ -316,7 +316,7 @@ void DataExplorator::displayHeadersFromRadioButtons() {
 }
 
 void DataExplorator::displayMoreResults() {
-    int increment = numberOfResults < 20 ? 5 : numberOfResults < 50 ? 10 : 25;
+    int increment = numberOfResults < 20 ? 5 : numberOfResults < 50 ? 10 : numberOfResults < 150 ? 25 : 50;
     // TODO check that there are still results to display (to compute and recalculate each time)
     numberOfResults += increment;
     mainModelMax->insertRows(mainModelMax->rowCount() - 1, increment);
@@ -325,7 +325,7 @@ void DataExplorator::displayMoreResults() {
 }
 
 void DataExplorator::displayLessResults() {
-    int decrement = numberOfResults > 50 ? 25 : numberOfResults > 20 ? 10 : 5;
+    int decrement = numberOfResults > 150 ? 50 : numberOfResults > 50 ? 25 : numberOfResults > 20 ? 10 : 5;
     if (numberOfResults > decrement) {
         numberOfResults -= decrement;
         mainModelMax->removeRows(mainModelMax->rowCount() - decrement, decrement);
