@@ -49,6 +49,8 @@ public slots:
     void displayMoreResults();
     void displayLessResults();
 
+    void changeDisplayMonth();
+
     int maxNumberOfRecords(bool indoor);
 
     QColor temperatureColor(double temperature);
