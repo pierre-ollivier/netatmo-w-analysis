@@ -319,8 +319,8 @@ void DataExplorator::displayMoreResults() {
     int increment = numberOfResults < 20 ? 5 : numberOfResults < 50 ? 10 : numberOfResults < 150 ? 25 : 50;
     // TODO check that there are still results to display (to compute and recalculate each time)
     numberOfResults += increment;
-    mainModelMax->insertRows(mainModelMax->rowCount() - 1, increment);
-    mainModelMin->insertRows(mainModelMax->rowCount() - 1, increment);
+    mainModelMax->insertRows(numberOfResults - increment - 1, increment);
+    mainModelMin->insertRows(numberOfResults - increment - 1, increment);
     fillBoards();
 }
 
@@ -328,8 +328,8 @@ void DataExplorator::displayLessResults() {
     int decrement = numberOfResults > 150 ? 50 : numberOfResults > 50 ? 25 : numberOfResults > 20 ? 10 : 5;
     if (numberOfResults > decrement) {
         numberOfResults -= decrement;
-        mainModelMax->removeRows(mainModelMax->rowCount() - decrement, decrement);
-        mainModelMin->removeRows(mainModelMin->rowCount() - decrement, decrement);
+        mainModelMax->removeRows(numberOfResults, decrement);
+        mainModelMin->removeRows(numberOfResults, decrement);
         fillBoards();
     }
 }
