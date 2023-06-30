@@ -13,7 +13,7 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     monthComboBox->addItems({"Année complète", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
                              "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"});
     monthComboBox->setCurrentIndex(QDate::currentDate().month());
-    connect(monthComboBox, SIGNAL(currentIndexChanged(int)), SLOT(fillBoards()));
+    connect(monthComboBox, SIGNAL(currentIndexChanged(int)), SLOT(changeDisplayMonth()));
 
     mainModelMax = new QStandardItemModel(5, 2);
     mainModelMax->setHorizontalHeaderLabels(
@@ -341,6 +341,14 @@ void DataExplorator::displayLessResults() {
         mainModelMin->setRowCount(std::min(maximumNumberOfRecords, numberOfResults));
         fillBoards();
     }
+}
+
+void DataExplorator::changeDisplayMonth() {
+    // Function executed only when `monthComboBox` changes value
+    const int maximumNumberOfRecords = maxNumberOfRecords(interiorCheckBox->isChecked());
+    mainModelMax->setRowCount(std::min(maximumNumberOfRecords, mainModelMax->rowCount()));
+    mainModelMin->setRowCount(std::min(maximumNumberOfRecords, mainModelMin->rowCount()));
+    fillBoards();
 }
 
 int DataExplorator::maxNumberOfRecords(bool indoor) {
