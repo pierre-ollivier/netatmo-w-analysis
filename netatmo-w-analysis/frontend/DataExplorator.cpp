@@ -141,7 +141,8 @@ void DataExplorator::fillBoards() {
     int decimalCount = humidityRadioButton->isChecked() ? 0 : 1;
     displayHeadersFromRadioButtons();
 
-    for (int i = 0; i < numberOfResults; i++) {
+    for (int i = 0; i < int(minMeasurements.size()); i++) {
+
         mainModelMax->setItem(i, 0, new QStandardItem());
         mainModelMax->setItem(i, 1, new QStandardItem());
         mainModelMax->setVerticalHeaderItem(i, new QStandardItem(QString::number(i + 1)));
@@ -319,8 +320,14 @@ void DataExplorator::displayMoreResults() {
     int increment = numberOfResults < 20 ? 5 : numberOfResults < 50 ? 10 : numberOfResults < 150 ? 25 : 50;
     // TODO check that there are still results to display (to compute and recalculate each time)
     numberOfResults += increment;
-    mainModelMax->insertRows(numberOfResults - increment - 1, increment);
-    mainModelMin->insertRows(numberOfResults - increment - 1, increment);
+    const int maximumNumberOfRecords = maxNumberOfRecords(interiorCheckBox->isChecked());
+
+    if (numberOfResults > maximumNumberOfRecords) {
+        increment = std::max(0, maximumNumberOfRecords - numberOfResults + increment);
+    }
+
+    mainModelMax->insertRows(numberOfResults - increment, increment);
+    mainModelMin->insertRows(numberOfResults - increment, increment);
     fillBoards();
 }
 
