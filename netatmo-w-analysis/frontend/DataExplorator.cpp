@@ -334,6 +334,15 @@ void DataExplorator::displayLessResults() {
     }
 }
 
+int DataExplorator::maxNumberOfRecords(bool indoor) {
+    if (indoor) {
+        return _dbHandler->getResultFromDatabase("SELECT COUNT(date) FROM IndoorDailyRecords").toInt();
+    }
+    else {
+        return _dbHandler->getResultFromDatabase("SELECT COUNT(date) FROM OutdoorDailyRecords").toInt();
+    }
+}
+
 QColor DataExplorator::temperatureColor(double temperature) {
 
     //t valant 10 fois la température exprimée en °C

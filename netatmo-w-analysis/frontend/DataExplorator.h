@@ -48,6 +48,8 @@ public slots:
     void displayMoreResults();
     void displayLessResults();
 
+    int maxNumberOfRecords(bool indoor);
+
     QColor temperatureColor(double temperature);
     QColor humidityColor(double humidity);
     QColor pressureColor(double pressure);
