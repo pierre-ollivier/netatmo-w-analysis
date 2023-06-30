@@ -110,32 +110,16 @@ void DataExplorator::fillBoards() {
     QString monthCondition = "";
     QString operation = operationFromRadioButtons();
     QString measurementCapitalized = measurementCapitalizedFromRadioButtons();
-
-    if (dewPointRadioButton->isChecked()) {
-        monthCondition = "WHERE minDewPoint IS NOT NULL";
-    }
-    else if (humidexRadioButton->isChecked()) {
-        monthCondition = "WHERE minHumidex IS NOT NULL";
-    }
-    else if (pressureRadioButton->isChecked()) {
-        monthCondition = "WHERE minPressure > 900";
-    }
-
-    if (monthComboBox->currentIndex() > 0 && monthCondition != "") {
-        monthCondition += " AND month = " + QString::number(monthComboBox->currentIndex());
-    }
-    else if (monthComboBox->currentIndex() > 0) {
-        monthCondition = "WHERE month = " + QString::number(monthComboBox->currentIndex());
-    }
+    QString condition = conditionFromWidgets();
 
     std::vector<QVariant> maxMeasurements = getValues(
-                databaseName, operation, measurementCapitalized, monthCondition, "DESC");
+                databaseName, operation, measurementCapitalized, condition, "DESC");
     std::vector<QVariant> maxMeasurementsDates = getValuesDates(
-                databaseName, operation, measurementCapitalized, monthCondition, "DESC");
+                databaseName, operation, measurementCapitalized, condition, "DESC");
     std::vector<QVariant> minMeasurements = getValues(
-                databaseName, operation, measurementCapitalized, monthCondition, "ASC");
+                databaseName, operation, measurementCapitalized, condition, "ASC");
     std::vector<QVariant> minMeasurementsDates = getValuesDates(
-                databaseName, operation, measurementCapitalized, monthCondition, "ASC");
+                databaseName, operation, measurementCapitalized, condition, "ASC");
 
     QString unitWithLeadingSpace = unitWithLeadingSpaceFromRadioButtons();
     int decimalCount = humidityRadioButton->isChecked() ? 0 : 1;
@@ -269,6 +253,27 @@ QString DataExplorator::databaseFromCheckBox() {
     return "OutdoorDailyRecords";
 }
 
+QString DataExplorator::conditionFromWidgets() {
+    QString condition = "";
+    if (dewPointRadioButton->isChecked()) {
+        condition = "WHERE minDewPoint IS NOT NULL";
+    }
+    else if (humidexRadioButton->isChecked()) {
+        condition = "WHERE minHumidex IS NOT NULL";
+    }
+    else if (pressureRadioButton->isChecked()) {
+        condition = "WHERE minPressure > 900";
+    }
+
+    if (monthComboBox->currentIndex() > 0 && condition != "") {
+        condition += " AND month = " + QString::number(monthComboBox->currentIndex());
+    }
+    else if (monthComboBox->currentIndex() > 0) {
+        condition = "WHERE month = " + QString::number(monthComboBox->currentIndex());
+    }
+    return condition;
+}
+
 void DataExplorator::displayHeadersFromRadioButtons() {
     QString measurement = "de la température";
     QString measurementPlusOperation = "de la température maximale";
@@ -342,11 +347,16 @@ void DataExplorator::displayLessResults() {
 }
 
 int DataExplorator::maxNumberOfRecords(bool indoor) {
+    QString operation = operationFromRadioButtons();
+    QString measurementCapitalized = measurementCapitalizedFromRadioButtons();
+    QString condition = conditionFromWidgets();
     if (indoor) {
-        return _dbHandler->getResultFromDatabase("SELECT COUNT(date) FROM IndoorDailyRecords").toInt();
+        return _dbHandler->getResultFromDatabase("SELECT COUNT(" + operation + measurementCapitalized + ") "
+                                                 "FROM IndoorDailyRecords " + condition).toInt();
     }
     else {
-        return _dbHandler->getResultFromDatabase("SELECT COUNT(date) FROM OutdoorDailyRecords").toInt();
+        return _dbHandler->getResultFromDatabase("SELECT COUNT(" + operation + measurementCapitalized + ") "
+                                                 "FROM OutdoorDailyRecords " + condition).toInt();
     }
 }
 
