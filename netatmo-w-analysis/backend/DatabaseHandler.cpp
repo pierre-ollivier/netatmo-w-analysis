@@ -20,32 +20,29 @@ DatabaseHandler::DatabaseHandler(QString pathToDatabase)
     _pathToDatabase = pathToDatabase;
 }
 
-void DatabaseHandler::prepareQuery(QSqlQuery query, QString tableName, QString params[], int paramsSize) {
-
-    // Useless for now, still some work to do to pass a QString[]
-    if (!db.open()) {
-        qDebug() << "Database open error";
-    }
-    if (!db.isOpen() ) {
-        qDebug() << "Database is not open";
-    }
-
+void DatabaseHandler::prepareQuery(QSqlQuery *query, QString tableName, QStringList params) {
+    const int paramsSize = params.length();
     QString preparingQuery = "INSERT INTO " + tableName + "(";
+
     for (int i = 0; i < paramsSize - 1; i++) {
         preparingQuery += params[i] + ",";
     }
+
     preparingQuery += params[paramsSize - 1];
     preparingQuery += ") VALUES (";
+
     for (int i = 0; i < paramsSize - 1; i++) {
         preparingQuery += "?,";
     }
+
     preparingQuery += "?);";
-    query.prepare(preparingQuery);
+    query->prepare(preparingQuery);
 }
 
 void DatabaseHandler::postOutdoorDailyRecord(ExtDailyRecord record, QString tableName) {
     db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
-    QSqlQuery query(db);
+    QSqlQuery *query = new QSqlQuery(db);
+
     if (!db.open()) {
         qDebug() << "Database open error";
     }
@@ -53,95 +50,80 @@ void DatabaseHandler::postOutdoorDailyRecord(ExtDailyRecord record, QString tabl
         qDebug() << "Database is not open";
     }
 
-    QString preparingQuery = "INSERT INTO " + tableName + "(";
-    for (int i = 0; i < 49; i++) {
-        preparingQuery += outdoorDailyRecordsParams[i];
-        preparingQuery += ",";
-    }
-    preparingQuery += outdoorDailyRecordsParams[49];
-    preparingQuery += ") VALUES (";
-    for (int i = 0; i < 49; i++) {
-        preparingQuery += "?,";
-    }
-    preparingQuery += "?);";
+    prepareQuery(query, tableName, outdoorDailyRecordsParams);
 
-    query.prepare(preparingQuery);
+    query->addBindValue(record.year());
+    query->addBindValue(record.month());
+    query->addBindValue(record.day());
+    query->addBindValue(record.date().toString("dd/MM/yyyy"));
+    query->addBindValue(record.decade());
+    query->addBindValue(record.weekNumber());
 
-//    prepareQuery(query, tableName, *outdoorDailyRecordsParams, 26);
+    query->addBindValue(record.maxTemperature());
+    query->addBindValue(record.minTemperature());
+    query->addBindValue(record.avgTemperature());
 
-    query.addBindValue(record.year());
-    query.addBindValue(record.month());
-    query.addBindValue(record.day());
-    query.addBindValue(record.date().toString("dd/MM/yyyy"));
-    query.addBindValue(record.decade());
-    query.addBindValue(record.weekNumber());
+    query->addBindValue(record.maxHumidity());
+    query->addBindValue(record.minHumidity());
+    query->addBindValue(record.avgHumidity());
 
-    query.addBindValue(record.maxTemperature());
-    query.addBindValue(record.minTemperature());
-    query.addBindValue(record.avgTemperature());
+    query->addBindValue(record.maxDewPoint());
+    query->addBindValue(record.minDewPoint());
+    query->addBindValue(record.avgDewPoint());
 
-    query.addBindValue(record.maxHumidity());
-    query.addBindValue(record.minHumidity());
-    query.addBindValue(record.avgHumidity());
+    query->addBindValue(record.maxHumidex());
+    query->addBindValue(record.minHumidex());
+    query->addBindValue(record.avgHumidex());
 
-    query.addBindValue(record.maxDewPoint());
-    query.addBindValue(record.minDewPoint());
-    query.addBindValue(record.avgDewPoint());
+    query->addBindValue(record.maxTemperatureTimestamp());
+    query->addBindValue(record.maxTemperatureTime().hour());
+    query->addBindValue(record.maxTemperatureTime().minute());
+    query->addBindValue(record.maxTemperatureTime().second());
 
-    query.addBindValue(record.maxHumidex());
-    query.addBindValue(record.minHumidex());
-    query.addBindValue(record.avgHumidex());
+    query->addBindValue(record.minTemperatureTimestamp());
+    query->addBindValue(record.minTemperatureTime().hour());
+    query->addBindValue(record.minTemperatureTime().minute());
+    query->addBindValue(record.minTemperatureTime().second());
 
-    query.addBindValue(record.maxTemperatureTimestamp());
-    query.addBindValue(record.maxTemperatureTime().hour());
-    query.addBindValue(record.maxTemperatureTime().minute());
-    query.addBindValue(record.maxTemperatureTime().second());
+    query->addBindValue(record.maxHumidityTimestamp());
+    query->addBindValue(record.maxHumidityTime().hour());
+    query->addBindValue(record.maxHumidityTime().minute());
+    query->addBindValue(record.maxHumidityTime().second());
 
-    query.addBindValue(record.minTemperatureTimestamp());
-    query.addBindValue(record.minTemperatureTime().hour());
-    query.addBindValue(record.minTemperatureTime().minute());
-    query.addBindValue(record.minTemperatureTime().second());
+    query->addBindValue(record.minHumidityTimestamp());
+    query->addBindValue(record.minHumidityTime().hour());
+    query->addBindValue(record.minHumidityTime().minute());
+    query->addBindValue(record.minHumidityTime().second());
 
-    query.addBindValue(record.maxHumidityTimestamp());
-    query.addBindValue(record.maxHumidityTime().hour());
-    query.addBindValue(record.maxHumidityTime().minute());
-    query.addBindValue(record.maxHumidityTime().second());
+    query->addBindValue(record.maxDewPointTimestamp());
+    query->addBindValue(record.maxDewPointTime().hour());
+    query->addBindValue(record.maxDewPointTime().minute());
+    query->addBindValue(record.maxDewPointTime().second());
 
-    query.addBindValue(record.minHumidityTimestamp());
-    query.addBindValue(record.minHumidityTime().hour());
-    query.addBindValue(record.minHumidityTime().minute());
-    query.addBindValue(record.minHumidityTime().second());
+    query->addBindValue(record.minDewPointTimestamp());
+    query->addBindValue(record.minDewPointTime().hour());
+    query->addBindValue(record.minDewPointTime().minute());
+    query->addBindValue(record.minDewPointTime().second());
 
-    query.addBindValue(record.maxDewPointTimestamp());
-    query.addBindValue(record.maxDewPointTime().hour());
-    query.addBindValue(record.maxDewPointTime().minute());
-    query.addBindValue(record.maxDewPointTime().second());
+    query->addBindValue(record.maxHumidexTimestamp());
+    query->addBindValue(record.maxHumidexTime().hour());
+    query->addBindValue(record.maxHumidexTime().minute());
+    query->addBindValue(record.maxHumidexTime().second());
 
-    query.addBindValue(record.minDewPointTimestamp());
-    query.addBindValue(record.minDewPointTime().hour());
-    query.addBindValue(record.minDewPointTime().minute());
-    query.addBindValue(record.minDewPointTime().second());
+    query->addBindValue(record.minHumidexTimestamp());
+    query->addBindValue(record.minHumidexTime().hour());
+    query->addBindValue(record.minHumidexTime().minute());
+    query->addBindValue(record.minHumidexTime().second());
 
-    query.addBindValue(record.maxHumidexTimestamp());
-    query.addBindValue(record.maxHumidexTime().hour());
-    query.addBindValue(record.maxHumidexTime().minute());
-    query.addBindValue(record.maxHumidexTime().second());
-
-    query.addBindValue(record.minHumidexTimestamp());
-    query.addBindValue(record.minHumidexTime().hour());
-    query.addBindValue(record.minHumidexTime().minute());
-    query.addBindValue(record.minHumidexTime().second());
-
-    if (!query.exec()) {
-        qDebug() << "The following query could not be executed. Query: " << preparingQuery;
-        qDebug() << "ERROR:" << query.lastError().text();
+    if (!query->exec()) {
+        qDebug() << "ERROR:" << query->lastError().text();
     }
     db.close();
 }
 
 void DatabaseHandler::postOutdoorTimestampRecord(ExtTimestampRecord record, QString tableName) {
     db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
-    QSqlQuery query(db);
+    QSqlQuery *query = new QSqlQuery(db);
 
     if (!db.open()) {
         qDebug() << "Database open error";
@@ -150,42 +132,29 @@ void DatabaseHandler::postOutdoorTimestampRecord(ExtTimestampRecord record, QStr
         qDebug() << "Database is not open";
     }
 
-    QString preparingQuery = "INSERT INTO " + tableName + "(";
-    for (int i = 0; i < 14; i++) {
-        preparingQuery += outdoorTimestampsParams[i];
-        preparingQuery += ",";
-    }
-    preparingQuery += outdoorTimestampsParams[14];
-    preparingQuery += ") VALUES (";
-    for (int i = 0; i < 14; i++) {
-        preparingQuery += "?,";
-    }
-    preparingQuery += "?);";
+    prepareQuery(query, tableName, outdoorTimestampsParams);
 
-    query.prepare(preparingQuery);
+    query->addBindValue(record.timestamp());
 
-    query.addBindValue(record.timestamp());
+    query->addBindValue(record.year());
+    query->addBindValue(record.month());
+    query->addBindValue(record.day());
+    query->addBindValue(record.date().toString("dd/MM/yyyy"));
+    query->addBindValue(record.decade());
+    query->addBindValue(record.weekNumber());
 
-    query.addBindValue(record.year());
-    query.addBindValue(record.month());
-    query.addBindValue(record.day());
-    query.addBindValue(record.date().toString("dd/MM/yyyy"));
-    query.addBindValue(record.decade());
-    query.addBindValue(record.weekNumber());
+    query->addBindValue(record.hour());
+    query->addBindValue(record.minute());
+    query->addBindValue(record.second());
+    query->addBindValue(record.time().toString("hh:mm:ss"));
 
-    query.addBindValue(record.hour());
-    query.addBindValue(record.minute());
-    query.addBindValue(record.second());
-    query.addBindValue(record.time().toString("hh:mm:ss"));
+    query->addBindValue(record.temperature());
+    query->addBindValue(record.humidity());
+    query->addBindValue(record.dewPoint());
+    query->addBindValue(record.humidex());
 
-    query.addBindValue(record.temperature());
-    query.addBindValue(record.humidity());
-    query.addBindValue(record.dewPoint());
-    query.addBindValue(record.humidex());
-
-    if (!query.exec()) {
-        qDebug() << "The following query could not be executed. Query: " << preparingQuery;
-        qDebug() << "ERROR:" << query.lastError().text();
+    if (!query->exec()) {
+        qDebug() << "ERROR:" << query->lastError().text();
     }
     db.close();
 
@@ -193,7 +162,7 @@ void DatabaseHandler::postOutdoorTimestampRecord(ExtTimestampRecord record, QStr
 
 void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString tableName) {
     db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
-    QSqlQuery query(db);
+    QSqlQuery *query = new QSqlQuery(db);
     if (!db.open()) {
         qDebug() << "Database open error";
     }
@@ -201,118 +170,102 @@ void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString table
         qDebug() << "Database is not open";
     }
 
-    QString preparingQuery = "INSERT INTO " + tableName + "(";
-    for (int i = 0; i < 66; i++) {
-        preparingQuery += indoorDailyRecordsParams[i];
-        preparingQuery += ",";
-    }
-    preparingQuery += indoorDailyRecordsParams[66];
-    preparingQuery += ") VALUES (";
-    for (int i = 0; i < 66; i++) {
-        preparingQuery += "?,";
-    }
-    preparingQuery += "?);";
+    prepareQuery(query, tableName, outdoorDailyRecordsParams);
 
+    query->addBindValue(record.year());
+    query->addBindValue(record.month());
+    query->addBindValue(record.day());
+    query->addBindValue(record.date().toString("dd/MM/yyyy"));
+    query->addBindValue(record.decade());
+    query->addBindValue(record.weekNumber());
 
-    query.prepare(preparingQuery);
+    query->addBindValue(record.maxTemperature());
+    query->addBindValue(record.minTemperature());
+    query->addBindValue(record.avgTemperature());
 
-//    prepareQuery(query, tableName, *outdoorDailyRecordsParams, 26);
+    query->addBindValue(record.maxHumidity());
+    query->addBindValue(record.minHumidity());
+    query->addBindValue(record.avgHumidity());
 
-    query.addBindValue(record.year());
-    query.addBindValue(record.month());
-    query.addBindValue(record.day());
-    query.addBindValue(record.date().toString("dd/MM/yyyy"));
-    query.addBindValue(record.decade());
-    query.addBindValue(record.weekNumber());
+    query->addBindValue(record.maxDewPoint());
+    query->addBindValue(record.minDewPoint());
+    query->addBindValue(record.avgDewPoint());
 
-    query.addBindValue(record.maxTemperature());
-    query.addBindValue(record.minTemperature());
-    query.addBindValue(record.avgTemperature());
+    query->addBindValue(record.maxHumidex());
+    query->addBindValue(record.minHumidex());
+    query->addBindValue(record.avgHumidex());
 
-    query.addBindValue(record.maxHumidity());
-    query.addBindValue(record.minHumidity());
-    query.addBindValue(record.avgHumidity());
+    query->addBindValue(record.maxPressure());
+    query->addBindValue(record.minPressure());
+    query->addBindValue(record.avgPressure());
 
-    query.addBindValue(record.maxDewPoint());
-    query.addBindValue(record.minDewPoint());
-    query.addBindValue(record.avgDewPoint());
+    query->addBindValue(record.maxCO2());
+    query->addBindValue(record.minCO2());
+    query->addBindValue(record.avgCO2());
 
-    query.addBindValue(record.maxHumidex());
-    query.addBindValue(record.minHumidex());
-    query.addBindValue(record.avgHumidex());
+    query->addBindValue(record.maxNoise());
+    query->addBindValue(record.minNoise());
+    query->addBindValue(record.avgNoise());
 
-    query.addBindValue(record.maxPressure());
-    query.addBindValue(record.minPressure());
-    query.addBindValue(record.avgPressure());
+    query->addBindValue(record.maxTemperatureTimestamp());
+    query->addBindValue(record.maxTemperatureTime().hour());
+    query->addBindValue(record.maxTemperatureTime().minute());
+    query->addBindValue(record.maxTemperatureTime().second());
 
-    query.addBindValue(record.maxCO2());
-    query.addBindValue(record.minCO2());
-    query.addBindValue(record.avgCO2());
+    query->addBindValue(record.minTemperatureTimestamp());
+    query->addBindValue(record.minTemperatureTime().hour());
+    query->addBindValue(record.minTemperatureTime().minute());
+    query->addBindValue(record.minTemperatureTime().second());
 
-    query.addBindValue(record.maxNoise());
-    query.addBindValue(record.minNoise());
-    query.addBindValue(record.avgNoise());
+    query->addBindValue(record.maxHumidityTimestamp());
+    query->addBindValue(record.maxHumidityTime().hour());
+    query->addBindValue(record.maxHumidityTime().minute());
+    query->addBindValue(record.maxHumidityTime().second());
 
-    query.addBindValue(record.maxTemperatureTimestamp());
-    query.addBindValue(record.maxTemperatureTime().hour());
-    query.addBindValue(record.maxTemperatureTime().minute());
-    query.addBindValue(record.maxTemperatureTime().second());
+    query->addBindValue(record.minHumidityTimestamp());
+    query->addBindValue(record.minHumidityTime().hour());
+    query->addBindValue(record.minHumidityTime().minute());
+    query->addBindValue(record.minHumidityTime().second());
 
-    query.addBindValue(record.minTemperatureTimestamp());
-    query.addBindValue(record.minTemperatureTime().hour());
-    query.addBindValue(record.minTemperatureTime().minute());
-    query.addBindValue(record.minTemperatureTime().second());
+    query->addBindValue(record.maxDewPointTimestamp());
+    query->addBindValue(record.maxDewPointTime().hour());
+    query->addBindValue(record.maxDewPointTime().minute());
+    query->addBindValue(record.maxDewPointTime().second());
 
-    query.addBindValue(record.maxHumidityTimestamp());
-    query.addBindValue(record.maxHumidityTime().hour());
-    query.addBindValue(record.maxHumidityTime().minute());
-    query.addBindValue(record.maxHumidityTime().second());
+    query->addBindValue(record.minDewPointTimestamp());
+    query->addBindValue(record.minDewPointTime().hour());
+    query->addBindValue(record.minDewPointTime().minute());
+    query->addBindValue(record.minDewPointTime().second());
 
-    query.addBindValue(record.minHumidityTimestamp());
-    query.addBindValue(record.minHumidityTime().hour());
-    query.addBindValue(record.minHumidityTime().minute());
-    query.addBindValue(record.minHumidityTime().second());
+    query->addBindValue(record.maxHumidexTimestamp());
+    query->addBindValue(record.maxHumidexTime().hour());
+    query->addBindValue(record.maxHumidexTime().minute());
+    query->addBindValue(record.maxHumidexTime().second());
 
-    query.addBindValue(record.maxDewPointTimestamp());
-    query.addBindValue(record.maxDewPointTime().hour());
-    query.addBindValue(record.maxDewPointTime().minute());
-    query.addBindValue(record.maxDewPointTime().second());
+    query->addBindValue(record.minHumidexTimestamp());
+    query->addBindValue(record.minHumidexTime().hour());
+    query->addBindValue(record.minHumidexTime().minute());
+    query->addBindValue(record.minHumidexTime().second());
 
-    query.addBindValue(record.minDewPointTimestamp());
-    query.addBindValue(record.minDewPointTime().hour());
-    query.addBindValue(record.minDewPointTime().minute());
-    query.addBindValue(record.minDewPointTime().second());
+    query->addBindValue(record.maxPressureTimestamp());
+    query->addBindValue(record.maxPressureTime().hour());
+    query->addBindValue(record.maxPressureTime().minute());
+    query->addBindValue(record.maxPressureTime().second());
 
-    query.addBindValue(record.maxHumidexTimestamp());
-    query.addBindValue(record.maxHumidexTime().hour());
-    query.addBindValue(record.maxHumidexTime().minute());
-    query.addBindValue(record.maxHumidexTime().second());
+    query->addBindValue(record.minPressureTimestamp());
+    query->addBindValue(record.minPressureTime().hour());
+    query->addBindValue(record.minPressureTime().minute());
+    query->addBindValue(record.minPressureTime().second());
 
-    query.addBindValue(record.minHumidexTimestamp());
-    query.addBindValue(record.minHumidexTime().hour());
-    query.addBindValue(record.minHumidexTime().minute());
-    query.addBindValue(record.minHumidexTime().second());
-
-    query.addBindValue(record.maxPressureTimestamp());
-    query.addBindValue(record.maxPressureTime().hour());
-    query.addBindValue(record.maxPressureTime().minute());
-    query.addBindValue(record.maxPressureTime().second());
-
-    query.addBindValue(record.minPressureTimestamp());
-    query.addBindValue(record.minPressureTime().hour());
-    query.addBindValue(record.minPressureTime().minute());
-    query.addBindValue(record.minPressureTime().second());
-
-    if (!query.exec()) {
-        qDebug() << "The following query could not be executed. Query: " << preparingQuery;
-        qDebug() << "ERROR:" << query.lastError().text();
+    if (!query->exec()) {
+        qDebug() << "ERROR:" << query->lastError().text();
     }
     db.close();
 }
 
 void DatabaseHandler::postIndoorTimestampRecord(IntTimestampRecord record, QString tableName) {
     db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
-    QSqlQuery query(db);
+    QSqlQuery *query = new QSqlQuery(db);
 
     if (!db.open()) {
         qDebug() << "Database open error";
@@ -321,45 +274,32 @@ void DatabaseHandler::postIndoorTimestampRecord(IntTimestampRecord record, QStri
         qDebug() << "Database is not open";
     }
 
-    QString preparingQuery = "INSERT INTO " + tableName + "(";
-    for (int i = 0; i < 17; i++) {
-        preparingQuery += indoorTimestampsParams[i];
-        preparingQuery += ",";
-    }
-    preparingQuery += indoorTimestampsParams[17];
-    preparingQuery += ") VALUES (";
-    for (int i = 0; i < 17; i++) {
-        preparingQuery += "?,";
-    }
-    preparingQuery += "?);";
+    prepareQuery(query, tableName, indoorTimestampsParams);
 
-    query.prepare(preparingQuery);
+    query->addBindValue(record.timestamp());
 
-    query.addBindValue(record.timestamp());
+    query->addBindValue(record.year());
+    query->addBindValue(record.month());
+    query->addBindValue(record.day());
+    query->addBindValue(record.date().toString("dd/MM/yyyy"));
+    query->addBindValue(record.decade());
+    query->addBindValue(record.weekNumber());
 
-    query.addBindValue(record.year());
-    query.addBindValue(record.month());
-    query.addBindValue(record.day());
-    query.addBindValue(record.date().toString("dd/MM/yyyy"));
-    query.addBindValue(record.decade());
-    query.addBindValue(record.weekNumber());
+    query->addBindValue(record.hour());
+    query->addBindValue(record.minute());
+    query->addBindValue(record.second());
+    query->addBindValue(record.time().toString("hh:mm:ss"));
 
-    query.addBindValue(record.hour());
-    query.addBindValue(record.minute());
-    query.addBindValue(record.second());
-    query.addBindValue(record.time().toString("hh:mm:ss"));
+    query->addBindValue(record.temperature());
+    query->addBindValue(record.humidity());
+    query->addBindValue(record.dewPoint());
+    query->addBindValue(record.humidex());
+    query->addBindValue(record.pressure());
+    query->addBindValue(record.co2());
+    query->addBindValue(record.noise());
 
-    query.addBindValue(record.temperature());
-    query.addBindValue(record.humidity());
-    query.addBindValue(record.dewPoint());
-    query.addBindValue(record.humidex());
-    query.addBindValue(record.pressure());
-    query.addBindValue(record.co2());
-    query.addBindValue(record.noise());
-
-    if (!query.exec()) {
-        qDebug() << "The following query could not be executed. Query: " << preparingQuery;
-        qDebug() << "ERROR:" << query.lastError().text();
+    if (!query->exec()) {
+        qDebug() << "ERROR:" << query->lastError().text();
     }
     db.close();
 }
