@@ -42,7 +42,8 @@ EphemerisPanel::EphemerisPanel() : QGroupBox()
 }
 
 void EphemerisPanel::setDate(QDate date) {
-    setTitle("Statistiques pour un " + date.toString("dd MMMM"));
+    setTitle("Statistiques pour un " + date.toString("d MMMM"));
+    if (date.day() == 1) setTitle("Statistiques pour un " + date.toString("der MMMM"));
 
     double txx = dbHandler->getResultFromDatabase(
                 "SELECT max(maxTemperature) FROM OutdoorDailyRecords "
