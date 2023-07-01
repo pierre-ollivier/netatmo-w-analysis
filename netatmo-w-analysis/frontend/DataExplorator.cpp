@@ -188,14 +188,14 @@ std::vector<QVariant> DataExplorator::getValues(
         return _dbHandler->getResultsFromDatabase(
                     "SELECT " + operation + measurementCapitalized + " "
                     "FROM " + databaseName + " " + monthCondition + " "
-                    "ORDER BY " + operation + measurementCapitalized + " "
+                    "ORDER BY round(" + operation + measurementCapitalized + ", 6) "
                     + order + ", year, month, day LIMIT " + QString::number(limit));
     }
 
     return _dbHandler->getResultsFromDatabase(
                 "SELECT (max" + measurementCapitalized + " - min" + measurementCapitalized + ") "
                 "FROM " + databaseName + " " + monthCondition + " "
-                "ORDER BY (max" + measurementCapitalized + " - min" + measurementCapitalized + ") "
+                "ORDER BY round(max" + measurementCapitalized + " - min" + measurementCapitalized + ", 6) "
                 + order + ", year, month, day LIMIT " + QString::number(limit));
 
 }
@@ -212,13 +212,13 @@ std::vector<QVariant> DataExplorator::getValuesDates(
     if (operation != "diff") {
         return _dbHandler->getResultsFromDatabase(
                     "SELECT date FROM " + databaseName + " " + monthCondition + " "
-                    "ORDER BY " + operation + measurementCapitalized + " " + order + ", "
-                    "year ASC, month ASC, day ASC LIMIT " + QString::number(limit));
+                    "ORDER BY round(" + operation + measurementCapitalized + ", 6) "
+                     + order + ", year ASC, month ASC, day ASC LIMIT " + QString::number(limit));
     }
 
     return _dbHandler->getResultsFromDatabase(
                 "SELECT date FROM " + databaseName + " " + monthCondition + " "
-                "ORDER BY (max" + measurementCapitalized + " - min" + measurementCapitalized + ") "
+                "ORDER BY round(max" + measurementCapitalized + " - min" + measurementCapitalized + ", 6) "
                 + order + ", year ASC, month ASC, day ASC LIMIT " + QString::number(limit));
 }
 
