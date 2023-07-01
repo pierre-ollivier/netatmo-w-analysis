@@ -11,9 +11,10 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     deviceLocale = new QLocale();
 
     monthComboBox = new QComboBox();
-    monthComboBox->addItems({"Année complète", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
-                             "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"});
-    monthComboBox->setCurrentIndex(QDate::currentDate().month());
+    monthComboBox->addItems({"Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+                             "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre",
+                             "Printemps", "Été", "Automne", "Hiver", "Année complète"});
+    monthComboBox->setCurrentIndex(QDate::currentDate().month() - 1);
     connect(monthComboBox, SIGNAL(currentIndexChanged(int)), SLOT(changeDisplayMonth()));
 
     mainModelMax = new QStandardItemModel(5, 2);
@@ -256,6 +257,7 @@ QString DataExplorator::databaseFromCheckBox() {
 
 QString DataExplorator::conditionFromWidgets() {
     QString condition = "";
+    QString timePeriodCondition = "";
     if (dewPointRadioButton->isChecked()) {
         condition = "WHERE minDewPoint IS NOT NULL";
     }
@@ -266,13 +268,34 @@ QString DataExplorator::conditionFromWidgets() {
         condition = "WHERE minPressure > 900";
     }
 
-    if (monthComboBox->currentIndex() > 0 && condition != "") {
-        condition += " AND month = " + QString::number(monthComboBox->currentIndex());
+    if (monthComboBox->currentIndex() < 12) {
+        timePeriodCondition = "month = " + QString::number(monthComboBox->currentIndex() + 1);
     }
-    else if (monthComboBox->currentIndex() > 0) {
-        condition = "WHERE month = " + QString::number(monthComboBox->currentIndex());
+    else if (monthComboBox->currentText() == "Printemps") {
+        timePeriodCondition = "month BETWEEN 3 AND 5";
     }
-    return condition;
+    else if (monthComboBox->currentText() == "Été") {
+        timePeriodCondition = "month BETWEEN 6 AND 8";
+    }
+    else if (monthComboBox->currentText() == "Automne") {
+        timePeriodCondition = "month BETWEEN 9 AND 11";
+    }
+    else if (monthComboBox->currentText() == "Hiver") {
+        timePeriodCondition = "month IN (1, 2, 12)";
+    }
+
+    if (condition == "" && timePeriodCondition == "") {
+        return "";
+    }
+    else if (condition == "") {
+        return "WHERE " + timePeriodCondition;
+    }
+    else if (timePeriodCondition == "") {
+        return condition;
+    }
+    else {
+        return condition + " AND " + timePeriodCondition;
+    }
 }
 
 void DataExplorator::displayHeadersFromRadioButtons() {
