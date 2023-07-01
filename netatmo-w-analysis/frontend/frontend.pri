@@ -2,6 +2,7 @@ QT += charts
 QT += core
 
 HEADERS += \
+    $$PWD/ColorUtils.h \
     $$PWD/CustomItemDelegate.h \
     $$PWD/DataExplorator.h \
     $$PWD/EphemerisPanel.h \
@@ -13,6 +14,7 @@ HEADERS += \
     $$PWD/YearlyReport.h
 
 SOURCES += \
+    $$PWD/ColorUtils.cpp \
     $$PWD/CustomItemDelegate.cpp \
     $$PWD/DataExplorator.cpp \
     $$PWD/EphemerisPanel.cpp \
