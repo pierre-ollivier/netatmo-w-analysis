@@ -1,6 +1,7 @@
 #include "YearlyReport.h"
 #include <QDate>
 #include <QDebug>
+#include "../frontend/ColorUtils.h"
 
 extern QString PATH_TO_PROD_DATABASE;
 extern QString PATH_TO_COPY_DATABASE;
@@ -67,6 +68,7 @@ void YearlyReport::fillBoard() {
         int mnnYear = getMeasurementYearByDate(measurementType, "min", date.day(), date.month(), mnn);
         int mnxYear = getMeasurementYearByDate(measurementType, "min", date.day(), date.month(), mnx);
         int mxnYear = getMeasurementYearByDate(measurementType, "max", date.day(), date.month(), mxn);
+
         mainModel->setItem(row, 0, new QStandardItem(deviceLocale->toString(mnn, 'f', decimals) + " " + unit));
         mainModel->setItem(row, 1, new QStandardItem(QString::number(mnnYear)));
         mainModel->setItem(row, 2, new QStandardItem(deviceLocale->toString(mxn, 'f', decimals) + " " + unit));
@@ -84,28 +86,28 @@ void YearlyReport::fillBoard() {
         }
 
         if (unit == "°C" or unit == "") {
-            mainModel->item(row, 0)->setBackground(QBrush(temperatureColor(mnn)));
-            mainModel->item(row, 2)->setBackground(QBrush(temperatureColor(mxn)));
-            mainModel->item(row, 4)->setBackground(QBrush(temperatureColor(mnx)));
-            mainModel->item(row, 6)->setBackground(QBrush(temperatureColor(mxx)));
-            mainModel->item(row, 8)->setBackground(QBrush(temperatureColor(mnm)));
-            mainModel->item(row, 9)->setBackground(QBrush(temperatureColor(mxm)));
+            mainModel->item(row, 0)->setBackground(QBrush(ColorUtils::temperatureColor(mnn)));
+            mainModel->item(row, 2)->setBackground(QBrush(ColorUtils::temperatureColor(mxn)));
+            mainModel->item(row, 4)->setBackground(QBrush(ColorUtils::temperatureColor(mnx)));
+            mainModel->item(row, 6)->setBackground(QBrush(ColorUtils::temperatureColor(mxx)));
+            mainModel->item(row, 8)->setBackground(QBrush(ColorUtils::temperatureColor(mnm)));
+            mainModel->item(row, 9)->setBackground(QBrush(ColorUtils::temperatureColor(mxm)));
         }
         else if (unit == "%") {
-            mainModel->item(row, 0)->setBackground(QBrush(humidityColor(mnn)));
-            mainModel->item(row, 2)->setBackground(QBrush(humidityColor(mxn)));
-            mainModel->item(row, 4)->setBackground(QBrush(humidityColor(mnx)));
-            mainModel->item(row, 6)->setBackground(QBrush(humidityColor(mxx)));
-            mainModel->item(row, 8)->setBackground(QBrush(humidityColor(mnm)));
-            mainModel->item(row, 9)->setBackground(QBrush(humidityColor(mxm)));
+            mainModel->item(row, 0)->setBackground(QBrush(ColorUtils::humidityColor(mnn)));
+            mainModel->item(row, 2)->setBackground(QBrush(ColorUtils::humidityColor(mxn)));
+            mainModel->item(row, 4)->setBackground(QBrush(ColorUtils::humidityColor(mnx)));
+            mainModel->item(row, 6)->setBackground(QBrush(ColorUtils::humidityColor(mxx)));
+            mainModel->item(row, 8)->setBackground(QBrush(ColorUtils::humidityColor(mnm)));
+            mainModel->item(row, 9)->setBackground(QBrush(ColorUtils::humidityColor(mxm)));
         }
         else if (unit == "hPa") {
-            mainModel->item(row, 0)->setBackground(QBrush(pressureColor(mnn)));
-            mainModel->item(row, 2)->setBackground(QBrush(pressureColor(mxn)));
-            mainModel->item(row, 4)->setBackground(QBrush(pressureColor(mnx)));
-            mainModel->item(row, 6)->setBackground(QBrush(pressureColor(mxx)));
-            mainModel->item(row, 8)->setBackground(QBrush(pressureColor(mnm)));
-            mainModel->item(row, 9)->setBackground(QBrush(pressureColor(mxm)));
+            mainModel->item(row, 0)->setBackground(QBrush(ColorUtils::pressureColor(mnn)));
+            mainModel->item(row, 2)->setBackground(QBrush(ColorUtils::pressureColor(mxn)));
+            mainModel->item(row, 4)->setBackground(QBrush(ColorUtils::pressureColor(mnx)));
+            mainModel->item(row, 6)->setBackground(QBrush(ColorUtils::pressureColor(mxx)));
+            mainModel->item(row, 8)->setBackground(QBrush(ColorUtils::pressureColor(mnm)));
+            mainModel->item(row, 9)->setBackground(QBrush(ColorUtils::pressureColor(mxm)));
         }
     }
 
@@ -243,63 +245,6 @@ void YearlyReport::changeMeasurement() {
     }
 
     fillBoard();
-}
-
-QColor YearlyReport::temperatureColor(double temperature) {
-
-    //t valant 10 fois la température exprimée en °C
-    //t =-200 : QColor(0, 0, 0)
-    //t =-150 : QColor(128, 0, 128)
-    //t =-100 : QColor(128, 0, 255)
-    //t = -50 : QColor(0, 0, 255)
-    //t =   0 : QColor(0, 128, 255)
-    //t =  50 : QColor(0, 255, 0)
-    //t = 100 : QColor(255, 255, 0)
-    //t = 200 : QColor(255, 128, 0)
-    //t = 300 : QColor(255, 0, 0)
-    //t = 350 : QColor(255, 0, 128)
-    //t = 400 : QColor(255, 0, 255)
-    //t = 450 : QColor(128, 0, 128)
-    //t = 500 : QColor(0, 0, 0)
-
-    int t = int(10 * temperature + 0.5 - (temperature < 0.0));
-
-    if (t < -200) return QColor(0, 0, 0);
-    if (t == -200) return QColor(0, 0, 0);
-    if (t < -150) return QColor(10 + (t + 200)*108/50, 0, 10 + (t + 200)*108/50);
-    if (t == -150) return QColor(128, 0, 128);
-    if (t < -100) return QColor(128, 0, 138 + (t + 150)*107/50);
-    if (t == -100) return QColor(128, 0, 255);
-    if (t < -50) return QColor(118 + (-100 - t)*108/50, 0, 255);
-    if (t == -50) return QColor(0, 0, 255);
-    if (t < 0) return QColor(0, 10 + (t + 50)*108/50, 255);
-    if (t == 0) return QColor(0, 128, 255);
-    if (t < 50) return QColor(0, 138 + t*107/50, 245 - t*235/50);
-    if (t == 50) return QColor(0, 255, 0);
-    if (t < 100) return QColor(10 + (t - 50)*235/50, 255, 0);
-    if (t == 100) return QColor(255, 255, 0);
-    if (t < 200) return QColor(255, 245 + (100 - t)*107/100, 0);
-    if (t == 200) return QColor(255, 128, 0);
-    if (t < 300) return QColor(255, 118 + (200 - t)*108/100, 0);
-    if (t == 300) return QColor(255, 0, 0);
-    if (t < 350) return QColor(255, 0, 10 + (t - 300)*108/50);
-    if (t == 350) return QColor(255, 0, 128);
-    if (t < 400) return QColor(255, 0, 138 + (t - 350)*107/50);
-    if (t == 400) return QColor(255, 0, 255);
-    if (t < 450) return QColor(245 + (400 - t)*107/50, 0, 245 + (400 - t)*107/50);
-    if (t == 450) return QColor(128, 0, 128);
-    if (t < 500) return QColor(118 + (450 - t)*108/50, 0, 118 + (450 - t)*108/50);
-    if (t == 500) return QColor(0, 0, 0);
-    return QColor(0, 0, 0);
-
-}
-
-QColor YearlyReport::humidityColor(int humidity) {
-    return temperatureColor(45 - 0.6 * humidity);
-}
-
-QColor YearlyReport::pressureColor(double pressure) {
-    return temperatureColor(-15 + (pressure - 960) * 60 / 126);
 }
 
 // idea: add amplitude? maybe as an option?

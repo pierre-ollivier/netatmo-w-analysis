@@ -53,10 +53,6 @@ public slots:
 
     int maxNumberOfRecords(bool indoor);
 
-    QColor temperatureColor(double temperature);
-    QColor humidityColor(double humidity);
-    QColor pressureColor(double pressure);
-
 private:
     QGridLayout *layout;
 
