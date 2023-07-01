@@ -15,7 +15,7 @@ class DatabaseHandler
 public:
     DatabaseHandler(QString pathToDatabase);
 
-    void prepareQuery(QSqlQuery query, QString tableName, QString params[], int paramsSize);
+    void prepareQuery(QSqlQuery *query, QString tableName, QStringList params);
 
     void postOutdoorDailyRecord(ExtDailyRecord record, QString tableName);
     void postIndoorDailyRecord(IntDailyRecord record, QString tableName);
