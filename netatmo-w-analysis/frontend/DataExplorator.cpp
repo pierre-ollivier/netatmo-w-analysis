@@ -95,13 +95,13 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     layout->addWidget(mainViewMin, 1, 4);
     layout->addWidget(moreResultsButton, 2, 1);
     layout->addWidget(lessResultsButton, 2, 4);
-    layout->addWidget(new QLabel("Mois : "), 2, 2);
+    layout->addWidget(new QLabel("Période : "), 2, 2);
     layout->addWidget(monthComboBox, 2, 3);
     layout->addWidget(measurementsGroupBox, 3, 1, 1, 3);
     layout->addWidget(operationsGroupBox, 3, 4);
     setLayout(layout);
 
-    setMinimumSize(800, 700);
+    setMinimumSize(830, 730);
 
     fillBoards();
 }
