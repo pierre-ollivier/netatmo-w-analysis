@@ -3,17 +3,54 @@
 Le but de ce projet est de fournir un outil de visualisation et d'analyse des données provenant d'une station météo Netatmo.
 
 ## Interface
-L'interface du programme est une fenêtre, sur laquelle sont affichées les températures extérieure (en haut) et intérieure (en bas).
+L'interface du programme est une fenêtre, sur laquelle sont affichées les températures extérieure (en haut) et intérieure (en bas). Des graphiques configurables présentent l'évolution d'un paramètre donné (température, humidité, point de rosée ou humidex) sur les dernières 4, 24 ou 192 heures.
+
+Des statistiques sont également affichées dans une zone à droite de la fenêtre.
 
 ### Menus
 Trois menus sont disponibles :
 - Menu Réseau : pour obtenir des informations de connectivité. C'est l'endroit où aller pour vérifier que le nombre d'appels à l'API Netatmo ne dépasse pas les limites (50 appels en 10 secondes glissantes, 500 appels en 60 minutes glissantes).
 - Menu Données : c'est ici que les opérations relatives aux données sont disponibles. Il est possible d'ajouter, à partir d'un fichier .csv, les données d'un mois (données toutes les 5 minutes) ou encore de compléter la base de données qui compile, pour chaque journée, les valeurs moyennes et extrêmes de chaque paramètre mesuré ou calculé.
-- Menu Climatologie : c'est ici qu'il est possible d'accéder aux résumés mensuels et annuels pour chaque paramètre.
+- Menu Climatologie : c'est ici qu'il est possible d'accéder aux résumés mensuels et annuels pour chaque paramètre. Le menu Climatologie donne également accès à la fenêtre Normales.
 
-## Données
+# Menu Données
 
-Les données sont stockées dans la base de données. Celle-ci contient plusieurs tables :
+## Normales
+
+La page Normales donne accès à une représentation graphique d'un paramètre de mesure donné (température, humidité, point de rosée ou encore humidex) au fil de l'année en cours, ainsi que son écartement vis-à-vis de la normale de chaque jour (moyenne du paramètre sélectionné sur toutes les années précédentes, dans les X jours autour dudit jour).
+
+Quatre options sont proposées pour chaque paramètre : valeur maximale sur une journée (en prenant en compte, dans le cas précis de la température extérieure, les normes de fenêtre temporelle de calcul), valeur minimale, valeur moyenne ou encore amplitude (différence entre le maximum et le minimum). 
+
+Il est possible de choisir entre les données intérieures et les données extérieures.
+
+# Menu Climatologie
+
+## Rapport mensuel
+
+Le rapport mensuel donne les valeurs minimales, maximales et moyennes d'un paramètre (à choisir parmi température, humidité, point de rosée, humidex et pression ; en intérieur ou en extérieur - dans le cas de la pression, les données seront identiques à l'intérieur et à l'extérieur).
+
+La fenêtre de rapport mensuel est interactive et permet de changer de mois, que ce soit en naviguant vers le mois précédent ou suivant ou en sélectionnant soi-même un mois parmi les mois contenant des mesures.
+
+L'absence de données pour un mois ou un jour précis est prise en compte dans l'affichage.
+
+## Rapport annuel
+
+Le rapport annuel de climatologie quotidienne est un tableau associé à un paramètre de mesure, à choisir parmi température, humidité, point de rosée, humidex ou pression. Pour chaque jour de l'année, les valeurs suivantes sont calculées et affichées :
+- le minimum du minimum sur la journée du paramètre, ainsi que l'année concernée
+- le maximum du minimum sur la journée du paramètre, ainsi que l'année concernée
+- le minimum du maximum sur la journée du paramètre, ainsi que l'année concernée
+- le maximum du maximum sur la journée du paramètre, ainsi que l'année concernée
+- la valeur moyenne du minimum du paramètre
+- la valeur moyenne du maximum du paramètre.
+
+# Stockage interne des données
+
+Les données sont stockées dans deux bases de données :
+- Une base de données, dite de « production » qui contient les données calculées à partir des fichiers chargés tous les mois. Les données de production sont fiables et définitives.
+- Une base de données, dite de « copie » qui est une copie de la base de données de production, à laquelle on ajoute une partie des données du mois courant (température et humidité maximales et minimales déterminées à partir des normes en vigueur, estimation de la température et de l'humidité moyennes).
+- Il existe une troisième base de données, dite de « test » qui permet de s'assurer que tout va bien mais qui n'est pas utilisée en tant que telle par le programme.
+
+Chaque base de données contient plusieurs tables :
 
 ### sqlite-sequence
 Cette table est utilisée pour s'assurer de l'unicité des identifiants dans les autres tables.
