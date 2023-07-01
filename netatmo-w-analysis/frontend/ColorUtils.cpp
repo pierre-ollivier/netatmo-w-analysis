@@ -55,6 +55,7 @@ QColor ColorUtils::temperatureColor(double temperature) {
 }
 
 QColor ColorUtils::temperatureColor(QVariant temperature) {
+    if (temperature.isNull()) return Qt::white;
     return temperatureColor(temperature.toDouble());
 }
 
@@ -67,6 +68,7 @@ QColor ColorUtils::humidityColor(int humidity) {
 }
 
 QColor ColorUtils::humidityColor(QVariant humidity) {
+    if (humidity.isNull()) return Qt::white;
     return humidityColor(humidity.toDouble());
 }
 
@@ -78,5 +80,6 @@ QColor ColorUtils::pressureColor(double pressure) {
 }
 
 QColor ColorUtils::pressureColor(QVariant pressure) {
+    if (pressure.isNull()) return Qt::white;
     return pressureColor(pressure.toDouble());
 }
