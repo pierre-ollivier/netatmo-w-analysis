@@ -286,31 +286,31 @@ void NormalsVisualizer::setYAxisRange(double maxValue, double minValue) {
 
 void NormalsVisualizer::setYAxisTicks(double maxValue, double minValue) {
     double difference = maxValue - minValue;
-    if (difference < 0.7 && _measurementType != "humidity") {
+    if (difference < 0.9 && _measurementType != "humidity") {
         yAxis->setTickInterval(0.1);
     }
-    else if (difference < 1.3 && _measurementType != "humidity") {
+    else if (difference < 1.7 && _measurementType != "humidity") {
         yAxis->setTickInterval(0.2);
     }
-    else if (difference < 2.0 && _measurementType != "humidity") {
+    else if (difference < 2.5 && _measurementType != "humidity") {
         yAxis->setTickInterval(0.4);
     }
-    else if (difference < 3.1 && _measurementType != "humidity") {
+    else if (difference < 4.1 && _measurementType != "humidity") {
         yAxis->setTickInterval(0.5);
     }
-    else if (difference < 6.1) {
+    else if (difference < 8.1) {
         yAxis->setTickInterval(1.0);
     }
-    else if (difference < 12) {
+    else if (difference < 15) {
         yAxis->setTickInterval(2.0);
     }
-    else if (difference < 15 && _measurementType != "humidity") {
+    else if (difference < 20 && _measurementType != "humidity") {
         yAxis->setTickInterval(2.5);
     }
-    else if (difference < 31) {
+    else if (difference < 41) {
         yAxis->setTickInterval(5.0);
     }
-    else if (difference < 61) {
+    else if (difference < 81) {
         yAxis->setTickInterval(10);
     }
     else {
