@@ -340,7 +340,8 @@ int DailyStatisticsCalculator::getMinCO2FromDate(QDate date) {
     const long long firstTimestamp = getFirstTimestampFromDate(date);
     const long long lastTimestamp = firstTimestamp + 86400;
     QString query = "SELECT min(co2) FROM " + indoorOrOutdoor + "TimestampRecords";
-    query += " WHERE timestamp BETWEEN " + QString::number(firstTimestamp) + " AND " + QString::number(lastTimestamp);
+    query += " WHERE co2 > 0";
+    query += " AND timestamp BETWEEN " + QString::number(firstTimestamp) + " AND " + QString::number(lastTimestamp);
     return dbHandler->getResultFromDatabase(query).toInt();
 }
 
