@@ -170,7 +170,7 @@ void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString table
         qDebug() << "Database is not open";
     }
 
-    prepareQuery(query, tableName, outdoorDailyRecordsParams);
+    prepareQuery(query, tableName, indoorDailyRecordsParams);
 
     query->addBindValue(record.year());
     query->addBindValue(record.month());
