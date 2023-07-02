@@ -405,7 +405,7 @@ void MainWindow::updateDailyIndoorDatabase() {
 
     QString q = "Confirmer la saisie ? \n\n";
     q += "Date de début : " + beginDate + "\n";
-    q += "Date de fin : " + endDate;
+    q += "Date de fin : " + endDate + "\n";
     q += "Dernière date dans la base de données intérieures : ";
     q += dbHandlerProd->getLatestDateTimeFromDatabase("IndoorDailyRecords").date().toString("dd/MM/yyyy");
 
@@ -431,7 +431,7 @@ void MainWindow::updateDailyOutdoorDatabase() {
 
     QString q = "Confirmer la saisie ? \n\n";
     q += "Date de début : " + beginDate + "\n";
-    q += "Date de fin : " + endDate;
+    q += "Date de fin : " + endDate + "\n";
     q += "Dernière date dans la base de données extérieures : ";
     q += dbHandlerProd->getLatestDateTimeFromDatabase("OutdoorDailyRecords").date().toString("dd/MM/yyyy");
 
