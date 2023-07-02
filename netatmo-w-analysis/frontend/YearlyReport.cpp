@@ -161,7 +161,8 @@ int YearlyReport::getMeasurementYearByDate(QString measurementType,
                 "SELECT year FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
                 "WHERE day = " + QString::number(day) + " "
                 "AND month = " + QString::number(month) + " "
-                "AND " + scope + capitalize(measurementType) + " = " + QString::number(measurementValue) + " " + extraWhereClause).toInt();
+                "AND " + scope + capitalize(measurementType) + " = "
+                + QString::number(measurementValue, 'f', 6) + " " + extraWhereClause).toInt();
 }
 
 void YearlyReport::changeMeasurement() {
