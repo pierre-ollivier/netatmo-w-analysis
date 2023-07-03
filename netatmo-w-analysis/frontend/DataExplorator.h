@@ -85,6 +85,7 @@ private:
 
     QGroupBox *customQueryGroupBox;
     QLineEdit *customQueryLineEdit;
+    QPushButton *sendQueryButton;
 
     QPushButton *moreResultsButton;
     QPushButton *lessResultsButton;
