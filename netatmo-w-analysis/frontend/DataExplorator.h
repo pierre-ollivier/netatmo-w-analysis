@@ -1,16 +1,17 @@
 #ifndef DATAEXPLORATOR_H
 #define DATAEXPLORATOR_H
 
-#include <QWidget>
 #include <QCheckBox>
 #include <QComboBox>
-#include <QGroupBox>
-#include <QLocale>
 #include <QGridLayout>
+#include <QGroupBox>
+#include <QLineEdit>
+#include <QLocale>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QStandardItemModel>
 #include <QTableView>
+#include <QWidget>
 #include "../backend/DatabaseHandler.h"
 
 class DataExplorator : public QWidget
@@ -67,6 +68,7 @@ private:
 
     QHBoxLayout *optionsLayout;
     QGridLayout *operationsLayout;
+    QGridLayout *customQueryLayout;
 
     QGroupBox *measurementsGroupBox;
     QRadioButton *temperatureRadioButton;
@@ -80,6 +82,9 @@ private:
     QRadioButton *minimumRadioButton;
     QRadioButton *averageRadioButton;
     QRadioButton *differenceRadioButton;
+
+    QGroupBox *customQueryGroupBox;
+    QLineEdit *customQueryLineEdit;
 
     QPushButton *moreResultsButton;
     QPushButton *lessResultsButton;
