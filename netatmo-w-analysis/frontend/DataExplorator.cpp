@@ -56,6 +56,10 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 
     interiorCheckBox = new QCheckBox("Intérieur");
 
+    customQueryGroupBox = new QGroupBox();
+    customQueryLineEdit = new QLineEdit();
+    customQueryLayout = new QGridLayout();
+
     moreResultsButton = new QPushButton("Plus...");
     lessResultsButton = new QPushButton("Moins...");
 
@@ -80,6 +84,12 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 
     operationsGroupBox->setLayout(operationsLayout);
 
+    customQueryLayout = new QGridLayout();
+    customQueryLayout->addWidget(new QLabel("Ou bien entrez une requête :"), 0, 0);
+    customQueryLayout->addWidget(customQueryLineEdit, 1, 0);
+
+    customQueryGroupBox->setLayout(customQueryLayout);
+
     connect(temperatureRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
     connect(humidityRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
     connect(dewPointRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
@@ -100,9 +110,10 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     layout->addWidget(monthComboBox, 2, 3);
     layout->addWidget(measurementsGroupBox, 3, 1, 1, 3);
     layout->addWidget(operationsGroupBox, 3, 4);
+    layout->addWidget(customQueryGroupBox, 4, 1, 1, 4);
     setLayout(layout);
 
-    setMinimumSize(830, 730);
+    setMinimumSize(830, 810);
 
     fillBoards();
 }
