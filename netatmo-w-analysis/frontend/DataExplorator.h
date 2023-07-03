@@ -23,6 +23,7 @@ public:
 
 public slots:
     void fillBoards();
+    void fillBoards(QString query);
 
     std::vector<QVariant> getValues(
             QString databaseName,
@@ -39,6 +40,8 @@ public slots:
             QString order = "DESC",
             int limit = 0);
 
+    std::vector<QVariant> getValues(QString query);
+
     QString measurementCapitalizedFromRadioButtons();
     QString operationFromRadioButtons();
     QString unitWithLeadingSpaceFromRadioButtons();
@@ -51,6 +54,8 @@ public slots:
     void displayLessResults();
 
     void changeDisplayMonth();
+
+    void sendRequest();
 
     int maxNumberOfRecords(bool indoor);
 
