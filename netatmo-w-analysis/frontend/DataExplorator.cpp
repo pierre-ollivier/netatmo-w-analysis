@@ -103,6 +103,8 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     connect(differenceRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
     connect(interiorCheckBox, SIGNAL(clicked()), SLOT(fillBoards()));
 
+    connect(sendQueryButton, SIGNAL(clicked()), this, SLOT(sendRequest()));
+
     layout = new QGridLayout();
     layout->addWidget(mainViewMax, 1, 1);
     layout->addWidget(mainViewMin, 1, 4);
@@ -188,6 +190,37 @@ void DataExplorator::fillBoards() {
     mainViewMin->resizeColumnsToContents();
 }
 
+void DataExplorator::fillBoards(QString query) {
+    std::vector<QVariant> data = getValues(query);
+    for (int i = 0; i < int(data.size()); i++) {
+        mainModelMax->setItem(i, 0, new QStandardItem());
+        mainModelMax->setItem(i, 1, new QStandardItem());
+        mainModelMax->setVerticalHeaderItem(i, new QStandardItem(QString::number(i + 1)));
+        mainModelMax->item(i, 0)->setText(
+                    deviceLocale->toString(
+                        data[i].toDouble(), 'f', 3));
+        mainModelMax->item(i, 1)->setText(data[i].toString());
+        if (i >= 1) {
+            if (data[i] == data[i - 1]) {
+                mainModelMax->verticalHeaderItem(i)->setText(mainModelMax->verticalHeaderItem(i - 1)->text());
+            }
+        }
+
+        mainModelMin->setItem(i, 0, new QStandardItem());
+        mainModelMin->setItem(i, 1, new QStandardItem());
+        mainModelMin->setVerticalHeaderItem(i, new QStandardItem(QString::number(i + 1)));
+        mainModelMin->item(i, 0)->setText(
+                    deviceLocale->toString(
+                        data[i].toDouble(), 'f', 3));
+        mainModelMin->item(i, 1)->setText(data[i].toString());
+        if (i >= 1) {
+            if (data[i] == data[i - 1]) {
+                mainModelMin->verticalHeaderItem(i)->setText(mainModelMin->verticalHeaderItem(i - 1)->text());
+            }
+        }
+    }
+}
+
 std::vector<QVariant> DataExplorator::getValues(
         QString databaseName,
         QString operation,
@@ -211,6 +244,10 @@ std::vector<QVariant> DataExplorator::getValues(
                 "ORDER BY round(max" + measurementCapitalized + " - min" + measurementCapitalized + ", 6) "
                 + order + ", year, month, day LIMIT " + QString::number(limit));
 
+}
+
+std::vector<QVariant> DataExplorator::getValues(QString query) {
+    return _dbHandler->getResultsFromDatabase(query);
 }
 
 std::vector<QVariant> DataExplorator::getValuesDates(
@@ -413,4 +450,8 @@ int DataExplorator::maxNumberOfRecords(bool indoor) {
         return _dbHandler->getResultFromDatabase("SELECT COUNT(" + operation + measurementCapitalized + ") "
                                                  "FROM " + tableName + " " + condition).toInt();
     }
+}
+
+void DataExplorator::sendRequest() {
+    fillBoards(customQueryLineEdit->text());
 }
