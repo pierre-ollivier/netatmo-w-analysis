@@ -191,7 +191,7 @@ void DataExplorator::fillBoards() {
 }
 
 void DataExplorator::fillBoards(QString query) {
-    std::vector<QVariant> data = getValues(query);
+    std::vector<QVariant> data = getValues(query, numberOfResults);
     for (int i = 0; i < int(data.size()); i++) {
         mainModelMax->setItem(i, 0, new QStandardItem());
         mainModelMax->setItem(i, 1, new QStandardItem());
@@ -246,8 +246,8 @@ std::vector<QVariant> DataExplorator::getValues(
 
 }
 
-std::vector<QVariant> DataExplorator::getValues(QString query) {
-    return _dbHandler->getResultsFromDatabase(query);
+std::vector<QVariant> DataExplorator::getValues(QString query, int limit) {
+    return _dbHandler->getResultsFromDatabase(query, limit);
 }
 
 std::vector<QVariant> DataExplorator::getValuesDates(
