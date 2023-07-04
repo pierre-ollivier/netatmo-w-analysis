@@ -100,6 +100,7 @@ private:
     DatabaseHandler *_dbHandler;
 
     int numberOfResults = 5;
+    bool lastOperationWasFromCustomQuery = false;
 };
 
 #endif // DATAEXPLORATOR_H
