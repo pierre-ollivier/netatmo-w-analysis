@@ -123,6 +123,7 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 }
 
 void DataExplorator::fillBoards() {
+    lastOperationWasFromCustomQuery = false;
     QString databaseName = databaseFromCheckBox();
     QString monthCondition = "";
     QString operation = operationFromRadioButtons();
@@ -191,6 +192,7 @@ void DataExplorator::fillBoards() {
 }
 
 void DataExplorator::fillBoards(QString query) {
+    lastOperationWasFromCustomQuery = true;
     std::vector<QVariant> data = getValues(query, numberOfResults);
     for (int i = 0; i < int(data.size()); i++) {
         mainModelMax->setItem(i, 0, new QStandardItem());
@@ -405,7 +407,8 @@ void DataExplorator::displayMoreResults() {
         numberOfResults += increment;
         mainModelMax->setRowCount(std::min(maximumNumberOfRecords, numberOfResults));
         mainModelMin->setRowCount(std::min(maximumNumberOfRecords, numberOfResults));
-        fillBoards();
+        if (lastOperationWasFromCustomQuery) fillBoards(customQueryLineEdit->text());
+        else fillBoards();
     }
 }
 
@@ -416,7 +419,8 @@ void DataExplorator::displayLessResults() {
         numberOfResults -= decrement;
         mainModelMax->setRowCount(std::min(maximumNumberOfRecords, numberOfResults));
         mainModelMin->setRowCount(std::min(maximumNumberOfRecords, numberOfResults));
-        fillBoards();
+        if (lastOperationWasFromCustomQuery) fillBoards(customQueryLineEdit->text());
+        else fillBoards();
     }
 }
 
@@ -456,5 +460,6 @@ int DataExplorator::maxNumberOfRecords(bool indoor) {
 }
 
 void DataExplorator::sendRequest() {
+    lastOperationWasFromCustomQuery = true;
     fillBoards(customQueryLineEdit->text());
 }
