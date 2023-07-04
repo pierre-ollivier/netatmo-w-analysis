@@ -219,6 +219,9 @@ void DataExplorator::fillBoards(QString query) {
             }
         }
     }
+
+    mainViewMax->resizeColumnsToContents();
+    mainViewMin->resizeColumnsToContents();
 }
 
 std::vector<QVariant> DataExplorator::getValues(
