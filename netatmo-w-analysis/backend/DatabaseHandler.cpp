@@ -681,7 +681,7 @@ QVariant DatabaseHandler::getResultFromDatabase(QString query) {
     return QVariant();
 }
 
-std::vector<QVariant> DatabaseHandler::getResultsFromDatabase(QString query) {
+std::vector<QVariant> DatabaseHandler::getResultsFromDatabase(QString query, int limit) {
     std::vector<QVariant> result = std::vector<QVariant>();
     db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
     QSqlQuery _query(db);
@@ -693,7 +693,7 @@ std::vector<QVariant> DatabaseHandler::getResultsFromDatabase(QString query) {
         qDebug() << "Database is not open";
     }
     if (_query.exec(query)) {
-        while (_query.next()) {
+        while (_query.next() && (limit == 0 || int(result.size()) < limit)) {
             result.push_back(_query.value(0));
         }
     }
