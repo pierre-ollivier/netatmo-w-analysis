@@ -109,7 +109,10 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     connect(differenceRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
     connect(interiorCheckBox, SIGNAL(clicked()), SLOT(fillBoards()));
 
-    connect(sendQueryButton, SIGNAL(clicked()), this, SLOT(sendRequest()));
+    connect(sendQueryButton, SIGNAL(clicked()), SLOT(sendRequest()));
+
+    connect(queryParamsSelected, SIGNAL(clicked()), SLOT(selectQueryParams()));
+    connect(customQuerySelected, SIGNAL(clicked()), SLOT(selectCustomQuery()));
 
     layout = new QGridLayout();
     layout->addWidget(mainViewMax, 1, 0, 1, 2);
@@ -471,3 +474,14 @@ void DataExplorator::sendRequest() {
     lastOperationWasFromCustomQuery = true;
     fillBoards(customQueryLineEdit->text());
 }
+
+void DataExplorator::selectQueryParams() {
+    lastOperationWasFromCustomQuery = false;
+    fillBoards();
+}
+
+void DataExplorator::selectCustomQuery() {
+    lastOperationWasFromCustomQuery = true;
+    fillBoards(customQueryLineEdit->text());
+}
+
