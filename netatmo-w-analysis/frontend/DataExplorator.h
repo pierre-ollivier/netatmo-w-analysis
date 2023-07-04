@@ -40,7 +40,7 @@ public slots:
             QString order = "DESC",
             int limit = 0);
 
-    std::vector<QVariant> getValues(QString query);
+    std::vector<QVariant> getValues(QString query, int limit = 0);
 
     QString measurementCapitalizedFromRadioButtons();
     QString operationFromRadioButtons();
