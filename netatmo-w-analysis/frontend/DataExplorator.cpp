@@ -135,6 +135,7 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 
 void DataExplorator::fillBoards() {
     lastOperationWasFromCustomQuery = false;
+    queryParamsSelected->setChecked(true);
     QString databaseName = databaseFromCheckBox();
     QString monthCondition = "";
     QString operation = operationFromRadioButtons();
@@ -204,6 +205,7 @@ void DataExplorator::fillBoards() {
 
 void DataExplorator::fillBoards(QString query) {
     lastOperationWasFromCustomQuery = true;
+    customQuerySelected->setChecked(true);
     std::vector<QVariant> data = getValues(query, numberOfResults);
     for (int i = 0; i < int(data.size()); i++) {
         mainModelMax->setItem(i, 0, new QStandardItem());
