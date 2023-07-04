@@ -53,6 +53,9 @@ public slots:
     void displayMoreResults();
     void displayLessResults();
 
+    void selectQueryParams();
+    void selectCustomQuery();
+
     void changeDisplayMonth();
 
     void sendRequest();
