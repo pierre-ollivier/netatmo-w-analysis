@@ -61,6 +61,12 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     customQueryLayout = new QGridLayout();
     sendQueryButton = new QPushButton("OK");
 
+    queryParamsSelected = new QRadioButton(this);
+    customQuerySelected = new QRadioButton(this);
+
+    queryParamsSelected->setFixedWidth(20);
+    customQuerySelected->setFixedWidth(20);
+
     moreResultsButton = new QPushButton("Plus...");
     lessResultsButton = new QPushButton("Moins...");
 
@@ -106,14 +112,16 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     connect(sendQueryButton, SIGNAL(clicked()), this, SLOT(sendRequest()));
 
     layout = new QGridLayout();
-    layout->addWidget(mainViewMax, 1, 1);
+    layout->addWidget(mainViewMax, 1, 0, 1, 2);
     layout->addWidget(mainViewMin, 1, 4);
-    layout->addWidget(moreResultsButton, 2, 1);
+    layout->addWidget(moreResultsButton, 2, 0, 1, 2);
     layout->addWidget(lessResultsButton, 2, 4);
     layout->addWidget(new QLabel("Période : "), 2, 2);
     layout->addWidget(monthComboBox, 2, 3);
+    layout->addWidget(queryParamsSelected, 3, 0);
     layout->addWidget(measurementsGroupBox, 3, 1, 1, 3);
     layout->addWidget(operationsGroupBox, 3, 4);
+    layout->addWidget(customQuerySelected, 4, 0);
     layout->addWidget(customQueryGroupBox, 4, 1, 1, 4);
     setLayout(layout);
 

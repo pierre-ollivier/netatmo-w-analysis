@@ -92,6 +92,9 @@ private:
     QLineEdit *customQueryLineEdit;
     QPushButton *sendQueryButton;
 
+    QRadioButton *queryParamsSelected;
+    QRadioButton *customQuerySelected;
+
     QPushButton *moreResultsButton;
     QPushButton *lessResultsButton;
 
