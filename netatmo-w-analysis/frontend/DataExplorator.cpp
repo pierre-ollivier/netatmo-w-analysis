@@ -205,22 +205,31 @@ void DataExplorator::fillBoards() {
 }
 
 void DataExplorator::fillBoards(QString query) {
+    QString queryASC = analyzer->toASC(query);
+    QString queryDESC = analyzer->toDESC(query);
+
     lastOperationWasFromCustomQuery = true;
     customQuerySelected->setChecked(true);
-    std::vector<QVariant> data = getValues(query, numberOfResults);
-    std::vector<QVariant> dates = getValuesDates(
-                analyzer->dateQueryFromMeasurementQuery(query),
+
+    std::vector<QVariant> dataASC = getValues(queryASC, numberOfResults);
+    std::vector<QVariant> datesASC = getValuesDates(
+                analyzer->dateQueryFromMeasurementQuery(queryASC),
                 numberOfResults);
-    for (int i = 0; i < int(data.size()); i++) {
+    std::vector<QVariant> dataDESC = getValues(queryDESC, numberOfResults);
+    std::vector<QVariant> datesDESC = getValuesDates(
+                analyzer->dateQueryFromMeasurementQuery(queryDESC),
+                numberOfResults);
+
+    for (int i = 0; i < int(dataDESC.size()); i++) {
         mainModelMax->setItem(i, 0, new QStandardItem());
         mainModelMax->setItem(i, 1, new QStandardItem());
         mainModelMax->setVerticalHeaderItem(i, new QStandardItem(QString::number(i + 1)));
         mainModelMax->item(i, 0)->setText(
                     deviceLocale->toString(
-                        data[i].toDouble(), 'f', 3));
-        mainModelMax->item(i, 1)->setText(dates[i].toString());
+                        dataDESC[i].toDouble(), 'f', 3));
+        mainModelMax->item(i, 1)->setText(datesDESC[i].toString());
         if (i >= 1) {
-            if (data[i] == data[i - 1]) {
+            if (dataDESC[i] == dataDESC[i - 1]) {
                 mainModelMax->verticalHeaderItem(i)->setText(mainModelMax->verticalHeaderItem(i - 1)->text());
             }
         }
@@ -230,10 +239,10 @@ void DataExplorator::fillBoards(QString query) {
         mainModelMin->setVerticalHeaderItem(i, new QStandardItem(QString::number(i + 1)));
         mainModelMin->item(i, 0)->setText(
                     deviceLocale->toString(
-                        data[i].toDouble(), 'f', 3));
-        mainModelMin->item(i, 1)->setText(dates[i].toString());
+                        dataASC[i].toDouble(), 'f', 3));
+        mainModelMin->item(i, 1)->setText(datesASC[i].toString());
         if (i >= 1) {
-            if (data[i] == data[i - 1]) {
+            if (dataASC[i] == dataASC[i - 1]) {
                 mainModelMin->verticalHeaderItem(i)->setText(mainModelMin->verticalHeaderItem(i - 1)->text());
             }
         }
