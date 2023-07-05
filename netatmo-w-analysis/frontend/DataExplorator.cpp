@@ -7,6 +7,7 @@
 DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 {
     _dbHandler = dbHandler;
+    analyzer = new QueryAnalyzer();
 
     deviceLocale = new QLocale();
 
@@ -207,6 +208,9 @@ void DataExplorator::fillBoards(QString query) {
     lastOperationWasFromCustomQuery = true;
     customQuerySelected->setChecked(true);
     std::vector<QVariant> data = getValues(query, numberOfResults);
+    std::vector<QVariant> dates = getValuesDates(
+                analyzer->dateQueryFromMeasurementQuery(query),
+                numberOfResults);
     for (int i = 0; i < int(data.size()); i++) {
         mainModelMax->setItem(i, 0, new QStandardItem());
         mainModelMax->setItem(i, 1, new QStandardItem());
@@ -214,7 +218,7 @@ void DataExplorator::fillBoards(QString query) {
         mainModelMax->item(i, 0)->setText(
                     deviceLocale->toString(
                         data[i].toDouble(), 'f', 3));
-        mainModelMax->item(i, 1)->setText(data[i].toString());
+        mainModelMax->item(i, 1)->setText(dates[i].toString());
         if (i >= 1) {
             if (data[i] == data[i - 1]) {
                 mainModelMax->verticalHeaderItem(i)->setText(mainModelMax->verticalHeaderItem(i - 1)->text());
@@ -227,7 +231,7 @@ void DataExplorator::fillBoards(QString query) {
         mainModelMin->item(i, 0)->setText(
                     deviceLocale->toString(
                         data[i].toDouble(), 'f', 3));
-        mainModelMin->item(i, 1)->setText(data[i].toString());
+        mainModelMin->item(i, 1)->setText(dates[i].toString());
         if (i >= 1) {
             if (data[i] == data[i - 1]) {
                 mainModelMin->verticalHeaderItem(i)->setText(mainModelMin->verticalHeaderItem(i - 1)->text());
@@ -288,6 +292,10 @@ std::vector<QVariant> DataExplorator::getValuesDates(
                 "SELECT date FROM " + databaseName + " " + monthCondition + " "
                 "ORDER BY round(max" + measurementCapitalized + " - min" + measurementCapitalized + ", 6) "
                 + order + ", year ASC, month ASC, day ASC LIMIT " + QString::number(limit));
+}
+
+std::vector<QVariant> DataExplorator::getValuesDates(QString query, int limit) {
+    return _dbHandler->getResultsFromDatabase(query, limit);
 }
 
 QString DataExplorator::measurementCapitalizedFromRadioButtons() {
