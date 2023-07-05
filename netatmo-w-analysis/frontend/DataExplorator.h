@@ -13,6 +13,7 @@
 #include <QTableView>
 #include <QWidget>
 #include "../backend/DatabaseHandler.h"
+#include "../backend/QueryAnalyzer.h"
 
 class DataExplorator : public QWidget
 {
@@ -41,6 +42,7 @@ public slots:
             int limit = 0);
 
     std::vector<QVariant> getValues(QString query, int limit = 0);
+    std::vector<QVariant> getValuesDates(QString query, int limit = 0);
 
     QString measurementCapitalizedFromRadioButtons();
     QString operationFromRadioButtons();
@@ -104,6 +106,7 @@ private:
     QCheckBox *interiorCheckBox;
 
     DatabaseHandler *_dbHandler;
+    QueryAnalyzer *analyzer;
 
     int numberOfResults = 5;
     bool lastOperationWasFromCustomQuery = false;
