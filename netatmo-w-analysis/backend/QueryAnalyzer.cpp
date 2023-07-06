@@ -16,20 +16,20 @@ QString QueryAnalyzer::dateQueryFromMeasurementQuery(QString measurementQuery) {
 }
 
 QString QueryAnalyzer::toASC(QString query) {
-    query = query.toLower();
-    if (query.contains(QString("desc"))) {
-        query = query.replace("desc", "asc");
+    QString queryLowered = query.toLower();
+    if (queryLowered.contains(QString("desc"))) {
+        query = query.replace("desc", "asc", Qt::CaseInsensitive);
     }
     if (query.contains("order by")) {
-        if (!query.contains("asc")) {
-            query += " asc";
+        if (!query.contains("asc", Qt::CaseInsensitive)) {
+            query += " ASC";
         }
     }
     else {
-        int indexOfSelect = query.indexOf("select");
-        int indexOfFrom = query.indexOf("from");
-        QString measurement = query.mid(indexOfSelect + 6, indexOfFrom - indexOfSelect - 6);
-        query += " order by " + measurement + " asc";
+        int indexOfSelect = queryLowered.indexOf("select");
+        int indexOfFrom = queryLowered.indexOf("from");
+        QString measurement = queryLowered.mid(indexOfSelect + 6, indexOfFrom - indexOfSelect - 6);
+        query += " ORDER BY " + measurement + " ASC";
     }
     return query;
 }
