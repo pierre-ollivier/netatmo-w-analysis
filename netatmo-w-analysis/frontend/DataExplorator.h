@@ -96,6 +96,7 @@ private:
     QGroupBox *customQueryGroupBox;
     QLineEdit *customQueryLineEdit;
     QPushButton *sendQueryButton;
+    QPushButton *buildQueryButton;
 
     QRadioButton *queryParamsSelected;
     QRadioButton *customQuerySelected;

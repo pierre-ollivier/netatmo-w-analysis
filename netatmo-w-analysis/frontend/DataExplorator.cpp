@@ -61,6 +61,7 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     customQueryLineEdit = new QLineEdit();
     customQueryLayout = new QGridLayout();
     sendQueryButton = new QPushButton("OK");
+    buildQueryButton = new QPushButton("Aide");
 
     queryParamsSelected = new QRadioButton(this);
     customQuerySelected = new QRadioButton(this);
@@ -93,9 +94,10 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     operationsGroupBox->setLayout(operationsLayout);
 
     customQueryLayout = new QGridLayout();
-    customQueryLayout->addWidget(new QLabel("Ou bien entrez une requête :"), 0, 0, 1, 12);
-    customQueryLayout->addWidget(customQueryLineEdit, 1, 0, 1, 11);
-    customQueryLayout->addWidget(sendQueryButton, 1, 11);
+    customQueryLayout->addWidget(new QLabel("Ou bien entrez une requête :"), 0, 0, 1, 20);
+    customQueryLayout->addWidget(customQueryLineEdit, 1, 0, 1, 18);
+    customQueryLayout->addWidget(sendQueryButton, 1, 18);
+    customQueryLayout->addWidget(buildQueryButton, 1, 19);
 
     customQueryGroupBox->setLayout(customQueryLayout);
 
