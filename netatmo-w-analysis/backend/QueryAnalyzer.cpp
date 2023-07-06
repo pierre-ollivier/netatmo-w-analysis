@@ -18,9 +18,9 @@ QString QueryAnalyzer::dateQueryFromMeasurementQuery(QString measurementQuery) {
 QString QueryAnalyzer::toASC(QString query) {
     QString queryLowered = query.toLower();
     if (queryLowered.contains(QString("desc"))) {
-        query = query.replace("desc", "asc", Qt::CaseInsensitive);
+        query = query.replace("desc", "ASC", Qt::CaseInsensitive);
     }
-    if (query.contains("order by")) {
+    if (queryLowered.contains("order by")) {
         if (!query.contains("asc", Qt::CaseInsensitive)) {
             query += " ASC";
         }
