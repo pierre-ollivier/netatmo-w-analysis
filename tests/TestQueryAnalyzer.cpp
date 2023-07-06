@@ -21,20 +21,20 @@ void TestQueryAnalyzer::testToASC() {
     QCOMPARE(analyzer->toASC(
                  "SELECT ((maxTemperature - minTemperature)/2) FROM IndoorDailyRecords "
                  "ORDER BY ((maxTemperature - minTemperature)/2)"),
-             "select ((maxTemperature - minTemperature)/2) from IndoorDailyRecords "
-             "order by ((maxTemperature - minTemperature)/2) asc");
+             "SELECT ((maxTemperature - minTemperature)/2) FROM IndoorDailyRecords "
+             "ORDER BY ((maxTemperature - minTemperature)/2) ASC");
 
     QCOMPARE(analyzer->toASC(
                  "SELECT ((maxTemperature - minTemperature)/2) FROM IndoorDailyRecords "
                  "ORDER BY ((maxTemperature - minTemperature)/2) ASC"),
-             "select ((maxTemperature - minTemperature)/2) from IndoorDailyRecords "
-             "order by ((maxTemperature - minTemperature)/2) asc");
+             "SELECT ((maxTemperature - minTemperature)/2) FROM IndoorDailyRecords "
+             "ORDER BY ((maxTemperature - minTemperature)/2) ASC");
 
     QCOMPARE(analyzer->toASC(
                  "SELECT ((maxTemperature - minTemperature)/2) FROM IndoorDailyRecords "
                  "ORDER BY ((maxTemperature - minTemperature)/2) DESC"),
-             "select ((maxTemperature - minTemperature)/2) from IndoorDailyRecords "
-             "order by ((maxTemperature - minTemperature)/2) asc");
+             "SELECT ((maxTemperature - minTemperature)/2) FROM IndoorDailyRecords "
+             "ORDER BY ((maxTemperature - minTemperature)/2) ASC");
 }
 void TestQueryAnalyzer::testToDESC() {
 
