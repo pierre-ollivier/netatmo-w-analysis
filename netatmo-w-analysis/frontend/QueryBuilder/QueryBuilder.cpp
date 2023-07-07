@@ -6,6 +6,10 @@ QueryBuilder::QueryBuilder()
     tableGroupBox = new QGroupBox("Table");
     conditionGroupBox = new QGroupBox("Conditions");
 
+    measurementGroupBox->setAlignment(Qt::AlignCenter);
+    tableGroupBox->setAlignment(Qt::AlignCenter);
+    conditionGroupBox->setAlignment(Qt::AlignCenter);
+
     temperatureButton = new QPushButton("Température");
     humidityButton = new QPushButton("Humidité");
     dewPointButton = new QPushButton("Point de rosée");
