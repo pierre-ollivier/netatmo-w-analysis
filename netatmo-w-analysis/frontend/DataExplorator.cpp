@@ -3,6 +3,7 @@
 #include <QLabel>
 #include "../frontend/CustomItemDelegate.h"
 #include "../frontend/ColorUtils.h"
+#include "../frontend/QueryBuilder.h"
 
 DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 {
@@ -113,6 +114,7 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     connect(interiorCheckBox, SIGNAL(clicked()), SLOT(fillBoards()));
 
     connect(sendQueryButton, SIGNAL(clicked()), SLOT(sendRequest()));
+    connect(buildQueryButton, SIGNAL(clicked()), SLOT(showQueryBuilder()));
 
     connect(queryParamsSelected, SIGNAL(clicked()), SLOT(selectQueryParams()));
     connect(customQuerySelected, SIGNAL(clicked()), SLOT(selectCustomQuery()));
@@ -494,6 +496,11 @@ int DataExplorator::maxNumberOfRecords(bool indoor) {
 void DataExplorator::sendRequest() {
     lastOperationWasFromCustomQuery = true;
     fillBoards(customQueryLineEdit->text());
+}
+
+void DataExplorator::showQueryBuilder() {
+    QueryBuilder *builder = new QueryBuilder();
+    builder->show();
 }
 
 void DataExplorator::selectQueryParams() {

@@ -61,6 +61,7 @@ public slots:
     void changeDisplayMonth();
 
     void sendRequest();
+    void showQueryBuilder();
 
     int maxNumberOfRecords(bool indoor);
 
