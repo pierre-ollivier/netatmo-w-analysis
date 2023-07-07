@@ -12,6 +12,9 @@ class QueryBuilder : public QWidget
 public:
     QueryBuilder();
 
+public slots:
+    void addCondition();
+
 private:
     QGroupBox *measurementGroupBox;
     QGroupBox *tableGroupBox;
@@ -25,6 +28,8 @@ private:
 
     QPushButton *indoorDailyButton;
     QPushButton *outdoorDailyButton;
+
+    QPushButton *addConditionButton;
 
     QGridLayout *measurementGroupBoxLayout;
     QGridLayout *tableGroupBoxLayout;
