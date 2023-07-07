@@ -3,6 +3,7 @@
 
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QPushButton>
 #include <QWidget>
 
 class QueryBuilder : public QWidget
@@ -15,6 +16,15 @@ private:
     QGroupBox *measurementGroupBox;
     QGroupBox *tableGroupBox;
     QGroupBox *conditionGroupBox;
+
+    QPushButton *temperatureButton;
+    QPushButton *humidityButton;
+    QPushButton *dewPointButton;
+    QPushButton *humidexButton;
+    QPushButton *otherButton;
+
+    QPushButton *indoorDailyButton;
+    QPushButton *outdoorDailyButton;
 
     QGridLayout *measurementGroupBoxLayout;
     QGridLayout *tableGroupBoxLayout;
