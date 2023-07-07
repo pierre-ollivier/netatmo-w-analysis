@@ -18,6 +18,8 @@ QueryBuilder::QueryBuilder()
     addConditionButton = new QPushButton("Ajouter...");
     connect(addConditionButton, SIGNAL(clicked()), SLOT(addCondition()));
 
+    conditionWidgets = new QList<ConditionWidget *>();
+
     measurementGroupBoxLayout = new QGridLayout();
     tableGroupBoxLayout = new QGridLayout();
     conditionGroupBoxLayout = new QGridLayout();
@@ -31,7 +33,7 @@ QueryBuilder::QueryBuilder()
     tableGroupBoxLayout->addWidget(indoorDailyButton);
     tableGroupBoxLayout->addWidget(outdoorDailyButton);
 
-    conditionGroupBoxLayout->addWidget(addConditionButton);
+    conditionGroupBoxLayout->addWidget(addConditionButton, 1000, 1);
 
     measurementGroupBox->setLayout(measurementGroupBoxLayout);
     tableGroupBox->setLayout(tableGroupBoxLayout);
@@ -46,5 +48,8 @@ QueryBuilder::QueryBuilder()
 }
 
 void QueryBuilder::addCondition() {
-    // TODO: add a condition widget to the layout
+    int n = conditionWidgets->size();
+    conditionWidgets->append(new ConditionWidget());
+
+    conditionGroupBoxLayout->addWidget(conditionWidgets->at(n), n, 1);
 }

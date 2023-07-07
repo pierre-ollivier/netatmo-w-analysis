@@ -5,6 +5,7 @@
 #include <QGroupBox>
 #include <QPushButton>
 #include <QWidget>
+#include "ConditionWidget.h"
 
 class QueryBuilder : public QWidget
 {
@@ -34,6 +35,8 @@ private:
     QGridLayout *measurementGroupBoxLayout;
     QGridLayout *tableGroupBoxLayout;
     QGridLayout *conditionGroupBoxLayout;
+
+    QList<ConditionWidget *> *conditionWidgets;
 
     QGridLayout *mainLayout;
 };
