@@ -3,7 +3,7 @@
 #include <QLabel>
 #include "../frontend/CustomItemDelegate.h"
 #include "../frontend/ColorUtils.h"
-#include "../frontend/QueryBuilder.h"
+#include "../frontend/QueryBuilder/QueryBuilder.h"
 
 DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 {
