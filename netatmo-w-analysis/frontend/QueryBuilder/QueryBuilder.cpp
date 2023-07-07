@@ -52,4 +52,8 @@ void QueryBuilder::addCondition() {
     conditionWidgets->append(new ConditionWidget());
 
     conditionGroupBoxLayout->addWidget(conditionWidgets->at(n), n, 1);
+
+    if (n >= 7) {
+        addConditionButton->setDisabled(true);
+    }
 }
