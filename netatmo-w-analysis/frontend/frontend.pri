@@ -10,6 +10,7 @@ HEADERS += \
     $$PWD/MainWindow.h \
     $$PWD/MonthlyReport.h \
     $$PWD/NormalsVisualizer.h \
+    $$PWD/QueryBuilder.h \
     $$PWD/YearMonthPicker.h \
     $$PWD/YearlyReport.h
 
@@ -22,5 +23,6 @@ SOURCES += \
     $$PWD/MainWindow.cpp \
     $$PWD/MonthlyReport.cpp \
     $$PWD/NormalsVisualizer.cpp \
+    $$PWD/QueryBuilder.cpp \
     $$PWD/YearMonthPicker.cpp \
     $$PWD/YearlyReport.cpp
