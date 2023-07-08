@@ -34,7 +34,8 @@ private:
     QPushButton *humidexButton;
     QPushButton *otherButton;
 
-    QButtonGroup *group;
+    QButtonGroup *measurementButtonGroup;
+    QButtonGroup *operationButtonGroup;
 
     QRadioButton *maximumButton;
     QRadioButton *minimumButton;
