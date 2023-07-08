@@ -79,3 +79,27 @@ void QueryBuilder::addCondition() {
         addConditionButton->setDisabled(true);
     }
 }
+
+QString QueryBuilder::query() {
+    return "SELECT " + queryFromMeasurement() + " FROM " + queryFromTable() + " WHERE " + queryFromConditions();
+}
+
+QString QueryBuilder::queryFromMeasurement() {
+    // TODO: add min, max, avg...
+    if (temperatureButton->isChecked()) return "Temperature";
+    if (humidityButton->isChecked()) return "Humidity";
+    if (dewPointButton->isChecked()) return "Dew point";
+    if (humidexButton->isChecked()) return "Humidex";
+    if (otherButton->isChecked()) return "*";  // TODO
+    return "*";
+}
+
+QString QueryBuilder::queryFromTable() {
+    if (indoorDailyButton->isChecked()) return "IndoorDailyRecords";
+    if (outdoorDailyButton->isChecked()) return "OutdoorDailyRecords";
+    return "";
+}
+
+QString QueryBuilder::queryFromConditions() {
+    return "";  // TODO
+}
