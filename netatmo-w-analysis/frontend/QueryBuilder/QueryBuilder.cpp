@@ -104,12 +104,25 @@ QString QueryBuilder::query() {
 }
 
 QString QueryBuilder::queryFromMeasurement() {
-    // TODO: add min, max, avg...
-    if (temperatureButton->isChecked()) return "Temperature";
-    if (humidityButton->isChecked()) return "Humidity";
-    if (dewPointButton->isChecked()) return "Dew point";
-    if (humidexButton->isChecked()) return "Humidex";
     if (otherButton->isChecked()) return "*";  // TODO
+
+    if (differenceButton->isChecked()) {
+        if (temperatureButton->isChecked()) return "(maxTemperature - minTemperature)";
+        if (humidityButton->isChecked()) return "(maxHumidity - minHumidity)";
+        if (dewPointButton->isChecked()) return "(maxDewPoint - minDewPoint)";
+        if (humidexButton->isChecked()) return "(maxHumidex - minHumidex)";
+    }
+
+    else {
+        QString operation = maximumButton->isChecked() ? "max" :
+                            minimumButton->isChecked() ? "min" :
+                                                         "avg";
+        if (temperatureButton->isChecked()) return operation + "Temperature";
+        if (humidityButton->isChecked()) return operation + "Humidity";
+        if (dewPointButton->isChecked()) return operation + "DewPoint";
+        if (humidexButton->isChecked()) return operation + "Humidex";
+    }
+
     return "*";
 }
 
