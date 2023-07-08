@@ -11,35 +11,35 @@ QueryBuilder::QueryBuilder()
     tableGroupBox->setAlignment(Qt::AlignCenter);
     conditionGroupBox->setAlignment(Qt::AlignCenter);
 
+    measurementButtonGroup = new QButtonGroup();
+
     temperatureButton = new QPushButton("Température");
     humidityButton = new QPushButton("Humidité");
     dewPointButton = new QPushButton("Point de rosée");
     humidexButton = new QPushButton("Humidex");
     otherButton = new QPushButton("Autre");
 
-    group = new QButtonGroup();
+    measurementButtonGroup->addButton(temperatureButton);
+    measurementButtonGroup->addButton(humidityButton);
+    measurementButtonGroup->addButton(dewPointButton);
+    measurementButtonGroup->addButton(humidexButton);
+
+    operationButtonGroup = new QButtonGroup();
 
     maximumButton = new QRadioButton("Maximum");
     minimumButton = new QRadioButton("Minimum");
     averageButton = new QRadioButton("Moyenne");
     differenceButton = new QRadioButton("Variation");
 
-    group->addButton(maximumButton);
-    group->addButton(minimumButton);
-    group->addButton(averageButton);
-    group->addButton(differenceButton);
+    operationButtonGroup->addButton(maximumButton);
+    operationButtonGroup->addButton(minimumButton);
+    operationButtonGroup->addButton(averageButton);
+    operationButtonGroup->addButton(differenceButton);
 
     temperatureButton->setCheckable(true);
     humidityButton->setCheckable(true);
     dewPointButton->setCheckable(true);
     humidexButton->setCheckable(true);
-    otherButton->setCheckable(true);
-
-    temperatureButton->setAutoExclusive(true);
-    humidityButton->setAutoExclusive(true);
-    dewPointButton->setAutoExclusive(true);
-    humidexButton->setAutoExclusive(true);
-//    otherButton->setAutoExclusive(true);
 
     indoorDailyButton = new QPushButton("Intérieur");
     outdoorDailyButton = new QPushButton("Extérieur");
