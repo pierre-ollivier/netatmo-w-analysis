@@ -13,6 +13,11 @@ class QueryBuilder : public QWidget
 public:
     QueryBuilder();
 
+    QString query();
+    QString queryFromMeasurement();
+    QString queryFromTable();
+    QString queryFromConditions();
+
 public slots:
     void addCondition();
 
