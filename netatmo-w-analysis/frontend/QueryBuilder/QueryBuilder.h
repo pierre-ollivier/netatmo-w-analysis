@@ -1,9 +1,11 @@
 #ifndef QUERYBUILDER_H
 #define QUERYBUILDER_H
 
+#include <QButtonGroup>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QPushButton>
+#include <QRadioButton>
 #include <QWidget>
 #include "ConditionWidget.h"
 
@@ -31,6 +33,13 @@ private:
     QPushButton *dewPointButton;
     QPushButton *humidexButton;
     QPushButton *otherButton;
+
+    QButtonGroup *group;
+
+    QRadioButton *maximumButton;
+    QRadioButton *minimumButton;
+    QRadioButton *averageButton;
+    QRadioButton *differenceButton;
 
     QPushButton *indoorDailyButton;
     QPushButton *outdoorDailyButton;
