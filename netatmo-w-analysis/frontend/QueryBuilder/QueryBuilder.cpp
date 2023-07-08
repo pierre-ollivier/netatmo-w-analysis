@@ -16,8 +16,17 @@ QueryBuilder::QueryBuilder()
     humidexButton = new QPushButton("Humidex");
     otherButton = new QPushButton("Autre");
 
+    temperatureButton->setCheckable(true);
+    humidityButton->setCheckable(true);
+    dewPointButton->setCheckable(true);
+    humidexButton->setCheckable(true);
+    otherButton->setCheckable(true);
+
     indoorDailyButton = new QPushButton("Intérieur");
     outdoorDailyButton = new QPushButton("Extérieur");
+
+    indoorDailyButton->setCheckable(true);
+    outdoorDailyButton->setCheckable(true);
 
     addConditionButton = new QPushButton("Ajouter...");
     connect(addConditionButton, SIGNAL(clicked()), SLOT(addCondition()));
