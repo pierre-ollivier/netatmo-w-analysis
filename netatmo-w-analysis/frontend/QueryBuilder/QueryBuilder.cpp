@@ -22,11 +22,20 @@ QueryBuilder::QueryBuilder()
     humidexButton->setCheckable(true);
     otherButton->setCheckable(true);
 
+    temperatureButton->setAutoExclusive(true);
+    humidityButton->setAutoExclusive(true);
+    dewPointButton->setAutoExclusive(true);
+    humidexButton->setAutoExclusive(true);
+    otherButton->setAutoExclusive(true);
+
     indoorDailyButton = new QPushButton("Intérieur");
     outdoorDailyButton = new QPushButton("Extérieur");
 
     indoorDailyButton->setCheckable(true);
     outdoorDailyButton->setCheckable(true);
+
+    indoorDailyButton->setAutoExclusive(true);
+    outdoorDailyButton->setAutoExclusive(true);
 
     addConditionButton = new QPushButton("Ajouter...");
     connect(addConditionButton, SIGNAL(clicked()), SLOT(addCondition()));
