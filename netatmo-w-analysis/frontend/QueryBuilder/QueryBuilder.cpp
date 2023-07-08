@@ -1,5 +1,6 @@
 #include "QueryBuilder.h"
 
+
 QueryBuilder::QueryBuilder()
 {
     measurementGroupBox = new QGroupBox("Grandeur mesurée");
@@ -16,6 +17,18 @@ QueryBuilder::QueryBuilder()
     humidexButton = new QPushButton("Humidex");
     otherButton = new QPushButton("Autre");
 
+    group = new QButtonGroup();
+
+    maximumButton = new QRadioButton("Maximum");
+    minimumButton = new QRadioButton("Minimum");
+    averageButton = new QRadioButton("Moyenne");
+    differenceButton = new QRadioButton("Variation");
+
+    group->addButton(maximumButton);
+    group->addButton(minimumButton);
+    group->addButton(averageButton);
+    group->addButton(differenceButton);
+
     temperatureButton->setCheckable(true);
     humidityButton->setCheckable(true);
     dewPointButton->setCheckable(true);
@@ -26,7 +39,7 @@ QueryBuilder::QueryBuilder()
     humidityButton->setAutoExclusive(true);
     dewPointButton->setAutoExclusive(true);
     humidexButton->setAutoExclusive(true);
-    otherButton->setAutoExclusive(true);
+//    otherButton->setAutoExclusive(true);
 
     indoorDailyButton = new QPushButton("Intérieur");
     outdoorDailyButton = new QPushButton("Extérieur");
@@ -46,11 +59,17 @@ QueryBuilder::QueryBuilder()
     tableGroupBoxLayout = new QGridLayout();
     conditionGroupBoxLayout = new QGridLayout();
 
-    measurementGroupBoxLayout->addWidget(temperatureButton);
-    measurementGroupBoxLayout->addWidget(humidityButton);
-    measurementGroupBoxLayout->addWidget(dewPointButton);
-    measurementGroupBoxLayout->addWidget(humidexButton);
-    measurementGroupBoxLayout->addWidget(otherButton);
+    measurementGroupBoxLayout->addWidget(temperatureButton, 1, 1);
+    measurementGroupBoxLayout->addWidget(humidityButton, 2, 1);
+    measurementGroupBoxLayout->addWidget(dewPointButton, 3, 1);
+    measurementGroupBoxLayout->addWidget(humidexButton, 4, 1);
+
+    measurementGroupBoxLayout->addWidget(maximumButton, 1, 2);
+    measurementGroupBoxLayout->addWidget(minimumButton, 2, 2);
+    measurementGroupBoxLayout->addWidget(averageButton, 3, 2);
+    measurementGroupBoxLayout->addWidget(differenceButton, 4, 2);
+
+    measurementGroupBoxLayout->addWidget(otherButton, 5, 1, 1, 2);
 
     tableGroupBoxLayout->addWidget(indoorDailyButton);
     tableGroupBoxLayout->addWidget(outdoorDailyButton);
