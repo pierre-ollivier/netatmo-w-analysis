@@ -47,6 +47,9 @@ QueryBuilder::QueryBuilder()
     indoorDailyButton = new QPushButton("Intérieur");
     outdoorDailyButton = new QPushButton("Extérieur");
 
+    connect(indoorDailyButton, SIGNAL(clicked()), SLOT(updateQueryTextEdit()));
+    connect(outdoorDailyButton, SIGNAL(clicked()), SLOT(updateQueryTextEdit()));
+
     indoorDailyButton->setCheckable(true);
     outdoorDailyButton->setCheckable(true);
 
