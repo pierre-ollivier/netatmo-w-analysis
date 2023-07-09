@@ -16,8 +16,8 @@ public:
 signals:
 
 private:
-    QComboBox *measurementComboBox;
-    QComboBox *dateComboBox;
+    QComboBox *conditionTypeComboBox;
+    QComboBox *operationComboBox;
 
     QGridLayout *layout;
 
@@ -30,7 +30,18 @@ private:
     const QStringList datesItems = {"Date",
                                     "Année",
                                     "Mois",
-                                    "Jour"};
+                                    "Jour",
+                                    "Numéro de décade",
+                                    "Numéro de semaine"};
+
+    const QStringList operationsItems = {"Égal à",
+                                         "Différent de",
+                                         "Supérieur à",
+                                         "Supérieur ou égal à",
+                                         "Inférieur à",
+                                         "Inférieur ou égal à",
+                                         "Compris entre",
+                                         "Non compris entre"};
 };
 
 #endif // CONDITIONWIDGET_H

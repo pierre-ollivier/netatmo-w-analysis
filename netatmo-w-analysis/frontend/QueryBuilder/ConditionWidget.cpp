@@ -2,13 +2,15 @@
 
 ConditionWidget::ConditionWidget(QWidget *parent) : QGroupBox(parent)
 {
-    measurementComboBox = new QComboBox();
-    measurementComboBox->addItems(measurementsItems);
-    dateComboBox = new QComboBox();
-    dateComboBox->addItems(datesItems);
+    conditionTypeComboBox = new QComboBox();
+    conditionTypeComboBox->addItems(measurementsItems);
+    conditionTypeComboBox->addItems(datesItems);
+
+    operationComboBox = new QComboBox();
+    operationComboBox->addItems(operationsItems);
 
     layout = new QGridLayout();
-    layout->addWidget(measurementComboBox);
-    layout->addWidget(dateComboBox);
+    layout->addWidget(conditionTypeComboBox, 1, 1);
+    layout->addWidget(operationComboBox, 1, 2);
     setLayout(layout);
 }
