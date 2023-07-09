@@ -5,13 +5,18 @@ ConditionWidget::ConditionWidget(QWidget *parent) : QGroupBox(parent)
     conditionTypeComboBox = new QComboBox();
     conditionTypeComboBox->addItems(measurementsItems);
     conditionTypeComboBox->addItems(datesItems);
+    connect(conditionTypeComboBox,
+            SIGNAL(currentIndexChanged(int)),
+            SLOT(changeMinMaxComboBoxVisibility()));
 
     minMaxComboBox = new QComboBox();
     minMaxComboBox->addItems({"max.", "min.", "moy.", "var."});
     minMaxComboBox->setFixedWidth(55);
+    minMaxComboBox->setVisible(false);
 
     operationComboBox = new QComboBox();
     operationComboBox->addItems(operationsItems);
+    operationComboBox->setFixedWidth(155);
 
     firstValueInput = new QLineEdit();
     firstValueInput->setFixedWidth(50);
@@ -52,4 +57,9 @@ QString ConditionWidget::condition() {
     }
 
     return cond;
+}
+
+void ConditionWidget::changeMinMaxComboBoxVisibility() {
+    minMaxComboBox->setVisible(1 <= conditionTypeComboBox->currentIndex()
+                               && conditionTypeComboBox->currentIndex() <= 4);
 }
