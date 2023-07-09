@@ -18,3 +18,8 @@ ConditionWidget::ConditionWidget(QWidget *parent) : QGroupBox(parent)
     layout->addWidget(firstValueInput, 1, 3);
     setLayout(layout);
 }
+
+QString ConditionWidget::condition() {
+    QString cond = translatedMeasurementsItems[conditionTypeComboBox->currentIndex()];
+    return cond;  // TODO
+}

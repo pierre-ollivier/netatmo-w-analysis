@@ -144,7 +144,12 @@ QString QueryBuilder::queryFromTable() {
 }
 
 QString QueryBuilder::queryFromConditions() {
-    return "";  // TODO
+    QString query = "";
+    for (ConditionWidget *conditionWidget : *conditionWidgets) {
+        query += conditionWidget->condition() + " AND ";
+    }
+    if (query != "") query = query.left(query.length() - 5);  // remove the last " AND "
+    return query;
 }
 
 void QueryBuilder::updateQueryTextEdit() {
