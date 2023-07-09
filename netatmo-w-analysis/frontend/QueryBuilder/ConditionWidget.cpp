@@ -21,5 +21,30 @@ ConditionWidget::ConditionWidget(QWidget *parent) : QGroupBox(parent)
 
 QString ConditionWidget::condition() {
     QString cond = translatedMeasurementsItems[conditionTypeComboBox->currentIndex()];
-    return cond;  // TODO
+
+    switch (operationComboBox->currentIndex()) {
+    case 0:
+        cond += " = " + firstValueInput->text();
+        break;
+    case 1:
+        cond += " = " + firstValueInput->text();
+        break;
+    case 2:
+        cond += " > " + firstValueInput->text();
+        break;
+    case 3:
+        cond += " >= " + firstValueInput->text();
+        break;
+    case 4:
+        cond += " < " + firstValueInput->text();
+        break;
+    case 5:
+        cond += " <= " + firstValueInput->text();
+        break;
+    default:
+        cond += " TODO ";  // TODO
+        break;
+    }
+
+    return cond;
 }
