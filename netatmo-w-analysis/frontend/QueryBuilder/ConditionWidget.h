@@ -12,6 +12,7 @@ class ConditionWidget : public QGroupBox
     Q_OBJECT
 public:
     explicit ConditionWidget(QWidget *parent = nullptr);
+    QString condition();
 
 signals:
 
@@ -35,6 +36,18 @@ private:
                                     "Jour",
                                     "Numéro de décade",
                                     "Numéro de semaine"};
+
+    const QStringList translatedMeasurementsItems = {"&&&",
+                                                     "Temperature",
+                                                     "Humidity",
+                                                     "DewPoint",
+                                                     "Humidex",
+                                                     "date",
+                                                     "year",
+                                                     "month",
+                                                     "day",
+                                                     "decade",
+                                                     "weekNumber"};
 
     const QStringList operationsItems = {"Égal à",
                                          "Différent de",
