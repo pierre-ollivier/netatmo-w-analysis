@@ -99,9 +99,11 @@ QueryBuilder::QueryBuilder()
 
 void QueryBuilder::addCondition() {
     int n = conditionWidgets->size();
-    conditionWidgets->append(new ConditionWidget());
+    ConditionWidget *cwid = new ConditionWidget();
+    conditionWidgets->append(cwid);
 
-    conditionGroupBoxLayout->addWidget(conditionWidgets->at(n), n, 1);
+    conditionGroupBoxLayout->addWidget(cwid, n, 1);
+    connect(cwid, SIGNAL(conditionChanged()), SLOT(updateQueryTextEdit()));
 
     if (n >= 7) {
         addConditionButton->setDisabled(true);
