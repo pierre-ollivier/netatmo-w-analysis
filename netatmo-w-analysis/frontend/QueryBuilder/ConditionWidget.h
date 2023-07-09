@@ -19,6 +19,7 @@ signals:
 private:
     QComboBox *conditionTypeComboBox;
     QComboBox *operationComboBox;
+    QComboBox *minMaxComboBox;
 
     QLineEdit *firstValueInput;
 
