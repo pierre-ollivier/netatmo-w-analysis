@@ -109,7 +109,9 @@ void QueryBuilder::addCondition() {
 }
 
 QString QueryBuilder::query() {
-    return "SELECT " + queryFromMeasurement() + " FROM " + queryFromTable() + " WHERE " + queryFromConditions();
+    QString queryFromConditions = this->queryFromConditions();
+    if (queryFromConditions == "") return "SELECT " + queryFromMeasurement() + " FROM " + queryFromTable();
+    return "SELECT " + queryFromMeasurement() + " FROM " + queryFromTable() + " WHERE " + queryFromConditions;
 }
 
 QString QueryBuilder::queryFromMeasurement() {
