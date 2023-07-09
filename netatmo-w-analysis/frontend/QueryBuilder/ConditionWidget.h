@@ -19,6 +19,8 @@ private:
     QComboBox *conditionTypeComboBox;
     QComboBox *operationComboBox;
 
+    QLineEdit *firstValueInput;
+
     QGridLayout *layout;
 
     const QStringList measurementsItems = {"Grandeur courante",
