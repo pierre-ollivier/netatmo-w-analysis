@@ -15,6 +15,7 @@ public:
     QString condition();
 
 signals:
+    void conditionChanged();
 
 private slots:
     void changeMinMaxComboBoxVisibility();

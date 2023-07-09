@@ -8,18 +8,30 @@ ConditionWidget::ConditionWidget(QWidget *parent) : QGroupBox(parent)
     connect(conditionTypeComboBox,
             SIGNAL(currentIndexChanged(int)),
             SLOT(changeMinMaxComboBoxVisibility()));
+    connect(conditionTypeComboBox,
+            SIGNAL(currentIndexChanged(int)),
+            SIGNAL(conditionChanged()));
 
     minMaxComboBox = new QComboBox();
     minMaxComboBox->addItems(minMaxItems);
     minMaxComboBox->setFixedWidth(55);
     minMaxComboBox->setVisible(false);
+    connect(minMaxComboBox,
+            SIGNAL(currentIndexChanged(int)),
+            SIGNAL(conditionChanged()));
 
     operationComboBox = new QComboBox();
     operationComboBox->addItems(operationsItems);
     operationComboBox->setFixedWidth(155);
+    connect(operationComboBox,
+            SIGNAL(currentIndexChanged(int)),
+            SIGNAL(conditionChanged()));
 
     firstValueInput = new QLineEdit();
     firstValueInput->setFixedWidth(50);
+    connect(firstValueInput,
+            SIGNAL(returnPressed()),
+            SIGNAL(conditionChanged()));
 
     layout = new QGridLayout();
     layout->addWidget(conditionTypeComboBox, 1, 1);
