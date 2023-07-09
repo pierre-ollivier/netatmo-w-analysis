@@ -6,6 +6,7 @@
 #include <QGroupBox>
 #include <QPushButton>
 #include <QRadioButton>
+#include <QTextEdit>
 #include <QWidget>
 #include "ConditionWidget.h"
 
@@ -22,6 +23,7 @@ public:
 
 public slots:
     void addCondition();
+    void updateQueryTextEdit();
 
 private:
     QGroupBox *measurementGroupBox;
@@ -46,6 +48,8 @@ private:
     QPushButton *outdoorDailyButton;
 
     QPushButton *addConditionButton;
+
+    QTextEdit *queryTextEdit;
 
     QGridLayout *measurementGroupBoxLayout;
     QGridLayout *tableGroupBoxLayout;

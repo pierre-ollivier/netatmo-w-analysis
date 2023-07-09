@@ -12,6 +12,7 @@ QueryBuilder::QueryBuilder()
     conditionGroupBox->setAlignment(Qt::AlignCenter);
 
     measurementButtonGroup = new QButtonGroup();
+    operationButtonGroup = new QButtonGroup();
 
     temperatureButton = new QPushButton("Température");
     humidityButton = new QPushButton("Humidité");
@@ -24,7 +25,6 @@ QueryBuilder::QueryBuilder()
     measurementButtonGroup->addButton(dewPointButton);
     measurementButtonGroup->addButton(humidexButton);
 
-    operationButtonGroup = new QButtonGroup();
 
     maximumButton = new QRadioButton("Maximum");
     minimumButton = new QRadioButton("Minimum");
@@ -41,6 +41,9 @@ QueryBuilder::QueryBuilder()
     dewPointButton->setCheckable(true);
     humidexButton->setCheckable(true);
 
+    connect(measurementButtonGroup, SIGNAL(buttonClicked(QAbstractButton *)), SLOT(updateQueryTextEdit()));
+    connect(operationButtonGroup, SIGNAL(buttonClicked(QAbstractButton *)), SLOT(updateQueryTextEdit()));
+
     indoorDailyButton = new QPushButton("Intérieur");
     outdoorDailyButton = new QPushButton("Extérieur");
 
@@ -54,6 +57,8 @@ QueryBuilder::QueryBuilder()
     connect(addConditionButton, SIGNAL(clicked()), SLOT(addCondition()));
 
     conditionWidgets = new QList<ConditionWidget *>();
+
+    queryTextEdit = new QTextEdit();
 
     measurementGroupBoxLayout = new QGridLayout();
     tableGroupBoxLayout = new QGridLayout();
@@ -84,6 +89,7 @@ QueryBuilder::QueryBuilder()
     mainLayout->addWidget(measurementGroupBox, 1, 1);
     mainLayout->addWidget(tableGroupBox, 1, 2);
     mainLayout->addWidget(conditionGroupBox, 1, 3);
+    mainLayout->addWidget(queryTextEdit, 2, 1, 1, 3);
 
     setLayout(mainLayout);
 }
@@ -134,4 +140,8 @@ QString QueryBuilder::queryFromTable() {
 
 QString QueryBuilder::queryFromConditions() {
     return "";  // TODO
+}
+
+void QueryBuilder::updateQueryTextEdit() {
+    queryTextEdit->setText(query());
 }
