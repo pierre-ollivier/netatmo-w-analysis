@@ -61,6 +61,9 @@ private:
                                          "Inférieur ou égal à",
                                          "Compris entre",
                                          "Non compris entre"};
+
+    const QStringList minMaxItems = {"max.", "min.", "moy.", "var."};
+    const QStringList translatedMinMaxItems = {"max", "min", "avg", "diff"};
 };
 
 #endif // CONDITIONWIDGET_H

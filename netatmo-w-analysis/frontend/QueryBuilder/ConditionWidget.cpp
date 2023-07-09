@@ -10,7 +10,7 @@ ConditionWidget::ConditionWidget(QWidget *parent) : QGroupBox(parent)
             SLOT(changeMinMaxComboBoxVisibility()));
 
     minMaxComboBox = new QComboBox();
-    minMaxComboBox->addItems({"max.", "min.", "moy.", "var."});
+    minMaxComboBox->addItems(minMaxItems);
     minMaxComboBox->setFixedWidth(55);
     minMaxComboBox->setVisible(false);
 
@@ -31,6 +31,16 @@ ConditionWidget::ConditionWidget(QWidget *parent) : QGroupBox(parent)
 
 QString ConditionWidget::condition() {
     QString cond = translatedMeasurementsItems[conditionTypeComboBox->currentIndex()];
+
+    if (1 <= conditionTypeComboBox->currentIndex() && conditionTypeComboBox->currentIndex() <= 4) {
+        QString minMaxText = translatedMinMaxItems[minMaxComboBox->currentIndex()];
+        if (minMaxText != "diff") {
+            cond = minMaxText + cond;
+        }
+        else {
+            cond = "(max" + cond + " - min" + cond + ")";
+        }
+    }
 
     switch (operationComboBox->currentIndex()) {
     case 0:
