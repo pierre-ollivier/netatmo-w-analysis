@@ -4,6 +4,7 @@
 #include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QLabel>
 #include <QLineEdit>
 #include <QWidget>
 
@@ -26,6 +27,9 @@ private:
     QComboBox *minMaxComboBox;
 
     QLineEdit *firstValueInput;
+    QLineEdit *secondValueInput;
+
+    QLabel *separatorLabel;
 
     QGridLayout *layout;
 

@@ -33,11 +33,21 @@ ConditionWidget::ConditionWidget(QWidget *parent) : QGroupBox(parent)
             SIGNAL(returnPressed()),
             SIGNAL(conditionChanged()));
 
+    secondValueInput = new QLineEdit();
+    secondValueInput->setFixedWidth(50);
+    connect(secondValueInput,
+            SIGNAL(returnPressed()),
+            SIGNAL(conditionChanged()));
+
+    separatorLabel = new QLabel("et");
+
     layout = new QGridLayout();
     layout->addWidget(conditionTypeComboBox, 1, 1);
     layout->addWidget(minMaxComboBox, 1, 2);
     layout->addWidget(operationComboBox, 1, 3);
     layout->addWidget(firstValueInput, 1, 4);
+    layout->addWidget(separatorLabel, 1, 5);
+    layout->addWidget(secondValueInput, 1, 6);
     setLayout(layout);
 }
 
