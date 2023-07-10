@@ -22,6 +22,7 @@ private slots:
     void changeMinMaxComboBoxVisibility();
     void changeSecondValueInputVisibility();
     void changeUnit();
+    void changeOperationsItems();
 
 private:
     QComboBox *conditionTypeComboBox;
@@ -61,14 +62,23 @@ private:
                                                      "decade",
                                                      "weekNumber"};
 
-    const QStringList operationsItems = {"Égal à",
-                                         "Différent de",
-                                         "Supérieur à",
-                                         "Supérieur ou égal à",
-                                         "Inférieur à",
-                                         "Inférieur ou égal à",
-                                         "Compris entre",
-                                         "Non compris entre"};
+    const QStringList operationsItemsMasculinized = {"Égal à",
+                                                     "Différent de",
+                                                     "Supérieur à",
+                                                     "Supérieur ou égal à",
+                                                     "Inférieur à",
+                                                     "Inférieur ou égal à",
+                                                     "Compris entre",
+                                                     "Non compris entre"};
+
+    const QStringList operationsItemsFeminized = {"Égale à",
+                                                  "Différente de",
+                                                  "Supérieure à",
+                                                  "Supérieure ou égale à",
+                                                  "Inférieure à",
+                                                  "Inférieure ou égale à",
+                                                  "Comprise entre",
+                                                  "Non comprise entre"};
 
     const QStringList unitItems = {"&&&",
                                    "°C",

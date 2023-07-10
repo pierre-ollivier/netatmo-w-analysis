@@ -14,6 +14,9 @@ ConditionWidget::ConditionWidget(QWidget *parent) : QGroupBox(parent)
     connect(conditionTypeComboBox,
             SIGNAL(currentIndexChanged(int)),
             SLOT(changeUnit()));
+    connect(conditionTypeComboBox,
+            SIGNAL(currentIndexChanged(int)),
+            SLOT(changeOperationsItems()));
 
     minMaxComboBox = new QComboBox();
     minMaxComboBox->addItems(minMaxItems);
@@ -24,7 +27,7 @@ ConditionWidget::ConditionWidget(QWidget *parent) : QGroupBox(parent)
             SIGNAL(conditionChanged()));
 
     operationComboBox = new QComboBox();
-    operationComboBox->addItems(operationsItems);
+    operationComboBox->addItems(operationsItemsMasculinized);
     operationComboBox->setFixedWidth(155);
     connect(operationComboBox,
             SIGNAL(currentIndexChanged(int)),
@@ -123,4 +126,16 @@ void ConditionWidget::changeUnit() {
         unitLabel->setText(unitItems[conditionTypeComboBox->currentIndex()]);
     }
     else unitLabel->setText("");  // TODO
+}
+
+void ConditionWidget::changeOperationsItems() {
+    int index = conditionTypeComboBox->currentIndex();
+    if (index == 1 || index == 2 || index == 5 || index == 6) {
+        operationComboBox->clear();
+        operationComboBox->addItems(operationsItemsFeminized);
+    }
+    else {
+        operationComboBox->clear();
+        operationComboBox->addItems(operationsItemsMasculinized);
+    }
 }
