@@ -21,6 +21,7 @@ signals:
 private slots:
     void changeMinMaxComboBoxVisibility();
     void changeSecondValueInputVisibility();
+    void changeUnit();
 
 private:
     QComboBox *conditionTypeComboBox;
@@ -31,6 +32,7 @@ private:
     QLineEdit *secondValueInput;
 
     QLabel *separatorLabel;
+    QLabel *unitLabel;
 
     QGridLayout *layout;
 
@@ -67,6 +69,18 @@ private:
                                          "Inférieur ou égal à",
                                          "Compris entre",
                                          "Non compris entre"};
+
+    const QStringList unitItems = {"&&&",
+                                   "°C",
+                                   "%",
+                                   "°C",
+                                   "",
+                                   "",
+                                   "",
+                                   "",
+                                   "",
+                                   "",
+                                   ""};
 
     const QStringList minMaxItems = {"max.", "min.", "moy.", "var."};
     const QStringList translatedMinMaxItems = {"max", "min", "avg", "diff"};

@@ -11,6 +11,9 @@ ConditionWidget::ConditionWidget(QWidget *parent) : QGroupBox(parent)
     connect(conditionTypeComboBox,
             SIGNAL(currentIndexChanged(int)),
             SIGNAL(conditionChanged()));
+    connect(conditionTypeComboBox,
+            SIGNAL(currentIndexChanged(int)),
+            SLOT(changeUnit()));
 
     minMaxComboBox = new QComboBox();
     minMaxComboBox->addItems(minMaxItems);
@@ -48,6 +51,9 @@ ConditionWidget::ConditionWidget(QWidget *parent) : QGroupBox(parent)
     separatorLabel->setAlignment(Qt::AlignCenter);
     separatorLabel->setHidden(true);
 
+    unitLabel = new QLabel();
+    unitLabel->setFixedWidth(15);
+
     layout = new QGridLayout();
     layout->addWidget(conditionTypeComboBox, 1, 1);
     layout->addWidget(minMaxComboBox, 1, 2);
@@ -55,6 +61,7 @@ ConditionWidget::ConditionWidget(QWidget *parent) : QGroupBox(parent)
     layout->addWidget(firstValueInput, 1, 4);
     layout->addWidget(separatorLabel, 1, 5);
     layout->addWidget(secondValueInput, 1, 6);
+    layout->addWidget(unitLabel, 1, 7);
     setLayout(layout);
 }
 
@@ -109,4 +116,11 @@ void ConditionWidget::changeSecondValueInputVisibility() {
     bool visible = operationComboBox->currentIndex() >= 6;
     secondValueInput->setVisible(visible);
     separatorLabel->setVisible(visible);
+}
+
+void ConditionWidget::changeUnit() {
+    if (conditionTypeComboBox->currentIndex() != 0) {
+        unitLabel->setText(unitItems[conditionTypeComboBox->currentIndex()]);
+    }
+    else unitLabel->setText("");  // TODO
 }
