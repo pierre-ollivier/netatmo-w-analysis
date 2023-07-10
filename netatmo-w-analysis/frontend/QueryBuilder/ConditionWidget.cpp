@@ -25,6 +25,9 @@ ConditionWidget::ConditionWidget(QWidget *parent) : QGroupBox(parent)
     operationComboBox->setFixedWidth(155);
     connect(operationComboBox,
             SIGNAL(currentIndexChanged(int)),
+            SLOT(changeSecondValueInputVisibility()));
+    connect(operationComboBox,
+            SIGNAL(currentIndexChanged(int)),
             SIGNAL(conditionChanged()));
 
     firstValueInput = new QLineEdit();
@@ -94,4 +97,10 @@ QString ConditionWidget::condition() {
 void ConditionWidget::changeMinMaxComboBoxVisibility() {
     minMaxComboBox->setVisible(1 <= conditionTypeComboBox->currentIndex()
                                && conditionTypeComboBox->currentIndex() <= 4);
+}
+
+void ConditionWidget::changeSecondValueInputVisibility() {
+    bool visible = operationComboBox->currentIndex() >= 6;
+    secondValueInput->setVisible(visible);
+    separatorLabel->setVisible(visible);
 }

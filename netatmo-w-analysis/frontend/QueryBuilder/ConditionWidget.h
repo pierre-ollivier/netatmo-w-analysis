@@ -20,6 +20,7 @@ signals:
 
 private slots:
     void changeMinMaxComboBoxVisibility();
+    void changeSecondValueInputVisibility();
 
 private:
     QComboBox *conditionTypeComboBox;
