@@ -90,9 +90,11 @@ QString ConditionWidget::condition() {
     case 5:
         cond += " <= " + firstValueInput->text();
         break;
-    default:
-        cond += " TODO ";  // TODO
+    case 6:
+        cond += " BETWEEN " + firstValueInput->text() + " AND " + secondValueInput->text();
         break;
+    case 7:
+        cond += " NOT BETWEEN " + firstValueInput->text() + " AND " + secondValueInput->text();
     }
 
     return cond;
