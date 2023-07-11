@@ -59,6 +59,8 @@ private:
     QList<ConditionWidget *> *conditionWidgets;
 
     QGridLayout *mainLayout;
+
+    unsigned int nextConditionWidgetCoordinate = 0;
 };
 
 #endif // QUERYBUILDER_H
