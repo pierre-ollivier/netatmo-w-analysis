@@ -58,8 +58,8 @@ ConditionWidget::ConditionWidget(QWidget *parent) : QGroupBox(parent)
     unitLabel->setFixedWidth(15);
 
     deleteButton = new QPushButton("Supprimer");
-    connect(deleteButton, SIGNAL(clicked()), this, SIGNAL(deleted()));
     connect(deleteButton, SIGNAL(clicked()), this, SLOT(setDeleted()));
+    connect(deleteButton, SIGNAL(clicked()), this, SIGNAL(deleted()));
 
     layout = new QGridLayout();
     layout->addWidget(conditionTypeComboBox, 1, 1);
