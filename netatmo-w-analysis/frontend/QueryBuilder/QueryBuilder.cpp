@@ -104,6 +104,7 @@ void QueryBuilder::addCondition() {
 
     conditionGroupBoxLayout->addWidget(cwid, n, 1);
     connect(cwid, SIGNAL(conditionChanged()), SLOT(updateQueryTextEdit()));
+    connect(cwid, SIGNAL(deleted()), SLOT(conditionWidgetDeleted()));
 
     if (n >= 7) {
         addConditionButton->setDisabled(true);
@@ -156,4 +157,14 @@ QString QueryBuilder::queryFromConditions() {
 
 void QueryBuilder::updateQueryTextEdit() {
     queryTextEdit->setText(query());
+}
+
+void QueryBuilder::conditionWidgetDeleted() {
+    for (ConditionWidget *cwid : *conditionWidgets) {
+        if (cwid->isDeleted()) {
+            conditionWidgets->removeOne(cwid);
+            delete cwid;
+            break;
+        }
+    }
 }
