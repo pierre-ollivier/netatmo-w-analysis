@@ -6,6 +6,7 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QLineEdit>
+#include <QPushButton>
 #include <QWidget>
 
 class ConditionWidget : public QGroupBox
@@ -15,8 +16,13 @@ public:
     explicit ConditionWidget(QWidget *parent = nullptr);
     QString condition();
 
+public slots:
+    bool isDeleted();
+    void setDeleted();
+
 signals:
     void conditionChanged();
+    void deleted();
 
 private slots:
     void changeMinMaxComboBoxVisibility();
@@ -34,6 +40,8 @@ private:
 
     QLabel *separatorLabel;
     QLabel *unitLabel;
+
+    QPushButton *deleteButton;
 
     QGridLayout *layout;
 
@@ -94,6 +102,8 @@ private:
 
     const QStringList minMaxItems = {"max.", "min.", "moy.", "var."};
     const QStringList translatedMinMaxItems = {"max", "min", "avg", "diff"};
+
+    bool _isDeleted = false;
 };
 
 #endif // CONDITIONWIDGET_H

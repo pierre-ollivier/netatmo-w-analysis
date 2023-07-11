@@ -114,6 +114,7 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     connect(interiorCheckBox, SIGNAL(clicked()), SLOT(fillBoards()));
 
     connect(sendQueryButton, SIGNAL(clicked()), SLOT(sendRequest()));
+    connect(customQueryLineEdit, SIGNAL(returnPressed()), SLOT(sendRequest()));
     connect(buildQueryButton, SIGNAL(clicked()), SLOT(showQueryBuilder()));
 
     connect(queryParamsSelected, SIGNAL(clicked()), SLOT(selectQueryParams()));

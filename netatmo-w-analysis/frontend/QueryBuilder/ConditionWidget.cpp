@@ -57,6 +57,10 @@ ConditionWidget::ConditionWidget(QWidget *parent) : QGroupBox(parent)
     unitLabel = new QLabel();
     unitLabel->setFixedWidth(15);
 
+    deleteButton = new QPushButton("Supprimer");
+    connect(deleteButton, SIGNAL(clicked()), this, SIGNAL(deleted()));
+    connect(deleteButton, SIGNAL(clicked()), this, SLOT(setDeleted()));
+
     layout = new QGridLayout();
     layout->addWidget(conditionTypeComboBox, 1, 1);
     layout->addWidget(minMaxComboBox, 1, 2);
@@ -65,6 +69,7 @@ ConditionWidget::ConditionWidget(QWidget *parent) : QGroupBox(parent)
     layout->addWidget(separatorLabel, 1, 5);
     layout->addWidget(secondValueInput, 1, 6);
     layout->addWidget(unitLabel, 1, 7);
+    layout->addWidget(deleteButton, 1, 8);
     setLayout(layout);
 }
 
@@ -138,4 +143,12 @@ void ConditionWidget::changeOperationsItems() {
         operationComboBox->clear();
         operationComboBox->addItems(operationsItemsMasculinized);
     }
+}
+
+bool ConditionWidget::isDeleted() {
+    return _isDeleted;
+}
+
+void ConditionWidget::setDeleted() {
+    _isDeleted = true;
 }
