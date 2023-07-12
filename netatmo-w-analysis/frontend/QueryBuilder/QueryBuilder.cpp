@@ -43,6 +43,8 @@ QueryBuilder::QueryBuilder()
 
     connect(measurementButtonGroup, SIGNAL(buttonClicked(QAbstractButton *)), SLOT(updateQueryTextEdit()));
     connect(operationButtonGroup, SIGNAL(buttonClicked(QAbstractButton *)), SLOT(updateQueryTextEdit()));
+    connect(measurementButtonGroup, SIGNAL(buttonClicked(QAbstractButton *)), SLOT(updateCurrentMeasurement()));
+    connect(operationButtonGroup, SIGNAL(buttonClicked(QAbstractButton *)), SLOT(updateCurrentMeasurement()));
 
     indoorDailyButton = new QPushButton("Intérieur");
     outdoorDailyButton = new QPushButton("Extérieur");
@@ -169,4 +171,21 @@ QString QueryBuilder::queryFromConditions() {
 
 void QueryBuilder::updateQueryTextEdit() {
     queryTextEdit->setText(query());
+}
+
+void QueryBuilder::updateCurrentMeasurement() {
+    /*
+     * Update the meaning of CurrentMeasurement in each ConditionWidget.
+     */
+    QString minMax = maximumButton->isChecked() ? "max" :
+                     minimumButton->isChecked() ? "min" :
+                     averageButton->isChecked() ? "avg" : "diff";
+    QString measurement = temperatureButton->isChecked() ? "Temperature" :
+                          humidityButton->isChecked() ? "Humidity" :
+                          dewPointButton->isChecked() ? "DewPoint" :
+                          humidexButton->isChecked() ? "Humidex" : "";
+
+    for (ConditionWidget *cwid : *conditionWidgets) {
+        cwid->setCurrentCondition(measurement, minMax);
+    }
 }
