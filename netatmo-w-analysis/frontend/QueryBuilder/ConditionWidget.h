@@ -19,6 +19,7 @@ public:
 public slots:
     bool isDeleted();
     void setDeleted();
+    void setCurrentCondition(QString, QString);
 
 signals:
     void conditionChanged();
@@ -102,6 +103,9 @@ private:
 
     const QStringList minMaxItems = {"max.", "min.", "moy.", "var."};
     const QStringList translatedMinMaxItems = {"max", "min", "avg", "diff"};
+
+    QString currentConditionMeasurementCapitalized = "Temperature";
+    QString currentConditionMinMax = "max";
 
     bool _isDeleted = false;
 };
