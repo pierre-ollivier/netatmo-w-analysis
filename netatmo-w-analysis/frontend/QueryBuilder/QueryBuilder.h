@@ -23,8 +23,8 @@ public:
 
 public slots:
     void addCondition();
+    void removeCondition();
     void updateQueryTextEdit();
-    void conditionWidgetDeleted();
 
 private:
     QGroupBox *measurementGroupBox;
