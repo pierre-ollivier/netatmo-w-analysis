@@ -25,6 +25,7 @@ public slots:
     void addCondition();
     void removeCondition();
     void updateQueryTextEdit();
+    void updateCurrentMeasurement();
 
 private:
     QGroupBox *measurementGroupBox;
