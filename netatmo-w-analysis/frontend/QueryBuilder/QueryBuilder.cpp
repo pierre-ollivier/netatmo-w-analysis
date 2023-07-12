@@ -104,9 +104,23 @@ void QueryBuilder::addCondition() {
 
     conditionGroupBoxLayout->addWidget(cwid, nextConditionWidgetCoordinate, 1);
     connect(cwid, SIGNAL(conditionChanged()), SLOT(updateQueryTextEdit()));
-    connect(cwid, SIGNAL(deleted()), SLOT(conditionWidgetDeleted()));
+    connect(cwid, SIGNAL(deleted()), SLOT(removeCondition()));
 
     addConditionButton->setEnabled(conditionWidgets->size() < 7);
+    updateQueryTextEdit();
+}
+
+void QueryBuilder::removeCondition() {
+    for (ConditionWidget *cwid : *conditionWidgets) {
+        if (cwid->isDeleted()) {
+            conditionWidgets->removeOne(cwid);
+            conditionGroupBoxLayout->removeWidget(cwid);
+            delete cwid;
+            addConditionButton->setEnabled(true);
+            updateQueryTextEdit();
+            break;
+        }
+    }
 }
 
 QString QueryBuilder::query() {
@@ -155,16 +169,4 @@ QString QueryBuilder::queryFromConditions() {
 
 void QueryBuilder::updateQueryTextEdit() {
     queryTextEdit->setText(query());
-}
-
-void QueryBuilder::conditionWidgetDeleted() {
-    for (ConditionWidget *cwid : *conditionWidgets) {
-        if (cwid->isDeleted()) {
-            conditionWidgets->removeOne(cwid);
-            conditionGroupBoxLayout->removeWidget(cwid);
-            delete cwid;
-            addConditionButton->setEnabled(true);
-            break;
-        }
-    }
 }
