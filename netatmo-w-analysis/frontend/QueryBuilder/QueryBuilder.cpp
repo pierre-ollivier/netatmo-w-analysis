@@ -186,6 +186,6 @@ void QueryBuilder::updateCurrentMeasurement() {
                           humidexButton->isChecked() ? "Humidex" : "";
 
     for (ConditionWidget *cwid : *conditionWidgets) {
-        cwid->setCurrentCondition(measurement, minMax);
+        cwid->setCurrentCondition(measurement, minMax, queryFromMeasurement());
     }
 }

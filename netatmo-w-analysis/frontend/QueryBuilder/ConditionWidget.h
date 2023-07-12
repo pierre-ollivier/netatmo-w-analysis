@@ -19,7 +19,10 @@ public:
 public slots:
     bool isDeleted();
     void setDeleted();
-    void setCurrentCondition(QString, QString);
+    void setCurrentCondition(
+            QString measurementTypeCapitalized,
+            QString minMax,
+            QString fullMeasurement);
 
 signals:
     void conditionChanged();
@@ -106,6 +109,7 @@ private:
 
     QString currentConditionMeasurementCapitalized = "Temperature";
     QString currentConditionMinMax = "max";
+    QString currentConditionFullMeasurement = "maxTemperature";
 
     bool _isDeleted = false;
 };

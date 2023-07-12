@@ -112,7 +112,7 @@ QString ConditionWidget::condition() {
         cond += " NOT BETWEEN " + firstValueInput->text() + " AND " + secondValueInput->text();
     }
 
-    cond = cond.replace("&&&", currentConditionMinMax +currentConditionMeasurementCapitalized);
+    cond = cond.replace("&&&", currentConditionFullMeasurement);
     return cond;
 }
 
@@ -154,7 +154,11 @@ void ConditionWidget::setDeleted() {
     _isDeleted = true;
 }
 
-void ConditionWidget::setCurrentCondition(QString measurementTypeCapitalized, QString minMax) {
+void ConditionWidget::setCurrentCondition(
+        QString measurementTypeCapitalized,
+        QString minMax,
+        QString fullMeasurement) {
     currentConditionMeasurementCapitalized = measurementTypeCapitalized;
     currentConditionMinMax = minMax;
+    currentConditionFullMeasurement = fullMeasurement;
 }
