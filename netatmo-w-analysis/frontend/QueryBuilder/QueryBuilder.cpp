@@ -106,6 +106,7 @@ QueryBuilder::QueryBuilder()
 void QueryBuilder::addCondition() {
     ConditionWidget *cwid = new ConditionWidget();
     conditionWidgets->append(cwid);
+    updateCurrentMeasurement();
     nextConditionWidgetCoordinate++;
 
     conditionGroupBoxLayout->addWidget(cwid, nextConditionWidgetCoordinate, 1);
