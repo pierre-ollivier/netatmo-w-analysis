@@ -21,7 +21,6 @@ public slots:
     void setDeleted();
     void setCurrentCondition(
             QString measurementTypeCapitalized,
-            QString minMax,
             QString fullMeasurement);
 
 signals:
@@ -108,10 +107,7 @@ private:
     const QStringList translatedMinMaxItems = {"max", "min", "avg", "diff"};
 
     QString currentConditionMeasurementCapitalized = "Temperature";
-    QString currentConditionMinMax = "max";
     QString currentConditionFullMeasurement = "maxTemperature";
-    // do we really need currentConditionMeasurementCapitalized and currentConditionMinMax?
-    // maybe we could pass the unit and genre instead, to comply with a future custom measurement
 
     bool _isDeleted = false;
 };

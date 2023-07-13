@@ -169,9 +169,7 @@ void ConditionWidget::setDeleted() {
 
 void ConditionWidget::setCurrentCondition(
         QString measurementTypeCapitalized,
-        QString minMax,
         QString fullMeasurement) {
     currentConditionMeasurementCapitalized = measurementTypeCapitalized;
-    currentConditionMinMax = minMax;
     currentConditionFullMeasurement = fullMeasurement;
 }
