@@ -131,7 +131,18 @@ void ConditionWidget::changeUnit() {
     if (conditionTypeComboBox->currentIndex() != 0) {
         unitLabel->setText(unitItems[conditionTypeComboBox->currentIndex()]);
     }
-    else unitLabel->setText("");  // TODO
+    else {
+        if (currentConditionMeasurementCapitalized == "Temperature"
+                || currentConditionMeasurementCapitalized == "DewPoint") {
+            unitLabel->setText("°C");
+        }
+        else if (currentConditionMeasurementCapitalized == "Humidity") {
+            unitLabel->setText("%");
+        }
+        else {
+            unitLabel->setText("");
+        }
+    }
 }
 
 void ConditionWidget::changeOperationsItems() {

@@ -110,6 +110,8 @@ private:
     QString currentConditionMeasurementCapitalized = "Temperature";
     QString currentConditionMinMax = "max";
     QString currentConditionFullMeasurement = "maxTemperature";
+    // do we really need currentConditionMeasurementCapitalized and currentConditionMinMax?
+    // maybe we could pass the unit and genre instead, to comply with a future custom measurement
 
     bool _isDeleted = false;
 };
