@@ -71,6 +71,8 @@ ConditionWidget::ConditionWidget(QWidget *parent) : QGroupBox(parent)
     layout->addWidget(unitLabel, 1, 7);
     layout->addWidget(deleteButton, 1, 8);
     setLayout(layout);
+
+    changeUnit();
 }
 
 QString ConditionWidget::condition() {
