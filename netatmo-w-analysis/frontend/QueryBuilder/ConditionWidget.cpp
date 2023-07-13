@@ -27,7 +27,7 @@ ConditionWidget::ConditionWidget(QWidget *parent) : QGroupBox(parent)
             SIGNAL(conditionChanged()));
 
     operationComboBox = new QComboBox();
-    operationComboBox->addItems(operationsItemsMasculinized);
+    operationComboBox->addItems(operationsItemsFeminized);
     operationComboBox->setFixedWidth(155);
     connect(operationComboBox,
             SIGNAL(currentIndexChanged(int)),
@@ -147,7 +147,7 @@ void ConditionWidget::changeUnit() {
 
 void ConditionWidget::changeOperationsItems() {
     int index = conditionTypeComboBox->currentIndex();
-    if (index == 1 || index == 2 || index == 5 || index == 6) {
+    if (index == 0 || index == 1 || index == 2 || index == 5 || index == 6) {
         operationComboBox->clear();
         operationComboBox->addItems(operationsItemsFeminized);
     }
