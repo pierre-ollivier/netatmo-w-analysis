@@ -40,6 +40,8 @@ QueryBuilder::QueryBuilder()
     humidityButton->setCheckable(true);
     dewPointButton->setCheckable(true);
     humidexButton->setCheckable(true);
+    temperatureButton->setChecked(true);
+    maximumButton->setChecked(true);
 
     connect(measurementButtonGroup, SIGNAL(buttonClicked(QAbstractButton *)), SLOT(updateCurrentMeasurement()));
     connect(operationButtonGroup, SIGNAL(buttonClicked(QAbstractButton *)), SLOT(updateCurrentMeasurement()));
@@ -57,6 +59,8 @@ QueryBuilder::QueryBuilder()
 
     indoorDailyButton->setAutoExclusive(true);
     outdoorDailyButton->setAutoExclusive(true);
+
+    indoorDailyButton->setChecked(true);
 
     addConditionButton = new QPushButton("Ajouter...");
     connect(addConditionButton, SIGNAL(clicked()), SLOT(addCondition()));
