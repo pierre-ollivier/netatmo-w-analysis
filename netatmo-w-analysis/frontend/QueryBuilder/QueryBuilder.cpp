@@ -181,15 +181,12 @@ void QueryBuilder::updateCurrentMeasurement() {
     /*
      * Update the meaning of CurrentMeasurement in each ConditionWidget.
      */
-    QString minMax = maximumButton->isChecked() ? "max" :
-                     minimumButton->isChecked() ? "min" :
-                     averageButton->isChecked() ? "avg" : "diff";
     QString measurement = temperatureButton->isChecked() ? "Temperature" :
                           humidityButton->isChecked() ? "Humidity" :
                           dewPointButton->isChecked() ? "DewPoint" :
                           humidexButton->isChecked() ? "Humidex" : "";
 
     for (ConditionWidget *cwid : *conditionWidgets) {
-        cwid->setCurrentCondition(measurement, minMax, queryFromMeasurement());
+        cwid->setCurrentCondition(measurement, queryFromMeasurement());
     }
 }
