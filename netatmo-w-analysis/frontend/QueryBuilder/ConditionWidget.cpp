@@ -157,7 +157,6 @@ void ConditionWidget::changeOperationsItems() {
         operationComboBox->clear();
         operationComboBox->addItems(operationsItemsMasculinized);
     }
-    changeUnit();
 }
 
 bool ConditionWidget::isDeleted() {
@@ -173,4 +172,6 @@ void ConditionWidget::setCurrentCondition(
         QString fullMeasurement) {
     currentConditionMeasurementCapitalized = measurementTypeCapitalized;
     currentConditionFullMeasurement = fullMeasurement;
+    changeOperationsItems();
+    changeUnit();
 }
