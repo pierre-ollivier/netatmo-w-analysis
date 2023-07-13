@@ -157,6 +157,7 @@ void ConditionWidget::changeOperationsItems() {
         operationComboBox->clear();
         operationComboBox->addItems(operationsItemsMasculinized);
     }
+    changeUnit();
 }
 
 bool ConditionWidget::isDeleted() {
