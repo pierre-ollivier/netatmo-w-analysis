@@ -1,5 +1,6 @@
 #include "NetatmoAPIHandler.h"
 #include <QByteArray>
+#include <QInputDialog>
 #include <QJsonDocument>
 #include <QJsonObject>
 
@@ -24,11 +25,8 @@ NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequest
     connect(outdoor3hRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieve3hOutdoorChartRequest(QNetworkReply *)));
 
     currentConditionsTimer = new QTimer();
-    if (timeBetweenRequests > 0) {
-        currentConditionsTimer->start(timeBetweenRequests);
-    }
     connect(currentConditionsTimer, SIGNAL(timeout()), this, SLOT(postCurrentConditionsRequest()));
-
+    _timeBetweenRequests = timeBetweenRequests;
 }
 
 NetatmoAPIHandler::NetatmoAPIHandler(NetatmoAPIHandler &other) :
@@ -66,10 +64,9 @@ void NetatmoAPIHandler::postTokensRequest() {
     params.addQueryItem("grant_type", "authorization_code");
     params.addQueryItem("client_id", clientId);
     params.addQueryItem("client_secret", clientSecret);
-    params.addQueryItem("code", authenticationCode);
+    params.addQueryItem("code", asForAuthenticationCode());
     params.addQueryItem("scope", "read_station");
     params.addQueryItem("redirect_uri", "127.0.0.1");
-    qDebug() << params.query().toUtf8();
     tokensManager->post(request, params.query().toUtf8());
     apiMonitor->addTimestamp();
 }
@@ -245,11 +242,12 @@ void NetatmoAPIHandler::retrieveTokens(QNetworkReply *reply) {
         accessToken = js["access_token"].toString();
         refreshToken = js["refresh_token"].toString();
 
-        qDebug() << accessToken;
-        qDebug() << refreshToken;
-
         emit accessTokenChanged(accessToken);
         emit refreshTokenChanged(refreshToken);
+
+        if (_timeBetweenRequests > 0 && !currentConditionsTimer->isActive()) {
+            currentConditionsTimer->start(_timeBetweenRequests);
+        }
     }
     else {
         qDebug() << "ERROR with network"
@@ -476,4 +474,18 @@ void NetatmoAPIHandler::retrieve3hOutdoorChartRequest(QNetworkReply *reply) {
         }
         emit ext3hRecordsRetrieved(result);
     }
+}
+
+QString NetatmoAPIHandler::asForAuthenticationCode() {
+    extern const QString clientId;
+    return QInputDialog::getText(
+                new QWidget(),
+                "Code d'authentification",
+                "Veuillez entrer le code reçu en allant à cette adresse : \n\n\n"
+                "https://api.netatmo.com/oauth2/authorize?"
+                "client_id=" + clientId
+                + "&&redirect_uri=127.0.0.1"
+                "&&scope=read_station"
+                "&&state=rtuvosmgovuodnpf"
+                );
 }
