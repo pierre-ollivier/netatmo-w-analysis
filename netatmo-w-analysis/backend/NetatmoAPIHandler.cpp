@@ -53,8 +53,7 @@ void NetatmoAPIHandler::setAccessToken(QString newAccessToken) {
 }
 
 void NetatmoAPIHandler::postTokensRequest() {
-    extern const QString username;
-    extern const QString password;
+    extern const QString authenticationCode;
     extern const QString clientId;
     extern const QString clientSecret;
 
@@ -64,12 +63,13 @@ void NetatmoAPIHandler::postTokensRequest() {
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
     QUrlQuery params;
-    params.addQueryItem("grant_type", "password");
+    params.addQueryItem("grant_type", "authorization_code");
     params.addQueryItem("client_id", clientId);
     params.addQueryItem("client_secret", clientSecret);
-    params.addQueryItem("username", username);
-    params.addQueryItem("password", password);
+    params.addQueryItem("code", authenticationCode);
     params.addQueryItem("scope", "read_station");
+    params.addQueryItem("redirect_uri", "127.0.0.1");
+    qDebug() << params.query().toUtf8();
     tokensManager->post(request, params.query().toUtf8());
     apiMonitor->addTimestamp();
 }
@@ -244,6 +244,9 @@ void NetatmoAPIHandler::retrieveTokens(QNetworkReply *reply) {
 
         accessToken = js["access_token"].toString();
         refreshToken = js["refresh_token"].toString();
+
+        qDebug() << accessToken;
+        qDebug() << refreshToken;
 
         emit accessTokenChanged(accessToken);
         emit refreshTokenChanged(refreshToken);
