@@ -251,8 +251,7 @@ void NetatmoAPIHandler::retrieveTokens(QNetworkReply *reply) {
         accessToken = js["access_token"].toString();
         refreshToken = js["refresh_token"].toString();
 
-//        writeRefreshToken("../netatmo-w-analysis/netatmo-w-analysis/refresh_token.txt", refreshToken);
-        writeRefreshToken("../refresh_token.txt", refreshToken);
+        writeRefreshToken(pathToRefreshTokenFile, refreshToken);
 
         emit accessTokenChanged(accessToken);
         emit refreshTokenChanged(refreshToken);
