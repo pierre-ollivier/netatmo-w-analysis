@@ -1,7 +1,10 @@
 #include "NetatmoAPIHandler.h"
 #include <QByteArray>
+#include <QFile>
+#include <QInputDialog>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QTextStream>
 
 NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequests)
 {
@@ -24,11 +27,10 @@ NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequest
     connect(outdoor3hRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieve3hOutdoorChartRequest(QNetworkReply *)));
 
     currentConditionsTimer = new QTimer();
-    if (timeBetweenRequests > 0) {
-        currentConditionsTimer->start(timeBetweenRequests);
-    }
     connect(currentConditionsTimer, SIGNAL(timeout()), this, SLOT(postCurrentConditionsRequest()));
+    _timeBetweenRequests = timeBetweenRequests;
 
+    checkIfThereIsARefreshToken();
 }
 
 NetatmoAPIHandler::NetatmoAPIHandler(NetatmoAPIHandler &other) :
@@ -53,25 +55,29 @@ void NetatmoAPIHandler::setAccessToken(QString newAccessToken) {
 }
 
 void NetatmoAPIHandler::postTokensRequest() {
-    extern const QString username;
-    extern const QString password;
-    extern const QString clientId;
-    extern const QString clientSecret;
+    if (refreshToken != "") {
+        postRefreshTokenRequest();
+    }
+    else {
+        extern const QString authenticationCode;
+        extern const QString clientId;
+        extern const QString clientSecret;
 
-    QUrl url("https://api.netatmo.com/oauth2/token"); // deprecated but still fine for personal use
-    QNetworkRequest request(url);
+        QUrl url("https://api.netatmo.com/oauth2/token"); // deprecated but still fine for personal use
+        QNetworkRequest request(url);
 
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
-    QUrlQuery params;
-    params.addQueryItem("grant_type", "password");
-    params.addQueryItem("client_id", clientId);
-    params.addQueryItem("client_secret", clientSecret);
-    params.addQueryItem("username", username);
-    params.addQueryItem("password", password);
-    params.addQueryItem("scope", "read_station");
-    tokensManager->post(request, params.query().toUtf8());
-    apiMonitor->addTimestamp();
+        QUrlQuery params;
+        params.addQueryItem("grant_type", "authorization_code");
+        params.addQueryItem("client_id", clientId);
+        params.addQueryItem("client_secret", clientSecret);
+        params.addQueryItem("code", askForAuthenticationCode());
+        params.addQueryItem("scope", "read_station");
+        params.addQueryItem("redirect_uri", "127.0.0.1");
+        tokensManager->post(request, params.query().toUtf8());
+        apiMonitor->addTimestamp();
+    }
 }
 
 void NetatmoAPIHandler::postRefreshTokenRequest() {
@@ -245,8 +251,14 @@ void NetatmoAPIHandler::retrieveTokens(QNetworkReply *reply) {
         accessToken = js["access_token"].toString();
         refreshToken = js["refresh_token"].toString();
 
+        writeRefreshToken(pathToRefreshTokenFile, refreshToken);
+
         emit accessTokenChanged(accessToken);
         emit refreshTokenChanged(refreshToken);
+
+        if (_timeBetweenRequests > 0 && !currentConditionsTimer->isActive()) {
+            currentConditionsTimer->start(_timeBetweenRequests);
+        }
     }
     else {
         qDebug() << "ERROR with network"
@@ -472,5 +484,44 @@ void NetatmoAPIHandler::retrieve3hOutdoorChartRequest(QNetworkReply *reply) {
             }
         }
         emit ext3hRecordsRetrieved(result);
+    }
+}
+
+QString NetatmoAPIHandler::askForAuthenticationCode() {
+    extern const QString clientId;
+    return QInputDialog::getText(
+                new QWidget(),
+                "Code d'authentification",
+                "Veuillez entrer le code reçu en allant à cette adresse : \n\n\n"
+                "https://api.netatmo.com/oauth2/authorize?"
+                "client_id=" + clientId
+                + "&&redirect_uri=127.0.0.1"
+                "&&scope=read_station"
+                "&&state=rtuvosmgovuodnpf"
+                );
+}
+
+void NetatmoAPIHandler::writeRefreshToken(QString pathToFile, QString refreshToken) {
+    QFile tokenFile(pathToFile);
+    if (tokenFile.open(QIODevice::WriteOnly)) {
+        QTextStream stream(&tokenFile);
+        stream << refreshToken;
+    }
+    else {
+        qDebug() << "ERROR when writing the refresh token" << refreshToken << "in" << pathToFile;
+    }
+}
+
+void NetatmoAPIHandler::checkIfThereIsARefreshToken() {
+    QFile tokenFile(pathToRefreshTokenFile);
+    QString _refreshToken = "";
+    if (tokenFile.open(QIODevice::ReadOnly)) {
+        QTextStream stream(&tokenFile);
+        stream >> _refreshToken;
+        refreshToken = _refreshToken;
+    }
+
+    else {
+        qDebug() << "No refresh token in" << pathToRefreshTokenFile;
     }
 }
