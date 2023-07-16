@@ -111,7 +111,7 @@ private:
     void writeRefreshToken(QString pathToFile, QString refreshToken);
     void checkIfThereIsARefreshToken();
 
-    const QString pathToRefreshTokenFile = "../refresh_token.txt";
+    const QString pathToRefreshTokenFile = "../netatmo-w-analysis/netatmo-w-analysis/refresh_token.txt";
 
     QNetworkAccessManager *tokensManager;
     QNetworkAccessManager *currentConditionsManager;
