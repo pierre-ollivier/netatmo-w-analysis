@@ -108,6 +108,7 @@ signals:
 
 private:
     QString askForAuthenticationCode();
+    void writeRefreshToken(QString pathToFile, QString refreshToken);
 
     QNetworkAccessManager *tokensManager;
     QNetworkAccessManager *currentConditionsManager;

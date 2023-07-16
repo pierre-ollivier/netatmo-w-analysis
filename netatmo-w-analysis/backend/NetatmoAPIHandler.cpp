@@ -1,8 +1,10 @@
 #include "NetatmoAPIHandler.h"
 #include <QByteArray>
+#include <QFile>
 #include <QInputDialog>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QTextStream>
 
 NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequests)
 {
@@ -241,6 +243,9 @@ void NetatmoAPIHandler::retrieveTokens(QNetworkReply *reply) {
 
         accessToken = js["access_token"].toString();
         refreshToken = js["refresh_token"].toString();
+
+        writeRefreshToken("../netatmo-w-analysis/netatmo-w-analysis/refresh_token.txt", refreshToken);
+//        writeRefreshToken("../refresh_token.txt", refreshToken);
 
         emit accessTokenChanged(accessToken);
         emit refreshTokenChanged(refreshToken);
@@ -488,4 +493,15 @@ QString NetatmoAPIHandler::askForAuthenticationCode() {
                 "&&scope=read_station"
                 "&&state=rtuvosmgovuodnpf"
                 );
+}
+
+void NetatmoAPIHandler::writeRefreshToken(QString pathToFile, QString refreshToken) {
+    QFile tokenFile(pathToFile);
+    if (tokenFile.open(QIODevice::WriteOnly)) {
+        QTextStream stream(&tokenFile);
+        stream << refreshToken;
+    }
+    else {
+        qDebug() << "ERROR when writing the refresh token" << refreshToken << "in" << pathToFile;
+    }
 }
