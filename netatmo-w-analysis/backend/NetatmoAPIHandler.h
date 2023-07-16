@@ -107,7 +107,7 @@ signals:
     void ext3hRecordsRetrieved(QMap<QDate, std::tuple<double, double>>);
 
 private:
-    QString asForAuthenticationCode();
+    QString askForAuthenticationCode();
 
     QNetworkAccessManager *tokensManager;
     QNetworkAccessManager *currentConditionsManager;
