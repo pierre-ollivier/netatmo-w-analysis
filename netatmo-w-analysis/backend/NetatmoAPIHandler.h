@@ -107,6 +107,12 @@ signals:
     void ext3hRecordsRetrieved(QMap<QDate, std::tuple<double, double>>);
 
 private:
+    QString askForAuthenticationCode();
+    void writeRefreshToken(QString pathToFile, QString refreshToken);
+    void checkIfThereIsARefreshToken();
+
+    const QString pathToRefreshTokenFile = "../refresh_token.txt";
+
     QNetworkAccessManager *tokensManager;
     QNetworkAccessManager *currentConditionsManager;
     QNetworkAccessManager *dailyFullOutdoorRequestManager;
@@ -145,6 +151,8 @@ private:
     double intCurrentPressure = 0.0;
     int intCurrentCO2 = 0;
     int intCurrentNoise = 0;
+
+    int _timeBetweenRequests = -1;
 };
 
 #endif // NETATMOAPIHANDLER_H
