@@ -109,6 +109,9 @@ signals:
 private:
     QString askForAuthenticationCode();
     void writeRefreshToken(QString pathToFile, QString refreshToken);
+    void checkIfThereIsARefreshToken();
+
+    const QString pathToRefreshTokenFile = "../refresh_token.txt";
 
     QNetworkAccessManager *tokensManager;
     QNetworkAccessManager *currentConditionsManager;
