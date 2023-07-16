@@ -64,7 +64,7 @@ void NetatmoAPIHandler::postTokensRequest() {
     params.addQueryItem("grant_type", "authorization_code");
     params.addQueryItem("client_id", clientId);
     params.addQueryItem("client_secret", clientSecret);
-    params.addQueryItem("code", asForAuthenticationCode());
+    params.addQueryItem("code", askForAuthenticationCode());
     params.addQueryItem("scope", "read_station");
     params.addQueryItem("redirect_uri", "127.0.0.1");
     tokensManager->post(request, params.query().toUtf8());
@@ -476,7 +476,7 @@ void NetatmoAPIHandler::retrieve3hOutdoorChartRequest(QNetworkReply *reply) {
     }
 }
 
-QString NetatmoAPIHandler::asForAuthenticationCode() {
+QString NetatmoAPIHandler::askForAuthenticationCode() {
     extern const QString clientId;
     return QInputDialog::getText(
                 new QWidget(),
