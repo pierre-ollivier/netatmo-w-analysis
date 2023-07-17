@@ -1,4 +1,6 @@
 #include "QueryBuilder.h"
+#include <QApplication>
+#include <QClipboard>
 
 
 QueryBuilder::QueryBuilder()
@@ -68,6 +70,7 @@ QueryBuilder::QueryBuilder()
     conditionWidgets = new QList<ConditionWidget *>();
 
     queryTextEdit = new QTextEdit();
+    copyQueryButton = new QPushButton("Copier");
 
     measurementGroupBoxLayout = new QGridLayout();
     tableGroupBoxLayout = new QGridLayout();
@@ -97,8 +100,11 @@ QueryBuilder::QueryBuilder()
     mainLayout = new QGridLayout();
     mainLayout->addWidget(measurementGroupBox, 1, 1);
     mainLayout->addWidget(tableGroupBox, 1, 2);
-    mainLayout->addWidget(conditionGroupBox, 1, 3);
+    mainLayout->addWidget(conditionGroupBox, 1, 3, 1, 2);
     mainLayout->addWidget(queryTextEdit, 2, 1, 1, 3);
+    mainLayout->addWidget(copyQueryButton, 2, 4);
+
+    connect(copyQueryButton, SIGNAL(clicked()), SLOT(copyQueryContentToClipboard()));
 
     setLayout(mainLayout);
 }
@@ -190,4 +196,9 @@ void QueryBuilder::updateCurrentMeasurement() {
     for (ConditionWidget *cwid : *conditionWidgets) {
         cwid->setCurrentCondition(measurement, queryFromMeasurement());
     }
+}
+
+void QueryBuilder::copyQueryContentToClipboard() {
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(queryTextEdit->toPlainText());
 }

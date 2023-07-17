@@ -26,6 +26,7 @@ public slots:
     void removeCondition();
     void updateQueryTextEdit();
     void updateCurrentMeasurement();
+    void copyQueryContentToClipboard();
 
 private:
     QGroupBox *measurementGroupBox;
@@ -52,6 +53,7 @@ private:
     QPushButton *addConditionButton;
 
     QTextEdit *queryTextEdit;
+    QPushButton *copyQueryButton;
 
     QGridLayout *measurementGroupBoxLayout;
     QGridLayout *tableGroupBoxLayout;
