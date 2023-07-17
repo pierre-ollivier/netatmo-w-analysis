@@ -1,4 +1,6 @@
 #include "DataExplorator.h"
+#include <QApplication>
+#include <QClipboard>
 #include <QDebug>
 #include <QLabel>
 #include "../frontend/CustomItemDelegate.h"
@@ -61,6 +63,7 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     customQueryGroupBox = new QGroupBox();
     customQueryLineEdit = new QLineEdit();
     customQueryLayout = new QGridLayout();
+    pasteQueryButton = new QPushButton("Coller");
     sendQueryButton = new QPushButton("OK");
     buildQueryButton = new QPushButton("Aide");
 
@@ -96,7 +99,8 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 
     customQueryLayout = new QGridLayout();
     customQueryLayout->addWidget(new QLabel("Ou bien entrez une requête :"), 0, 0, 1, 20);
-    customQueryLayout->addWidget(customQueryLineEdit, 1, 0, 1, 18);
+    customQueryLayout->addWidget(customQueryLineEdit, 1, 0, 1, 17);
+    customQueryLayout->addWidget(pasteQueryButton, 1, 17);
     customQueryLayout->addWidget(sendQueryButton, 1, 18);
     customQueryLayout->addWidget(buildQueryButton, 1, 19);
 
@@ -116,6 +120,7 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     connect(sendQueryButton, SIGNAL(clicked()), SLOT(sendRequest()));
     connect(customQueryLineEdit, SIGNAL(returnPressed()), SLOT(sendRequest()));
     connect(buildQueryButton, SIGNAL(clicked()), SLOT(showQueryBuilder()));
+    connect(pasteQueryButton, SIGNAL(clicked()), SLOT(pasteQueryFromClipboard()));
 
     connect(queryParamsSelected, SIGNAL(clicked()), SLOT(selectQueryParams()));
     connect(customQuerySelected, SIGNAL(clicked()), SLOT(selectCustomQuery()));
@@ -514,3 +519,7 @@ void DataExplorator::selectCustomQuery() {
     fillBoards(customQueryLineEdit->text());
 }
 
+void DataExplorator::pasteQueryFromClipboard() {
+    QClipboard *clipboard = QApplication::clipboard();
+    customQueryLineEdit->setText(clipboard->text());
+}

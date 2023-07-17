@@ -65,6 +65,8 @@ public slots:
 
     int maxNumberOfRecords(bool indoor);
 
+    void pasteQueryFromClipboard();
+
 private:
     QGridLayout *layout;
 
@@ -96,6 +98,7 @@ private:
 
     QGroupBox *customQueryGroupBox;
     QLineEdit *customQueryLineEdit;
+    QPushButton *pasteQueryButton;
     QPushButton *sendQueryButton;
     QPushButton *buildQueryButton;
 
