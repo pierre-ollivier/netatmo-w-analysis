@@ -2,6 +2,7 @@
 #define QUERYBUILDER_H
 
 #include <QButtonGroup>
+#include <QCheckBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QPushButton>
@@ -51,6 +52,7 @@ private:
     QPushButton *outdoorDailyButton;
 
     QPushButton *addConditionButton;
+    QCheckBox *removeNullCheckBox;
 
     QTextEdit *queryTextEdit;
     QPushButton *copyQueryButton;
