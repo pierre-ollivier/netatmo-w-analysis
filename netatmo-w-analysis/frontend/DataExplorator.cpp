@@ -148,22 +148,23 @@ void DataExplorator::fillBoards() {
     lastOperationWasFromCustomQuery = false;
     queryParamsSelected->setChecked(true);
     QString databaseName = databaseFromCheckBox();
-    QString monthCondition = "";
     QString operation = operationFromRadioButtons();
     QString measurementCapitalized = measurementCapitalizedFromRadioButtons();
     QString condition = conditionFromWidgets();
 
     std::vector<QVariant> maxMeasurements = getValues(
-                databaseName, operation, measurementCapitalized, condition, "DESC");
+                buildQuery(databaseName, operation, measurementCapitalized, condition, "DESC", numberOfResults));
     std::vector<QVariant> maxMeasurementsDates = getValuesDates(
-                databaseName, operation, measurementCapitalized, condition, "DESC");
+                buildDateQuery(databaseName, operation, measurementCapitalized, condition, "DESC", numberOfResults));
     std::vector<QVariant> minMeasurements = getValues(
-                databaseName, operation, measurementCapitalized, condition, "ASC");
+                buildQuery(databaseName, operation, measurementCapitalized, condition, "ASC", numberOfResults));
     std::vector<QVariant> minMeasurementsDates = getValuesDates(
-                databaseName, operation, measurementCapitalized, condition, "ASC");
+                buildDateQuery(databaseName, operation, measurementCapitalized, condition, "ASC", numberOfResults));
 
-    QString unitWithLeadingSpace = unitWithLeadingSpaceFromRadioButtons();
-    int decimalCount = humidityRadioButton->isChecked() ? 0 : 1;
+    customQueryLineEdit->setText(buildQuery(databaseName, operation, measurementCapitalized, condition));
+
+    const QString unitWithLeadingSpace = unitWithLeadingSpaceFromQuery();
+    const int decimalCount = decimalsFromQuery();
     displayHeadersFromRadioButtons();
 
     for (int i = 0; i < int(minMeasurements.size()); i++) {
@@ -218,7 +219,7 @@ void DataExplorator::fillBoards(QString query) {
     QString queryASC = analyzer->toASC(query);
     QString queryDESC = analyzer->toDESC(query);
 
-    QString unitWithLeadingSpace = unitWithLeadingSpaceFromRadioButtons();
+    const QString unitWithLeadingSpace = unitWithLeadingSpaceFromQuery();
 
     lastOperationWasFromCustomQuery = true;
     customQuerySelected->setChecked(true);
@@ -268,55 +269,46 @@ void DataExplorator::fillBoards(QString query) {
     mainViewMin->resizeColumnsToContents();
 }
 
-std::vector<QVariant> DataExplorator::getValues(
-        QString databaseName,
-        QString operation,
-        QString measurementCapitalized,
-        QString monthCondition,
-        QString order,
-        int limit) {
-
-    if (limit == 0) limit = numberOfResults;
+QString DataExplorator::buildQuery(QString databaseName,
+                                   QString operation,
+                                   QString measurementCapitalized,
+                                   QString monthCondition,
+                                   QString order,
+                                   int limit) {
     if (operation != "diff") {
-        return _dbHandler->getResultsFromDatabase(
-                    "SELECT " + operation + measurementCapitalized + " "
-                    "FROM " + databaseName + " " + monthCondition + " "
-                    "ORDER BY round(" + operation + measurementCapitalized + ", 6) "
-                    + order + ", year, month, day LIMIT " + QString::number(limit));
+        return "SELECT " + operation + measurementCapitalized + " "
+               + "FROM " + databaseName + " " + monthCondition + " "
+               + "ORDER BY round(" + operation + measurementCapitalized + ", 6) "
+               + (order != "" ? order + ", year, month, day" + (limit > 0 ? " LIMIT " + QString::number(limit) : "") : "");
     }
 
-    return _dbHandler->getResultsFromDatabase(
-                "SELECT (max" + measurementCapitalized + " - min" + measurementCapitalized + ") "
-                "FROM " + databaseName + " " + monthCondition + " "
-                "ORDER BY round(max" + measurementCapitalized + " - min" + measurementCapitalized + ", 6) "
-                + order + ", year, month, day LIMIT " + QString::number(limit));
+    return "SELECT (max" + measurementCapitalized + " - min" + measurementCapitalized + ") "
+           + "FROM " + databaseName + " " + monthCondition + " "
+           + "ORDER BY round(max" + measurementCapitalized + " - min" + measurementCapitalized + ", 6) "
+           + (order != "" ? order + ", year, month, day" + (limit > 0 ? " LIMIT " + QString::number(limit) : "") : "");
+}
 
+QString DataExplorator::buildDateQuery(QString databaseName,
+                                       QString operation,
+                                       QString measurementCapitalized,
+                                       QString monthCondition,
+                                       QString order,
+                                       int limit) {
+    if (operation != "diff") {
+        return "SELECT date FROM "
+               + databaseName + " " + monthCondition + " "
+               + "ORDER BY round(" + operation + measurementCapitalized + ", 6) "
+               + (order != "" ? order + ", year, month, day" + (limit > 0 ? " LIMIT " + QString::number(limit) : "") : "");
+    }
+
+    return "SELECT date FROM "
+           + databaseName + " " + monthCondition + " "
+           + "ORDER BY round(max" + measurementCapitalized + " - min" + measurementCapitalized + ", 6) "
+           + (order != "" ? order + ", year, month, day" + (limit > 0 ? " LIMIT " + QString::number(limit) : "") : "");
 }
 
 std::vector<QVariant> DataExplorator::getValues(QString query, int limit) {
     return _dbHandler->getResultsFromDatabase(query, limit);
-}
-
-std::vector<QVariant> DataExplorator::getValuesDates(
-        QString databaseName,
-        QString operation,
-        QString measurementCapitalized,
-        QString monthCondition,
-        QString order,
-        int limit) {
-
-    if (limit == 0) limit = numberOfResults;
-    if (operation != "diff") {
-        return _dbHandler->getResultsFromDatabase(
-                    "SELECT date FROM " + databaseName + " " + monthCondition + " "
-                    "ORDER BY round(" + operation + measurementCapitalized + ", 6) "
-                     + order + ", year ASC, month ASC, day ASC LIMIT " + QString::number(limit));
-    }
-
-    return _dbHandler->getResultsFromDatabase(
-                "SELECT date FROM " + databaseName + " " + monthCondition + " "
-                "ORDER BY round(max" + measurementCapitalized + " - min" + measurementCapitalized + ", 6) "
-                + order + ", year ASC, month ASC, day ASC LIMIT " + QString::number(limit));
 }
 
 std::vector<QVariant> DataExplorator::getValuesDates(QString query, int limit) {
@@ -340,15 +332,7 @@ QString DataExplorator::operationFromRadioButtons() {
     return "";
 }
 
-QString DataExplorator::unitWithLeadingSpaceFromRadioButtons() {
-    if (queryParamsSelected->isChecked()) {
-        if (temperatureRadioButton->isChecked()) return " °C";
-        if (humidityRadioButton->isChecked()) return " %";
-        if (dewPointRadioButton->isChecked()) return " °C";
-        if (humidexRadioButton->isChecked()) return "";
-        if (pressureRadioButton->isChecked()) return " hPa";
-        return "";
-    }
+QString DataExplorator::unitWithLeadingSpaceFromQuery() {
     return " " + unitFromMeasurement.value(analyzer->measurementTypeFromQuery(customQueryLineEdit->text()));
 }
 
@@ -460,7 +444,7 @@ void DataExplorator::displayHeadersFromRadioButtons() {
 }
 
 void DataExplorator::displayMoreResults() {
-    const int maximumNumberOfRecords = maxNumberOfRecords(interiorCheckBox->isChecked());
+    const int maximumNumberOfRecords = maxNumberOfRecords();
     int increment = numberOfResults < 20 ? 5 : numberOfResults < 50 ? 10 : numberOfResults < 150 ? 25 : 50;
     if (numberOfResults < maximumNumberOfRecords) {
         numberOfResults += increment;
@@ -472,7 +456,7 @@ void DataExplorator::displayMoreResults() {
 }
 
 void DataExplorator::displayLessResults() {
-    const int maximumNumberOfRecords = maxNumberOfRecords(interiorCheckBox->isChecked());
+    const int maximumNumberOfRecords = maxNumberOfRecords();
     int decrement = numberOfResults > 150 ? 50 : numberOfResults > 50 ? 25 : numberOfResults > 20 ? 10 : 5;
     if (numberOfResults > decrement) {
         numberOfResults -= decrement;
@@ -485,42 +469,14 @@ void DataExplorator::displayLessResults() {
 
 void DataExplorator::changeDisplayMonth() {
     // Function executed only when `monthComboBox` changes value
-    const int maximumNumberOfRecords = maxNumberOfRecords(interiorCheckBox->isChecked());
+    const int maximumNumberOfRecords = maxNumberOfRecords();
     mainModelMax->setRowCount(std::min(maximumNumberOfRecords, mainModelMax->rowCount()));
     mainModelMin->setRowCount(std::min(maximumNumberOfRecords, mainModelMin->rowCount()));
     fillBoards();
 }
 
-int DataExplorator::maxNumberOfRecords(bool indoor) {
-    if (queryParamsSelected->isChecked()) {
-        QString operation = operationFromRadioButtons();
-        QString measurementCapitalized = measurementCapitalizedFromRadioButtons();
-        QString condition = conditionFromWidgets();
-        indoor = indoor || measurementCapitalized == "Pressure";
-        QString tableName = indoor ? "IndoorDailyRecords" : "OutdoorDailyRecords";
-
-        if (operation == "diff") {
-            QString extendedCondition = "min" + measurementCapitalized + " IS NOT NULL "
-                                                                         "AND max" + measurementCapitalized + " IS NOT NULL ";
-            if (condition == "") {
-                condition = "WHERE " + extendedCondition;
-            }
-            else {
-                condition += " AND " + extendedCondition;
-            }
-            return _dbHandler->getResultFromDatabase(
-                        "SELECT COUNT(*) FROM ("
-                        "SELECT min" + measurementCapitalized + ", max" + measurementCapitalized + " "
-                                                                                                   "FROM " + tableName + " " + condition + ")").toInt();
-        }
-        else {
-            return _dbHandler->getResultFromDatabase("SELECT COUNT(" + operation + measurementCapitalized + ") "
-                                                                                                            "FROM " + tableName + " " + condition).toInt();
-        }
-    }
-    else {
-        return _dbHandler->getNumberOfResultsFromDatabase(customQueryLineEdit->text());
-    }
+int DataExplorator::maxNumberOfRecords() {
+    return _dbHandler->getNumberOfResultsFromDatabase(customQueryLineEdit->text());
 }
 
 void DataExplorator::sendRequest() {
