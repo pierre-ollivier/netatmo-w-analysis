@@ -67,6 +67,7 @@ QueryBuilder::QueryBuilder()
     addConditionButton = new QPushButton("Ajouter...");
     connect(addConditionButton, SIGNAL(clicked()), SLOT(addCondition()));
     removeNullCheckBox = new QCheckBox("Filtrer les valeurs NULL");
+    removeNullCheckBox->setChecked(true);
     connect(removeNullCheckBox, SIGNAL(clicked()), SLOT(updateQueryTextEdit()));
 
     conditionWidgets = new QList<ConditionWidget *>();
@@ -110,6 +111,8 @@ QueryBuilder::QueryBuilder()
     connect(copyQueryButton, SIGNAL(clicked()), SLOT(copyQueryContentToClipboard()));
 
     setLayout(mainLayout);
+
+    updateQueryTextEdit();
 }
 
 void QueryBuilder::addCondition() {
