@@ -69,6 +69,9 @@ void TestQueryAnalyzer::testMeasurementTypeFromQuery() {
                  "SELECT (maxTemperature - minTemperature) FROM OutdoorDailyRecords"),
              "temperature");
     QCOMPARE(analyzer->measurementTypeFromQuery(
+                 "SELECT max(maxTemperature - minTemperature) FROM OutdoorDailyRecords WHERE month = 7"),
+             "temperature");
+    QCOMPARE(analyzer->measurementTypeFromQuery(
                  "SELECT avgHumidity FROM IndoorDailyRecords WHERE minHumidity = 25"),
              "humidity");
     QCOMPARE(analyzer->measurementTypeFromQuery(

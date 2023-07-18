@@ -29,7 +29,7 @@ void TestDatabaseHandler::testGetDailyRecordsFromDatabase() {
     QCOMPARE(int(records.size()), 7);
     QCOMPARE(records[0].maxTemperature(), 21.8);
     QCOMPARE(records[1].minHumidity(), 58);
-    QCOMPARE(records[2].maxCO2(),1219);
+    QCOMPARE(records[2].maxCO2(), 1219);
     QCOMPARE(records[3].maxNoise(), 51);
     std::vector<ExtDailyRecord> extRecords = dbHandler.getExtDailyRecordsFromDatabase(
                 "SELECT * from OutdoorDailyRecords WHERE year = 2019 AND month = 10 ORDER BY day DESC", 1);
