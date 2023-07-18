@@ -223,6 +223,8 @@ void DataExplorator::fillBoards(QString query) {
     lastOperationWasFromCustomQuery = true;
     customQuerySelected->setChecked(true);
 
+    const int decimalCount = decimalsFromQuery();
+
     std::vector<QVariant> dataASC = getValues(queryASC, numberOfResults);
     std::vector<QVariant> datesASC = getValuesDates(
                 analyzer->dateQueryFromMeasurementQuery(queryASC),
@@ -240,7 +242,7 @@ void DataExplorator::fillBoards(QString query) {
         mainModelMax->setVerticalHeaderItem(i, new QStandardItem(QString::number(i + 1)));
         mainModelMax->item(i, 0)->setText(
                     deviceLocale->toString(
-                        dataDESC[i].toDouble(), 'f', 3) + unitWithLeadingSpace);
+                        dataDESC[i].toDouble(), 'f', decimalCount) + unitWithLeadingSpace);
         mainModelMax->item(i, 1)->setText(datesDESC[i].toString());
         if (i >= 1) {
             if (dataDESC[i] == dataDESC[i - 1]) {
@@ -253,7 +255,7 @@ void DataExplorator::fillBoards(QString query) {
         mainModelMin->setVerticalHeaderItem(i, new QStandardItem(QString::number(i + 1)));
         mainModelMin->item(i, 0)->setText(
                     deviceLocale->toString(
-                        dataASC[i].toDouble(), 'f', 3) + unitWithLeadingSpace);
+                        dataASC[i].toDouble(), 'f', decimalCount) + unitWithLeadingSpace);
         mainModelMin->item(i, 1)->setText(datesASC[i].toString());
         if (i >= 1) {
             if (dataASC[i] == dataASC[i - 1]) {
@@ -348,6 +350,10 @@ QString DataExplorator::unitWithLeadingSpaceFromRadioButtons() {
         return "";
     }
     return " " + unitFromMeasurement.value(analyzer->measurementTypeFromQuery(customQueryLineEdit->text()));
+}
+
+int DataExplorator::decimalsFromQuery() {
+    return decimalsFromMeasurement.value(analyzer->measurementTypeFromQuery(customQueryLineEdit->text()));
 }
 
 QString DataExplorator::databaseFromCheckBox() {

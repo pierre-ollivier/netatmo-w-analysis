@@ -47,6 +47,7 @@ public slots:
     QString measurementCapitalizedFromRadioButtons();
     QString operationFromRadioButtons();
     QString unitWithLeadingSpaceFromRadioButtons();
+    int decimalsFromQuery();
     QString databaseFromCheckBox();
     QString conditionFromWidgets();
 
@@ -126,6 +127,18 @@ private:
                 std::pair<QString, QString>("co2", "ppm"),
                 std::pair<QString, QString>("noise", "dB"),
                 std::pair<QString, QString>("", ""),
+            });
+
+    const QMap<QString, int> decimalsFromMeasurement = QMap<QString, int>(
+    {
+                std::pair<QString, int>("temperature", 1),
+                std::pair<QString, int>("humidity", 0),
+                std::pair<QString, int>("dewpoint", 1),
+                std::pair<QString, int>("humidex", 1),
+                std::pair<QString, int>("pressure", 1),
+                std::pair<QString, int>("co2", 0),
+                std::pair<QString, int>("noise", 0),
+                std::pair<QString, int>("", 3),
             });
 };
 
