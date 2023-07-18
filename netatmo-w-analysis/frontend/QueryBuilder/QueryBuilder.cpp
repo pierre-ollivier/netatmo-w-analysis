@@ -66,6 +66,8 @@ QueryBuilder::QueryBuilder()
 
     addConditionButton = new QPushButton("Ajouter...");
     connect(addConditionButton, SIGNAL(clicked()), SLOT(addCondition()));
+    removeNullCheckBox = new QCheckBox("Filtrer les valeurs NULL");
+    connect(removeNullCheckBox, SIGNAL(clicked()), SLOT(updateQueryTextEdit()));
 
     conditionWidgets = new QList<ConditionWidget *>();
 
@@ -92,6 +94,7 @@ QueryBuilder::QueryBuilder()
     tableGroupBoxLayout->addWidget(outdoorDailyButton);
 
     conditionGroupBoxLayout->addWidget(addConditionButton, 1000, 1);
+    conditionGroupBoxLayout->addWidget(removeNullCheckBox, 1001, 1);
 
     measurementGroupBox->setLayout(measurementGroupBoxLayout);
     tableGroupBox->setLayout(tableGroupBoxLayout);
@@ -177,6 +180,15 @@ QString QueryBuilder::queryFromConditions() {
         query += conditionWidget->condition() + " AND ";
     }
     if (query != "") query = query.left(query.length() - 5);  // remove the last " AND "
+
+    if (removeNullCheckBox->isChecked()) {
+        if (query == "") {
+            query = queryFromMeasurement() + " IS NOT NULL";
+        }
+        else {
+            query += " AND " + queryFromMeasurement() + " IS NOT NULL";
+        }
+    }
     return query;
 }
 
