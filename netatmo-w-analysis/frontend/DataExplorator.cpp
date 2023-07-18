@@ -347,7 +347,7 @@ QString DataExplorator::unitWithLeadingSpaceFromRadioButtons() {
         if (pressureRadioButton->isChecked()) return " hPa";
         return "";
     }
-    return "";  // TODO
+    return " " + unitFromMeasurement.value(analyzer->measurementTypeFromQuery(customQueryLineEdit->text()));
 }
 
 QString DataExplorator::databaseFromCheckBox() {

@@ -115,6 +115,18 @@ private:
 
     int numberOfResults = 5;
     bool lastOperationWasFromCustomQuery = false;
+
+    const QMap<QString, QString> unitFromMeasurement = QMap<QString, QString>(
+    {
+                std::pair<QString, QString>("temperature", "°C"),
+                std::pair<QString, QString>("humidity", "%"),
+                std::pair<QString, QString>("dewpoint", "°C"),
+                std::pair<QString, QString>("humidex", ""),
+                std::pair<QString, QString>("pressure", "hPa"),
+                std::pair<QString, QString>("co2", "ppm"),
+                std::pair<QString, QString>("noise", "dB"),
+                std::pair<QString, QString>("", ""),
+            });
 };
 
 #endif // DATAEXPLORATOR_H
