@@ -11,6 +11,7 @@ public:
     QString dateQueryFromMeasurementQuery(QString measurementQuery);
     QString toASC(QString query);
     QString toDESC(QString query);
+    QString measurementTypeFromQuery(QString query);
 };
 
 #endif // QUERYANALYZER_H

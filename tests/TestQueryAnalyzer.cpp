@@ -57,3 +57,33 @@ void TestQueryAnalyzer::testToDESC() {
              "SELECT ((maxTemperature - minTemperature)/2) FROM IndoorDailyRecords "
              "ORDER BY ((maxTemperature - minTemperature)/2) DESC");
 }
+
+void TestQueryAnalyzer::testMeasurementTypeFromQuery() {
+    QCOMPARE(analyzer->measurementTypeFromQuery(
+                 "SELECT maxTemperature FROM IndoorDailyRecords WHERE minHumidity = 25"),
+             "temperature");
+    QCOMPARE(analyzer->measurementTypeFromQuery(
+                 "SELECT avgTemperature FROM IndoorDailyRecords WHERE minHumidity = 25"),
+             "temperature");
+    QCOMPARE(analyzer->measurementTypeFromQuery(
+                 "SELECT (maxTemperature - minTemperature) FROM OutdoorDailyRecords"),
+             "temperature");
+    QCOMPARE(analyzer->measurementTypeFromQuery(
+                 "SELECT avgHumidity FROM IndoorDailyRecords WHERE minHumidity = 25"),
+             "humidity");
+    QCOMPARE(analyzer->measurementTypeFromQuery(
+                 "SELECT maxDewPoint FROM IndoorDailyRecords WHERE minHumidity = 25"),
+             "dewpoint");
+    QCOMPARE(analyzer->measurementTypeFromQuery(
+                 "SELECT avgHumidex FROM IndoorDailyRecords WHERE minHumidity = 25"),
+             "humidex");
+    QCOMPARE(analyzer->measurementTypeFromQuery(
+                 "SELECT minPressure FROM IndoorDailyRecords WHERE minHumidity = 25"),
+             "pressure");
+    QCOMPARE(analyzer->measurementTypeFromQuery(
+                 "SELECT avgCO2 FROM IndoorDailyRecords WHERE minHumidity = 25"),
+             "co2");
+    QCOMPARE(analyzer->measurementTypeFromQuery(
+                 "SELECT maxNoise FROM IndoorDailyRecords WHERE minHumidity = 25"),
+             "noise");
+}
