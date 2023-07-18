@@ -26,27 +26,12 @@ public slots:
     void fillBoards();
     void fillBoards(QString query);
 
-    std::vector<QVariant> getValues(
-            QString databaseName,
-            QString operation,
-            QString measurementCapitalized,
-            QString monthCondition,
-            QString order = "ASC",
-            int limit = 0);
-    std::vector<QVariant> getValuesDates(
-            QString databaseName,
-            QString operation,
-            QString measurementCapitalized,
-            QString monthCondition,
-            QString order = "DESC",
-            int limit = 0);
-
     std::vector<QVariant> getValues(QString query, int limit = 0);
     std::vector<QVariant> getValuesDates(QString query, int limit = 0);
 
     QString measurementCapitalizedFromRadioButtons();
     QString operationFromRadioButtons();
-    QString unitWithLeadingSpaceFromRadioButtons();
+    QString unitWithLeadingSpaceFromQuery();
     int decimalsFromQuery();
     QString databaseFromCheckBox();
     QString conditionFromWidgets();
@@ -64,9 +49,22 @@ public slots:
     void sendRequest();
     void showQueryBuilder();
 
-    int maxNumberOfRecords(bool indoor);
+    int maxNumberOfRecords();
 
     void pasteQueryFromClipboard();
+
+    QString buildQuery(QString databaseName,
+                       QString operation,
+                       QString measurementCapitalized,
+                       QString monthCondition,
+                       QString order = "",
+                       int limit = 0);
+    QString buildDateQuery(QString databaseName,
+                           QString operation,
+                           QString measurementCapitalized,
+                           QString monthCondition,
+                           QString order = "",
+                           int limit = 0);
 
 private:
     QGridLayout *layout;
