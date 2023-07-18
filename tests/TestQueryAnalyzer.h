@@ -15,6 +15,7 @@ private slots:
     void testDateQueryFromMeasurementQuery();
     void testToASC();
     void testToDESC();
+    void testMeasurementTypeFromQuery();
 
 private:
     QueryAnalyzer *analyzer;
