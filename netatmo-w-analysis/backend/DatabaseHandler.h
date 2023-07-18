@@ -35,6 +35,7 @@ public:
 
     QVariant getResultFromDatabase(QString query);
     std::vector<QVariant> getResultsFromDatabase(QString query, int limit = 0);
+    int getNumberOfResultsFromDatabase(QString query);
 
     QDateTime getLatestDateTimeFromDatabase(QString tableName, QString measurement = "");
 
