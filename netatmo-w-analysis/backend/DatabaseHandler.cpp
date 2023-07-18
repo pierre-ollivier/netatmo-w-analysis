@@ -704,6 +704,27 @@ std::vector<QVariant> DatabaseHandler::getResultsFromDatabase(QString query, int
     return result;
 }
 
+int DatabaseHandler::getNumberOfResultsFromDatabase(QString query) {
+    db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    QSqlQuery _query(db);
+    int result = 0;
+
+    if (!db.open()) {
+        qDebug() << "Database open error";
+    }
+    if (!db.isOpen() ) {
+        qDebug() << "Database is not open";
+    }
+    if (_query.exec(query)) {
+        while (_query.next()) result++;
+    }
+    else {
+        qDebug() << "Invalid query:" << query;
+    }
+    db.close();
+    return result;
+}
+
 void DatabaseHandler::updateOutdoorDailyRecords(QDate beginDate, QDate endDate, bool verbose) {
     DailyStatisticsCalculator dailyCalculator = DailyStatisticsCalculator(_pathToDatabase);
     QProgressDialog progress("Ajout des nouvelles données...", "Annuler", beginDate.toJulianDay(), endDate.toJulianDay());

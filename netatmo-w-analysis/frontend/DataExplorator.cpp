@@ -486,29 +486,34 @@ void DataExplorator::changeDisplayMonth() {
 }
 
 int DataExplorator::maxNumberOfRecords(bool indoor) {
-    QString operation = operationFromRadioButtons();
-    QString measurementCapitalized = measurementCapitalizedFromRadioButtons();
-    QString condition = conditionFromWidgets();
-    indoor = indoor || measurementCapitalized == "Pressure";
-    QString tableName = indoor ? "IndoorDailyRecords" : "OutdoorDailyRecords";
+    if (queryParamsSelected->isChecked()) {
+        QString operation = operationFromRadioButtons();
+        QString measurementCapitalized = measurementCapitalizedFromRadioButtons();
+        QString condition = conditionFromWidgets();
+        indoor = indoor || measurementCapitalized == "Pressure";
+        QString tableName = indoor ? "IndoorDailyRecords" : "OutdoorDailyRecords";
 
-    if (operation == "diff") {
-        QString extendedCondition = "min" + measurementCapitalized + " IS NOT NULL "
-                                    "AND max" + measurementCapitalized + " IS NOT NULL ";
-        if (condition == "") {
-            condition = "WHERE " + extendedCondition;
+        if (operation == "diff") {
+            QString extendedCondition = "min" + measurementCapitalized + " IS NOT NULL "
+                                                                         "AND max" + measurementCapitalized + " IS NOT NULL ";
+            if (condition == "") {
+                condition = "WHERE " + extendedCondition;
+            }
+            else {
+                condition += " AND " + extendedCondition;
+            }
+            return _dbHandler->getResultFromDatabase(
+                        "SELECT COUNT(*) FROM ("
+                        "SELECT min" + measurementCapitalized + ", max" + measurementCapitalized + " "
+                                                                                                   "FROM " + tableName + " " + condition + ")").toInt();
         }
         else {
-            condition += " AND " + extendedCondition;
+            return _dbHandler->getResultFromDatabase("SELECT COUNT(" + operation + measurementCapitalized + ") "
+                                                                                                            "FROM " + tableName + " " + condition).toInt();
         }
-        return _dbHandler->getResultFromDatabase(
-                    "SELECT COUNT(*) FROM ("
-                    "SELECT min" + measurementCapitalized + ", max" + measurementCapitalized + " "
-                    "FROM " + tableName + " " + condition + ")").toInt();
     }
     else {
-        return _dbHandler->getResultFromDatabase("SELECT COUNT(" + operation + measurementCapitalized + ") "
-                                                 "FROM " + tableName + " " + condition).toInt();
+        return _dbHandler->getNumberOfResultsFromDatabase(customQueryLineEdit->text());
     }
 }
 
