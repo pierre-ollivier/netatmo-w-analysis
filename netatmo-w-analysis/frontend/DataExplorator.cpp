@@ -150,8 +150,6 @@ void DataExplorator::fillBoards() {
     QString measurementCapitalized = measurementCapitalizedFromRadioButtons();
     QString condition = conditionFromWidgets();
 
-    displayHeadersFromRadioButtons();  // TODO: refactor this
-
     customQueryLineEdit->setText(buildQuery(databaseName, operation, measurementCapitalized, condition));
     fillBoards(customQueryLineEdit->text());
 }
@@ -174,8 +172,6 @@ void DataExplorator::fillBoards(QString query) {
     std::vector<QVariant> datesDESC = getValuesDates(
                 analyzer->dateQueryFromMeasurementQuery(queryDESC),
                 numberOfResults);
-
-    displayHeadersFromRadioButtons();
 
     for (int i = 0; i < int(dataDESC.size()); i++) {
         mainModelMax->setItem(i, 0, new QStandardItem());
@@ -203,6 +199,10 @@ void DataExplorator::fillBoards(QString query) {
                 mainModelMin->verticalHeaderItem(i)->setText(mainModelMin->verticalHeaderItem(i - 1)->text());
             }
         }
+
+        // set horizontal labels
+        mainModelMax->horizontalHeaderItem(0)->setText(analyzer->horizontalLabelFromQuery(query, true));
+        mainModelMin->horizontalHeaderItem(0)->setText(analyzer->horizontalLabelFromQuery(query, false));
 
         // set colors
 
@@ -345,59 +345,6 @@ QString DataExplorator::conditionFromWidgets() {
     }
     else {
         return condition + " AND " + timePeriodCondition;
-    }
-}
-
-void DataExplorator::displayHeadersFromRadioButtons() {
-    if (queryParamsSelected->isChecked()) {
-        QString measurement = "de la température";
-        QString measurementPlusOperation = "de la température maximale";
-        QString article = "";
-
-        if (temperatureRadioButton->isChecked()) {
-            measurement = "température";
-            article = "de la ";
-        }
-        else if (humidityRadioButton->isChecked()) {
-            measurement = "humidité";
-            article = "de l'";
-        }
-        else if (dewPointRadioButton->isChecked()) {
-            measurement = "point de rosée";
-            article = "du ";
-        }
-        else if (humidexRadioButton->isChecked()) {
-            measurement = "humidex";
-            article = "de l'";
-        }
-        else {
-            measurement = "pression";
-            article = "de la ";
-        }
-
-        if (maximumRadioButton->isChecked()) {
-            measurementPlusOperation = measurement + " max.";
-            mainModelMax->horizontalHeaderItem(0)->setText("Max. " + article + measurementPlusOperation);
-            mainModelMin->horizontalHeaderItem(0)->setText("Min. " + article + measurementPlusOperation);
-        }
-        else if (minimumRadioButton->isChecked()) {
-            measurementPlusOperation = measurement + " min.";
-            mainModelMax->horizontalHeaderItem(0)->setText("Max. " + article + measurementPlusOperation);
-            mainModelMin->horizontalHeaderItem(0)->setText("Min. " + article + measurementPlusOperation);
-        }
-        else if (averageRadioButton->isChecked()) {
-            measurementPlusOperation = measurement + " moy.";
-            mainModelMax->horizontalHeaderItem(0)->setText("Max. " + article + measurementPlusOperation);
-            mainModelMin->horizontalHeaderItem(0)->setText("Min. " + article + measurementPlusOperation);
-        }
-        else {
-            mainModelMax->horizontalHeaderItem(0)->setText("Var. max. " + article + measurement);
-            mainModelMin->horizontalHeaderItem(0)->setText("Var. min. " + article + measurement);
-        }
-    }
-    else {
-        mainModelMax->horizontalHeaderItem(0)->setText("");
-        mainModelMin->horizontalHeaderItem(0)->setText("");  // TODO
     }
 }
 

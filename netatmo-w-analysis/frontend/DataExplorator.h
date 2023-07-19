@@ -36,8 +36,6 @@ public slots:
     QString databaseFromCheckBox();
     QString conditionFromWidgets();
 
-    void displayHeadersFromRadioButtons();
-
     void displayMoreResults();
     void displayLessResults();
 
