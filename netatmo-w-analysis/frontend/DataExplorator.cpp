@@ -145,74 +145,15 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 }
 
 void DataExplorator::fillBoards() {
-    lastOperationWasFromCustomQuery = false;
-    queryParamsSelected->setChecked(true);
     QString databaseName = databaseFromCheckBox();
     QString operation = operationFromRadioButtons();
     QString measurementCapitalized = measurementCapitalizedFromRadioButtons();
     QString condition = conditionFromWidgets();
 
-    std::vector<QVariant> maxMeasurements = getValues(
-                buildQuery(databaseName, operation, measurementCapitalized, condition, "DESC", numberOfResults));
-    std::vector<QVariant> maxMeasurementsDates = getValuesDates(
-                buildDateQuery(databaseName, operation, measurementCapitalized, condition, "DESC", numberOfResults));
-    std::vector<QVariant> minMeasurements = getValues(
-                buildQuery(databaseName, operation, measurementCapitalized, condition, "ASC", numberOfResults));
-    std::vector<QVariant> minMeasurementsDates = getValuesDates(
-                buildDateQuery(databaseName, operation, measurementCapitalized, condition, "ASC", numberOfResults));
+    displayHeadersFromRadioButtons();  // TODO: refactor this
 
     customQueryLineEdit->setText(buildQuery(databaseName, operation, measurementCapitalized, condition));
-
-    const QString unitWithLeadingSpace = unitWithLeadingSpaceFromQuery();
-    const int decimalCount = decimalsFromQuery();
-    displayHeadersFromRadioButtons();
-
-    for (int i = 0; i < int(minMeasurements.size()); i++) {
-
-        mainModelMax->setItem(i, 0, new QStandardItem());
-        mainModelMax->setItem(i, 1, new QStandardItem());
-        mainModelMax->setVerticalHeaderItem(i, new QStandardItem(QString::number(i + 1)));
-        mainModelMax->item(i, 0)->setText(
-                    deviceLocale->toString(
-                        maxMeasurements[i].toDouble(), 'f', decimalCount) + unitWithLeadingSpace);
-        mainModelMax->item(i, 1)->setText(maxMeasurementsDates[i].toString());
-        if (i >= 1) {
-            if (maxMeasurements[i] == maxMeasurements[i - 1]) {
-                mainModelMax->verticalHeaderItem(i)->setText(mainModelMax->verticalHeaderItem(i - 1)->text());
-            }
-        }
-
-        mainModelMin->setItem(i, 0, new QStandardItem());
-        mainModelMin->setItem(i, 1, new QStandardItem());
-        mainModelMin->setVerticalHeaderItem(i, new QStandardItem(QString::number(i + 1)));
-        mainModelMin->item(i, 0)->setText(
-                    deviceLocale->toString(
-                        minMeasurements[i].toDouble(), 'f', decimalCount) + unitWithLeadingSpace);
-        mainModelMin->item(i, 1)->setText(minMeasurementsDates[i].toString());
-        if (i >= 1) {
-            if (minMeasurements[i] == minMeasurements[i - 1]) {
-                mainModelMin->verticalHeaderItem(i)->setText(mainModelMin->verticalHeaderItem(i - 1)->text());
-            }
-        }
-
-        // set colors
-
-        if (humidityRadioButton->isChecked()) {
-            mainModelMax->item(i, 0)->setBackground(QBrush(ColorUtils::humidityColor(maxMeasurements[i])));
-            mainModelMin->item(i, 0)->setBackground(QBrush(ColorUtils::humidityColor(minMeasurements[i])));
-        }
-        else if (pressureRadioButton->isChecked()) {
-            mainModelMax->item(i, 0)->setBackground(QBrush(ColorUtils::pressureColor(maxMeasurements[i])));
-            mainModelMin->item(i, 0)->setBackground(QBrush(ColorUtils::pressureColor(minMeasurements[i])));
-        }
-        else {
-            mainModelMax->item(i, 0)->setBackground(QBrush(ColorUtils::temperatureColor(maxMeasurements[i])));
-            mainModelMin->item(i, 0)->setBackground(QBrush(ColorUtils::temperatureColor(minMeasurements[i])));
-        }
-    }
-
-    mainViewMax->resizeColumnsToContents();
-    mainViewMin->resizeColumnsToContents();
+    fillBoards(customQueryLineEdit->text());
 }
 
 void DataExplorator::fillBoards(QString query) {
