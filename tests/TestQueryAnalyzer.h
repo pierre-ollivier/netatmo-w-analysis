@@ -17,6 +17,7 @@ private slots:
     void testToDESC();
     void testMeasurementTypeFromQuery();
     void testOperationFromQuery();
+    void testHorizontalLabelFromQuery();
 
 private:
     QueryAnalyzer *analyzer;

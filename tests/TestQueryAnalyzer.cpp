@@ -123,3 +123,36 @@ void TestQueryAnalyzer::testOperationFromQuery() {
                  "SELECT maxNoise FROM IndoorDailyRecords WHERE minHumidity = 25"),
              "maximum");
 }
+
+void TestQueryAnalyzer::testHorizontalLabelFromQuery() {
+    QCOMPARE(analyzer->horizontalLabelFromQuery(
+                 "SELECT maxTemperature FROM IndoorDailyRecords WHERE minHumidity = 25", true),
+             "Max. de la température max.");
+    QCOMPARE(analyzer->horizontalLabelFromQuery(
+                 "SELECT avgTemperature FROM IndoorDailyRecords WHERE minHumidity = 25", false),
+             "Min. de la température moy.");
+    QCOMPARE(analyzer->horizontalLabelFromQuery(
+                 "SELECT (maxTemperature - minTemperature) FROM OutdoorDailyRecords", true),
+             "Var. max. de la température");
+    QCOMPARE(analyzer->horizontalLabelFromQuery(
+                 "SELECT max(maxTemperature - minTemperature) FROM OutdoorDailyRecords WHERE month = 7", false),
+             "Min. de la température max.");
+    QCOMPARE(analyzer->horizontalLabelFromQuery(
+                 "SELECT avgHumidity FROM IndoorDailyRecords WHERE minHumidity = 25", true),
+             "Max. de l'humidité moy.");
+    QCOMPARE(analyzer->horizontalLabelFromQuery(
+                 "SELECT maxDewPoint FROM IndoorDailyRecords WHERE minHumidity = 25", false),
+             "Min. du point de rosée max.");
+    QCOMPARE(analyzer->horizontalLabelFromQuery(
+                 "SELECT avgHumidex FROM IndoorDailyRecords WHERE minHumidity = 25", true),
+             "Max. de l'humidex moy.");
+    QCOMPARE(analyzer->horizontalLabelFromQuery(
+                 "SELECT minPressure FROM IndoorDailyRecords WHERE minHumidity = 25", false),
+             "Min. de la pression min.");
+    QCOMPARE(analyzer->horizontalLabelFromQuery(
+                 "SELECT avgCO2 FROM IndoorDailyRecords WHERE minHumidity = 25", true),
+             "Max. du CO2 moy.");
+    QCOMPARE(analyzer->horizontalLabelFromQuery(
+                 "SELECT maxNoise FROM IndoorDailyRecords WHERE minHumidity = 25", false),
+             "Min. du bruit max.");
+}
