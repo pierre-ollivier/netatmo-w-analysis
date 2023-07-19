@@ -162,7 +162,6 @@ void DataExplorator::fillBoards(QString query) {
 
     const QString unitWithLeadingSpace = unitWithLeadingSpaceFromQuery();
 
-    lastOperationWasFromCustomQuery = true;
     customQuerySelected->setChecked(true);
 
     const int decimalCount = decimalsFromQuery();
@@ -409,8 +408,7 @@ void DataExplorator::displayMoreResults() {
         numberOfResults += increment;
         mainModelMax->setRowCount(std::min(maximumNumberOfRecords, numberOfResults));
         mainModelMin->setRowCount(std::min(maximumNumberOfRecords, numberOfResults));
-        if (lastOperationWasFromCustomQuery) fillBoards(customQueryLineEdit->text());
-        else fillBoards();
+        fillBoards();
     }
 }
 
@@ -421,8 +419,7 @@ void DataExplorator::displayLessResults() {
         numberOfResults -= decrement;
         mainModelMax->setRowCount(std::min(maximumNumberOfRecords, numberOfResults));
         mainModelMin->setRowCount(std::min(maximumNumberOfRecords, numberOfResults));
-        if (lastOperationWasFromCustomQuery) fillBoards(customQueryLineEdit->text());
-        else fillBoards();
+        fillBoards();
     }
 }
 
@@ -440,7 +437,6 @@ int DataExplorator::maxNumberOfRecords() {
 
 void DataExplorator::sendRequest() {
     customQuerySelected->setChecked(true);
-    lastOperationWasFromCustomQuery = true;
     fillBoards(customQueryLineEdit->text());
 }
 
@@ -450,12 +446,10 @@ void DataExplorator::showQueryBuilder() {
 }
 
 void DataExplorator::selectQueryParams() {
-    lastOperationWasFromCustomQuery = false;
     fillBoards();
 }
 
 void DataExplorator::selectCustomQuery() {
-    lastOperationWasFromCustomQuery = true;
     fillBoards(customQueryLineEdit->text());
 }
 

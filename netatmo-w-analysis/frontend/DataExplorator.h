@@ -113,7 +113,6 @@ private:
     QueryAnalyzer *analyzer;
 
     int numberOfResults = 5;
-    bool lastOperationWasFromCustomQuery = false;
 
     const QMap<QString, QString> unitFromMeasurement = QMap<QString, QString>(
     {
