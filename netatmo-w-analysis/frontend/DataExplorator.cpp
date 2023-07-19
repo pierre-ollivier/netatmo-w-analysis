@@ -263,6 +263,24 @@ void DataExplorator::fillBoards(QString query) {
                 mainModelMin->verticalHeaderItem(i)->setText(mainModelMin->verticalHeaderItem(i - 1)->text());
             }
         }
+
+        // set colors
+
+        QString measurementType = analyzer->measurementTypeFromQuery(query);
+
+        if (measurementType == "humidity") {
+            mainModelMax->item(i, 0)->setBackground(QBrush(ColorUtils::humidityColor(dataDESC[i])));
+            mainModelMin->item(i, 0)->setBackground(QBrush(ColorUtils::humidityColor(dataASC[i])));
+        }
+        else if (measurementType == "pressure") {
+            mainModelMax->item(i, 0)->setBackground(QBrush(ColorUtils::pressureColor(dataDESC[i])));
+            mainModelMin->item(i, 0)->setBackground(QBrush(ColorUtils::pressureColor(dataASC[i])));
+        }
+        else if (measurementType == "temperature" || measurementType == "dewpoint" || measurementType == "humidex") {
+            mainModelMax->item(i, 0)->setBackground(QBrush(ColorUtils::temperatureColor(dataDESC[i])));
+            mainModelMin->item(i, 0)->setBackground(QBrush(ColorUtils::temperatureColor(dataASC[i])));
+        }
+
     }
 
     mainViewMax->resizeColumnsToContents();
