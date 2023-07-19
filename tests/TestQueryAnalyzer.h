@@ -16,6 +16,7 @@ private slots:
     void testToASC();
     void testToDESC();
     void testMeasurementTypeFromQuery();
+    void testOperationFromQuery();
 
 private:
     QueryAnalyzer *analyzer;

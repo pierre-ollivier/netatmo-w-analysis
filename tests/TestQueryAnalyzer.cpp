@@ -90,3 +90,36 @@ void TestQueryAnalyzer::testMeasurementTypeFromQuery() {
                  "SELECT maxNoise FROM IndoorDailyRecords WHERE minHumidity = 25"),
              "noise");
 }
+
+void TestQueryAnalyzer::testOperationFromQuery() {
+    QCOMPARE(analyzer->operationFromQuery(
+                 "SELECT maxTemperature FROM IndoorDailyRecords WHERE minHumidity = 25"),
+             "maximum");
+    QCOMPARE(analyzer->operationFromQuery(
+                 "SELECT avgTemperature FROM IndoorDailyRecords WHERE minHumidity = 25"),
+             "average");
+    QCOMPARE(analyzer->operationFromQuery(
+                 "SELECT (maxTemperature - minTemperature) FROM OutdoorDailyRecords"),
+             "variation");
+    QCOMPARE(analyzer->operationFromQuery(
+                 "SELECT max(maxTemperature - minTemperature) FROM OutdoorDailyRecords WHERE month = 7"),
+             "maximum");
+    QCOMPARE(analyzer->operationFromQuery(
+                 "SELECT avgHumidity FROM IndoorDailyRecords WHERE minHumidity = 25"),
+             "average");
+    QCOMPARE(analyzer->operationFromQuery(
+                 "SELECT maxDewPoint FROM IndoorDailyRecords WHERE minHumidity = 25"),
+             "maximum");
+    QCOMPARE(analyzer->operationFromQuery(
+                 "SELECT avgHumidex FROM IndoorDailyRecords WHERE minHumidity = 25"),
+             "average");
+    QCOMPARE(analyzer->operationFromQuery(
+                 "SELECT minPressure FROM IndoorDailyRecords WHERE minHumidity = 25"),
+             "minimum");
+    QCOMPARE(analyzer->operationFromQuery(
+                 "SELECT avgCO2 FROM IndoorDailyRecords WHERE minHumidity = 25"),
+             "average");
+    QCOMPARE(analyzer->operationFromQuery(
+                 "SELECT maxNoise FROM IndoorDailyRecords WHERE minHumidity = 25"),
+             "maximum");
+}
