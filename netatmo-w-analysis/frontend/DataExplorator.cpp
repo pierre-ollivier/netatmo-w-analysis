@@ -145,12 +145,14 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 }
 
 void DataExplorator::fillBoards() {
-    QString databaseName = databaseFromCheckBox();
-    QString operation = operationFromRadioButtons();
-    QString measurementCapitalized = measurementCapitalizedFromRadioButtons();
-    QString condition = conditionFromWidgets();
+    if (queryParamsSelected->isChecked()) {
+        QString databaseName = databaseFromCheckBox();
+        QString operation = operationFromRadioButtons();
+        QString measurementCapitalized = measurementCapitalizedFromRadioButtons();
+        QString condition = conditionFromWidgets();
 
-    customQueryLineEdit->setText(buildQuery(databaseName, operation, measurementCapitalized, condition));
+        customQueryLineEdit->setText(buildQuery(databaseName, operation, measurementCapitalized, condition));
+    }
     fillBoards(customQueryLineEdit->text());
 }
 
@@ -159,8 +161,6 @@ void DataExplorator::fillBoards(QString query) {
     QString queryDESC = analyzer->toDESC(query);
 
     const QString unitWithLeadingSpace = unitWithLeadingSpaceFromQuery();
-
-    customQuerySelected->setChecked(true);
 
     const int decimalCount = decimalsFromQuery();
 
