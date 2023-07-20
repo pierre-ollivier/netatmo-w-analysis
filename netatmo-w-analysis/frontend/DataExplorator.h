@@ -91,7 +91,7 @@ private:
     QRadioButton *maximumRadioButton;
     QRadioButton *minimumRadioButton;
     QRadioButton *averageRadioButton;
-    QRadioButton *differenceRadioButton;
+    QRadioButton *variationRadioButton;
 
     QGroupBox *customQueryGroupBox;
     QLineEdit *customQueryLineEdit;
