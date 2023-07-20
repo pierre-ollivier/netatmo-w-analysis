@@ -73,6 +73,7 @@ Thumbs.db
 
 # Credentials
 credentials.cpp
+tests/credentials_test.cpp
 
 # Playground
 playground.cpp

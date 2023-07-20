@@ -1,17 +1,19 @@
 #ifndef DATAEXPLORATOR_H
 #define DATAEXPLORATOR_H
 
-#include <QWidget>
 #include <QCheckBox>
 #include <QComboBox>
-#include <QGroupBox>
-#include <QLocale>
 #include <QGridLayout>
+#include <QGroupBox>
+#include <QLineEdit>
+#include <QLocale>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QStandardItemModel>
 #include <QTableView>
+#include <QWidget>
 #include "../backend/DatabaseHandler.h"
+#include "../backend/QueryAnalyzer.h"
 
 class DataExplorator : public QWidget
 {
@@ -22,36 +24,45 @@ public:
 
 public slots:
     void fillBoards();
+    void fillBoards(QString query);
 
-    std::vector<QVariant> getValues(
-            QString databaseName,
-            QString operation,
-            QString measurementCapitalized,
-            QString monthCondition,
-            QString order = "ASC",
-            int limit = 0);
-    std::vector<QVariant> getValuesDates(
-            QString databaseName,
-            QString operation,
-            QString measurementCapitalized,
-            QString monthCondition,
-            QString order = "DESC",
-            int limit = 0);
+    std::vector<QVariant> getValues(QString query, int limit = 0);
+    std::vector<QVariant> getValuesDates(QString query, int limit = 0);
 
     QString measurementCapitalizedFromRadioButtons();
     QString operationFromRadioButtons();
-    QString unitWithLeadingSpaceFromRadioButtons();
+    QString unitWithLeadingSpaceFromQuery();
+    int decimalsFromQuery();
     QString databaseFromCheckBox();
     QString conditionFromWidgets();
-
-    void displayHeadersFromRadioButtons();
 
     void displayMoreResults();
     void displayLessResults();
 
+    void selectQueryParams();
+    void selectCustomQuery();
+
     void changeDisplayMonth();
 
-    int maxNumberOfRecords(bool indoor);
+    void sendRequest();
+    void showQueryBuilder();
+
+    int maxNumberOfRecords();
+
+    void pasteQueryFromClipboard();
+
+    QString buildQuery(QString databaseName,
+                       QString operation,
+                       QString measurementCapitalized,
+                       QString monthCondition,
+                       QString order = "",
+                       int limit = 0);
+    QString buildDateQuery(QString databaseName,
+                           QString operation,
+                           QString measurementCapitalized,
+                           QString monthCondition,
+                           QString order = "",
+                           int limit = 0);
 
 private:
     QGridLayout *layout;
@@ -67,6 +78,7 @@ private:
 
     QHBoxLayout *optionsLayout;
     QGridLayout *operationsLayout;
+    QGridLayout *customQueryLayout;
 
     QGroupBox *measurementsGroupBox;
     QRadioButton *temperatureRadioButton;
@@ -79,7 +91,16 @@ private:
     QRadioButton *maximumRadioButton;
     QRadioButton *minimumRadioButton;
     QRadioButton *averageRadioButton;
-    QRadioButton *differenceRadioButton;
+    QRadioButton *variationRadioButton;
+
+    QGroupBox *customQueryGroupBox;
+    QLineEdit *customQueryLineEdit;
+    QPushButton *pasteQueryButton;
+    QPushButton *sendQueryButton;
+    QPushButton *buildQueryButton;
+
+    QRadioButton *queryParamsSelected;
+    QRadioButton *customQuerySelected;
 
     QPushButton *moreResultsButton;
     QPushButton *lessResultsButton;
@@ -87,8 +108,33 @@ private:
     QCheckBox *interiorCheckBox;
 
     DatabaseHandler *_dbHandler;
+    QueryAnalyzer *analyzer;
 
     int numberOfResults = 5;
+
+    const QMap<QString, QString> unitFromMeasurement = QMap<QString, QString>(
+    {
+                std::pair<QString, QString>("temperature", "°C"),
+                std::pair<QString, QString>("humidity", "%"),
+                std::pair<QString, QString>("dewpoint", "°C"),
+                std::pair<QString, QString>("humidex", ""),
+                std::pair<QString, QString>("pressure", "hPa"),
+                std::pair<QString, QString>("co2", "ppm"),
+                std::pair<QString, QString>("noise", "dB"),
+                std::pair<QString, QString>("", ""),
+            });
+
+    const QMap<QString, int> decimalsFromMeasurement = QMap<QString, int>(
+    {
+                std::pair<QString, int>("temperature", 1),
+                std::pair<QString, int>("humidity", 0),
+                std::pair<QString, int>("dewpoint", 1),
+                std::pair<QString, int>("humidex", 1),
+                std::pair<QString, int>("pressure", 1),
+                std::pair<QString, int>("co2", 0),
+                std::pair<QString, int>("noise", 0),
+                std::pair<QString, int>("", 3),
+            });
 };
 
 #endif // DATAEXPLORATOR_H

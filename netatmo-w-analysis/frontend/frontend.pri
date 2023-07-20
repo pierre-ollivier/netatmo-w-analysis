@@ -1,6 +1,8 @@
 QT += charts
 QT += core
 
+include ($$PWD/QueryBuilder/QueryBuilder.pri)
+
 HEADERS += \
     $$PWD/ColorUtils.h \
     $$PWD/CustomItemDelegate.h \
