@@ -78,6 +78,11 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
         chart->addSeries(areaSeries);
     }
 
+    for (int stdCount = -2000; stdCount <= 2000; stdCount += 1000) {
+        seriesMap->value(stdCount)->setPen(QPen(QBrush(Qt::black), 1, Qt::DashLine));
+        chart->addSeries(seriesMap->value(stdCount));
+    }
+
     drawSeries = QMap<double, bool>();
 
     for (int stdCount = -2000; stdCount <= 2000; stdCount += 200) {
@@ -251,6 +256,12 @@ void NormalsVisualizer::drawChart(QMap<int, QList<QPointF>> pointsMap, QList<QPo
         QList<QPointF> points = pointsMap.value(stdCount);
         seriesMap->value(stdCount)->clear();
         seriesMap->value(stdCount)->append(points);
+        if (stdCount % 1000 == 0) {
+            if (seriesMap->value(stdCount)->attachedAxes().length() == 0) {
+                seriesMap->value(stdCount)->attachAxis(xAxis);
+                seriesMap->value(stdCount)->attachAxis(yAxis);
+            }
+        }
     }
 
     for (int stdCount = -1900; stdCount <= 1900; stdCount += 200) {
