@@ -69,6 +69,7 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 
     queryParamsSelected = new QRadioButton(this);
     customQuerySelected = new QRadioButton(this);
+    queryParamsSelected->setChecked(true);
 
     queryParamsSelected->setFixedWidth(20);
     customQuerySelected->setFixedWidth(20);
