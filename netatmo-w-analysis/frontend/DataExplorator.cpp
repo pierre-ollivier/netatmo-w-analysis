@@ -54,7 +54,7 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     maximumRadioButton = new QRadioButton("Maximum");
     minimumRadioButton = new QRadioButton("Minimum");
     averageRadioButton = new QRadioButton("Moyenne");
-    differenceRadioButton = new QRadioButton("Amplitude");
+    variationRadioButton = new QRadioButton("Variation");
 
     maximumRadioButton->setChecked(true);
 
@@ -94,7 +94,7 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     operationsLayout->addWidget(maximumRadioButton, 0, 0);
     operationsLayout->addWidget(minimumRadioButton, 1, 0);
     operationsLayout->addWidget(averageRadioButton, 0, 1);
-    operationsLayout->addWidget(differenceRadioButton, 1, 1);
+    operationsLayout->addWidget(variationRadioButton, 1, 1);
 
     operationsGroupBox->setLayout(operationsLayout);
 
@@ -115,7 +115,7 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
     connect(maximumRadioButton, SIGNAL(clicked()), SLOT(selectQueryParams()));
     connect(minimumRadioButton, SIGNAL(clicked()), SLOT(selectQueryParams()));
     connect(averageRadioButton, SIGNAL(clicked()), SLOT(selectQueryParams()));
-    connect(differenceRadioButton, SIGNAL(clicked()), SLOT(selectQueryParams()));
+    connect(variationRadioButton, SIGNAL(clicked()), SLOT(selectQueryParams()));
     connect(interiorCheckBox, SIGNAL(clicked()), SLOT(selectQueryParams()));
 
     connect(sendQueryButton, SIGNAL(clicked()), SLOT(sendRequest()));
@@ -287,7 +287,7 @@ QString DataExplorator::operationFromRadioButtons() {
     if (maximumRadioButton->isChecked()) return "max";
     if (minimumRadioButton->isChecked()) return "min";
     if (averageRadioButton->isChecked()) return "avg";
-    if (differenceRadioButton->isChecked()) return "diff";
+    if (variationRadioButton->isChecked()) return "diff";
     return "";
 }
 
