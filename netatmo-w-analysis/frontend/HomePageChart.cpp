@@ -154,6 +154,7 @@ void HomePageChart::drawChart(QList<QPointF> points) {
 
 void HomePageChart::setYAxisRange(double maxValue, double minValue) {
     double difference = maxValue - minValue;
+    if (difference == 0) difference = 0.01;
     maxValue += 0.1 * difference;
     minValue -= 0.1 * difference;
     yAxis->setRange(minValue, maxValue);

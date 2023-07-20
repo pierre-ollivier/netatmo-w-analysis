@@ -34,7 +34,8 @@ public:
     std::vector<ExtDailyRecord> getExtDailyRecordsFromDatabase(QString query, int N = 1);
 
     QVariant getResultFromDatabase(QString query);
-    std::vector<QVariant> getResultsFromDatabase(QString query);
+    std::vector<QVariant> getResultsFromDatabase(QString query, int limit = 0);
+    int getNumberOfResultsFromDatabase(QString query);
 
     QDateTime getLatestDateTimeFromDatabase(QString tableName, QString measurement = "");
 

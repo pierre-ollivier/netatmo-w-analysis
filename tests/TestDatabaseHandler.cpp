@@ -26,14 +26,14 @@ void TestDatabaseHandler::testGetDailyRecordsFromDatabase() {
     DatabaseHandler dbHandler(PATH_TO_TEST_DATABASE);
     std::vector<IntDailyRecord> records = dbHandler.getIntDailyRecordsFromDatabase(
                 "SELECT * from IndoorDailyRecords WHERE weekNumber = 41 ORDER BY id", -1);
-    QCOMPARE(records.size(), 7);
+    QCOMPARE(int(records.size()), 7);
     QCOMPARE(records[0].maxTemperature(), 21.8);
     QCOMPARE(records[1].minHumidity(), 58);
-    QCOMPARE(records[2].maxCO2(),1219);
+    QCOMPARE(records[2].maxCO2(), 1219);
     QCOMPARE(records[3].maxNoise(), 51);
     std::vector<ExtDailyRecord> extRecords = dbHandler.getExtDailyRecordsFromDatabase(
                 "SELECT * from OutdoorDailyRecords WHERE year = 2019 AND month = 10 ORDER BY day DESC", 1);
-    QCOMPARE(extRecords.size(), 1);
+    QCOMPARE(int(extRecords.size()), 1);
     QCOMPARE(extRecords[0].minTemperature(), 9);
 }
 
@@ -49,6 +49,16 @@ void TestDatabaseHandler::testGetResultFromDatabase() {
                  "SELECT round(avg(avgPressure)) from IndoorDailyRecords where month = 10"), 953);
     QCOMPARE(dbHandler.getResultFromDatabase(
                  "SELECT max(minNoise) + min(maxNoise) as noise from IndoorDailyRecords where month = 11"), 83);
+}
+
+void TestDatabaseHandler::testGetResultsFromDatabase() {
+    DatabaseHandler dbHandler(PATH_TO_TEST_DATABASE);
+    QCOMPARE(dbHandler.getResultsFromDatabase(
+                 "SELECT maxTemperature from OutdoorDailyRecords where year = 2020 ORDER BY maxTemperature", 5),
+             std::vector<QVariant>({3.1, 3.9, 4, 5, 5.1}));
+    QCOMPARE(dbHandler.getResultsFromDatabase(
+                 "SELECT minHumidity from OutdoorDailyRecords where month = 7 and day = 4 ORDER BY minHumidity"),
+             std::vector<QVariant>({51, 56}));
 }
 
 void TestDatabaseHandler::testGetLatestDateTimeFromDatabase() {

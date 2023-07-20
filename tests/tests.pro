@@ -16,6 +16,7 @@ SOURCES += \
     TestDailyStatisticsCalculator.cpp \
     TestDatabaseHandler.cpp \
     TestNormalComputer.cpp \
+    TestQueryAnalyzer.cpp \
     TestTypes.cpp \
     credentials_test.cpp \
     dbparams_test.cpp \
@@ -27,4 +28,5 @@ HEADERS += \
     TestDailyStatisticsCalculator.h \
     TestDatabaseHandler.h \
     TestNormalComputer.h \
+    TestQueryAnalyzer.h \
     TestTypes.h
