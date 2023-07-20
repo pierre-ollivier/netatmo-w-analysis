@@ -174,6 +174,9 @@ void DataExplorator::fillBoards(QString query) {
                 analyzer->dateQueryFromMeasurementQuery(queryDESC),
                 numberOfResults);
 
+    mainModelMax->setRowCount(int(dataDESC.size()));
+    mainModelMin->setRowCount(int(dataDESC.size()));
+
     for (int i = 0; i < int(dataDESC.size()); i++) {
         mainModelMax->setItem(i, 0, new QStandardItem());
         mainModelMax->setItem(i, 1, new QStandardItem());
