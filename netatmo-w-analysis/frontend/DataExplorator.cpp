@@ -106,16 +106,16 @@ DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 
     customQueryGroupBox->setLayout(customQueryLayout);
 
-    connect(temperatureRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
-    connect(humidityRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
-    connect(dewPointRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
-    connect(humidexRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
-    connect(pressureRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
-    connect(maximumRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
-    connect(minimumRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
-    connect(averageRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
-    connect(differenceRadioButton, SIGNAL(clicked()), SLOT(fillBoards()));
-    connect(interiorCheckBox, SIGNAL(clicked()), SLOT(fillBoards()));
+    connect(temperatureRadioButton, SIGNAL(clicked()), SLOT(selectQueryParams()));
+    connect(humidityRadioButton, SIGNAL(clicked()), SLOT(selectQueryParams()));
+    connect(dewPointRadioButton, SIGNAL(clicked()), SLOT(selectQueryParams()));
+    connect(humidexRadioButton, SIGNAL(clicked()), SLOT(selectQueryParams()));
+    connect(pressureRadioButton, SIGNAL(clicked()), SLOT(selectQueryParams()));
+    connect(maximumRadioButton, SIGNAL(clicked()), SLOT(selectQueryParams()));
+    connect(minimumRadioButton, SIGNAL(clicked()), SLOT(selectQueryParams()));
+    connect(averageRadioButton, SIGNAL(clicked()), SLOT(selectQueryParams()));
+    connect(differenceRadioButton, SIGNAL(clicked()), SLOT(selectQueryParams()));
+    connect(interiorCheckBox, SIGNAL(clicked()), SLOT(selectQueryParams()));
 
     connect(sendQueryButton, SIGNAL(clicked()), SLOT(sendRequest()));
     connect(customQueryLineEdit, SIGNAL(returnPressed()), SLOT(sendRequest()));
@@ -393,6 +393,7 @@ void DataExplorator::showQueryBuilder() {
 }
 
 void DataExplorator::selectQueryParams() {
+    queryParamsSelected->setChecked(true);
     fillBoards();
 }
 
