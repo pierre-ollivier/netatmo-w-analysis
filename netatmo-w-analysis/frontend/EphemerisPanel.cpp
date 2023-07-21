@@ -89,8 +89,8 @@ void EphemerisPanel::setDate(QDate date) {
                 "AND minTemperature = " + QString::number(tnn)).toInt();
     tnnLabel->setText(tnnLabel->text() + " (" + QString::number(tnnYear) + ")");
 
-    double stdevTx = analyzer->stdevFromMaxTemperature(27.2);  // TODO: parametrize this
-    double stdevTn = analyzer->stdevFromMinTemperature(16.7);  // TODO: parametrize this
+    double stdevTx = analyzer->stdevFromMeasurement("maxTemperature", 27.2);  // TODO: parametrize this
+    double stdevTn = analyzer->stdevFromMeasurement("minTemperature", 16.7);  // TODO: parametrize this
 
     stdevLabel->setText("Température maximale : " + QString::number(stdevTx) + " ET" + "\n"
                         "Température minimale : " + QString::number(stdevTn) + " ET");

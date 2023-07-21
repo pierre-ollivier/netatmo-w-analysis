@@ -9,8 +9,7 @@ class MetricsAnalyzer
 public:
     MetricsAnalyzer(QDate date = QDate::currentDate());
 
-    double stdevFromMaxTemperature(double maxTemperature);
-    double stdevFromMinTemperature(double minTemperature);
+    double stdevFromMeasurement(QString measurementType, double measurementValue);
 
 private:
     QDate _date;
