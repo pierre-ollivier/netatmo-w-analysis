@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QLocale>
 #include "../backend/DatabaseHandler.h"
+#include "../backend/MetricsAnalyzer.h"
 #include "../backend/NormalComputer.h"
 
 class EphemerisPanel : public QGroupBox
@@ -21,10 +22,12 @@ private:
     QLabel *tnnLabel;
     QLabel *txmLabel;
     QLabel *tnmLabel;
+    QLabel *stdevLabel;
     QLocale *deviceLocale;
     QGridLayout *layout;
     DatabaseHandler *dbHandler;
     NormalComputer *normalComputer;
+    MetricsAnalyzer *analyzer;
 };
 
 #endif // EPHEMERISPANEL_H
