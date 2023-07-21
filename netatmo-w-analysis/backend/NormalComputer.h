@@ -19,12 +19,25 @@ public:
             QDate date,
             QString measurement,
             int daysCount);
+
+    double stdevMeasurementByMovingAverage(
+            QString tableName,
+            QDate date,
+            QString measurement,
+            double average,
+            int daysCount);
+
     QList<double> createAveragesList(QString tableName,
                                      QString measurement,
                                      int daysCount);
 
     QList<double> createStandardDeviationList(QString tableName,
                                               QString measurement,
+                                              int daysCount);
+
+    QList<double> createStandardDeviationList(QString tableName,
+                                              QString measurement,
+                                              QList<double> averages,
                                               int daysCount);
 
     QList<double> createValuesFromCurrentYear(QString tableName,
