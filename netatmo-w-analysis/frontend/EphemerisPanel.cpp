@@ -8,6 +8,7 @@ EphemerisPanel::EphemerisPanel() : QGroupBox()
     tnnLabel = new QLabel("__,_ °C");
     txmLabel = new QLabel("__,_ °C");
     tnmLabel = new QLabel("__,_ °C");
+    stdevLabel = new QLabel();
 
     deviceLocale = new QLocale();
 
@@ -21,9 +22,12 @@ EphemerisPanel::EphemerisPanel() : QGroupBox()
     layout->addWidget(txmLabel, 3, 2);
     layout->addWidget(new QLabel("Température minimale moyenne : "), 4, 1);
     layout->addWidget(tnmLabel, 4, 2);
+    layout->addWidget(new QLabel("Écarts aux normales :"), 5, 1);
+    layout->addWidget(stdevLabel, 5, 2);
 
     dbHandler = new DatabaseHandler(PATH_TO_PROD_DATABASE);
     normalComputer = new NormalComputer(dbHandler);
+    analyzer = new MetricsAnalyzer();
 
     setTitle("Statistiques pour un _ _");
     setFont(QFont("Arial", 12));
@@ -76,12 +80,19 @@ void EphemerisPanel::setDate(QDate date) {
                 "WHERE day = " + QString::number(date.day()) + " "
                 "AND month = " + QString::number(date.month()) + " "
                 "AND maxTemperature = " + QString::number(txx)).toInt();
-    txxLabel->setText(txxLabel->text() + " (" +QString::number(txxYear) + ")");
+    txxLabel->setText(txxLabel->text() + " (" + QString::number(txxYear) + ")");
 
     int tnnYear = dbHandler->getResultFromDatabase(
                 "SELECT year FROM OutdoorDailyRecords "
                 "WHERE day = " + QString::number(date.day()) + " "
                 "AND month = " + QString::number(date.month()) + " "
                 "AND minTemperature = " + QString::number(tnn)).toInt();
-    tnnLabel->setText(tnnLabel->text() + " (" +QString::number(tnnYear) + ")");
+    tnnLabel->setText(tnnLabel->text() + " (" + QString::number(tnnYear) + ")");
+
+    double stdevTx = analyzer->stdevFromMaxTemperature(27.2);  // TODO: parametrize this
+    double stdevTn = analyzer->stdevFromMinTemperature(16.7);  // TODO: parametrize this
+
+    stdevLabel->setText("Température maximale : " + QString::number(stdevTx) + " ET" + "\n"
+                        "Température minimale : " + QString::number(stdevTn) + " ET");
+
 }
