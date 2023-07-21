@@ -8,36 +8,19 @@ MetricsAnalyzer::MetricsAnalyzer(QDate date)
     computer = new NormalComputer(new DatabaseHandler(PATH_TO_COPY_DATABASE));
 }
 
-double MetricsAnalyzer::stdevFromMaxTemperature(double maxTemperature) {
+double MetricsAnalyzer::stdevFromMeasurement(QString measurementType, double measurementValue) {
     double average = computer->normalMeasurementByMovingAverage(
                 "OutdoorDailyRecords",
                 _date,
-                "maxTemperature",
+                measurementType,
                 41);
 
     double stdev = computer->stdevMeasurementByMovingAverage(
                 "OutdoorDailyRecords",
                 _date,
-                "maxTemperature",
+                measurementType,
                 average,
                 41);
 
-    return (maxTemperature - average) / stdev;
-}
-
-double MetricsAnalyzer::stdevFromMinTemperature(double minTemperature) {
-    double average = computer->normalMeasurementByMovingAverage(
-                "OutdoorDailyRecords",
-                _date,
-                "minTemperature",
-                41);
-
-    double stdev = computer->stdevMeasurementByMovingAverage(
-                "OutdoorDailyRecords",
-                _date,
-                "minTemperature",
-                average,
-                41);
-
-    return (minTemperature - average) / stdev;
+    return (measurementValue - average) / stdev;
 }
