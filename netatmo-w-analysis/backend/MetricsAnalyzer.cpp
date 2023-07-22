@@ -9,14 +9,16 @@ MetricsAnalyzer::MetricsAnalyzer(QDate date)
 }
 
 double MetricsAnalyzer::stdevFromMeasurement(QString measurementType, double measurementValue) {
+    QString table = (measurementType != "maxPressure" && measurementType != "minPressure") ?
+                "OutdoorDailyRecords" : "IndoorDailyRecords";
     double average = computer->normalMeasurementByMovingAverage(
-                "OutdoorDailyRecords",
+                table,
                 _date,
                 measurementType,
                 41);
 
     double stdev = computer->stdevMeasurementByMovingAverage(
-                "OutdoorDailyRecords",
+                table,
                 _date,
                 measurementType,
                 average,
