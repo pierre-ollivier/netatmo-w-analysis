@@ -91,8 +91,12 @@ void EphemerisPanel::setDate(QDate date) {
 
     double stdevTx = analyzer->stdevFromMeasurement("maxTemperature", 27.2);  // TODO: parametrize this
     double stdevTn = analyzer->stdevFromMeasurement("minTemperature", 16.7);  // TODO: parametrize this
+    double stdevRHx = analyzer->stdevFromMeasurement("maxHumidity", 62);  // TODO: parametrize this
+    double stdevRHn = analyzer->stdevFromMeasurement("minHumidity", 37);  // TODO: parametrize this
 
     stdevLabel->setText("Température maximale : " + QString::number(stdevTx) + " ET" + "\n"
-                        "Température minimale : " + QString::number(stdevTn) + " ET");
+                        "Température minimale : " + QString::number(stdevTn) + " ET" + "\n"
+                        "Humidité maximale : " + QString::number(stdevRHx) + " ET" + "\n"
+                        "Humidité maximale : " + QString::number(stdevRHn) + " ET");
 
 }
