@@ -1,6 +1,7 @@
 #include "EphemerisPanel.h"
+#include <QDebug>
 
-extern const QString PATH_TO_PROD_DATABASE;
+extern const QString PATH_TO_COPY_DATABASE;
 
 EphemerisPanel::EphemerisPanel() : QGroupBox()
 {
@@ -25,7 +26,7 @@ EphemerisPanel::EphemerisPanel() : QGroupBox()
     layout->addWidget(new QLabel("Écarts aux normales :"), 5, 1);
     layout->addWidget(stdevLabel, 5, 2);
 
-    dbHandler = new DatabaseHandler(PATH_TO_PROD_DATABASE);
+    dbHandler = new DatabaseHandler(PATH_TO_COPY_DATABASE);
     normalComputer = new NormalComputer(dbHandler);
     analyzer = new MetricsAnalyzer();
 
@@ -89,18 +90,50 @@ void EphemerisPanel::setDate(QDate date) {
                 "AND minTemperature = " + QString::number(tnn)).toInt();
     tnnLabel->setText(tnnLabel->text() + " (" + QString::number(tnnYear) + ")");
 
-    double stdevTx = analyzer->stdevFromMeasurement("maxTemperature", 27.2);  // TODO: parametrize this
-    double stdevTn = analyzer->stdevFromMeasurement("minTemperature", 16.7);  // TODO: parametrize this
-    double stdevRHx = analyzer->stdevFromMeasurement("maxHumidity", 62);  // TODO: parametrize this
-    double stdevRHn = analyzer->stdevFromMeasurement("minHumidity", 37);  // TODO: parametrize this
-    double stdevPx = analyzer->stdevFromMeasurement("maxPressure", 1017.9);  // TODO: parametrize this
-    double stdevPn = analyzer->stdevFromMeasurement("minPressure", 1012.4);  // TODO: parametrize this
+    double tx = dbHandler->getResultFromDatabase(
+                "SELECT max(temperature) FROM LastOutdoorTimestampRecords "
+                "WHERE day = " + QString::number(QDate::currentDate().day())).toDouble();
+    double tn = dbHandler->getResultFromDatabase(
+                "SELECT MIN(temperature) FROM LastOutdoorTimestampRecords "
+                "WHERE date = " + QDate::currentDate().toString("\"dd/MM/yyyy\"")).toDouble();
+    double tdx = dbHandler->getResultFromDatabase(
+                "SELECT MAX(dewPoint) FROM LastOutdoorTimestampRecords "
+                "WHERE date = " + QDate::currentDate().toString("\"dd/MM/yyyy\"")).toDouble();
+    double tdn = dbHandler->getResultFromDatabase(
+                "SELECT MIN(dewPoint) FROM LastOutdoorTimestampRecords "
+                "WHERE date = " + QDate::currentDate().toString("\"dd/MM/yyyy\"")).toDouble();
+    double hx = dbHandler->getResultFromDatabase(
+                "SELECT MAX(humidex) FROM LastOutdoorTimestampRecords "
+                "WHERE date = " + QDate::currentDate().toString("\"dd/MM/yyyy\"")).toDouble();
+    double hn = dbHandler->getResultFromDatabase(
+                "SELECT MIN(humidex) FROM LastOutdoorTimestampRecords "
+                "WHERE date = " + QDate::currentDate().toString("\"dd/MM/yyyy\"")).toDouble();
+    int rhx = dbHandler->getResultFromDatabase(
+                "SELECT MAX(humidity) FROM LastOutdoorTimestampRecords "
+                "WHERE date = " + QDate::currentDate().toString("\"dd/MM/yyyy\"")).toInt();
+    int rhn = dbHandler->getResultFromDatabase(
+                "SELECT MIN(humidity) FROM LastOutdoorTimestampRecords "
+                "WHERE date = " + QDate::currentDate().toString("\"dd/MM/yyyy\"")).toInt();
+
+    qDebug() << tx << tn << tdx << tdn << hx << hn << rhx << rhn;
+
+    double stdevTx = analyzer->stdevFromMeasurement("maxTemperature", tx);  // TODO: parametrize this
+    double stdevTn = analyzer->stdevFromMeasurement("minTemperature", tn);  // TODO: parametrize this
+    double stdevRHx = analyzer->stdevFromMeasurement("maxHumidity", rhx);  // TODO: parametrize this
+    double stdevRHn = analyzer->stdevFromMeasurement("minHumidity", rhn);  // TODO: parametrize this
+    double stdevTdx = analyzer->stdevFromMeasurement("maxDewPoint", tdx);  // TODO: parametrize this
+    double stdevTdn = analyzer->stdevFromMeasurement("minDewPoint", tdn);  // TODO: parametrize this
+    double stdevHx = analyzer->stdevFromMeasurement("maxHumidex", hx);  // TODO: parametrize this
+    double stdevHn = analyzer->stdevFromMeasurement("minHumidex", hn);  // TODO: parametrize this
+
 
     stdevLabel->setText("Température maximale : " + QString::number(stdevTx) + " ET" + "\n"
                         "Température minimale : " + QString::number(stdevTn) + " ET" + "\n"
                         "Humidité maximale : " + QString::number(stdevRHx) + " ET" + "\n"
-                        "Humidité maximale : " + QString::number(stdevRHn) + " ET" + "\n"
-                        "Pression maximale : " + QString::number(stdevPx) + " ET" + "\n"
-                        "Pression maximale : " + QString::number(stdevPn) + " ET");
+                        "Humidité minimale : " + QString::number(stdevRHn) + " ET" + "\n"
+                        "Point de rosée maximal : " + QString::number(stdevTdx) + " ET" + "\n"
+                        "Point de rosée minimal : " + QString::number(stdevTdn) + " ET" + "\n"
+                        "Humidex maximal : " + QString::number(stdevHx) + " ET" + "\n"
+                        "Humidex minimal : " + QString::number(stdevHn) + " ET");
 
 }
