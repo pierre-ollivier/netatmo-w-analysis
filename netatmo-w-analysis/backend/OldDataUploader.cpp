@@ -18,9 +18,6 @@ OldDataUploader::OldDataUploader(NetatmoAPIHandler* apiHandler, QString accessTo
     connect(apiHandler,
             SIGNAL(ext3hRecordsRetrieved(QMap<QDate, std::tuple<double, double>>)),
             SLOT(log3hRecords(QMap<QDate, std::tuple<double, double>>)));
-    connect(apiHandler,
-            SIGNAL(outdoorRecordListRetrieved(QList<ExtTimestampRecord>)),
-            SLOT(logOutdoorTimestampRecords(QList<ExtTimestampRecord>)));
 }
 
 void OldDataUploader::addDataFromCurrentMonths(QDate beginDate, QDate endDate, bool indoor) {
@@ -41,11 +38,15 @@ void OldDataUploader::addDataFromCurrentMonths(QDate beginDate, QDate endDate, b
 }
 
 void OldDataUploader::addExtTimestampRecordsFromCurrentMonth() {
+    NetatmoAPIHandler *apiHandler = new NetatmoAPIHandler(_apiHandler->getAPIMonitor());
+    connect(apiHandler,
+            SIGNAL(outdoorRecordListRetrieved(QList<ExtTimestampRecord>)),
+            SLOT(logOutdoorTimestampRecords(QList<ExtTimestampRecord>)));
     QDateTime dt = QDateTime(QDate::currentDate().addDays(-8), QTime(0, 0));
     for (int i = 0; i <= 8; i++) {
         long long dateBegin = dt.toSecsSinceEpoch() + i * 86400;
         long long dateEnd = dt.toSecsSinceEpoch() + (i + 1) * 86400;
-        _apiHandler->postOutdoorTimestampRecordsRequest(dateBegin, dateEnd, _accessToken);
+        apiHandler->postOutdoorTimestampRecordsRequest(dateBegin, dateEnd, _accessToken);
     }
 }
 
