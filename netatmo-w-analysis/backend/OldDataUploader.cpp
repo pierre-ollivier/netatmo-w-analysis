@@ -107,7 +107,6 @@ void OldDataUploader::log3hRecords(QMap<QDate, std::tuple<double, double>> recor
 void OldDataUploader::logOutdoorTimestampRecords(QList<ExtTimestampRecord> records) {
     DatabaseHandler dbHandler(PATH_TO_COPY_DATABASE);
     for (ExtTimestampRecord record : records) {
-        //  TODO: check that the record does not already exist (start of the month)
-        dbHandler.postOutdoorTimestampRecord(record, "OutdoorTimestampRecords");
+        dbHandler.postOutdoorTimestampRecord(record, "LastOutdoorTimestampRecords");
     }
 }
