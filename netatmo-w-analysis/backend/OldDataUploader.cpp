@@ -43,8 +43,8 @@ void OldDataUploader::addDataFromCurrentMonths(QDate beginDate, QDate endDate, b
 void OldDataUploader::addExtTimestampRecordsFromCurrentMonth() {
     QDateTime dt = QDateTime(QDate::currentDate().addDays(-8), QTime(0, 0));
     for (int i = 0; i <= 8; i++) {
-        long long dateBegin = dt.currentSecsSinceEpoch() + i * 86400;
-        long long dateEnd = dt.currentSecsSinceEpoch() + (i + 1) * 86400;
+        long long dateBegin = dt.toSecsSinceEpoch() + i * 86400;
+        long long dateEnd = dt.toSecsSinceEpoch() + (i + 1) * 86400;
         _apiHandler->postOutdoorTimestampRecordsRequest(dateBegin, dateEnd, _accessToken);
     }
 }
