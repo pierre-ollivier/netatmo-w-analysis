@@ -33,10 +33,10 @@ HomePageChart::HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName, b
     setChart(chart);
     setFixedSize(500, 300);
 
-    if (indoor) connect(_apiHandler, SIGNAL(indoorRecordListRetrieved(QList<TimestampRecord>)),
-                        SLOT(drawChart(QList<TimestampRecord>)));
-    else connect(_apiHandler, SIGNAL(outdoorRecordListRetrieved(QList<TimestampRecord>)),
-                 SLOT(drawChart(QList<TimestampRecord>)));
+    if (indoor) connect(_apiHandler, SIGNAL(indoorRecordListRetrieved(QList<IntTimestampRecord>)),
+                        SLOT(drawChart(QList<IntTimestampRecord>)));
+    else connect(_apiHandler, SIGNAL(outdoorRecordListRetrieved(QList<ExtTimestampRecord>)),
+                 SLOT(drawChart(QList<ExtTimestampRecord>)));
 }
 
 void HomePageChart::gatherChartData(QString accessToken, QString measurementType, bool indoor, int durationInHours) {
@@ -63,9 +63,28 @@ void HomePageChart::gatherChartData(QString accessToken, QString measurementType
     }
 }
 
-void HomePageChart::drawChart(QList<TimestampRecord> records) {
+void HomePageChart::drawChart(QList<ExtTimestampRecord> records) {
     QList<QPointF> points = QList<QPointF>();
-    for (TimestampRecord record : records) {
+    for (ExtTimestampRecord record : records) {
+        if (_measurementType == "temperature") {
+            points.append(QPointF(1000 * record.timestamp(), record.temperature()));
+        }
+        else if (_measurementType == "humidity") {
+            points.append(QPointF(1000 * record.timestamp(), record.humidity()));
+        }
+        else if (_measurementType == "dewPoint") {
+            points.append(QPointF(1000 * record.timestamp(), record.dewPoint()));
+        }
+        else if (_measurementType == "humidex") {
+            points.append(QPointF(1000 * record.timestamp(), record.humidex()));
+        }
+    }
+    drawChart(points);
+}
+
+void HomePageChart::drawChart(QList<IntTimestampRecord> records) {
+    QList<QPointF> points = QList<QPointF>();
+    for (IntTimestampRecord record : records) {
         if (_measurementType == "temperature") {
             points.append(QPointF(1000 * record.timestamp(), record.temperature()));
         }

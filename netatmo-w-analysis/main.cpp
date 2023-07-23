@@ -2,6 +2,7 @@
 #include <QFile>
 #include "frontend/MainWindow.h"
 #include "backend/DatabaseHandler.h"
+#include "backend/NetatmoAPIHandler.h"
 #include "playground.cpp"
 
 extern const QString VERSION;

@@ -15,7 +15,8 @@ public:
 public slots:
     void gatherChartData(QString accessToken, QString measurementType, bool indoor, int durationInHours = 4);
     void drawChart(QList<QPointF> temperatureList);
-    void drawChart(QList<TimestampRecord> records);
+    void drawChart(QList<ExtTimestampRecord> records);
+    void drawChart(QList<IntTimestampRecord> records);
     void setYAxisRange(double maxValue, double minValue);
     void setYAxisTicks(double maxValue, double minValue);
 

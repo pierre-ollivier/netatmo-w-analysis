@@ -226,6 +226,7 @@ void MainWindow::addDataFromCurrentMonths() {
                                               QDate::currentDate(), false);
     oldDataUploader->addDataFromCurrentMonths(lastAddedIndoorDate.addDays(1),
                                               QDate::currentDate(), true);
+    oldDataUploader->addExtTimestampRecordsFromCurrentMonth();  // TODO add limit date
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
