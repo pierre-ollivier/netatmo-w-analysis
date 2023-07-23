@@ -66,6 +66,7 @@ public slots:
     void displayYearlyReport();
 
     void addDataFromCurrentMonths();
+    void addDataFromLastDays();
     void changeChartsOptions();
 
     void showNormals();

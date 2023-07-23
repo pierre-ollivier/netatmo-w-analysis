@@ -202,6 +202,7 @@ void MainWindow::setAccessToken(QString newAccessToken) {
     accessToken = newAccessToken;
     oldDataUploader->setAccessToken(accessToken);
     addDataFromCurrentMonths();
+    addDataFromLastDays();
     updateIndoorChart();
     updateOutdoorChart();
 }
@@ -226,7 +227,12 @@ void MainWindow::addDataFromCurrentMonths() {
                                               QDate::currentDate(), false);
     oldDataUploader->addDataFromCurrentMonths(lastAddedIndoorDate.addDays(1),
                                               QDate::currentDate(), true);
-    oldDataUploader->addExtTimestampRecordsFromCurrentMonth();  // TODO add limit date
+}
+
+void MainWindow::addDataFromLastDays() {
+    extern const QString creationQuery;
+    dbHandlerCopy->getResultFromDatabase(creationQuery);
+    oldDataUploader->addExtTimestampRecordsFromCurrentMonth();
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
