@@ -21,12 +21,14 @@ public:
 
 public slots:
     void addDataFromCurrentMonths(QDate beginDate, QDate endDate, bool indoor = false);
+    void addExtTimestampRecordsFromCurrentMonth();
     void addExtTimestampRecordToCopyDatabase(ExtTimestampRecord);
     void addIntTimestampRecordToCopyDatabase(IntTimestampRecord);
 
     void logExtDailyRecord(ExtDailyRecord);
     void logIntDailyRecord(IntDailyRecord);
     void log3hRecords(QMap<QDate, std::tuple<double, double>> records);
+    void logOutdoorTimestampRecords(QList<ExtTimestampRecord> records);
 
 private:
     NetatmoAPIHandler *_apiHandler;

@@ -18,6 +18,9 @@ OldDataUploader::OldDataUploader(NetatmoAPIHandler* apiHandler, QString accessTo
     connect(apiHandler,
             SIGNAL(ext3hRecordsRetrieved(QMap<QDate, std::tuple<double, double>>)),
             SLOT(log3hRecords(QMap<QDate, std::tuple<double, double>>)));
+    connect(apiHandler,
+            SIGNAL(outdoorRecordListRetrieved(QList<ExtTimestampRecord>)),
+            SLOT(logOutdoorTimestampRecords(QList<ExtTimestampRecord>)));
 }
 
 void OldDataUploader::addDataFromCurrentMonths(QDate beginDate, QDate endDate, bool indoor) {
@@ -34,6 +37,15 @@ void OldDataUploader::addDataFromCurrentMonths(QDate beginDate, QDate endDate, b
         endTimestamp = QDateTime(endDate.addDays(0), QTime(6, 0), Qt::UTC).toSecsSinceEpoch();
         _apiHandler->postFullOutdoorDailyRequest(beginTimestamp, endTimestamp, "1day", _accessToken);
         _apiHandler->post3hDailyRequest(beginTimestamp, endTimestamp, _accessToken);
+    }
+}
+
+void OldDataUploader::addExtTimestampRecordsFromCurrentMonth() {
+    QDateTime dt = QDateTime(QDate::currentDate().addDays(-8), QTime(0, 0));
+    for (int i = 0; i <= 8; i++) {
+        long long dateBegin = dt.currentSecsSinceEpoch() + i * 86400;
+        long long dateEnd = dt.currentSecsSinceEpoch() + (i + 1) * 86400;
+        _apiHandler->postOutdoorTimestampRecordsRequest(dateBegin, dateEnd, _accessToken);
     }
 }
 
@@ -88,5 +100,13 @@ void OldDataUploader::log3hRecords(QMap<QDate, std::tuple<double, double>> recor
             extendedRecordsMap[date]->setMinTemperature(std::get<0>(records[date]));
             extendedRecordsMap[date]->setMaxTemperature(std::get<1>(records[date]));
         }
+    }
+}
+
+void OldDataUploader::logOutdoorTimestampRecords(QList<ExtTimestampRecord> records) {
+    DatabaseHandler dbHandler(PATH_TO_COPY_DATABASE);
+    for (ExtTimestampRecord record : records) {
+        //  TODO: check that the record does not already exist (start of the month)
+        dbHandler.postOutdoorTimestampRecord(record, "OutdoorTimestampRecords");
     }
 }
