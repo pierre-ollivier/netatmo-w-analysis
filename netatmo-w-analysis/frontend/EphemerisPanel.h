@@ -16,6 +16,7 @@ public:
     EphemerisPanel();
 
     void setDate(QDate date);
+    void updateStdevLabel();
 
 private:
     QLabel *txxLabel;

@@ -19,6 +19,9 @@ public:
     OldDataUploader(NetatmoAPIHandler *apiHandler, QString accessToken = "");
     void setAccessToken(QString accessToken);
 
+signals:
+    void outdoorTimestampRecordsLogged();
+
 public slots:
     void addDataFromCurrentMonths(QDate beginDate, QDate endDate, bool indoor = false);
     void addExtTimestampRecordsFromCurrentMonth();
