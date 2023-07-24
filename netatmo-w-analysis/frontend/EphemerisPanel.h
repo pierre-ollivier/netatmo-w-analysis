@@ -12,10 +12,12 @@
 
 class EphemerisPanel : public QGroupBox
 {
+    Q_OBJECT
 public:
     EphemerisPanel();
-
     void setDate(QDate date);
+
+public slots:
     void updateStdevLabel();
 
 private:
