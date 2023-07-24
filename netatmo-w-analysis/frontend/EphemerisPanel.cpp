@@ -5,11 +5,11 @@ extern const QString PATH_TO_COPY_DATABASE;
 
 EphemerisPanel::EphemerisPanel() : QGroupBox()
 {
-    txxLabel = new QLabel("__,_ °C");
-    tnnLabel = new QLabel("__,_ °C");
+    txxLabel = new QLabel("__,_ °C (____)");
+    tnnLabel = new QLabel("__,_ °C (____)");
     txmLabel = new QLabel("__,_ °C");
     tnmLabel = new QLabel("__,_ °C");
-    stdevLabel = new QLabel();
+    stdevLabel = new QLabel("_________________________");
 
     deviceLocale = new QLocale();
 
