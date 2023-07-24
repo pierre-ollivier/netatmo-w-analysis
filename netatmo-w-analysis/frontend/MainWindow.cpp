@@ -26,7 +26,6 @@ MainWindow::MainWindow()
     dbHandlerProd = new DatabaseHandler(PATH_TO_PROD_DATABASE);
     dbHandlerCopy = new DatabaseHandler(PATH_TO_COPY_DATABASE);
     oldDataUploader = new OldDataUploader(apiHandler);
-//    connect(oldDataUploader, SIGNAL(outdoorTimestampRecordsLogged()), )
     buildWindow();
 }
 
