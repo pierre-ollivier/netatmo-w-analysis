@@ -109,4 +109,5 @@ void OldDataUploader::logOutdoorTimestampRecords(QList<ExtTimestampRecord> recor
     for (ExtTimestampRecord record : records) {
         dbHandler.postOutdoorTimestampRecord(record, "LastOutdoorTimestampRecords");
     }
+    emit outdoorTimestampRecordsLogged();
 }
