@@ -26,6 +26,7 @@ MainWindow::MainWindow()
     dbHandlerProd = new DatabaseHandler(PATH_TO_PROD_DATABASE);
     dbHandlerCopy = new DatabaseHandler(PATH_TO_COPY_DATABASE);
     oldDataUploader = new OldDataUploader(apiHandler);
+//    connect(oldDataUploader, SIGNAL(outdoorTimestampRecordsLogged()), )
     buildWindow();
 }
 
@@ -117,6 +118,7 @@ void MainWindow::buildCharts() {
 
 void MainWindow::buildEphemerisPanel() {
     ephemerisPanel = new EphemerisPanel();
+    connect(oldDataUploader, SIGNAL(outdoorTimestampRecordsLogged()), ephemerisPanel, SLOT(updateStdevLabel()));
 }
 
 void MainWindow::buildLayouts() {
