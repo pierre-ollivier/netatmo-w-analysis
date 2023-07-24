@@ -67,8 +67,8 @@ void MainWindow::buildAPIHandler() {
 
 void MainWindow::buildLabels() {
     statusLabel = new QLabel("Mesure : __/__/____ __:__:__\nActualisation : __/__/____ __:__:__");
-    currentMinExtTempLabel = new QLabel("<font color=\"#0010ff\">↓</font> _,_ °C (__:__)");
-    currentMaxExtTempLabel = new QLabel("<font color=\"#ff1000\">↑</font> _,_ °C (__:__)");
+    currentMinExtTempLabel = new QLabel("<font color=\"#0010ff\">↓</font> __,_ °C (__:__)");
+    currentMaxExtTempLabel = new QLabel("<font color=\"#ff1000\">↑</font> __,_ °C (__:__)");
     currentMinExtTempLabel->setFont(QFont("Arial", 13));
     currentMaxExtTempLabel->setFont(QFont("Arial", 13));
 
@@ -76,8 +76,8 @@ void MainWindow::buildLabels() {
     currentExtTempLabel->setFont(QFont("Arial", 32));
     currentIntTempLabel = new QLabel("__,_<font color=\"#606060\"> °C</font>");
     currentIntTempLabel->setFont(QFont("Arial", 32));
-    currentMinIntTempLabel = new QLabel("<font color=\"#0010ff\">↓</font> _,_ °C (__:__)");
-    currentMaxIntTempLabel = new QLabel("<font color=\"#ff1000\">↑</font> _,_ °C (__:__)");
+    currentMinIntTempLabel = new QLabel("<font color=\"#0010ff\">↓</font> __,_ °C (__:__)");
+    currentMaxIntTempLabel = new QLabel("<font color=\"#ff1000\">↑</font> __,_ °C (__:__)");
     currentMinIntTempLabel->setFont(QFont("Arial", 13));
     currentMaxIntTempLabel->setFont(QFont("Arial", 13));
 }
