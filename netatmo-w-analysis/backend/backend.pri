@@ -7,7 +7,8 @@ HEADERS += \
     $$PWD/NetatmoAPIHandler.h \
     $$PWD/NormalComputer.h \
     $$PWD/OldDataUploader.h \
-    $$PWD/QueryAnalyzer.h
+    $$PWD/QueryAnalyzer.h \
+    $$PWD/RecentDataHandler.h
 
 SOURCES += \
     $$PWD/APIMonitor.cpp \
@@ -18,4 +19,5 @@ SOURCES += \
     $$PWD/NetatmoAPIHandler.cpp \
     $$PWD/NormalComputer.cpp \
     $$PWD/OldDataUploader.cpp \
-    $$PWD/QueryAnalyzer.cpp
+    $$PWD/QueryAnalyzer.cpp \
+    $$PWD/RecentDataHandler.cpp

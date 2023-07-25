@@ -1,17 +1,19 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QWidget>
-#include <QMainWindow>
-#include <QLabel>
-#include <QPushButton>
 #include <QGridLayout>
+#include <QLabel>
+#include <QMainWindow>
 #include <QMenuBar>
+#include <QPushButton>
+#include <QWidget>
 #include <QtCharts>
-#include "../netatmo-w-analysis/backend/NetatmoAPIHandler.h"
-#include "../netatmo-w-analysis/backend/DatabaseHandler.h"
+
 #include "../netatmo-w-analysis/backend/APIMonitor.h"
+#include "../netatmo-w-analysis/backend/DatabaseHandler.h"
+#include "../netatmo-w-analysis/backend/NetatmoAPIHandler.h"
 #include "../netatmo-w-analysis/backend/OldDataUploader.h"
+#include "../netatmo-w-analysis/backend/RecentDataHandler.h"
 #include "../netatmo-w-analysis/frontend/HomePageChart.h"
 #include "../netatmo-w-analysis/frontend/EphemerisPanel.h"
 
@@ -23,7 +25,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow();
     void buildWindow();
-    void buildAPIHandler();
+    void buildAPIHandlers();
     void buildLabels();
     void buildButtons();
     void buildCharts();
@@ -90,8 +92,9 @@ private:
     //layouts
     QGridLayout *mainLayout;
 
-    //other (provisional)
+    //API handlers
     NetatmoAPIHandler *apiHandler;
+    RecentDataHandler *recentDataHandler;
 
     //database handlers
     DatabaseHandler *dbHandlerProd;

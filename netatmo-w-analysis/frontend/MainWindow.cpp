@@ -23,6 +23,7 @@ MainWindow::MainWindow()
     deviceLocale = new QLocale();
     apiMonitor = new APIMonitor();
     apiHandler = new NetatmoAPIHandler(apiMonitor, 20000);
+    recentDataHandler = new RecentDataHandler(apiMonitor);
     dbHandlerProd = new DatabaseHandler(PATH_TO_PROD_DATABASE);
     dbHandlerCopy = new DatabaseHandler(PATH_TO_COPY_DATABASE);
     oldDataUploader = new OldDataUploader(apiHandler);
@@ -30,7 +31,7 @@ MainWindow::MainWindow()
 }
 
 void MainWindow::buildWindow() {
-    buildAPIHandler();
+    buildAPIHandlers();
     buildLabels();
     buildButtons();
     buildCharts();
@@ -40,7 +41,7 @@ void MainWindow::buildWindow() {
     createMenus();
 }
 
-void MainWindow::buildAPIHandler() { 
+void MainWindow::buildAPIHandlers() {
     apiHandler->postTokensRequest();
     connect(apiHandler, SIGNAL(accessTokenChanged(QString)),
             apiHandler, SLOT(postCurrentConditionsRequest(QString)));
@@ -93,8 +94,8 @@ void MainWindow::buildButtons() {
 }
 
 void MainWindow::buildCharts() {
-    indoorChart = new HomePageChart(apiHandler, "IndoorTimestampRecords", true);
-    outdoorChart = new HomePageChart(apiHandler, "OutdoorTimestampRecords", false);
+    indoorChart = new HomePageChart(recentDataHandler, "IndoorTimestampRecords", true);
+    outdoorChart = new HomePageChart(recentDataHandler, "OutdoorTimestampRecords", false);
 
     h4Option = new QRadioButton("4 heures");
     h24Option = new QRadioButton("24 heures");

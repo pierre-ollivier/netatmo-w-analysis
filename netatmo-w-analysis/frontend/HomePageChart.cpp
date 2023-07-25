@@ -4,10 +4,10 @@
 
 extern QString PATH_TO_COPY_DATABASE;
 
-HomePageChart::HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName, bool indoor) : QChartView()
+HomePageChart::HomePageChart(RecentDataHandler *recentDataHandler, QString tableName, bool indoor) : QChartView()
 {
     _tableName = tableName;
-    _apiHandler = apiHandler;
+    _recentDataHandler = recentDataHandler;
     _indoor = indoor;
 
     locale = new QLocale(QLocale::system());
@@ -33,9 +33,9 @@ HomePageChart::HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName, b
     setChart(chart);
     setFixedSize(500, 300);
 
-    if (indoor) connect(_apiHandler, SIGNAL(indoorRecordListRetrieved(QList<IntTimestampRecord>)),
+    if (indoor) connect(_recentDataHandler, SIGNAL(indoorRecordListRetrieved(QList<IntTimestampRecord>)),
                         SLOT(drawChart(QList<IntTimestampRecord>)));
-    else connect(_apiHandler, SIGNAL(outdoorRecordListRetrieved(QList<ExtTimestampRecord>)),
+    else connect(_recentDataHandler, SIGNAL(outdoorRecordListRetrieved(QList<ExtTimestampRecord>)),
                  SLOT(drawChart(QList<ExtTimestampRecord>)));
 }
 
@@ -49,18 +49,23 @@ void HomePageChart::gatherChartData(QString accessToken, QString measurementType
         scale = "30min";
     }
 
-    if (indoor) {
-        _apiHandler->postIndoorChartRequest(
-                    dateBegin,
-                    scale,
-                    accessToken);
-    }
-    else {
-        _apiHandler->postOutdoorChartRequest(
-                    dateBegin,
-                    scale,
-                    accessToken);
-    }
+//    if (indoor) {
+//        _apiHandler->postIndoorChartRequest(
+//                    dateBegin,
+//                    scale,
+//                    accessToken);
+//    }
+//    else {
+//        _apiHandler->postOutdoorChartRequest(
+//                    dateBegin,
+//                    scale,
+//                    accessToken);
+//    }
+
+    _recentDataHandler->postRequests(
+                dateBegin,
+                scale,
+                accessToken);  // TODO move this somewhere else, otherwise all the requests will be posted twice
 }
 
 void HomePageChart::drawChart(QList<ExtTimestampRecord> records) {
