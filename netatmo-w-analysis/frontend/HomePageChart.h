@@ -2,7 +2,7 @@
 #define HOMEPAGECHART_H
 
 #include <QtCharts>
-#include "../netatmo-w-analysis/backend/NetatmoAPIHandler.h"
+#include "../netatmo-w-analysis/backend/RecentDataHandler.h"
 #include "../types/TimestampRecord.h"
 
 class HomePageChart : public QChartView
@@ -10,7 +10,7 @@ class HomePageChart : public QChartView
     Q_OBJECT
 
 public:
-    HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName, bool indoor);
+    HomePageChart(RecentDataHandler *recentDataHandler, QString tableName, bool indoor);
 
 public slots:
     void gatherChartData(QString accessToken, QString measurementType, bool indoor, int durationInHours = 4);
@@ -30,7 +30,7 @@ private:
 
     QLocale *locale;
 
-    NetatmoAPIHandler *_apiHandler;
+    RecentDataHandler *_recentDataHandler;
 
     QString _tableName;
     QString _measurementType = "temperature";
