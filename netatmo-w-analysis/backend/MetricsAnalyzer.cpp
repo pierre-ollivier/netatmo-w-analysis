@@ -104,14 +104,14 @@ QString MetricsAnalyzer::text(DatabaseHandler *dbHandler) {
 //            "Humidex minimal : " + QString::number(stdevHn) + " ET");
 
     const int decimals = (3 <= indexOfMostRelevantMetric && indexOfMostRelevantMetric < 6) ? 0 : 1;
+    const QString unitWithLeadingSpace = indexOfMostRelevantMetric < 3 ? " °C" :
+                                         indexOfMostRelevantMetric < 6 ? " %" :
+                                         indexOfMostRelevantMetric < 9 ? " °C" :
+                                                                         "";
 
     return "Aujourd'hui, la valeur la plus notable est " + measurementsTranslated[indexOfMostRelevantMetric]
-            + " de " + locale->toString(values[indexOfMostRelevantMetric], 'f', decimals) + ",\n"
-            + "ce qui correspond à un écart de " + locale->toString(standardDeviations[indexOfMostRelevantMetric], 'f', 1)
-            + (absStandardDeviations[indexOfMostRelevantMetric] >= 1.95 ? " écarts-types" : " écart-type");
+            + " de <b>" + locale->toString(values[indexOfMostRelevantMetric], 'f', decimals) + unitWithLeadingSpace + "</b>,<br>"
+            + "ce qui correspond à un écart à la moyenne de <b>" + locale->toString(standardDeviations[indexOfMostRelevantMetric], 'f', 1)
+            + "</b> " + (absStandardDeviations[indexOfMostRelevantMetric] >= 1.95 ? "écarts-types" : "écart-type") + ".";
 
-    /*
-     * Structure du texte final : "Aujourd'hui, la valeur la plus notable est la variation d'humidité de 40 %,
-     * ce qui correspond à un écart de 1,2 écart-type.
-     */
 }
