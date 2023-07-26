@@ -2,6 +2,7 @@
 #define METRICSANALYZER_H
 
 #include <QDate>
+#include <QLocale>
 #include "../netatmo-w-analysis/backend/DatabaseHandler.h"
 #include "../netatmo-w-analysis/backend/NormalComputer.h"
 
@@ -16,6 +17,8 @@ public:
 private:
     QDate _date;
     NormalComputer *computer;
+
+    QLocale *locale;
 };
 
 #endif // METRICSANALYZER_H
