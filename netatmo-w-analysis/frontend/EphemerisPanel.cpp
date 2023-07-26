@@ -23,8 +23,7 @@ EphemerisPanel::EphemerisPanel() : QGroupBox()
     layout->addWidget(txmLabel, 3, 2);
     layout->addWidget(new QLabel("Température minimale moyenne : "), 4, 1);
     layout->addWidget(tnmLabel, 4, 2);
-    layout->addWidget(new QLabel("Écarts aux normales :"), 5, 1);
-    layout->addWidget(stdevLabel, 5, 2);
+    layout->addWidget(stdevLabel, 5, 1, 1, 2);
 
     dbHandler = new DatabaseHandler(PATH_TO_COPY_DATABASE);
     normalComputer = new NormalComputer(dbHandler);
