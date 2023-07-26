@@ -19,6 +19,7 @@ public:
 
 public slots:
     void updateStdevLabel();
+    void updateStatistics();
 
 private:
     QLabel *txxLabel;
@@ -31,6 +32,8 @@ private:
     DatabaseHandler *dbHandler;
     NormalComputer *normalComputer;
     MetricsAnalyzer *analyzer;
+
+    QDate _date;
 };
 
 #endif // EPHEMERISPANEL_H
