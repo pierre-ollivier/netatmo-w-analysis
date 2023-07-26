@@ -64,6 +64,9 @@ void MainWindow::buildAPIHandlers() {
             this, SLOT(updateMaxIntTemperatureTime(int)));
     connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), SLOT(updateOutdoorChart()));
     connect(apiHandler, SIGNAL(intUTCTimeChanged(int)), SLOT(updateIndoorChart()));
+
+    connect(recentDataHandler, SIGNAL(recentRecordListRetrieved(QList<ExtTimestampRecord>)),
+            oldDataUploader, SLOT(logOutdoorTimestampRecords(QList<ExtTimestampRecord>)));
 }
 
 void MainWindow::buildLabels() {

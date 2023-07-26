@@ -46,51 +46,61 @@ EphemerisPanel::EphemerisPanel() : QGroupBox()
                 "}");
 }
 
+
 void EphemerisPanel::setDate(QDate date) {
-    setTitle("Statistiques pour un " + date.toString("d MMMM"));
-    if (date.day() == 1) setTitle("Statistiques pour un " + date.toString("der MMMM"));
+    if (date != _date) {
+        _date = date;
+        updateStatistics();
+    }
+}
+
+
+void EphemerisPanel::updateStatistics() {
+    setTitle("Statistiques pour un " + _date.toString("d MMMM"));
+    if (_date.day() == 1) setTitle("Statistiques pour un " + _date.toString("der MMMM"));
 
     double txx = dbHandler->getResultFromDatabase(
                 "SELECT max(maxTemperature) FROM OutdoorDailyRecords "
-                "WHERE month = " + QString::number(date.month()) + " "
-                "AND day = " + QString::number(date.day())).toDouble();
+                "WHERE month = " + QString::number(_date.month()) + " "
+                "AND day = " + QString::number(_date.day())).toDouble();
     txxLabel->setText("<font color = \"#209fdf\">" + deviceLocale->toString(txx, 'f', 1) + "</font> °C");
 
     double tnn = dbHandler->getResultFromDatabase(
                 "SELECT min(minTemperature) FROM OutdoorDailyRecords "
-                "WHERE month = " + QString::number(date.month()) + " "
-                "AND day = " + QString::number(date.day())).toDouble();
+                "WHERE month = " + QString::number(_date.month()) + " "
+                "AND day = " + QString::number(_date.day())).toDouble();
     tnnLabel->setText("<font color = \"#209fdf\">" + deviceLocale->toString(tnn, 'f', 1) + "</font> °C");
 
     double txm = normalComputer->normalMeasurementByMovingAverage(
                 "OutdoorDailyRecords",
-                date,
+                _date,
                 "maxTemperature",
                 41);
     txmLabel->setText("<font color = \"#209fdf\">" + deviceLocale->toString(txm, 'f', 1) + "</font> °C");
 
     double tnm = normalComputer->normalMeasurementByMovingAverage(
                 "OutdoorDailyRecords",
-                date,
+                _date,
                 "minTemperature",
                 41);
     tnmLabel->setText("<font color = \"#209fdf\">" + deviceLocale->toString(tnm, 'f', 1) + "</font> °C");
 
     int txxYear = dbHandler->getResultFromDatabase(
                 "SELECT year FROM OutdoorDailyRecords "
-                "WHERE day = " + QString::number(date.day()) + " "
-                "AND month = " + QString::number(date.month()) + " "
+                "WHERE day = " + QString::number(_date.day()) + " "
+                "AND month = " + QString::number(_date.month()) + " "
                 "AND maxTemperature = " + QString::number(txx)).toInt();
     txxLabel->setText(txxLabel->text() + " (" + QString::number(txxYear) + ")");
 
     int tnnYear = dbHandler->getResultFromDatabase(
                 "SELECT year FROM OutdoorDailyRecords "
-                "WHERE day = " + QString::number(date.day()) + " "
-                "AND month = " + QString::number(date.month()) + " "
+                "WHERE day = " + QString::number(_date.day()) + " "
+                "AND month = " + QString::number(_date.month()) + " "
                 "AND minTemperature = " + QString::number(tnn)).toInt();
     tnnLabel->setText(tnnLabel->text() + " (" + QString::number(tnnYear) + ")");
     updateStdevLabel();
 }
+
 
 void EphemerisPanel::updateStdevLabel() {
     stdevLabel->setText(analyzer->text(dbHandler));
