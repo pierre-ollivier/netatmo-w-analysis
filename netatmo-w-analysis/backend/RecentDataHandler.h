@@ -19,6 +19,8 @@ public slots:
     void postRequests(int dateBegin, QString scale, QString accessToken);
     void retrieveIndoorChartRequest(QNetworkReply*);
     void retrieveOutdoorChartRequest(QNetworkReply*);
+    void retrieveLongOutdoorChartRequest(QNetworkReply*);
+    void retrieveLongOutdoorLastRequest(QNetworkReply*);
 
 signals:
     void outdoorRecordListRetrieved(QList<ExtTimestampRecord>);
@@ -30,6 +32,8 @@ private:
 
     QNetworkAccessManager *outdoorChartRequestManager;
     QNetworkAccessManager *indoorChartRequestManager;
+    QNetworkAccessManager *longOutdoorChartRequestManager;
+    QNetworkAccessManager *longOutdoorLastRequestManager;
 
     int _minTimestamp = 0;
 };
