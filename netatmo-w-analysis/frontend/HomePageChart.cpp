@@ -35,7 +35,6 @@ HomePageChart::HomePageChart(QString tableName, bool indoor) : QChartView()
 
 void HomePageChart::drawChart(QList<ExtTimestampRecord> records) {
     QList<QPointF> points = QList<QPointF>();
-//    QString measurementType = _parentWindow->measurementType();
     for (ExtTimestampRecord record : records) {
         if (_measurementType == "temperature") {
             points.append(QPointF(1000 * record.timestamp(), record.temperature()));
@@ -54,7 +53,6 @@ void HomePageChart::drawChart(QList<ExtTimestampRecord> records) {
 }
 
 void HomePageChart::drawChart(QList<IntTimestampRecord> records) {
-//    QString measurementType = _parentWindow->measurementType();
     QList<QPointF> points = QList<QPointF>();
     for (IntTimestampRecord record : records) {
         if (_measurementType == "temperature") {
@@ -78,14 +76,10 @@ void HomePageChart::drawChart(QList<QPointF> points) {
     minOfSeries = QVariant();
     long long minTimestamp = 0, maxTimestamp = 0;
 
-    series->clear();
-    series->append(points);
-
     for (QPointF point: points) {
         if (point.x() > maxTimestamp) maxTimestamp = point.x();
     }
 
-//    int timeBetweenXTicksInMs = _parentWindow->durationInHours() * 3600 * 1000 / 8;
     int timeBetweenXTicksInMs = _durationInHours * 3600 * 1000 / 8;
     int maxShiftOfMaxTimestamp =
             _durationInHours == 4? 30 * 60 * 1000:
@@ -110,6 +104,9 @@ void HomePageChart::drawChart(QList<QPointF> points) {
             if (minOfSeries.isNull() || point.y() < minOfSeries.toDouble()) minOfSeries = point.y();
         }
     }
+
+    series->clear();
+    series->append(points);
 
     setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
 
