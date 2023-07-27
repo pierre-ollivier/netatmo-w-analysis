@@ -7,7 +7,6 @@ extern QString PATH_TO_COPY_DATABASE;
 HomePageChart::HomePageChart(QString tableName, bool indoor) : QChartView()
 {
     _tableName = tableName;
-//    _recentDataHandler = recentDataHandler;
     _indoor = indoor;
 
     locale = new QLocale(QLocale::system());
@@ -32,27 +31,6 @@ HomePageChart::HomePageChart(QString tableName, bool indoor) : QChartView()
 
     setChart(chart);
     setFixedSize(500, 300);
-
-//    if (indoor) connect(_recentDataHandler, SIGNAL(indoorRecordListRetrieved(QList<IntTimestampRecord>)),
-//                        SLOT(drawChart(QList<IntTimestampRecord>)));
-//    else connect(_recentDataHandler, SIGNAL(outdoorRecordListRetrieved(QList<ExtTimestampRecord>)),
-//                 SLOT(drawChart(QList<ExtTimestampRecord>)));
-}
-
-void HomePageChart::gatherChartData(QString accessToken, QString measurementType, bool indoor, int durationInHours) {
-    _measurementType = measurementType;
-    _durationInHours = durationInHours;
-    int dateBegin = QDateTime::currentDateTime().toSecsSinceEpoch() - durationInHours * 3600 - 600;
-    QString scale = "max";
-
-    if (durationInHours > 48) {
-        scale = "30min";
-    }
-
-    _recentDataHandler->postRequests(
-                dateBegin,
-                scale,
-                accessToken);  // TODO move this somewhere else, otherwise all the requests will be posted twice
 }
 
 void HomePageChart::drawChart(QList<ExtTimestampRecord> records) {
@@ -139,8 +117,6 @@ void HomePageChart::drawChart(QList<QPointF> points) {
         xAxis->setFormat("dd/MM");
     }
     else xAxis->setFormat("hh:mm");
-
-//    QString measurementType = _parentWindow->measurementType();
 
     if (_measurementType == "temperature") {
         yAxis->setLabelFormat(QString("%.1f") + " °C");

@@ -17,7 +17,6 @@ public:
     void setMeasurementType(QString measurementType);
 
 public slots:
-    void gatherChartData(QString accessToken, QString measurementType, bool indoor, int durationInHours = 4);
     void drawChart(QList<QPointF> temperatureList);
     void drawChart(QList<ExtTimestampRecord> records);
     void drawChart(QList<IntTimestampRecord> records);
@@ -41,8 +40,6 @@ private:
 
     QVariant maxOfSeries = QVariant();
     QVariant minOfSeries = QVariant();
-
-//    MainWindow *_parentWindow;
 
     bool _indoor;
 
