@@ -63,8 +63,7 @@ void MainWindow::buildAPIHandlers() {
             this, SLOT(updateMinIntTemperatureTime(int)));
     connect(apiHandler, SIGNAL(intMaxTemperatureTimeChanged(int)),
             this, SLOT(updateMaxIntTemperatureTime(int)));
-//    connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), SLOT(updateOutdoorChart()));
-//    connect(apiHandler, SIGNAL(intUTCTimeChanged(int)), SLOT(updateIndoorChart()));
+
     connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), SIGNAL(recentDataShouldBeUpdated()));
     connect(apiHandler, SIGNAL(intUTCTimeChanged(int)), SIGNAL(recentDataShouldBeUpdated()));
 
@@ -152,7 +151,6 @@ void MainWindow::buildLayouts() {
     mainLayout = new QGridLayout();
     mainLayout->addWidget(currentExtTempLabel, 1, 0, 2, 1);
     mainLayout->addWidget(statusLabel, 0, 0);
-//    mainLayout->addWidget(labelExtremes, 0, 1, 1, 2);
     mainLayout->addWidget(actualisationButton, 0, 3);
     mainLayout->addWidget(outdoorChart, 1, 1, 2, 2);
     mainLayout->addWidget(currentMaxExtTempLabel, 1, 3);
@@ -215,15 +213,12 @@ void MainWindow::setAccessToken(QString newAccessToken) {
     oldDataUploader->setAccessToken(accessToken);
     addDataFromCurrentMonths();
     addDataFromLastDays();
-//    updateIndoorChart();
-//    updateOutdoorChart();
     emit recentDataShouldBeUpdated();
 }
 
 void MainWindow::updateIndoorChart(QString measurementType, int durationInHours) {
     if (measurementType == "") measurementType = _measurementType;
     if (durationInHours == 0) durationInHours = _durationInHours;
-//    if (accessToken != "") indoorChart->gatherChartData(accessToken, measurementType, true, durationInHours);
     int dateBegin = QDateTime::currentDateTime().toSecsSinceEpoch() - durationInHours * 3600 - 600;
     QString scale = "max";
 
@@ -241,7 +236,6 @@ void MainWindow::updateIndoorChart(QString measurementType, int durationInHours)
 void MainWindow::updateOutdoorChart(QString measurementType, int durationInHours) {
     if (measurementType == "") measurementType = _measurementType;
     if (durationInHours == 0) durationInHours = _durationInHours;
-//    if (accessToken != "") outdoorChart->gatherChartData(accessToken, measurementType, false, durationInHours);
     int dateBegin = QDateTime::currentDateTime().toSecsSinceEpoch() - durationInHours * 3600 - 600;
     QString scale = "max";
 
@@ -512,8 +506,6 @@ void MainWindow::changeChartsOptions() {
     indoorChart->setDurationInHours(_durationInHours);
     outdoorChart->setMeasurementType(_measurementType);
     outdoorChart->setDurationInHours(_durationInHours);
-//    updateOutdoorChart();
-//    updateIndoorChart();
     emit recentDataShouldBeUpdated();
 }
 
