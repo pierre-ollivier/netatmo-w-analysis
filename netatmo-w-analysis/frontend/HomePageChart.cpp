@@ -4,10 +4,10 @@
 
 extern QString PATH_TO_COPY_DATABASE;
 
-HomePageChart::HomePageChart(RecentDataHandler *recentDataHandler, QString tableName, bool indoor) : QChartView()
+HomePageChart::HomePageChart(QString tableName, bool indoor) : QChartView()
 {
     _tableName = tableName;
-    _recentDataHandler = recentDataHandler;
+//    _recentDataHandler = recentDataHandler;
     _indoor = indoor;
 
     locale = new QLocale(QLocale::system());
@@ -33,10 +33,10 @@ HomePageChart::HomePageChart(RecentDataHandler *recentDataHandler, QString table
     setChart(chart);
     setFixedSize(500, 300);
 
-    if (indoor) connect(_recentDataHandler, SIGNAL(indoorRecordListRetrieved(QList<IntTimestampRecord>)),
-                        SLOT(drawChart(QList<IntTimestampRecord>)));
-    else connect(_recentDataHandler, SIGNAL(outdoorRecordListRetrieved(QList<ExtTimestampRecord>)),
-                 SLOT(drawChart(QList<ExtTimestampRecord>)));
+//    if (indoor) connect(_recentDataHandler, SIGNAL(indoorRecordListRetrieved(QList<IntTimestampRecord>)),
+//                        SLOT(drawChart(QList<IntTimestampRecord>)));
+//    else connect(_recentDataHandler, SIGNAL(outdoorRecordListRetrieved(QList<ExtTimestampRecord>)),
+//                 SLOT(drawChart(QList<ExtTimestampRecord>)));
 }
 
 void HomePageChart::gatherChartData(QString accessToken, QString measurementType, bool indoor, int durationInHours) {
@@ -49,19 +49,6 @@ void HomePageChart::gatherChartData(QString accessToken, QString measurementType
         scale = "30min";
     }
 
-//    if (indoor) {
-//        _apiHandler->postIndoorChartRequest(
-//                    dateBegin,
-//                    scale,
-//                    accessToken);
-//    }
-//    else {
-//        _apiHandler->postOutdoorChartRequest(
-//                    dateBegin,
-//                    scale,
-//                    accessToken);
-//    }
-
     _recentDataHandler->postRequests(
                 dateBegin,
                 scale,
@@ -70,6 +57,7 @@ void HomePageChart::gatherChartData(QString accessToken, QString measurementType
 
 void HomePageChart::drawChart(QList<ExtTimestampRecord> records) {
     QList<QPointF> points = QList<QPointF>();
+//    QString measurementType = _parentWindow->measurementType();
     for (ExtTimestampRecord record : records) {
         if (_measurementType == "temperature") {
             points.append(QPointF(1000 * record.timestamp(), record.temperature()));
@@ -88,6 +76,7 @@ void HomePageChart::drawChart(QList<ExtTimestampRecord> records) {
 }
 
 void HomePageChart::drawChart(QList<IntTimestampRecord> records) {
+//    QString measurementType = _parentWindow->measurementType();
     QList<QPointF> points = QList<QPointF>();
     for (IntTimestampRecord record : records) {
         if (_measurementType == "temperature") {
@@ -118,6 +107,7 @@ void HomePageChart::drawChart(QList<QPointF> points) {
         if (point.x() > maxTimestamp) maxTimestamp = point.x();
     }
 
+//    int timeBetweenXTicksInMs = _parentWindow->durationInHours() * 3600 * 1000 / 8;
     int timeBetweenXTicksInMs = _durationInHours * 3600 * 1000 / 8;
     int maxShiftOfMaxTimestamp =
             _durationInHours == 4? 30 * 60 * 1000:
@@ -149,6 +139,8 @@ void HomePageChart::drawChart(QList<QPointF> points) {
         xAxis->setFormat("dd/MM");
     }
     else xAxis->setFormat("hh:mm");
+
+//    QString measurementType = _parentWindow->measurementType();
 
     if (_measurementType == "temperature") {
         yAxis->setLabelFormat(QString("%.1f") + " °C");
@@ -217,4 +209,12 @@ void HomePageChart::setYAxisTicks(double maxValue, double minValue) {
     else {
         yAxis->setTickInterval(20);
     }
+}
+
+void HomePageChart::setDurationInHours(int durationInHours) {
+    _durationInHours = durationInHours;
+}
+
+void HomePageChart::setMeasurementType(QString measurementType) {
+    _measurementType = measurementType;
 }

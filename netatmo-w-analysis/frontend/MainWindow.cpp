@@ -27,14 +27,15 @@ MainWindow::MainWindow()
     dbHandlerProd = new DatabaseHandler(PATH_TO_PROD_DATABASE);
     dbHandlerCopy = new DatabaseHandler(PATH_TO_COPY_DATABASE);
     oldDataUploader = new OldDataUploader(apiHandler);
+    connect(this, SIGNAL(recentDataShouldBeUpdated()), SLOT(postRecentDataRequests()));
     buildWindow();
 }
 
 void MainWindow::buildWindow() {
+    buildCharts();
     buildAPIHandlers();
     buildLabels();
     buildButtons();
-    buildCharts();
     buildEphemerisPanel();
     buildLayouts();
     createActions();
@@ -62,11 +63,17 @@ void MainWindow::buildAPIHandlers() {
             this, SLOT(updateMinIntTemperatureTime(int)));
     connect(apiHandler, SIGNAL(intMaxTemperatureTimeChanged(int)),
             this, SLOT(updateMaxIntTemperatureTime(int)));
-    connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), SLOT(updateOutdoorChart()));
-    connect(apiHandler, SIGNAL(intUTCTimeChanged(int)), SLOT(updateIndoorChart()));
+//    connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), SLOT(updateOutdoorChart()));
+//    connect(apiHandler, SIGNAL(intUTCTimeChanged(int)), SLOT(updateIndoorChart()));
+    connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), SIGNAL(recentDataShouldBeUpdated()));
+    connect(apiHandler, SIGNAL(intUTCTimeChanged(int)), SIGNAL(recentDataShouldBeUpdated()));
 
     connect(recentDataHandler, SIGNAL(recentRecordListRetrieved(QList<ExtTimestampRecord>)),
             oldDataUploader, SLOT(logOutdoorTimestampRecords(QList<ExtTimestampRecord>)));
+    connect(recentDataHandler, SIGNAL(outdoorRecordListRetrieved(QList<ExtTimestampRecord>)),
+            outdoorChart, SLOT(drawChart(QList<ExtTimestampRecord>)));
+    connect(recentDataHandler, SIGNAL(indoorRecordListRetrieved(QList<IntTimestampRecord>)),
+            indoorChart, SLOT(drawChart(QList<IntTimestampRecord>)));
 }
 
 void MainWindow::buildLabels() {
@@ -97,8 +104,8 @@ void MainWindow::buildButtons() {
 }
 
 void MainWindow::buildCharts() {
-    indoorChart = new HomePageChart(recentDataHandler, "IndoorTimestampRecords", true);
-    outdoorChart = new HomePageChart(recentDataHandler, "OutdoorTimestampRecords", false);
+    indoorChart = new HomePageChart("IndoorTimestampRecords", true);
+    outdoorChart = new HomePageChart("OutdoorTimestampRecords", false);
 
     h4Option = new QRadioButton("4 heures");
     h24Option = new QRadioButton("24 heures");
@@ -208,20 +215,45 @@ void MainWindow::setAccessToken(QString newAccessToken) {
     oldDataUploader->setAccessToken(accessToken);
     addDataFromCurrentMonths();
     addDataFromLastDays();
-    updateIndoorChart();
-    updateOutdoorChart();
+//    updateIndoorChart();
+//    updateOutdoorChart();
+    emit recentDataShouldBeUpdated();
 }
 
 void MainWindow::updateIndoorChart(QString measurementType, int durationInHours) {
     if (measurementType == "") measurementType = _measurementType;
     if (durationInHours == 0) durationInHours = _durationInHours;
-    if (accessToken != "") indoorChart->gatherChartData(accessToken, measurementType, true, durationInHours);
+//    if (accessToken != "") indoorChart->gatherChartData(accessToken, measurementType, true, durationInHours);
+    int dateBegin = QDateTime::currentDateTime().toSecsSinceEpoch() - durationInHours * 3600 - 600;
+    QString scale = "max";
+
+    if (durationInHours > 48) {
+        scale = "30min";
+    }
+    if (accessToken != "") {
+        recentDataHandler->postRequests(
+                    dateBegin,
+                    scale,
+                    accessToken);
+    }
 }
 
 void MainWindow::updateOutdoorChart(QString measurementType, int durationInHours) {
     if (measurementType == "") measurementType = _measurementType;
     if (durationInHours == 0) durationInHours = _durationInHours;
-    if (accessToken != "") outdoorChart->gatherChartData(accessToken, measurementType, false, durationInHours);
+//    if (accessToken != "") outdoorChart->gatherChartData(accessToken, measurementType, false, durationInHours);
+    int dateBegin = QDateTime::currentDateTime().toSecsSinceEpoch() - durationInHours * 3600 - 600;
+    QString scale = "max";
+
+    if (durationInHours > 48) {
+        scale = "30min";
+    }
+    if (accessToken != "") {
+        recentDataHandler->postRequests(
+                    dateBegin,
+                    scale,
+                    accessToken);
+    }
 }
 
 void MainWindow::addDataFromCurrentMonths() {
@@ -476,8 +508,13 @@ void MainWindow::changeChartsOptions() {
     if (h4Option->isChecked()) _durationInHours = 4;
     if (h24Option->isChecked()) _durationInHours = 24;
     if (h192Option->isChecked()) _durationInHours = 192;
-    updateOutdoorChart();
-    updateIndoorChart();
+    indoorChart->setMeasurementType(_measurementType);
+    indoorChart->setDurationInHours(_durationInHours);
+    outdoorChart->setMeasurementType(_measurementType);
+    outdoorChart->setDurationInHours(_durationInHours);
+//    updateOutdoorChart();
+//    updateIndoorChart();
+    emit recentDataShouldBeUpdated();
 }
 
 void MainWindow::showNormals() {
@@ -489,4 +526,27 @@ void MainWindow::showNormals() {
 void MainWindow::exploreData() {
     DataExplorator *explorator = new DataExplorator(dbHandlerCopy);
     explorator->show();
+}
+
+void MainWindow::postRecentDataRequests() {
+    int dateBegin = QDateTime::currentDateTime().toSecsSinceEpoch() - _durationInHours * 3600 - 600;
+    QString scale = "max";
+
+    if (_durationInHours > 48) {
+        scale = "30min";
+    }
+    if (accessToken != "") {
+        recentDataHandler->postRequests(
+                    dateBegin,
+                    scale,
+                    accessToken);
+    }
+}
+
+QString MainWindow::measurementType() {
+    return _measurementType;
+}
+
+int MainWindow::durationInHours() {
+    return _durationInHours;
 }
