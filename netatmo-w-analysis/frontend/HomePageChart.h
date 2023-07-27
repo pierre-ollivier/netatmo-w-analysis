@@ -3,6 +3,7 @@
 
 #include <QtCharts>
 #include "../netatmo-w-analysis/backend/RecentDataHandler.h"
+//#include "../netatmo-w-analysis/frontend/MainWindow.h"
 #include "../types/TimestampRecord.h"
 
 class HomePageChart : public QChartView
@@ -10,7 +11,10 @@ class HomePageChart : public QChartView
     Q_OBJECT
 
 public:
-    HomePageChart(RecentDataHandler *recentDataHandler, QString tableName, bool indoor);
+    HomePageChart(QString tableName, bool indoor);
+
+    void setDurationInHours(int durationInHours);
+    void setMeasurementType(QString measurementType);
 
 public slots:
     void gatherChartData(QString accessToken, QString measurementType, bool indoor, int durationInHours = 4);
@@ -37,6 +41,8 @@ private:
 
     QVariant maxOfSeries = QVariant();
     QVariant minOfSeries = QVariant();
+
+//    MainWindow *_parentWindow;
 
     bool _indoor;
 

@@ -34,6 +34,9 @@ public:
     void createMenus();
     void createActions();
 
+    QString measurementType();
+    int durationInHours();
+
 public slots:
     void setAccessToken(QString);
 
@@ -72,9 +75,10 @@ public slots:
     void changeChartsOptions();
 
     void showNormals();
+    void postRecentDataRequests();
 
 signals:
-
+    void recentDataShouldBeUpdated();
 
 private:
     // labels
