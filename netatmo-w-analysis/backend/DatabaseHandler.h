@@ -38,6 +38,7 @@ public:
     int getNumberOfResultsFromDatabase(QString query);
 
     QDateTime getLatestDateTimeFromDatabase(QString tableName, QString measurement = "");
+    long long getLatestTimestampFromDatabaseInS(QString tableName, QString measurement = "");
 
     void updateOutdoorDailyRecords(QDate beginDate, QDate endDate, bool verbose = true);
     void updateIndoorDailyRecords(QDate beginDate, QDate endDate, bool verbose = true);

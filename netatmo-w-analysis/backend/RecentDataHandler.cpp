@@ -6,6 +6,8 @@
 #include <QUrl>
 #include <QUrlQuery>
 
+extern const QString PATH_TO_COPY_DATABASE;
+
 RecentDataHandler::RecentDataHandler(APIMonitor *monitor)
 {
     apiMonitor = monitor;
@@ -15,7 +17,7 @@ RecentDataHandler::RecentDataHandler(APIMonitor *monitor)
     longOutdoorLastRequestManager = new QNetworkAccessManager();
     longOutdoorChartRequestManager = new QNetworkAccessManager();
 
-    apiMonitor = monitor;
+    dbHandlerLastRecords = new DatabaseHandler(PATH_TO_COPY_DATABASE);
 
     connect(outdoorChartRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveOutdoorChartRequest(QNetworkReply *)));
     connect(indoorChartRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveIndoorChartRequest(QNetworkReply *)));
@@ -127,7 +129,7 @@ void RecentDataHandler::retrieveOutdoorChartRequest(QNetworkReply *reply) {
             int humidity = int(0.5 + value[1].toDouble());
 
             recordsList.append(ExtTimestampRecord(timestamp, temperature, humidity));
-            if (timestamp > _minTimestamp) {
+            if (timestamp > dbHandlerLastRecords->getLatestTimestampFromDatabaseInS("LastOutdoorTimestampRecords")) {
                 lastRecordsList.append(ExtTimestampRecord(timestamp, temperature, humidity));
             }
         }
@@ -198,7 +200,7 @@ void RecentDataHandler::retrieveLongOutdoorLastRequest(QNetworkReply *reply) {
             double temperature = value[0].toDouble();
             int humidity = int(0.5 + value[1].toDouble());
 
-            if (timestamp > _minTimestamp) {
+            if (timestamp > dbHandlerLastRecords->getLatestTimestampFromDatabaseInS("LastOutdoorTimestampRecords")) {
                 lastRecordsList.append(ExtTimestampRecord(timestamp, temperature, humidity));
             }
         }
