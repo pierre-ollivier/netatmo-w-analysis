@@ -33,8 +33,6 @@ private:
 
     QLocale *locale;
 
-    RecentDataHandler *_recentDataHandler;
-
     QString _tableName;
     QString _measurementType = "temperature";
 

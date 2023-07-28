@@ -56,9 +56,6 @@ public slots:
     void updateActualisationDate(QDateTime timestamp);
     void updateRequestCounts();
 
-    void updateIndoorChart(QString measurementType = "", int durationInHours = 0);
-    void updateOutdoorChart(QString measurementType = "", int durationInHours = 0);
-
     void addMonthData();
     void addMultipleMonthsData();
 
