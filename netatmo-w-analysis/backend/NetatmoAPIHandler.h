@@ -33,16 +33,12 @@ public slots:
     void postFullOutdoorDailyRequest(int dateBegin, int dateEnd, QString scale, QString accessToken);
     void post3hDailyRequest(int dateBegin, int dateEnd, QString accessToken);
     void postFullIndoorDailyRequest(int dateBegin, int dateEnd, QString scale, QString accessToken);
-    void postOutdoorChartRequest(int dateBegin, QString scale, QString accessToken);
-    void postIndoorChartRequest(int dateBegin, QString scale, QString accessToken);
     void postOutdoorTimestampRecordsRequest(long long dateBegin, long long dateEnd, QString accessToken);
 
     void retrieveTokens(QNetworkReply*);
     void retrieveCurrentConditions(QNetworkReply*);
     void retrieveFullDailyOutdoorConditions(QNetworkReply*);
     void retrieveFullDailyIndoorConditions(QNetworkReply*);
-    void retrieveIndoorChartRequest(QNetworkReply*);
-    void retrieveOutdoorChartRequest(QNetworkReply*);
     void retrieve3hOutdoorChartRequest(QNetworkReply *);
     void retrieveOutdoorTimestampRecordsRequest(QNetworkReply *);
 
@@ -119,8 +115,6 @@ private:
     QNetworkAccessManager *currentConditionsManager;
     QNetworkAccessManager *dailyFullOutdoorRequestManager;
     QNetworkAccessManager *dailyFullIndoorRequestManager;
-    QNetworkAccessManager *indoorChartRequestManager;
-    QNetworkAccessManager *outdoorChartRequestManager;
     QNetworkAccessManager *outdoor3hRequestManager;
     QNetworkAccessManager *outdoorTimestampRecordsRequestManager;
 
