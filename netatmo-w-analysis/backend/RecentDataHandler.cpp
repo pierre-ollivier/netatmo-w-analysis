@@ -163,7 +163,6 @@ void RecentDataHandler::retrieveIndoorChartRequest(QNetworkReply *reply) {
 
 void RecentDataHandler::retrieveLongOutdoorChartRequest(QNetworkReply *reply) {
     QList<ExtTimestampRecord> recordsList = QList<ExtTimestampRecord>();
-    QList<ExtTimestampRecord> lastRecordsList = QList<ExtTimestampRecord>();
     QByteArray bytes = reply->readAll();
     QJsonDocument js = QJsonDocument::fromJson(bytes);
     QJsonObject tb = js["body"].toObject();
@@ -178,9 +177,6 @@ void RecentDataHandler::retrieveLongOutdoorChartRequest(QNetworkReply *reply) {
             int humidity = int(0.5 + value[1].toDouble());
 
             recordsList.append(ExtTimestampRecord(timestamp, temperature, humidity));
-            if (timestamp > _minTimestamp) {
-                lastRecordsList.append(ExtTimestampRecord(timestamp, temperature, humidity));
-            }
         }
         emit outdoorRecordListRetrieved(recordsList);
     }
@@ -188,7 +184,6 @@ void RecentDataHandler::retrieveLongOutdoorChartRequest(QNetworkReply *reply) {
 
 
 void RecentDataHandler::retrieveLongOutdoorLastRequest(QNetworkReply *reply) {
-    QList<ExtTimestampRecord> recordsList = QList<ExtTimestampRecord>();
     QList<ExtTimestampRecord> lastRecordsList = QList<ExtTimestampRecord>();
     QByteArray bytes = reply->readAll();
     QJsonDocument js = QJsonDocument::fromJson(bytes);
@@ -203,11 +198,10 @@ void RecentDataHandler::retrieveLongOutdoorLastRequest(QNetworkReply *reply) {
             double temperature = value[0].toDouble();
             int humidity = int(0.5 + value[1].toDouble());
 
-            recordsList.append(ExtTimestampRecord(timestamp, temperature, humidity));
             if (timestamp > _minTimestamp) {
                 lastRecordsList.append(ExtTimestampRecord(timestamp, temperature, humidity));
             }
         }
-        emit recentRecordListRetrieved(recordsList);
+        emit recentRecordListRetrieved(lastRecordsList);
     }
 }
