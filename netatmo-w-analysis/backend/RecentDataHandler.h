@@ -5,6 +5,7 @@
 #include <QNetworkReply>
 #include <QObject>
 #include "../netatmo-w-analysis/backend/APIMonitor.h"
+#include "../netatmo-w-analysis/backend/DatabaseHandler.h"
 #include "../netatmo-w-analysis/types/ExtTimestampRecord.h"
 #include "../netatmo-w-analysis/types/IntTimestampRecord.h"
 
@@ -34,6 +35,8 @@ private:
     QNetworkAccessManager *indoorChartRequestManager;
     QNetworkAccessManager *longOutdoorChartRequestManager;
     QNetworkAccessManager *longOutdoorLastRequestManager;
+
+    DatabaseHandler *dbHandlerLastRecords;
 
     int _minTimestamp = 0;
 };

@@ -831,3 +831,7 @@ QDateTime DatabaseHandler::getLatestDateTimeFromDatabase(QString tableName, QStr
         return QDateTime(QDate::fromString(latestDate, "dd/MM/yyyy"), QTime::fromString(latestTime, "hh:mm:ss"));
     }
 }
+
+long long DatabaseHandler::getLatestTimestampFromDatabaseInS(QString tableName, QString measurement) {
+    return getLatestDateTimeFromDatabase(tableName, measurement).toSecsSinceEpoch();
+}
