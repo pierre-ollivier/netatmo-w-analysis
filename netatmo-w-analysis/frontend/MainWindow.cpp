@@ -216,40 +216,6 @@ void MainWindow::setAccessToken(QString newAccessToken) {
     emit recentDataShouldBeUpdated();
 }
 
-void MainWindow::updateIndoorChart(QString measurementType, int durationInHours) {
-    if (measurementType == "") measurementType = _measurementType;
-    if (durationInHours == 0) durationInHours = _durationInHours;
-    int dateBegin = QDateTime::currentDateTime().toSecsSinceEpoch() - durationInHours * 3600 - 600;
-    QString scale = "max";
-
-    if (durationInHours > 48) {
-        scale = "30min";
-    }
-    if (accessToken != "") {
-        recentDataHandler->postRequests(
-                    dateBegin,
-                    scale,
-                    accessToken);
-    }
-}
-
-void MainWindow::updateOutdoorChart(QString measurementType, int durationInHours) {
-    if (measurementType == "") measurementType = _measurementType;
-    if (durationInHours == 0) durationInHours = _durationInHours;
-    int dateBegin = QDateTime::currentDateTime().toSecsSinceEpoch() - durationInHours * 3600 - 600;
-    QString scale = "max";
-
-    if (durationInHours > 48) {
-        scale = "30min";
-    }
-    if (accessToken != "") {
-        recentDataHandler->postRequests(
-                    dateBegin,
-                    scale,
-                    accessToken);
-    }
-}
-
 void MainWindow::addDataFromCurrentMonths() {
     QDate lastAddedOutdoorDate = dbHandlerProd->getLatestDateTimeFromDatabase("OutdoorDailyRecords").date();
     QDate lastAddedIndoorDate = dbHandlerProd->getLatestDateTimeFromDatabase("IndoorDailyRecords").date();
