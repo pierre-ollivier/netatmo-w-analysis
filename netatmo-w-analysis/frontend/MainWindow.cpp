@@ -213,7 +213,6 @@ void MainWindow::setAccessToken(QString newAccessToken) {
     oldDataUploader->setAccessToken(accessToken);
     addDataFromCurrentMonths();
     addDataFromLastDays();
-    emit recentDataShouldBeUpdated();
 }
 
 void MainWindow::addDataFromCurrentMonths() {
