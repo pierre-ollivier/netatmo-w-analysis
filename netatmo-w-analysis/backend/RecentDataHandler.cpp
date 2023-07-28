@@ -26,7 +26,6 @@ RecentDataHandler::RecentDataHandler(APIMonitor *monitor)
 }
 
 void RecentDataHandler::postRequests(int date_begin, QString scale, QString accessToken) {
-    //  TODO add a second date_begin specifically for OldDataUploader and recentRecordListRetrieved
     if (accessToken == "") qDebug() << "Warning: undefined access token in RecentDataHandler";
     extern const QString mainDeviceId;
     extern const QString outdoorModuleId;
