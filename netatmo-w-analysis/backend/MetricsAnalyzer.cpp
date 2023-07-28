@@ -1,5 +1,6 @@
 #include "MetricsAnalyzer.h"
 #include <algorithm>
+#include <QDebug>
 
 extern const QString PATH_TO_COPY_DATABASE;
 
@@ -82,8 +83,16 @@ QString MetricsAnalyzer::text(DatabaseHandler *dbHandler) {
         stdevHx, stdevHn, stdevDeltaH
     };
 
+    qDebug() << "\nET";
+    for (int i = 0; i < 12; i++) qDebug() << standardDeviations[i];
+    qDebug() << "\nValeurs";
+    for (int i = 0; i < 12; i++) qDebug() << values[i];
+
     double absStandardDeviations[12];
     for (int i = 0; i < 12; i++) absStandardDeviations[i] = abs(standardDeviations[i]);
+
+    qDebug() << "\nET abs";
+    for (int i = 0; i < 12; i++) qDebug() << absStandardDeviations[i];
 
     QStringList measurementsTranslated = {
         "la température maximale", "la température minimale", "la variation de température",
@@ -92,7 +101,8 @@ QString MetricsAnalyzer::text(DatabaseHandler *dbHandler) {
         "l'humidex maximal", "l'humidex minimal", "la variation de l'humidex"
     };
 
-    int indexOfMostRelevantMetric = *std::max_element(absStandardDeviations, absStandardDeviations + 12);
+    int indexOfMostRelevantMetric = indexOfMaxElement(absStandardDeviations);
+    qDebug() << "\nIndex: " << indexOfMostRelevantMetric;
 
 //    return ("Température maximale : " + QString::number(stdevTx) + " ET" + "\n"
 //            "Température minimale : " + QString::number(stdevTn) + " ET" + "\n"
@@ -114,4 +124,16 @@ QString MetricsAnalyzer::text(DatabaseHandler *dbHandler) {
             + "ce qui correspond à un écart à la moyenne de <b>" + locale->toString(standardDeviations[indexOfMostRelevantMetric], 'f', 1)
             + "</b> " + (absStandardDeviations[indexOfMostRelevantMetric] >= 1.95 ? "écarts-types" : "écart-type") + ".";
 
+}
+
+int MetricsAnalyzer::indexOfMaxElement(double *array) {
+    int result = 0;
+    double maximum = array[0];
+    for (int i = 1; i < 12; i++) {
+        if (array[i] > maximum) {
+            maximum = array[i];
+            result = i;
+        }
+    }
+    return result;
 }

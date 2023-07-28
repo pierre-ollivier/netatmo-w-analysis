@@ -14,6 +14,8 @@ public:
     QString text(DatabaseHandler *dbHandler);
     double stdevFromMeasurement(QString measurementType, double measurementValue);
 
+    int indexOfMaxElement(double array[]);
+
 private:
     QDate _date;
     NormalComputer *computer;
