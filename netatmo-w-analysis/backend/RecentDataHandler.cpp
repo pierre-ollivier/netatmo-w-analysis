@@ -84,7 +84,7 @@ void RecentDataHandler::postRequests(int date_begin, QString scale, QString acce
         params.addQueryItem("access_token", accessToken.toUtf8());
         params.addQueryItem("device_id", mainDeviceId);
         params.addQueryItem("module_id", outdoorModuleId);
-        params.addQueryItem("scale", "max");
+        params.addQueryItem("scale", scale);
         params.addQueryItem("type", "temperature,humidity");
         params.addQueryItem("date_begin", QString::number(date_begin));
         params.addQueryItem("optimize", "false");
