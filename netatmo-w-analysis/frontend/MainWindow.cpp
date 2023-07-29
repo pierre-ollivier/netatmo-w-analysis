@@ -226,8 +226,10 @@ void MainWindow::addDataFromCurrentMonths() {
 }
 
 void MainWindow::addDataFromLastDays() {
-    extern const QString creationQuery;
-    dbHandlerCopy->getResultFromDatabase(creationQuery);
+    extern const QString lastOutdoorTimestampRecordsCreationQuery;
+    extern const QString lastIndoorTimestampRecordsCreationQuery;
+    dbHandlerCopy->getResultFromDatabase(lastOutdoorTimestampRecordsCreationQuery);
+    dbHandlerCopy->getResultFromDatabase(lastIndoorTimestampRecordsCreationQuery);
     oldDataUploader->addExtTimestampRecordsFromCurrentMonth();
 }
 
