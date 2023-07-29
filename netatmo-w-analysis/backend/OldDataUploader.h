@@ -21,10 +21,12 @@ public:
 
 signals:
     void outdoorTimestampRecordsLogged();
+    void indoorTimestampRecordsLogged();
 
 public slots:
     void addDataFromCurrentMonths(QDate beginDate, QDate endDate, bool indoor = false);
     void addExtTimestampRecordsFromCurrentMonth();
+    void addIntTimestampRecordsFromCurrentMonth();
     void addExtTimestampRecordToCopyDatabase(ExtTimestampRecord);
     void addIntTimestampRecordToCopyDatabase(IntTimestampRecord);
 
@@ -32,6 +34,7 @@ public slots:
     void logIntDailyRecord(IntDailyRecord);
     void log3hRecords(QMap<QDate, std::tuple<double, double>> records);
     void logOutdoorTimestampRecords(QList<ExtTimestampRecord> records);
+    void logIndoorTimestampRecords(QList<IntTimestampRecord> records);
 
 private:
     NetatmoAPIHandler *_apiHandler;
