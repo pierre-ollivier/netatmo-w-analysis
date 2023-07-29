@@ -231,6 +231,7 @@ void MainWindow::addDataFromLastDays() {
     dbHandlerCopy->getResultFromDatabase(lastOutdoorTimestampRecordsCreationQuery);
     dbHandlerCopy->getResultFromDatabase(lastIndoorTimestampRecordsCreationQuery);
     oldDataUploader->addExtTimestampRecordsFromCurrentMonth();
+    oldDataUploader->addIntTimestampRecordsFromCurrentMonth();
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
