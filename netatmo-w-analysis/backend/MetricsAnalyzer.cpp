@@ -75,9 +75,9 @@ QString MetricsAnalyzer::text(DatabaseHandler *dbHandler) {
     double stdevHx = stdevFromMeasurement("maxHumidex", hx);
     double stdevHn = stdevFromMeasurement("minHumidex", hn);
     double stdevDeltaH = stdevFromMeasurement("(maxHumidex - minHumidex)", hx - hn);
-    double stdevPx = stdevFromMeasurement("maxPressure", px);
-    double stdevPn = stdevFromMeasurement("minPressure", pn);
-    double stdevDeltaP = stdevFromMeasurement("(maxPressure - minPressure)", px - pn);
+    double stdevPx = px != 0 ? stdevFromMeasurement("maxPressure", px) : 0;
+    double stdevPn = pn != 0 ? stdevFromMeasurement("minPressure", pn) : 0;
+    double stdevDeltaP = px != 0 && pn != 0 ? stdevFromMeasurement("(maxPressure - minPressure)", px - pn) : 0;
 
     double values[15] = {
         tx, tn, tx - tn,
