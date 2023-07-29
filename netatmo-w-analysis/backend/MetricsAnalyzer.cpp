@@ -12,7 +12,7 @@ MetricsAnalyzer::MetricsAnalyzer(QDate date)
 }
 
 double MetricsAnalyzer::stdevFromMeasurement(QString measurementType, double measurementValue) {
-    QString table = (measurementType != "maxPressure" && measurementType != "minPressure") ?
+    QString table = (!measurementType.contains("pressure", Qt::CaseInsensitive)) ?
                 "OutdoorDailyRecords" : "IndoorDailyRecords";
     double average = computer->normalMeasurementByMovingAverage(
                 table,
@@ -56,6 +56,13 @@ QString MetricsAnalyzer::text(DatabaseHandler *dbHandler) {
                 "SELECT MIN(humidity) FROM LastOutdoorTimestampRecords "
                 "WHERE date = " + QDate::currentDate().toString("\"dd/MM/yyyy\"")).toInt();
 
+    double px = dbHandler->getResultFromDatabase(
+                "SELECT max(pressure) FROM LastIndoorTimestampRecords "
+                "WHERE day = " + QString::number(QDate::currentDate().day())).toDouble();
+    double pn = dbHandler->getResultFromDatabase(
+                "SELECT MIN(pressure) FROM LastIndoorTimestampRecords "
+                "WHERE date = " + QDate::currentDate().toString("\"dd/MM/yyyy\"")).toDouble();
+
     double stdevTx = stdevFromMeasurement("maxTemperature", tx);
     double stdevTn = stdevFromMeasurement("minTemperature", tn);
     double stdevDeltaT = stdevFromMeasurement("(maxTemperature - minTemperature)", tx - tn);
@@ -68,56 +75,54 @@ QString MetricsAnalyzer::text(DatabaseHandler *dbHandler) {
     double stdevHx = stdevFromMeasurement("maxHumidex", hx);
     double stdevHn = stdevFromMeasurement("minHumidex", hn);
     double stdevDeltaH = stdevFromMeasurement("(maxHumidex - minHumidex)", hx - hn);
+    double stdevPx = stdevFromMeasurement("maxPressure", px);
+    double stdevPn = stdevFromMeasurement("minPressure", pn);
+    double stdevDeltaP = stdevFromMeasurement("(maxPressure - minPressure)", px - pn);
 
-    double values[12] = {
+    double values[15] = {
         tx, tn, tx - tn,
         double(rhx), double(rhn), double(rhx - rhn),
         tdx, tdn, tdx - tdn,
-        hx, hn, hx - hn
+        hx, hn, hx - hn,
+        px, pn, px - pn
     };
 
-    double standardDeviations[12] = {
+    double standardDeviations[15] = {
         stdevTx, stdevTn, stdevDeltaT,
         stdevRHx, stdevRHn, stdevDeltaRH,
         stdevTdx, stdevTdn, stdevDeltaTd,
-        stdevHx, stdevHn, stdevDeltaH
+        stdevHx, stdevHn, stdevDeltaH,
+        stdevPx, stdevPn, stdevDeltaP
     };
 
     qDebug() << "\nET";
-    for (int i = 0; i < 12; i++) qDebug() << standardDeviations[i];
+    for (int i = 0; i < 15; i++) qDebug() << standardDeviations[i];
     qDebug() << "\nValeurs";
-    for (int i = 0; i < 12; i++) qDebug() << values[i];
+    for (int i = 0; i < 15; i++) qDebug() << values[i];
 
-    double absStandardDeviations[12];
-    for (int i = 0; i < 12; i++) absStandardDeviations[i] = abs(standardDeviations[i]);
+    double absStandardDeviations[15];
+    for (int i = 0; i < 15; i++) absStandardDeviations[i] = abs(standardDeviations[i]);
 
     qDebug() << "\nET abs";
-    for (int i = 0; i < 12; i++) qDebug() << absStandardDeviations[i];
+    for (int i = 0; i < 15; i++) qDebug() << absStandardDeviations[i];
 
     QStringList measurementsTranslated = {
         "la température maximale", "la température minimale", "la variation de température",
         "l'humidité maximale", "l'humidité minimale", "la variation d'humidité",
         "le point de rosée maximal", "le point de rosée minimal", "la variation de point de rosée",
-        "l'humidex maximal", "l'humidex minimal", "la variation de l'humidex"
+        "l'humidex maximal", "l'humidex minimal", "la variation de l'humidex",
+        "la pression maximale", "la pression minimale", "la variation de pression"
     };
 
     int indexOfMostRelevantMetric = indexOfMaxElement(absStandardDeviations);
     qDebug() << "\nIndex: " << indexOfMostRelevantMetric;
 
-//    return ("Température maximale : " + QString::number(stdevTx) + " ET" + "\n"
-//            "Température minimale : " + QString::number(stdevTn) + " ET" + "\n"
-//            "Humidité maximale : " + QString::number(stdevRHx) + " ET" + "\n"
-//            "Humidité minimale : " + QString::number(stdevRHn) + " ET" + "\n"
-//            "Point de rosée maximal : " + QString::number(stdevTdx) + " ET" + "\n"
-//            "Point de rosée minimal : " + QString::number(stdevTdn) + " ET" + "\n"
-//            "Humidex maximal : " + QString::number(stdevHx) + " ET" + "\n"
-//            "Humidex minimal : " + QString::number(stdevHn) + " ET");
-
     const int decimals = (3 <= indexOfMostRelevantMetric && indexOfMostRelevantMetric < 6) ? 0 : 1;
     const QString unitWithLeadingSpace = indexOfMostRelevantMetric < 3 ? " °C" :
                                          indexOfMostRelevantMetric < 6 ? " %" :
                                          indexOfMostRelevantMetric < 9 ? " °C" :
-                                                                         "";
+                                         indexOfMostRelevantMetric < 12 ? "" :
+                                                                         " hPa";
 
     return "Aujourd'hui, la valeur la plus notable est " + measurementsTranslated[indexOfMostRelevantMetric]
             + " de <b>" + locale->toString(values[indexOfMostRelevantMetric], 'f', decimals) + unitWithLeadingSpace + "</b>,<br>"
@@ -129,7 +134,7 @@ QString MetricsAnalyzer::text(DatabaseHandler *dbHandler) {
 int MetricsAnalyzer::indexOfMaxElement(double *array) {
     int result = 0;
     double maximum = array[0];
-    for (int i = 1; i < 12; i++) {
+    for (int i = 1; i < 15; i++) {
         if (array[i] > maximum) {
             maximum = array[i];
             result = i;
