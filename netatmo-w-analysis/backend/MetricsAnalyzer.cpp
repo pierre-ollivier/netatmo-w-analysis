@@ -151,11 +151,30 @@ QString MetricsAnalyzer::text(DatabaseHandler *dbHandler) {
                 "Aujourd'hui, la valeur la plus notable est " :
                 "Hier, la valeur la plus notable était ";
 
-    return introductoryText
+    QString finalText = introductoryText
             + measurementsTranslated[indexOfMostRelevantMetric]
             + " de <b>" + locale->toString(values[indexOfMostRelevantMetric], 'f', decimals) + unitWithLeadingSpace + "</b>,<br>"
             + "ce qui correspond à un écart à la moyenne de <b>" + locale->toString(standardDeviations[indexOfMostRelevantMetric], 'f', 1)
             + "</b> " + (absStandardDeviations[indexOfMostRelevantMetric] >= 1.95 ? "écarts-types" : "écart-type") + ".";
+
+    QString extraText = "";
+    for (int i = 0; i < 15; i++) {
+        if (i != indexOfMostRelevantMetric && absStandardDeviations[i] >= 1.95) {
+            const QString unitWithLeadingSpace = i < 3 ? " °C" :
+                                                 i < 6 ? " %" :
+                                                 i < 9 ? " °C" :
+                                                 i < 12 ? "" :
+                                                          " hPa";
+            const int decimals = (3 <= i && i < 6) ? 0 : 1;
+            extraText += QString("<br>")
+                    + "On notera aussi "
+                    + measurementsTranslated[i]
+                    + " de " + locale->toString(values[i], 'f', decimals) + unitWithLeadingSpace + ",<br>"
+                    + "ce qui correspond à un écart à la moyenne de " + locale->toString(standardDeviations[i], 'f', 1)
+                    + " " + (absStandardDeviations[i] >= 1.95 ? "écarts-types" : "écart-type") + ".<br>";
+        }
+    }
+    return finalText + "<br>" + extraText;
 
 }
 
