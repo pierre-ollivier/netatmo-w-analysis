@@ -12,7 +12,7 @@ public:
     MetricsAnalyzer(QDate date = QDate::currentDate());
 
     QString text(DatabaseHandler *dbHandler);
-    double stdevFromMeasurement(QString measurementType, double measurementValue);
+    double stdevFromMeasurement(QString measurementType, double measurementValue, bool currentDateIsUsed = true);
 
     int indexOfMaxElement(double array[]);
 
