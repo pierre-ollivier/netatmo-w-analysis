@@ -11,18 +11,19 @@ MetricsAnalyzer::MetricsAnalyzer(QDate date)
     locale = new QLocale();
 }
 
-double MetricsAnalyzer::stdevFromMeasurement(QString measurementType, double measurementValue) {
+double MetricsAnalyzer::stdevFromMeasurement(QString measurementType, double measurementValue, bool currentDateIsUsed) {
     QString table = (!measurementType.contains("pressure", Qt::CaseInsensitive)) ?
                 "OutdoorDailyRecords" : "IndoorDailyRecords";
+    QDate date = currentDateIsUsed ? _date : _date.addDays(-1);
     double average = computer->normalMeasurementByMovingAverage(
                 table,
-                _date,
+                date,
                 measurementType,
                 41);
 
     double stdev = computer->stdevMeasurementByMovingAverage(
                 table,
-                _date,
+                date,
                 measurementType,
                 average,
                 41);
@@ -31,53 +32,75 @@ double MetricsAnalyzer::stdevFromMeasurement(QString measurementType, double mea
 }
 
 QString MetricsAnalyzer::text(DatabaseHandler *dbHandler) {
+    int hour = QDateTime::currentDateTimeUtc().time().hour();
+    bool currentDateIsUsed = hour >= 14;
+    QDate date = currentDateIsUsed ? QDate::currentDate() : QDate::currentDate().addDays(-1);
+
     double tx = dbHandler->getResultFromDatabase(
                 "SELECT max(temperature) FROM LastOutdoorTimestampRecords "
-                "WHERE day = " + QString::number(QDate::currentDate().day())).toDouble();
+                "WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
     double tn = dbHandler->getResultFromDatabase(
                 "SELECT MIN(temperature) FROM LastOutdoorTimestampRecords "
-                "WHERE date = " + QDate::currentDate().toString("\"dd/MM/yyyy\"")).toDouble();
+                "WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
     double tdx = dbHandler->getResultFromDatabase(
                 "SELECT MAX(dewPoint) FROM LastOutdoorTimestampRecords "
-                "WHERE date = " + QDate::currentDate().toString("\"dd/MM/yyyy\"")).toDouble();
+                "WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
     double tdn = dbHandler->getResultFromDatabase(
                 "SELECT MIN(dewPoint) FROM LastOutdoorTimestampRecords "
-                "WHERE date = " + QDate::currentDate().toString("\"dd/MM/yyyy\"")).toDouble();
+                "WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
     double hx = dbHandler->getResultFromDatabase(
                 "SELECT MAX(humidex) FROM LastOutdoorTimestampRecords "
-                "WHERE date = " + QDate::currentDate().toString("\"dd/MM/yyyy\"")).toDouble();
+                "WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
     double hn = dbHandler->getResultFromDatabase(
                 "SELECT MIN(humidex) FROM LastOutdoorTimestampRecords "
-                "WHERE date = " + QDate::currentDate().toString("\"dd/MM/yyyy\"")).toDouble();
+                "WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
     int rhx = dbHandler->getResultFromDatabase(
                 "SELECT MAX(humidity) FROM LastOutdoorTimestampRecords "
-                "WHERE date = " + QDate::currentDate().toString("\"dd/MM/yyyy\"")).toInt();
+                "WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toInt();
     int rhn = dbHandler->getResultFromDatabase(
                 "SELECT MIN(humidity) FROM LastOutdoorTimestampRecords "
-                "WHERE date = " + QDate::currentDate().toString("\"dd/MM/yyyy\"")).toInt();
+                "WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toInt();
 
     double px = dbHandler->getResultFromDatabase(
                 "SELECT max(pressure) FROM LastIndoorTimestampRecords "
-                "WHERE day = " + QString::number(QDate::currentDate().day())).toDouble();
+                "WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
     double pn = dbHandler->getResultFromDatabase(
                 "SELECT MIN(pressure) FROM LastIndoorTimestampRecords "
-                "WHERE date = " + QDate::currentDate().toString("\"dd/MM/yyyy\"")).toDouble();
+                "WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
 
-    double stdevTx = stdevFromMeasurement("maxTemperature", tx);
-    double stdevTn = stdevFromMeasurement("minTemperature", tn);
-    double stdevDeltaT = stdevFromMeasurement("(maxTemperature - minTemperature)", tx - tn);
-    double stdevRHx = stdevFromMeasurement("maxHumidity", rhx);
-    double stdevRHn = stdevFromMeasurement("minHumidity", rhn);
-    double stdevDeltaRH = stdevFromMeasurement("(maxHumidity - minHumidity)", rhx - rhn);
-    double stdevTdx = stdevFromMeasurement("maxDewPoint", tdx);
-    double stdevTdn = stdevFromMeasurement("minDewPoint", tdn);
-    double stdevDeltaTd = stdevFromMeasurement("(maxDewPoint - minDewPoint)", tdx - tdn);
-    double stdevHx = stdevFromMeasurement("maxHumidex", hx);
-    double stdevHn = stdevFromMeasurement("minHumidex", hn);
-    double stdevDeltaH = stdevFromMeasurement("(maxHumidex - minHumidex)", hx - hn);
-    double stdevPx = px != 0 ? stdevFromMeasurement("maxPressure", px) : 0;
-    double stdevPn = pn != 0 ? stdevFromMeasurement("minPressure", pn) : 0;
-    double stdevDeltaP = px != 0 && pn != 0 ? stdevFromMeasurement("(maxPressure - minPressure)", px - pn) : 0;
+    double stdevTx = stdevFromMeasurement("maxTemperature", tx, currentDateIsUsed);
+    double stdevTn = stdevFromMeasurement("minTemperature", tn, currentDateIsUsed);
+    double stdevDeltaT = stdevFromMeasurement("(maxTemperature - minTemperature)", tx - tn, currentDateIsUsed);
+    double stdevRHx = stdevFromMeasurement("maxHumidity", rhx, currentDateIsUsed);
+    double stdevRHn = stdevFromMeasurement("minHumidity", rhn, currentDateIsUsed);
+    double stdevDeltaRH = stdevFromMeasurement("(maxHumidity - minHumidity)", rhx - rhn, currentDateIsUsed);
+    double stdevTdx = stdevFromMeasurement("maxDewPoint", tdx, currentDateIsUsed);
+    double stdevTdn = stdevFromMeasurement("minDewPoint", tdn, currentDateIsUsed);
+    double stdevDeltaTd = stdevFromMeasurement("(maxDewPoint - minDewPoint)", tdx - tdn, currentDateIsUsed);
+    double stdevHx = stdevFromMeasurement("maxHumidex", hx, currentDateIsUsed);
+    double stdevHn = stdevFromMeasurement("minHumidex", hn, currentDateIsUsed);
+    double stdevDeltaH = stdevFromMeasurement("(maxHumidex - minHumidex)", hx - hn, currentDateIsUsed);
+    double stdevPx = px != 0 ? stdevFromMeasurement("maxPressure", px, currentDateIsUsed) : 0;
+    double stdevPn = pn != 0 ? stdevFromMeasurement("minPressure", pn, currentDateIsUsed) : 0;
+    double stdevDeltaP = pn != 0 ? stdevFromMeasurement("(maxPressure - minPressure)", px - pn, currentDateIsUsed) : 0;
+
+    if (currentDateIsUsed) {
+        if (hour < 16) {
+            stdevRHn = 0;
+            stdevDeltaRH = 0;
+        }
+        // TODO implement other limitations on pressure, dew point and min humidex based on current measurements
+        if (hour < 20) {
+            stdevPx = 0;
+            stdevPn = 0;
+            stdevDeltaP = 0;
+            stdevTdx = 0;
+            stdevTdn = 0;
+            stdevDeltaTd = 0;
+            stdevHn = 0;
+            stdevDeltaH = 0;
+        }
+    }
 
     double values[15] = {
         tx, tn, tx - tn,
@@ -124,7 +147,12 @@ QString MetricsAnalyzer::text(DatabaseHandler *dbHandler) {
                                          indexOfMostRelevantMetric < 12 ? "" :
                                                                          " hPa";
 
-    return "Aujourd'hui, la valeur la plus notable est " + measurementsTranslated[indexOfMostRelevantMetric]
+    QString introductoryText = currentDateIsUsed ?
+                "Aujourd'hui, la valeur la plus notable est " :
+                "Hier, la valeur la plus notable était ";
+
+    return introductoryText
+            + measurementsTranslated[indexOfMostRelevantMetric]
             + " de <b>" + locale->toString(values[indexOfMostRelevantMetric], 'f', decimals) + unitWithLeadingSpace + "</b>,<br>"
             + "ce qui correspond à un écart à la moyenne de <b>" + locale->toString(standardDeviations[indexOfMostRelevantMetric], 'f', 1)
             + "</b> " + (absStandardDeviations[indexOfMostRelevantMetric] >= 1.95 ? "écarts-types" : "écart-type") + ".";
