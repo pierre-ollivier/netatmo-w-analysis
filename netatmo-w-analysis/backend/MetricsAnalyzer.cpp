@@ -4,6 +4,18 @@
 
 extern const QString PATH_TO_COPY_DATABASE;
 
+QString unitWithLeadingSpaceFromIndex(int index) {
+    return index < 3 ? " °C" :
+           index < 6 ? " %" :
+           index < 9 ? " °C" :
+           index < 12 ? "" :
+                        " hPa";
+}
+
+int decimalsFromIndex(int index) {
+    return (3 <= index && index < 6) ? 0 : 1;
+}
+
 MetricsAnalyzer::MetricsAnalyzer(QDate date)
 {
     _date = date;
@@ -140,12 +152,6 @@ QString MetricsAnalyzer::text(DatabaseHandler *dbHandler) {
     int indexOfMostRelevantMetric = indexOfMaxElement(absStandardDeviations);
     qDebug() << "\nIndex: " << indexOfMostRelevantMetric;
 
-    const int decimals = (3 <= indexOfMostRelevantMetric && indexOfMostRelevantMetric < 6) ? 0 : 1;
-    const QString unitWithLeadingSpace = indexOfMostRelevantMetric < 3 ? " °C" :
-                                         indexOfMostRelevantMetric < 6 ? " %" :
-                                         indexOfMostRelevantMetric < 9 ? " °C" :
-                                         indexOfMostRelevantMetric < 12 ? "" :
-                                                                         " hPa";
 
     QString introductoryText = currentDateIsUsed ?
                 "Aujourd'hui, la valeur la plus notable est " :
@@ -153,23 +159,19 @@ QString MetricsAnalyzer::text(DatabaseHandler *dbHandler) {
 
     QString finalText = introductoryText
             + measurementsTranslated[indexOfMostRelevantMetric]
-            + " de <b>" + locale->toString(values[indexOfMostRelevantMetric], 'f', decimals) + unitWithLeadingSpace + "</b>,<br>"
-            + "ce qui correspond à un écart à la moyenne de <b>" + locale->toString(standardDeviations[indexOfMostRelevantMetric], 'f', 1)
+            + " de <b>" + locale->toString(values[indexOfMostRelevantMetric], 'f', decimalsFromIndex(indexOfMostRelevantMetric))
+            + unitWithLeadingSpaceFromIndex(indexOfMostRelevantMetric) + "</b>,<br>"
+            + "ce qui correspond à un écart à la moyenne de <b>"
+            + locale->toString(standardDeviations[indexOfMostRelevantMetric], 'f', 1)
             + "</b> " + (absStandardDeviations[indexOfMostRelevantMetric] >= 1.95 ? "écarts-types" : "écart-type") + ".";
 
     QString extraText = "";
     for (int i = 0; i < 15; i++) {
         if (i != indexOfMostRelevantMetric && absStandardDeviations[i] >= 1.95) {
-            const QString unitWithLeadingSpace = i < 3 ? " °C" :
-                                                 i < 6 ? " %" :
-                                                 i < 9 ? " °C" :
-                                                 i < 12 ? "" :
-                                                          " hPa";
-            const int decimals = (3 <= i && i < 6) ? 0 : 1;
             extraText += QString("<br>")
                     + "On notera aussi "
                     + measurementsTranslated[i]
-                    + " de " + locale->toString(values[i], 'f', decimals) + unitWithLeadingSpace + ",<br>"
+                    + " de " + locale->toString(values[i], 'f', decimalsFromIndex(i)) + unitWithLeadingSpaceFromIndex(i) + ",<br>"
                     + "ce qui correspond à un écart à la moyenne de " + locale->toString(standardDeviations[i], 'f', 1)
                     + " " + (absStandardDeviations[i] >= 1.95 ? "écarts-types" : "écart-type") + ".<br>";
         }
@@ -189,3 +191,5 @@ int MetricsAnalyzer::indexOfMaxElement(double *array) {
     }
     return result;
 }
+
+
