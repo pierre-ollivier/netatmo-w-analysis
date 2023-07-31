@@ -47,13 +47,20 @@ QString MetricsAnalyzer::text(DatabaseHandler *dbHandler) {
     int hour = QDateTime::currentDateTimeUtc().time().hour();
     bool currentDateIsUsed = hour >= 14;
     QDate date = currentDateIsUsed ? QDate::currentDate() : QDate::currentDate().addDays(-1);
+    int maxTimestampTn = QDateTime(date, QTime(18, 0), Qt::UTC).toSecsSinceEpoch();
+    int minTimestampTn = maxTimestampTn - 24 * 3600;
+    int minTimestampTx = maxTimestampTn - 12 * 3600;
+    int maxTimestampTx = maxTimestampTn + 12 * 3600;
+
 
     double tx = dbHandler->getResultFromDatabase(
                 "SELECT max(temperature) FROM LastOutdoorTimestampRecords "
-                "WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
+                "WHERE timestamp BETWEEN " + QString::number(minTimestampTx)
+                + " AND " + QString::number(maxTimestampTx)).toDouble();
     double tn = dbHandler->getResultFromDatabase(
                 "SELECT MIN(temperature) FROM LastOutdoorTimestampRecords "
-                "WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
+                "WHERE timestamp BETWEEN " + QString::number(minTimestampTn)
+                + " AND " + QString::number(maxTimestampTn)).toDouble();
     double tdx = dbHandler->getResultFromDatabase(
                 "SELECT MAX(dewPoint) FROM LastOutdoorTimestampRecords "
                 "WHERE date = " + date.toString("\"dd/MM/yyyy\"")).toDouble();
