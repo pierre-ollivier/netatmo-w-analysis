@@ -142,11 +142,33 @@ QString MetricsAnalyzer::text(DatabaseHandler *dbHandler) {
     qDebug() << "\nValeurs";
     for (int i = 0; i < 15; i++) qDebug() << values[i];
 
-    double absStandardDeviations[15];
-    for (int i = 0; i < 15; i++) absStandardDeviations[i] = abs(standardDeviations[i]);
+    int month = date.month();
+    QStringList measurements = {
+        "maxTemperature", "minTemperature", "(maxTemperature - minTemperature)",
+        "maxHumidity", "minHumidity", "(maxHumidity - minHumidity)",
+        "maxDewPoint", "minDewPoint", "(maxDewPoint - minDewPoint)",
+        "maxHumidex", "minHumidex", "(maxHumidex - minHumidex)",
+        "maxPressure", "minPressure", "(maxPressure - minPressure)"
+    };
+    int highScoreBonus[15];
+
+    for (int i = 0; i < 15; i++) {
+        if (values[i] > mensualHigh(measurements[i], month) || values[i] < mensualLow(measurements[i], month)) {
+            highScoreBonus[i] = 1;
+            if (values[i] > annualHigh(measurements[i]) || values[i] < annualLow(measurements[i])) {
+                highScoreBonus[i] = 2;
+            }
+        }
+        else {
+            highScoreBonus[i] = 0;
+        }
+    }
+
+    double finalScores[15];
+    for (int i = 0; i < 15; i++) finalScores[i] = abs(standardDeviations[i]) + highScoreBonus[i];
 
     qDebug() << "\nET abs";
-    for (int i = 0; i < 15; i++) qDebug() << absStandardDeviations[i];
+    for (int i = 0; i < 15; i++) qDebug() << finalScores[i];
 
     QStringList measurementsTranslated = {
         "la température maximale", "la température minimale", "la variation de température",
@@ -156,7 +178,7 @@ QString MetricsAnalyzer::text(DatabaseHandler *dbHandler) {
         "la pression maximale", "la pression minimale", "la variation de pression"
     };
 
-    int indexOfMostRelevantMetric = indexOfMaxElement(absStandardDeviations);
+    int indexOfMostRelevantMetric = indexOfMaxElement(finalScores);
     qDebug() << "\nIndex: " << indexOfMostRelevantMetric;
 
 
@@ -164,23 +186,30 @@ QString MetricsAnalyzer::text(DatabaseHandler *dbHandler) {
                 "Aujourd'hui, la valeur la plus notable est " :
                 "Hier, la valeur la plus notable était ";
 
+    QString highScoreText = highScoreBonus[indexOfMostRelevantMetric] == 2 ? "<br>C'est un nouveau record absolu." :
+                            highScoreBonus[indexOfMostRelevantMetric] == 1 ? "<br>C'est un nouveau record mensuel." : "";
+
     QString finalText = introductoryText
-            + measurementsTranslated[indexOfMostRelevantMetric]
-            + " de <b>" + locale->toString(values[indexOfMostRelevantMetric], 'f', decimalsFromIndex(indexOfMostRelevantMetric))
+            + measurementsTranslated[indexOfMostRelevantMetric] + " de <b>"
+            + locale->toString(values[indexOfMostRelevantMetric], 'f', decimalsFromIndex(indexOfMostRelevantMetric))
             + unitWithLeadingSpaceFromIndex(indexOfMostRelevantMetric) + "</b>,<br>"
             + "ce qui correspond à un écart à la moyenne de <b>"
             + locale->toString(standardDeviations[indexOfMostRelevantMetric], 'f', 1)
-            + "</b> " + (absStandardDeviations[indexOfMostRelevantMetric] >= 1.95 ? "écarts-types" : "écart-type") + ".";
+            + "</b> " + (abs(standardDeviations[indexOfMostRelevantMetric]) >= 1.95 ? "écarts-types" : "écart-type") + "."
+            + highScoreText;
 
     QString extraText = "";
     for (int i = 0; i < 15; i++) {
-        if (i != indexOfMostRelevantMetric && absStandardDeviations[i] >= 1.95) {
+        if (i != indexOfMostRelevantMetric && finalScores[i] >= 1.95) {
+            QString highScoreText = highScoreBonus[i] == 2 ? "<br>C'est un nouveau record absolu." :
+                                    highScoreBonus[i] == 1 ? "<br>C'est un nouveau record mensuel." : "";
             extraText += QString("<br>")
                     + "On notera aussi "
                     + measurementsTranslated[i]
                     + " de " + locale->toString(values[i], 'f', decimalsFromIndex(i)) + unitWithLeadingSpaceFromIndex(i) + ",<br>"
                     + "ce qui correspond à un écart à la moyenne de " + locale->toString(standardDeviations[i], 'f', 1)
-                    + " " + (absStandardDeviations[i] >= 1.95 ? "écarts-types" : "écart-type") + ".<br>";
+                    + " " + (abs(standardDeviations[i]) >= 1.95 ? "écarts-types" : "écart-type") + "."
+                    + highScoreText + "<br>";
         }
     }
     return finalText + "<br>" + extraText;
@@ -199,4 +228,38 @@ int MetricsAnalyzer::indexOfMaxElement(double *array) {
     return result;
 }
 
+double MetricsAnalyzer::mensualLow(QString measurement, int month) {
+    DatabaseHandler dbHandler = DatabaseHandler(PATH_TO_COPY_DATABASE);
+    bool indoor = measurement.contains("pressure", Qt::CaseInsensitive);
+    QString database = indoor ? "IndoorDailyRecords" : "OutdoorDailyRecords";
+    return dbHandler.getResultFromDatabase(
+                "SELECT min(" + measurement + ") FROM " + database + " WHERE month = " + QString::number(month)
+                ).toDouble();
+}
 
+double MetricsAnalyzer::mensualHigh(QString measurement, int month) {
+    DatabaseHandler dbHandler = DatabaseHandler(PATH_TO_COPY_DATABASE);
+    bool indoor = measurement.contains("pressure", Qt::CaseInsensitive);
+    QString database = indoor ? "IndoorDailyRecords" : "OutdoorDailyRecords";
+    return dbHandler.getResultFromDatabase(
+                "SELECT max(" + measurement + ") FROM " + database + " WHERE month = " + QString::number(month)
+                ).toDouble();
+}
+
+double MetricsAnalyzer::annualLow(QString measurement) {
+    DatabaseHandler dbHandler = DatabaseHandler(PATH_TO_COPY_DATABASE);
+    bool indoor = measurement.contains("pressure", Qt::CaseInsensitive);
+    QString database = indoor ? "IndoorDailyRecords" : "OutdoorDailyRecords";
+    return dbHandler.getResultFromDatabase(
+                "SELECT min(" + measurement + ") FROM " + database
+                ).toDouble();
+}
+
+double MetricsAnalyzer::annualHigh(QString measurement) {
+    DatabaseHandler dbHandler = DatabaseHandler(PATH_TO_COPY_DATABASE);
+    bool indoor = measurement.contains("pressure", Qt::CaseInsensitive);
+    QString database = indoor ? "IndoorDailyRecords" : "OutdoorDailyRecords";
+    return dbHandler.getResultFromDatabase(
+                "SELECT max(" + measurement + ") FROM " + database
+                ).toDouble();
+}
