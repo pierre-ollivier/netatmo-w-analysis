@@ -21,6 +21,11 @@ private:
     NormalComputer *computer;
 
     QLocale *locale;
+
+    double mensualLow(QString measurement, int month);
+    double mensualHigh(QString measurement, int month);
+    double annualLow(QString measurement);
+    double annualHigh(QString measurement);
 };
 
 #endif // METRICSANALYZER_H
