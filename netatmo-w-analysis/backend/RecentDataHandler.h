@@ -22,11 +22,14 @@ public slots:
     void retrieveOutdoorChartRequest(QNetworkReply*);
     void retrieveLongOutdoorChartRequest(QNetworkReply*);
     void retrieveLongOutdoorLastRequest(QNetworkReply*);
+    void retrieveLongIndoorChartRequest(QNetworkReply*);
+    void retrieveLongIndoorLastRequest(QNetworkReply*);
 
 signals:
     void outdoorRecordListRetrieved(QList<ExtTimestampRecord>);
     void indoorRecordListRetrieved(QList<IntTimestampRecord>);
-    void recentRecordListRetrieved(QList<ExtTimestampRecord>);
+    void recentOutdoorRecordListRetrieved(QList<ExtTimestampRecord>);
+    void recentIndoorRecordListRetrieved(QList<IntTimestampRecord>);
 
 private:
     APIMonitor *apiMonitor;
@@ -35,6 +38,8 @@ private:
     QNetworkAccessManager *indoorChartRequestManager;
     QNetworkAccessManager *longOutdoorChartRequestManager;
     QNetworkAccessManager *longOutdoorLastRequestManager;
+    QNetworkAccessManager *longIndoorChartRequestManager;
+    QNetworkAccessManager *longIndoorLastRequestManager;
 
     DatabaseHandler *dbHandlerLastRecords;
 
