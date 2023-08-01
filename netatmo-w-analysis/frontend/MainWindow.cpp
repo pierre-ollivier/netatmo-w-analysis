@@ -67,8 +67,11 @@ void MainWindow::buildAPIHandlers() {
     connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), SIGNAL(recentDataShouldBeUpdated()));
     connect(apiHandler, SIGNAL(intUTCTimeChanged(int)), SIGNAL(recentDataShouldBeUpdated()));
 
-    connect(recentDataHandler, SIGNAL(recentRecordListRetrieved(QList<ExtTimestampRecord>)),
+    connect(recentDataHandler, SIGNAL(recentOutdoorRecordListRetrieved(QList<ExtTimestampRecord>)),
             oldDataUploader, SLOT(logOutdoorTimestampRecords(QList<ExtTimestampRecord>)));
+    connect(recentDataHandler, SIGNAL(recentIndoorRecordListRetrieved(QList<IntTimestampRecord>)),
+            oldDataUploader, SLOT(logIndoorTimestampRecords(QList<IntTimestampRecord>)));
+
     connect(recentDataHandler, SIGNAL(outdoorRecordListRetrieved(QList<ExtTimestampRecord>)),
             outdoorChart, SLOT(drawChart(QList<ExtTimestampRecord>)));
     connect(recentDataHandler, SIGNAL(indoorRecordListRetrieved(QList<IntTimestampRecord>)),
