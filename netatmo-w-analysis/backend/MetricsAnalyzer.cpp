@@ -153,7 +153,9 @@ QString MetricsAnalyzer::text(DatabaseHandler *dbHandler) {
     int highScoreBonus[15];
 
     for (int i = 0; i < 15; i++) {
-        if (values[i] > mensualHigh(measurements[i], month) || values[i] < mensualLow(measurements[i], month)) {
+        if (standardDeviations[i] != 0 &&
+                (values[i] > mensualHigh(measurements[i], month) || values[i] < mensualLow(measurements[i], month))) {
+
             highScoreBonus[i] = 1;
             if (values[i] > annualHigh(measurements[i]) || values[i] < annualLow(measurements[i])) {
                 highScoreBonus[i] = 2;
