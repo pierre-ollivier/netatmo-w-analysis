@@ -175,13 +175,14 @@ void RecentDataHandler::retrieveIndoorChartRequest(QNetworkReply *reply) {
             double pressure = value[2].toDouble();
             int co2 = value[3].toDouble();
             int noise = value[4].toDouble();
+
             recordsList.append(IntTimestampRecord(timestamp, temperature, humidity, pressure, co2, noise));
             if (timestamp > dbHandlerLastRecords->getLatestTimestampFromDatabaseInS("LastIndoorTimestampRecords")) {
                 lastRecordsList.append(IntTimestampRecord(timestamp, temperature, humidity, pressure, co2, noise));
             }
         }
         emit indoorRecordListRetrieved(recordsList);
-        emit recentIndoorRecordListRetrieved(recordsList);
+        emit recentIndoorRecordListRetrieved(lastRecordsList);
     }
 }
 
