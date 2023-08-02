@@ -1,6 +1,5 @@
 #include "MetricsAnalyzer.h"
 #include <algorithm>
-#include <QDebug>
 
 extern const QString PATH_TO_COPY_DATABASE;
 
@@ -137,11 +136,6 @@ QString MetricsAnalyzer::text(DatabaseHandler *dbHandler) {
         stdevPx, stdevPn, stdevDeltaP
     };
 
-    qDebug() << "\nET";
-    for (int i = 0; i < 15; i++) qDebug() << standardDeviations[i];
-    qDebug() << "\nValeurs";
-    for (int i = 0; i < 15; i++) qDebug() << values[i];
-
     int month = date.month();
     QStringList measurements = {
         "maxTemperature", "minTemperature", "(maxTemperature - minTemperature)",
@@ -169,9 +163,6 @@ QString MetricsAnalyzer::text(DatabaseHandler *dbHandler) {
     double finalScores[15];
     for (int i = 0; i < 15; i++) finalScores[i] = abs(standardDeviations[i]) + highScoreBonus[i];
 
-    qDebug() << "\nET abs";
-    for (int i = 0; i < 15; i++) qDebug() << finalScores[i];
-
     QStringList measurementsTranslated = {
         "la température maximale", "la température minimale", "la variation de température",
         "l'humidité maximale", "l'humidité minimale", "la variation d'humidité",
@@ -181,8 +172,6 @@ QString MetricsAnalyzer::text(DatabaseHandler *dbHandler) {
     };
 
     int indexOfMostRelevantMetric = indexOfMaxElement(finalScores);
-    qDebug() << "\nIndex: " << indexOfMostRelevantMetric;
-
 
     QString introductoryText = currentDateIsUsed ?
                 "Aujourd'hui, la valeur la plus notable est " :
