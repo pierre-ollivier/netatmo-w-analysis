@@ -3,8 +3,10 @@
 
 extern const QString PATH_TO_COPY_DATABASE;
 
-EphemerisPanel::EphemerisPanel() : QGroupBox()
+EphemerisPanel::EphemerisPanel() : QWidget()
 {
+    mainGroupBox = new QGroupBox();
+
     txxLabel = new QLabel("__,_ °C (____)");
     tnnLabel = new QLabel("__,_ °C (____)");
     txmLabel = new QLabel("__,_ °C");
@@ -13,27 +15,28 @@ EphemerisPanel::EphemerisPanel() : QGroupBox()
 
     deviceLocale = new QLocale();
 
-    layout = new QGridLayout();
+    mainLayout = new QGridLayout();
+    boxLayout = new QGridLayout();
 
-    layout->addWidget(new QLabel("Température maximale absolue : "), 1, 1);
-    layout->addWidget(txxLabel, 1, 2);
-    layout->addWidget(new QLabel("Température minimale absolue : "), 2, 1);
-    layout->addWidget(tnnLabel, 2, 2);
-    layout->addWidget(new QLabel("Température maximale moyenne : "), 3, 1);
-    layout->addWidget(txmLabel, 3, 2);
-    layout->addWidget(new QLabel("Température minimale moyenne : "), 4, 1);
-    layout->addWidget(tnmLabel, 4, 2);
-    layout->addWidget(stdevLabel, 5, 1, 1, 2);
+    boxLayout->addWidget(new QLabel("Température maximale absolue : "), 1, 1);
+    boxLayout->addWidget(txxLabel, 1, 2);
+    boxLayout->addWidget(new QLabel("Température minimale absolue : "), 2, 1);
+    boxLayout->addWidget(tnnLabel, 2, 2);
+    boxLayout->addWidget(new QLabel("Température maximale moyenne : "), 3, 1);
+    boxLayout->addWidget(txmLabel, 3, 2);
+    boxLayout->addWidget(new QLabel("Température minimale moyenne : "), 4, 1);
+    boxLayout->addWidget(tnmLabel, 4, 2);
+    boxLayout->addWidget(stdevLabel, 5, 1, 1, 2);
 
     dbHandler = new DatabaseHandler(PATH_TO_COPY_DATABASE);
     normalComputer = new NormalComputer(dbHandler);
     analyzer = new MetricsAnalyzer();
 
-    setTitle("Statistiques pour un _ _");
-    setFont(QFont("Arial", 12));
-    setLayout(layout);
-    setAlignment(Qt::AlignHCenter);
-    setStyleSheet(
+    mainGroupBox->setTitle("Statistiques pour un _ _");
+    mainGroupBox->setFont(QFont("Arial", 12));
+    mainGroupBox->setLayout(boxLayout);
+    mainGroupBox->setAlignment(Qt::AlignHCenter);
+    mainGroupBox->setStyleSheet(
                 "QGroupBox {"
                 "  border: 2px solid gray;"
                 "  border-radius: 15px;"
@@ -43,6 +46,9 @@ EphemerisPanel::EphemerisPanel() : QGroupBox()
                 "  subcontrol-origin: margin;"
                 "  subcontrol-position: top center;"
                 "}");
+
+    mainLayout->addWidget(mainGroupBox, 1, 1);
+    setLayout(mainLayout);
 }
 
 
@@ -55,8 +61,8 @@ void EphemerisPanel::setDate(QDate date) {
 
 
 void EphemerisPanel::updateStatistics() {
-    setTitle("Statistiques pour un " + _date.toString("d MMMM"));
-    if (_date.day() == 1) setTitle("Statistiques pour un " + _date.toString("der MMMM"));
+    mainGroupBox->setTitle("Statistiques pour un " + _date.toString("d MMMM"));
+    if (_date.day() == 1) mainGroupBox->setTitle("Statistiques pour un " + _date.toString("der MMMM"));
 
     double txx = dbHandler->getResultFromDatabase(
                 "SELECT max(maxTemperature) FROM OutdoorDailyRecords "
