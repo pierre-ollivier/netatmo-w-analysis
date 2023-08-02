@@ -10,7 +10,7 @@
 #include "../backend/MetricsAnalyzer.h"
 #include "../backend/NormalComputer.h"
 
-class EphemerisPanel : public QGroupBox
+class EphemerisPanel : public QWidget
 {
     Q_OBJECT
 public:
@@ -22,13 +22,15 @@ public slots:
     void updateStatistics();
 
 private:
+    QGroupBox *mainGroupBox;
     QLabel *txxLabel;
     QLabel *tnnLabel;
     QLabel *txmLabel;
     QLabel *tnmLabel;
     QLabel *stdevLabel;
     QLocale *deviceLocale;
-    QGridLayout *layout;
+    QGridLayout *boxLayout;
+    QGridLayout *mainLayout;
     DatabaseHandler *dbHandler;
     NormalComputer *normalComputer;
     MetricsAnalyzer *analyzer;
