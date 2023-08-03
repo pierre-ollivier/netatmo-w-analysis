@@ -11,6 +11,7 @@
 
 #include "../netatmo-w-analysis/backend/APIMonitor.h"
 #include "../netatmo-w-analysis/backend/DatabaseHandler.h"
+#include "../netatmo-w-analysis/backend/MetricsAnalyzer.h"
 #include "../netatmo-w-analysis/backend/NetatmoAPIHandler.h"
 #include "../netatmo-w-analysis/backend/OldDataUploader.h"
 #include "../netatmo-w-analysis/backend/RecentDataHandler.h"
@@ -41,10 +42,10 @@ public slots:
     void setAccessToken(QString);
 
     void updateCurrentExtTemperature(double currentTemperature);
-    void updateMinExtTemperature(double minTemperature);
-    void updateMaxExtTemperature(double maxTemperature);
-    void updateMinExtTemperatureTime(int timestamp);
-    void updateMaxExtTemperatureTime(int timestamp);
+    void updateMinExtTemperature();
+    void updateMaxExtTemperature();
+    void updateMinExtTemperatureTime();
+    void updateMaxExtTemperatureTime();
 
     void updateCurrentIntTemperature(double currentTemperature);
     void updateMinIntTemperature(double minTemperature);
@@ -107,6 +108,7 @@ private:
     APIMonitor *apiMonitor;
     HomePageChart *indoorChart;
     HomePageChart *outdoorChart;
+    MetricsAnalyzer *analyzer;
 
     //data uploader
     OldDataUploader *oldDataUploader;

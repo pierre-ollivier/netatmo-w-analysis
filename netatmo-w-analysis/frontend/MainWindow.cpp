@@ -22,6 +22,7 @@ MainWindow::MainWindow()
     setMenuBar(menuBar);
     deviceLocale = new QLocale();
     apiMonitor = new APIMonitor();
+    analyzer = new MetricsAnalyzer();
     apiHandler = new NetatmoAPIHandler(apiMonitor, 20000);
     recentDataHandler = new RecentDataHandler(apiMonitor);
     dbHandlerProd = new DatabaseHandler(PATH_TO_PROD_DATABASE);
@@ -51,12 +52,12 @@ void MainWindow::buildAPIHandlers() {
     connect(apiHandler, SIGNAL(intTemperatureChanged(double)), this, SLOT(updateCurrentIntTemperature(double)));
     connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), this, SLOT(updateLastMeasurementDate(int)));
     connect(apiHandler, SIGNAL(currentTimeChanged(QDateTime)), this, SLOT(updateActualisationDate(QDateTime)));
-    connect(apiHandler, SIGNAL(extMinTemperatureChanged(double)), this, SLOT(updateMinExtTemperature(double)));
-    connect(apiHandler, SIGNAL(extMaxTemperatureChanged(double)), this, SLOT(updateMaxExtTemperature(double)));
+    connect(apiHandler, SIGNAL(extMinTemperatureChanged(double)), this, SLOT(updateMinExtTemperature()));
+    connect(apiHandler, SIGNAL(extMaxTemperatureChanged(double)), this, SLOT(updateMaxExtTemperature()));
     connect(apiHandler, SIGNAL(extMinTemperatureTimeChanged(int)),
-            this, SLOT(updateMinExtTemperatureTime(int)));
+            this, SLOT(updateMinExtTemperatureTime()));
     connect(apiHandler, SIGNAL(extMaxTemperatureTimeChanged(int)),
-            this, SLOT(updateMaxExtTemperatureTime(int)));
+            this, SLOT(updateMaxExtTemperatureTime()));
     connect(apiHandler, SIGNAL(intMinTemperatureChanged(double)), this, SLOT(updateMinIntTemperature(double)));
     connect(apiHandler, SIGNAL(intMaxTemperatureChanged(double)), this, SLOT(updateMaxIntTemperature(double)));
     connect(apiHandler, SIGNAL(intMinTemperatureTimeChanged(int)),
@@ -261,21 +262,24 @@ void MainWindow::updateActualisationDate(QDateTime timestamp) {
     statusLabel->setText(statusLabel->text().replace(45, 19, timestamp.toString("dd/MM/yyyy hh:mm:ss")));
 }
 
-void MainWindow::updateMinExtTemperature(double minTemperature) {
+void MainWindow::updateMinExtTemperature() {
+    double minTemperature = analyzer->currentMinTemperatureInfo().first;
     const int lenToReplace = currentMinExtTempLabel->text().length() - 42;
     currentMinExtTempLabel->setText(currentMinExtTempLabel->text().replace(31,  // the blue arrow and the HTML tags take space
                                                            lenToReplace,
                                                            deviceLocale->toString(minTemperature, 'f', 1)));
 }
 
-void MainWindow::updateMaxExtTemperature(double maxTemperature) {
+void MainWindow::updateMaxExtTemperature() {
+    double maxTemperature = analyzer->currentMaxTemperatureInfo().first;
     const int lenToReplace = currentMaxExtTempLabel->text().length() - 42;
     currentMaxExtTempLabel->setText(currentMaxExtTempLabel->text().replace(31,  // the red arrow and the HTML tags take space
                                                            lenToReplace,
                                                            deviceLocale->toString(maxTemperature, 'f', 1)));
 }
 
-void MainWindow::updateMinExtTemperatureTime(int timestamp) {
+void MainWindow::updateMinExtTemperatureTime() {
+    long long timestamp = analyzer->currentMinTemperatureInfo().second;
     QDateTime dt = QDateTime();
     dt.setSecsSinceEpoch(timestamp);
     const int positionToReplace = currentMinExtTempLabel->text().length() - 7;
@@ -284,7 +288,8 @@ void MainWindow::updateMinExtTemperatureTime(int timestamp) {
                                                            dt.toString("(hh:mm)")));
 }
 
-void MainWindow::updateMaxExtTemperatureTime(int timestamp) {
+void MainWindow::updateMaxExtTemperatureTime() {
+    long long timestamp = analyzer->currentMaxTemperatureInfo().second;
     QDateTime dt = QDateTime();
     dt.setSecsSinceEpoch(timestamp);
     const int positionToReplace = currentMaxExtTempLabel->text().length() - 7;
