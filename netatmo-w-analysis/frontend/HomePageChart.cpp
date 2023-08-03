@@ -143,7 +143,11 @@ void HomePageChart::drawChart(QList<QPointF> points) {
 
 void HomePageChart::setYAxisRange(double maxValue, double minValue) {
     double difference = maxValue - minValue;
-    if (difference == 0) difference = 0.05;
+    if (difference < 0.2) {
+        difference = 0.2;
+        maxValue = (maxValue + minValue + difference) / 2;
+        minValue = (maxValue + minValue - difference) / 2;
+    }
     maxValue += 0.1 * difference;
     minValue -= 0.1 * difference;
     yAxis->setRange(minValue, maxValue);
@@ -152,9 +156,7 @@ void HomePageChart::setYAxisRange(double maxValue, double minValue) {
 
 void HomePageChart::setYAxisTicks(double maxValue, double minValue) {
     double difference = maxValue - minValue;
-    if (difference < 0.1 && _measurementType != "humidity") {
-        yAxis->setTickInterval(0.01);
-    }
+
     if (difference < 0.7 && _measurementType != "humidity") {
         yAxis->setTickInterval(0.1);
     }
