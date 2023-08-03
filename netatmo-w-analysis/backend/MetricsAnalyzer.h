@@ -16,6 +16,9 @@ public:
 
     int indexOfMaxElement(double array[]);
 
+    QPair<double, long long> currentMaxTemperatureInfo();
+    QPair<double, long long> currentMinTemperatureInfo();
+
 private:
     QDate _date;
     NormalComputer *computer;
@@ -26,6 +29,8 @@ private:
     double mensualHigh(QString measurement, int month);
     double annualLow(QString measurement);
     double annualHigh(QString measurement);
+
+    double currentMinTemperature();
 };
 
 #endif // METRICSANALYZER_H

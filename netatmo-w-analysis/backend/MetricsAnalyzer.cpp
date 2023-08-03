@@ -254,3 +254,58 @@ double MetricsAnalyzer::annualHigh(QString measurement) {
                 "SELECT max(" + measurement + ") FROM " + database
                 ).toDouble();
 }
+
+QPair<double, long long> MetricsAnalyzer::currentMaxTemperatureInfo() {
+    DatabaseHandler dbHandler = DatabaseHandler(PATH_TO_COPY_DATABASE);
+    QDateTime nowUTC = QDateTime::currentDateTimeUtc();
+    if (nowUTC.time().hour() >= 6) {
+        nowUTC.setTime(QTime(6, 0));
+        long long minTimestamp = nowUTC.toSecsSinceEpoch();
+        double maxTemperature = dbHandler.getResultFromDatabase(
+                    "SELECT max(temperature) FROM LastOutdoorTimestampRecords "
+                    "WHERE timestamp >= " + QString::number(minTimestamp)
+                    + " ORDER BY timestamp").toDouble();
+        long long maxTemperatureTimestamp = dbHandler.getResultFromDatabase(
+                    "SELECT min(timestamp) FROM LastOutdoorTimestampRecords "
+                    "WHERE timestamp >= " + QString::number(minTimestamp)
+                    + " AND temperature = " + QString::number(maxTemperature)).toLongLong();
+        return {maxTemperature, maxTemperatureTimestamp};
+    }
+    else {
+        nowUTC.setTime(QTime(6, 0));
+        long long maxTimestamp = nowUTC.toSecsSinceEpoch();
+        nowUTC = nowUTC.addDays(-1);
+        long long minTimestamp = nowUTC.toSecsSinceEpoch();
+        double maxTemperature = dbHandler.getResultFromDatabase(
+                    "SELECT max(temperature) FROM LastOutdoorTimestampRecords "
+                    "WHERE timestamp BETWEEN " + QString::number(minTimestamp)
+                    + " AND " + QString::number(maxTimestamp)
+                    + " ORDER BY timestamp").toDouble();
+        long long maxTemperatureTimestamp = dbHandler.getResultFromDatabase(
+                    "SELECT min(timestamp) FROM LastOutdoorTimestampRecords "
+                    "WHERE timestamp BETWEEN " + QString::number(minTimestamp)
+                    + " AND " + QString::number(maxTimestamp)
+                    + " AND temperature = " + QString::number(maxTemperature)).toLongLong();
+        return {maxTemperature, maxTemperatureTimestamp};
+    }
+}
+
+QPair<double, long long> MetricsAnalyzer::currentMinTemperatureInfo() {
+    DatabaseHandler dbHandler = DatabaseHandler(PATH_TO_COPY_DATABASE);
+    QDateTime nowUTC = QDateTime::currentDateTimeUtc();
+    nowUTC.setTime(QTime(18, 0));
+    long long maxTimestamp = nowUTC.toSecsSinceEpoch();
+    nowUTC = nowUTC.addDays(-1);
+    long long minTimestamp = nowUTC.toSecsSinceEpoch();
+    double minTemperature = dbHandler.getResultFromDatabase(
+                "SELECT min(temperature) FROM LastOutdoorTimestampRecords "
+                "WHERE timestamp BETWEEN " + QString::number(minTimestamp)
+                + " AND " + QString::number(maxTimestamp)
+                + " ORDER BY timestamp").toDouble();
+    long long minTemperatureTimestamp = dbHandler.getResultFromDatabase(
+                "SELECT min(timestamp) FROM LastOutdoorTimestampRecords "
+                "WHERE timestamp BETWEEN " + QString::number(minTimestamp)
+                + " AND " + QString::number(maxTimestamp)
+                + " AND temperature = " + QString::number(minTemperature)).toLongLong();
+    return {minTemperature, minTemperatureTimestamp};
+}
