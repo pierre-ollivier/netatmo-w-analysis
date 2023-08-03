@@ -214,8 +214,8 @@ void MainWindow::setAccessToken(QString newAccessToken) {
     QTimer::singleShot(170 * 60 * 1000, apiHandler, SLOT(postRefreshTokenRequest()));
     accessToken = newAccessToken;
     oldDataUploader->setAccessToken(accessToken);
-    addDataFromCurrentMonths();
-    addDataFromLastDays();
+    if (!dataFromCurrentMonthsWasAdded) addDataFromCurrentMonths();
+    if (!dataFromLastDaysWasAdded) addDataFromLastDays();
 }
 
 void MainWindow::addDataFromCurrentMonths() {
@@ -226,6 +226,7 @@ void MainWindow::addDataFromCurrentMonths() {
                                               QDate::currentDate(), false);
     oldDataUploader->addDataFromCurrentMonths(lastAddedIndoorDate.addDays(1),
                                               QDate::currentDate(), true);
+    dataFromCurrentMonthsWasAdded = true;
 }
 
 void MainWindow::addDataFromLastDays() {
@@ -235,6 +236,8 @@ void MainWindow::addDataFromLastDays() {
     dbHandlerCopy->getResultFromDatabase(lastIndoorTimestampRecordsCreationQuery);
     oldDataUploader->addExtTimestampRecordsFromCurrentMonth();
     oldDataUploader->addIntTimestampRecordsFromCurrentMonth();
+
+    dataFromLastDaysWasAdded = true;
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {

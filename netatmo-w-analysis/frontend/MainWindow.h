@@ -141,6 +141,8 @@ private:
 
     QString _measurementType = "temperature";
     int _durationInHours = 4;
+    bool dataFromCurrentMonthsWasAdded = false;
+    bool dataFromLastDaysWasAdded = false;
 
 
 };
