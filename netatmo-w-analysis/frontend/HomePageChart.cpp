@@ -4,10 +4,9 @@
 
 extern QString PATH_TO_COPY_DATABASE;
 
-HomePageChart::HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName, bool indoor) : QChartView()
+HomePageChart::HomePageChart(QString tableName, bool indoor) : QChartView()
 {
     _tableName = tableName;
-    _apiHandler = apiHandler;
     _indoor = indoor;
 
     locale = new QLocale(QLocale::system());
@@ -32,40 +31,30 @@ HomePageChart::HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName, b
 
     setChart(chart);
     setFixedSize(500, 300);
-
-    if (indoor) connect(_apiHandler, SIGNAL(indoorRecordListRetrieved(QList<TimestampRecord>)),
-                        SLOT(drawChart(QList<TimestampRecord>)));
-    else connect(_apiHandler, SIGNAL(outdoorRecordListRetrieved(QList<TimestampRecord>)),
-                 SLOT(drawChart(QList<TimestampRecord>)));
 }
 
-void HomePageChart::gatherChartData(QString accessToken, QString measurementType, bool indoor, int durationInHours) {
-    _measurementType = measurementType;
-    _durationInHours = durationInHours;
-    int dateBegin = QDateTime::currentDateTime().toSecsSinceEpoch() - durationInHours * 3600 - 600;
-    QString scale = "max";
-
-    if (durationInHours > 48) {
-        scale = "30min";
-    }
-
-    if (indoor) {
-        _apiHandler->postIndoorChartRequest(
-                    dateBegin,
-                    scale,
-                    accessToken);
-    }
-    else {
-        _apiHandler->postOutdoorChartRequest(
-                    dateBegin,
-                    scale,
-                    accessToken);
-    }
-}
-
-void HomePageChart::drawChart(QList<TimestampRecord> records) {
+void HomePageChart::drawChart(QList<ExtTimestampRecord> records) {
     QList<QPointF> points = QList<QPointF>();
-    for (TimestampRecord record : records) {
+    for (ExtTimestampRecord record : records) {
+        if (_measurementType == "temperature") {
+            points.append(QPointF(1000 * record.timestamp(), record.temperature()));
+        }
+        else if (_measurementType == "humidity") {
+            points.append(QPointF(1000 * record.timestamp(), record.humidity()));
+        }
+        else if (_measurementType == "dewPoint") {
+            points.append(QPointF(1000 * record.timestamp(), record.dewPoint()));
+        }
+        else if (_measurementType == "humidex") {
+            points.append(QPointF(1000 * record.timestamp(), record.humidex()));
+        }
+    }
+    drawChart(points);
+}
+
+void HomePageChart::drawChart(QList<IntTimestampRecord> records) {
+    QList<QPointF> points = QList<QPointF>();
+    for (IntTimestampRecord record : records) {
         if (_measurementType == "temperature") {
             points.append(QPointF(1000 * record.timestamp(), record.temperature()));
         }
@@ -86,9 +75,6 @@ void HomePageChart::drawChart(QList<QPointF> points) {
     maxOfSeries = QVariant();
     minOfSeries = QVariant();
     long long minTimestamp = 0, maxTimestamp = 0;
-
-    series->clear();
-    series->append(points);
 
     for (QPointF point: points) {
         if (point.x() > maxTimestamp) maxTimestamp = point.x();
@@ -118,6 +104,9 @@ void HomePageChart::drawChart(QList<QPointF> points) {
             if (minOfSeries.isNull() || point.y() < minOfSeries.toDouble()) minOfSeries = point.y();
         }
     }
+
+    series->clear();
+    series->append(points);
 
     setYAxisRange(maxOfSeries.toDouble(), minOfSeries.toDouble());
 
@@ -154,7 +143,11 @@ void HomePageChart::drawChart(QList<QPointF> points) {
 
 void HomePageChart::setYAxisRange(double maxValue, double minValue) {
     double difference = maxValue - minValue;
-    if (difference == 0) difference = 0.01;
+    if (difference < 0.2) {
+        difference = 0.2;
+        maxValue = (maxValue + minValue + difference) / 2;
+        minValue = (maxValue + minValue - difference) / 2;
+    }
     maxValue += 0.1 * difference;
     minValue -= 0.1 * difference;
     yAxis->setRange(minValue, maxValue);
@@ -163,6 +156,7 @@ void HomePageChart::setYAxisRange(double maxValue, double minValue) {
 
 void HomePageChart::setYAxisTicks(double maxValue, double minValue) {
     double difference = maxValue - minValue;
+
     if (difference < 0.7 && _measurementType != "humidity") {
         yAxis->setTickInterval(0.1);
     }
@@ -193,4 +187,12 @@ void HomePageChart::setYAxisTicks(double maxValue, double minValue) {
     else {
         yAxis->setTickInterval(20);
     }
+}
+
+void HomePageChart::setDurationInHours(int durationInHours) {
+    _durationInHours = durationInHours;
+}
+
+void HomePageChart::setMeasurementType(QString measurementType) {
+    _measurementType = measurementType;
 }

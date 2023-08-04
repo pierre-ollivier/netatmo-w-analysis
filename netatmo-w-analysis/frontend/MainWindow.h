@@ -1,17 +1,20 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QWidget>
-#include <QMainWindow>
-#include <QLabel>
-#include <QPushButton>
 #include <QGridLayout>
+#include <QLabel>
+#include <QMainWindow>
 #include <QMenuBar>
+#include <QPushButton>
+#include <QWidget>
 #include <QtCharts>
-#include "../netatmo-w-analysis/backend/NetatmoAPIHandler.h"
-#include "../netatmo-w-analysis/backend/DatabaseHandler.h"
+
 #include "../netatmo-w-analysis/backend/APIMonitor.h"
+#include "../netatmo-w-analysis/backend/DatabaseHandler.h"
+#include "../netatmo-w-analysis/backend/MetricsAnalyzer.h"
+#include "../netatmo-w-analysis/backend/NetatmoAPIHandler.h"
 #include "../netatmo-w-analysis/backend/OldDataUploader.h"
+#include "../netatmo-w-analysis/backend/RecentDataHandler.h"
 #include "../netatmo-w-analysis/frontend/HomePageChart.h"
 #include "../netatmo-w-analysis/frontend/EphemerisPanel.h"
 
@@ -23,7 +26,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow();
     void buildWindow();
-    void buildAPIHandler();
+    void buildAPIHandlers();
     void buildLabels();
     void buildButtons();
     void buildCharts();
@@ -32,14 +35,18 @@ public:
     void createMenus();
     void createActions();
 
+    QString measurementType();
+    int durationInHours();
+
 public slots:
     void setAccessToken(QString);
 
     void updateCurrentExtTemperature(double currentTemperature);
     void updateMinExtTemperature(double minTemperature);
     void updateMaxExtTemperature(double maxTemperature);
-    void updateMinExtTemperatureTime(int timestamp);
-    void updateMaxExtTemperatureTime(int timestamp);
+    void updateMinExtTemperatureTime(long long timestamp);
+    void updateMaxExtTemperatureTime(long long timestamp);
+    void updateExtExtremeTemperaturesInfo();
 
     void updateCurrentIntTemperature(double currentTemperature);
     void updateMinIntTemperature(double minTemperature);
@@ -50,9 +57,6 @@ public slots:
     void updateLastMeasurementDate(int timestamp);
     void updateActualisationDate(QDateTime timestamp);
     void updateRequestCounts();
-
-    void updateIndoorChart(QString measurementType = "", int durationInHours = 0);
-    void updateOutdoorChart(QString measurementType = "", int durationInHours = 0);
 
     void addMonthData();
     void addMultipleMonthsData();
@@ -66,12 +70,14 @@ public slots:
     void displayYearlyReport();
 
     void addDataFromCurrentMonths();
+    void addDataFromLastDays();
     void changeChartsOptions();
 
     void showNormals();
+    void postRecentDataRequests();
 
 signals:
-
+    void recentDataShouldBeUpdated();
 
 private:
     // labels
@@ -89,8 +95,9 @@ private:
     //layouts
     QGridLayout *mainLayout;
 
-    //other (provisional)
+    //API handlers
     NetatmoAPIHandler *apiHandler;
+    RecentDataHandler *recentDataHandler;
 
     //database handlers
     DatabaseHandler *dbHandlerProd;
@@ -102,6 +109,7 @@ private:
     APIMonitor *apiMonitor;
     HomePageChart *indoorChart;
     HomePageChart *outdoorChart;
+    MetricsAnalyzer *analyzer;
 
     //data uploader
     OldDataUploader *oldDataUploader;
@@ -136,6 +144,8 @@ private:
 
     QString _measurementType = "temperature";
     int _durationInHours = 4;
+    bool dataFromCurrentMonthsWasAdded = false;
+    bool dataFromLastDaysWasAdded = false;
 
 
 };

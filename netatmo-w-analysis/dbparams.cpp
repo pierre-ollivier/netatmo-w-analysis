@@ -163,3 +163,48 @@ extern const QStringList outdoorDailyRecordsParams = {
     "minHumidexMinute",
     "minHumidexSecond",
 };
+
+extern const QString lastOutdoorTimestampRecordsCreationQuery = QString()
+        + "CREATE TABLE \"LastOutdoorTimestampRecords\" ("
+        + "\n" + "\"id\"	INTEGER UNIQUE,"
+        + "\n" + "\"timestamp\"	INTEGER,"
+        + "\n" + "\"year\"	INTEGER,"
+        + "\n" + "\"month\"	INTEGER,"
+        + "\n" +  "\"day\"	INTEGER,"
+        + "\n" + "\"date\"	TEXT,"
+        + "\n" + "\"decade\"	INTEGER,"
+        + "\n" + "\"weekNumber\"	INTEGER,"
+        + "\n" + "\"hour\"	INTEGER,"
+        + "\n" + "\"minute\"	INTEGER,"
+        + "\n" + "\"second\"	INTEGER,"
+        + "\n" + "\"time\"	TEXT,"
+        + "\n" + "\"temperature\"	NUMERIC,"
+        + "\n" + "\"humidity\"	INTEGER,"
+        + "\n" + "\"dewPoint\"	REAL,"
+        + "\n" + "\"humidex\"	NUMERIC,"
+        + "\n" + "PRIMARY KEY(\"id\" AUTOINCREMENT)"
+        + "\n" + ")";
+
+extern const QString lastIndoorTimestampRecordsCreationQuery = QString()
+        + "CREATE TABLE \"LastIndoorTimestampRecords\" ("
+        + "\n" + "\"id\"	INTEGER UNIQUE,"
+        + "\n" + "\"timestamp\"	INTEGER,"
+        + "\n" + "\"year\"	INTEGER,"
+        + "\n" + "\"month\"	INTEGER,"
+        + "\n" +  "\"day\"	INTEGER,"
+        + "\n" + "\"date\"	TEXT,"
+        + "\n" + "\"decade\"	INTEGER,"
+        + "\n" + "\"weekNumber\"	INTEGER,"
+        + "\n" + "\"hour\"	INTEGER,"
+        + "\n" + "\"minute\"	INTEGER,"
+        + "\n" + "\"second\"	INTEGER,"
+        + "\n" + "\"time\"	TEXT,"
+        + "\n" + "\"temperature\"	NUMERIC,"
+        + "\n" + "\"humidity\"	INTEGER,"
+        + "\n" + "\"dewPoint\"	REAL,"
+        + "\n" + "\"humidex\"	NUMERIC,"
+        + "\n" + "\"pressure\"	NUMERIC,"
+        + "\n" + "\"co2\"	INTEGER,"
+        + "\n" + "\"noise\"	INTEGER,"
+        + "\n" + "PRIMARY KEY(\"id\" AUTOINCREMENT)"
+        + "\n" + ")";

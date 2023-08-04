@@ -360,6 +360,7 @@ void NormalsVisualizer::changeChartOptions() {
                                                            daysSlider->value());
     QList<double> standardDeviation = _computer->createStandardDeviationList(tableName,
                                                                              measurementType,
+                                                                             averages,
                                                                              daysSlider->value());
     for (int stdCount = -2000; stdCount <= 2000; stdCount += 200) {
         QList<QPointF> points = createChartData(averages, standardDeviation, stdCount);

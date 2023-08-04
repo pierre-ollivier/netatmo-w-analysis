@@ -2,7 +2,8 @@
 #define HOMEPAGECHART_H
 
 #include <QtCharts>
-#include "../netatmo-w-analysis/backend/NetatmoAPIHandler.h"
+#include "../netatmo-w-analysis/backend/RecentDataHandler.h"
+//#include "../netatmo-w-analysis/frontend/MainWindow.h"
 #include "../types/TimestampRecord.h"
 
 class HomePageChart : public QChartView
@@ -10,12 +11,15 @@ class HomePageChart : public QChartView
     Q_OBJECT
 
 public:
-    HomePageChart(NetatmoAPIHandler *apiHandler, QString tableName, bool indoor);
+    HomePageChart(QString tableName, bool indoor);
+
+    void setDurationInHours(int durationInHours);
+    void setMeasurementType(QString measurementType);
 
 public slots:
-    void gatherChartData(QString accessToken, QString measurementType, bool indoor, int durationInHours = 4);
     void drawChart(QList<QPointF> temperatureList);
-    void drawChart(QList<TimestampRecord> records);
+    void drawChart(QList<ExtTimestampRecord> records);
+    void drawChart(QList<IntTimestampRecord> records);
     void setYAxisRange(double maxValue, double minValue);
     void setYAxisTicks(double maxValue, double minValue);
 
@@ -28,8 +32,6 @@ private:
     QValueAxis *yAxis;
 
     QLocale *locale;
-
-    NetatmoAPIHandler *_apiHandler;
 
     QString _tableName;
     QString _measurementType = "temperature";

@@ -61,6 +61,35 @@ double NormalComputer::stdevMeasurementByMovingAverage(
     return std::sqrt(_dbHandler->getResultFromDatabase(query).toDouble());
 }
 
+double NormalComputer::stdevMeasurementByMovingAverage(
+        QString tableName,
+        QDate date,
+        QString measurement,
+        double average,
+        int daysCount) {
+
+    QString query = "SELECT AVG(" + measurement + " * " + measurement + ") "
+                    "- " + QString::number(pow(average, 2)) + " FROM " + tableName + " ";
+    int dayGap = daysCount / 2; // number of days on each side
+    QDate beginDate = date.addDays(-dayGap), endDate = date.addDays(dayGap);
+
+    if (beginDate.year() == endDate.year()) {
+        query += "WHERE 100 * month + day BETWEEN "
+                + QString::number(100 * beginDate.month() + beginDate.day())
+                + " AND "
+                + QString::number(100 * endDate.month() + endDate.day());
+    }
+
+    else {
+        query += "WHERE 100 * month + day BETWEEN "
+                + QString::number(100 * beginDate.month() + beginDate.day())
+                + " AND 1231 OR 100 * month + day BETWEEN 101 AND "
+                + QString::number(100 * endDate.month() + endDate.day());
+    }
+
+    return std::sqrt(_dbHandler->getResultFromDatabase(query).toDouble());
+}
+
 QList<double> NormalComputer::createAveragesList(QString tableName, QString measurement, int daysCount) {
     QList<double> result = QList<double>();
     for (QDate date = QDate(2020, 1, 1); date.year() < 2021; date = date.addDays(1)) {
@@ -80,6 +109,23 @@ QList<double> NormalComputer::createStandardDeviationList(QString tableName, QSt
                           tableName,
                           date,
                           measurement,
+                          daysCount));
+    }
+    return result;
+}
+
+QList<double> NormalComputer::createStandardDeviationList(
+        QString tableName,
+        QString measurement,
+        QList<double> averagesList,
+        int daysCount) {
+    QList<double> result = QList<double>();
+    for (QDate date = QDate(2020, 1, 1); date.year() < 2021; date = date.addDays(1)) {
+        result.append(stdevMeasurementByMovingAverage(
+                          tableName,
+                          date,
+                          measurement,
+                          averagesList[date.dayOfYear() - 1],
                           daysCount));
     }
     return result;
