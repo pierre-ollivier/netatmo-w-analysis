@@ -42,10 +42,11 @@ public slots:
     void setAccessToken(QString);
 
     void updateCurrentExtTemperature(double currentTemperature);
-    void updateMinExtTemperature();
-    void updateMaxExtTemperature();
-    void updateMinExtTemperatureTime();
-    void updateMaxExtTemperatureTime();
+    void updateMinExtTemperature(double minTemperature);
+    void updateMaxExtTemperature(double maxTemperature);
+    void updateMinExtTemperatureTime(long long timestamp);
+    void updateMaxExtTemperatureTime(long long timestamp);
+    void updateExtExtremeTemperaturesInfo();
 
     void updateCurrentIntTemperature(double currentTemperature);
     void updateMinIntTemperature(double minTemperature);
