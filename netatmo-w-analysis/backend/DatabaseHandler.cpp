@@ -669,7 +669,7 @@ QVariant DatabaseHandler::getResultFromDatabase(QString query) {
             db.close();
             return _query.value(0);
         }
-        else if (query.left(6) != "DELETE") {
+        else if (query.left(6) != "DELETE" && query.left(6) != "CREATE") {
             qDebug() << "Empty query result";
             qDebug() << query;
         }
@@ -830,4 +830,8 @@ QDateTime DatabaseHandler::getLatestDateTimeFromDatabase(QString tableName, QStr
                     "LIMIT 1").toString();
         return QDateTime(QDate::fromString(latestDate, "dd/MM/yyyy"), QTime::fromString(latestTime, "hh:mm:ss"));
     }
+}
+
+long long DatabaseHandler::getLatestTimestampFromDatabaseInS(QString tableName, QString measurement) {
+    return getLatestDateTimeFromDatabase(tableName, measurement).toSecsSinceEpoch();
 }

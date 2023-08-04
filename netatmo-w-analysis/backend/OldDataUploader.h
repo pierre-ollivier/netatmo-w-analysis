@@ -19,14 +19,22 @@ public:
     OldDataUploader(NetatmoAPIHandler *apiHandler, QString accessToken = "");
     void setAccessToken(QString accessToken);
 
+signals:
+    void outdoorTimestampRecordsLogged();
+    void indoorTimestampRecordsLogged();
+
 public slots:
     void addDataFromCurrentMonths(QDate beginDate, QDate endDate, bool indoor = false);
+    void addExtTimestampRecordsFromCurrentMonth();
+    void addIntTimestampRecordsFromCurrentMonth();
     void addExtTimestampRecordToCopyDatabase(ExtTimestampRecord);
     void addIntTimestampRecordToCopyDatabase(IntTimestampRecord);
 
     void logExtDailyRecord(ExtDailyRecord);
     void logIntDailyRecord(IntDailyRecord);
     void log3hRecords(QMap<QDate, std::tuple<double, double>> records);
+    void logOutdoorTimestampRecords(QList<ExtTimestampRecord> records);
+    void logIndoorTimestampRecords(QList<IntTimestampRecord> records);
 
 private:
     NetatmoAPIHandler *_apiHandler;

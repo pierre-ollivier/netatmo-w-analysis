@@ -2,6 +2,7 @@
 #include <QFile>
 #include "frontend/MainWindow.h"
 #include "backend/DatabaseHandler.h"
+#include "backend/NetatmoAPIHandler.h"
 #include "playground.cpp"
 
 extern const QString VERSION;
@@ -21,7 +22,16 @@ int main(int argc, char *argv[]) {
         mainWin.setWindowTitle("netatmo-w-analysis v" + VERSION);
 
         executeAllPlaygroundFunctions();
-        int result = app.exec();
+        int result = 3;
+
+        try {
+            result = app.exec();
+        }
+
+        catch (const std::exception& ex) {
+            qDebug() << ex.what();
+        }
+
         QFile copyDatabase(APP_PATH + "/" + PATH_TO_COPY_DATABASE);
         copyDatabase.close();
         bool deleteValid = copyDatabase.remove();
@@ -31,6 +41,7 @@ int main(int argc, char *argv[]) {
             qDebug() << copyDatabase.errorString();
             return 2;
         }
+
     }
 
     else {

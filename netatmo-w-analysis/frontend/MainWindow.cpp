@@ -22,25 +22,28 @@ MainWindow::MainWindow()
     setMenuBar(menuBar);
     deviceLocale = new QLocale();
     apiMonitor = new APIMonitor();
+    analyzer = new MetricsAnalyzer();
     apiHandler = new NetatmoAPIHandler(apiMonitor, 20000);
+    recentDataHandler = new RecentDataHandler(apiMonitor);
     dbHandlerProd = new DatabaseHandler(PATH_TO_PROD_DATABASE);
     dbHandlerCopy = new DatabaseHandler(PATH_TO_COPY_DATABASE);
     oldDataUploader = new OldDataUploader(apiHandler);
+    connect(this, SIGNAL(recentDataShouldBeUpdated()), SLOT(postRecentDataRequests()));
     buildWindow();
 }
 
 void MainWindow::buildWindow() {
-    buildAPIHandler();
+    buildCharts();
+    buildAPIHandlers();
     buildLabels();
     buildButtons();
-    buildCharts();
     buildEphemerisPanel();
     buildLayouts();
     createActions();
     createMenus();
 }
 
-void MainWindow::buildAPIHandler() { 
+void MainWindow::buildAPIHandlers() {
     apiHandler->postTokensRequest();
     connect(apiHandler, SIGNAL(accessTokenChanged(QString)),
             apiHandler, SLOT(postCurrentConditionsRequest(QString)));
@@ -49,26 +52,34 @@ void MainWindow::buildAPIHandler() {
     connect(apiHandler, SIGNAL(intTemperatureChanged(double)), this, SLOT(updateCurrentIntTemperature(double)));
     connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), this, SLOT(updateLastMeasurementDate(int)));
     connect(apiHandler, SIGNAL(currentTimeChanged(QDateTime)), this, SLOT(updateActualisationDate(QDateTime)));
-    connect(apiHandler, SIGNAL(extMinTemperatureChanged(double)), this, SLOT(updateMinExtTemperature(double)));
-    connect(apiHandler, SIGNAL(extMaxTemperatureChanged(double)), this, SLOT(updateMaxExtTemperature(double)));
-    connect(apiHandler, SIGNAL(extMinTemperatureTimeChanged(int)),
-            this, SLOT(updateMinExtTemperatureTime(int)));
-    connect(apiHandler, SIGNAL(extMaxTemperatureTimeChanged(int)),
-            this, SLOT(updateMaxExtTemperatureTime(int)));
     connect(apiHandler, SIGNAL(intMinTemperatureChanged(double)), this, SLOT(updateMinIntTemperature(double)));
     connect(apiHandler, SIGNAL(intMaxTemperatureChanged(double)), this, SLOT(updateMaxIntTemperature(double)));
     connect(apiHandler, SIGNAL(intMinTemperatureTimeChanged(int)),
             this, SLOT(updateMinIntTemperatureTime(int)));
     connect(apiHandler, SIGNAL(intMaxTemperatureTimeChanged(int)),
             this, SLOT(updateMaxIntTemperatureTime(int)));
-    connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), SLOT(updateOutdoorChart()));
-    connect(apiHandler, SIGNAL(intUTCTimeChanged(int)), SLOT(updateIndoorChart()));
+
+    connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), SIGNAL(recentDataShouldBeUpdated()));
+    connect(apiHandler, SIGNAL(intUTCTimeChanged(int)), SIGNAL(recentDataShouldBeUpdated()));
+
+    connect(recentDataHandler, SIGNAL(recentOutdoorRecordListRetrieved(QList<ExtTimestampRecord>)),
+            oldDataUploader, SLOT(logOutdoorTimestampRecords(QList<ExtTimestampRecord>)));
+    connect(recentDataHandler, SIGNAL(recentIndoorRecordListRetrieved(QList<IntTimestampRecord>)),
+            oldDataUploader, SLOT(logIndoorTimestampRecords(QList<IntTimestampRecord>)));
+
+    connect(recentDataHandler, SIGNAL(recentOutdoorRecordListRetrieved(QList<ExtTimestampRecord>)),
+            SLOT(updateExtExtremeTemperaturesInfo()));
+
+    connect(recentDataHandler, SIGNAL(outdoorRecordListRetrieved(QList<ExtTimestampRecord>)),
+            outdoorChart, SLOT(drawChart(QList<ExtTimestampRecord>)));
+    connect(recentDataHandler, SIGNAL(indoorRecordListRetrieved(QList<IntTimestampRecord>)),
+            indoorChart, SLOT(drawChart(QList<IntTimestampRecord>)));
 }
 
 void MainWindow::buildLabels() {
     statusLabel = new QLabel("Mesure : __/__/____ __:__:__\nActualisation : __/__/____ __:__:__");
-    currentMinExtTempLabel = new QLabel("<font color=\"#0010ff\">↓</font> _,_ °C (__:__)");
-    currentMaxExtTempLabel = new QLabel("<font color=\"#ff1000\">↑</font> _,_ °C (__:__)");
+    currentMinExtTempLabel = new QLabel("<font color=\"#0010ff\">↓</font> __,_ °C (__:__)");
+    currentMaxExtTempLabel = new QLabel("<font color=\"#ff1000\">↑</font> __,_ °C (__:__)");
     currentMinExtTempLabel->setFont(QFont("Arial", 13));
     currentMaxExtTempLabel->setFont(QFont("Arial", 13));
 
@@ -76,8 +87,8 @@ void MainWindow::buildLabels() {
     currentExtTempLabel->setFont(QFont("Arial", 32));
     currentIntTempLabel = new QLabel("__,_<font color=\"#606060\"> °C</font>");
     currentIntTempLabel->setFont(QFont("Arial", 32));
-    currentMinIntTempLabel = new QLabel("<font color=\"#0010ff\">↓</font> _,_ °C (__:__)");
-    currentMaxIntTempLabel = new QLabel("<font color=\"#ff1000\">↑</font> _,_ °C (__:__)");
+    currentMinIntTempLabel = new QLabel("<font color=\"#0010ff\">↓</font> __,_ °C (__:__)");
+    currentMaxIntTempLabel = new QLabel("<font color=\"#ff1000\">↑</font> __,_ °C (__:__)");
     currentMinIntTempLabel->setFont(QFont("Arial", 13));
     currentMaxIntTempLabel->setFont(QFont("Arial", 13));
 }
@@ -93,8 +104,8 @@ void MainWindow::buildButtons() {
 }
 
 void MainWindow::buildCharts() {
-    indoorChart = new HomePageChart(apiHandler, "IndoorTimestampRecords", true);
-    outdoorChart = new HomePageChart(apiHandler, "OutdoorTimestampRecords", false);
+    indoorChart = new HomePageChart("IndoorTimestampRecords", true);
+    outdoorChart = new HomePageChart("OutdoorTimestampRecords", false);
 
     h4Option = new QRadioButton("4 heures");
     h24Option = new QRadioButton("24 heures");
@@ -117,6 +128,7 @@ void MainWindow::buildCharts() {
 
 void MainWindow::buildEphemerisPanel() {
     ephemerisPanel = new EphemerisPanel();
+    connect(oldDataUploader, SIGNAL(outdoorTimestampRecordsLogged()), ephemerisPanel, SLOT(updateStdevLabel()));
 }
 
 void MainWindow::buildLayouts() {
@@ -140,7 +152,6 @@ void MainWindow::buildLayouts() {
     mainLayout = new QGridLayout();
     mainLayout->addWidget(currentExtTempLabel, 1, 0, 2, 1);
     mainLayout->addWidget(statusLabel, 0, 0);
-//    mainLayout->addWidget(labelExtremes, 0, 1, 1, 2);
     mainLayout->addWidget(actualisationButton, 0, 3);
     mainLayout->addWidget(outdoorChart, 1, 1, 2, 2);
     mainLayout->addWidget(currentMaxExtTempLabel, 1, 3);
@@ -201,21 +212,8 @@ void MainWindow::setAccessToken(QString newAccessToken) {
     QTimer::singleShot(170 * 60 * 1000, apiHandler, SLOT(postRefreshTokenRequest()));
     accessToken = newAccessToken;
     oldDataUploader->setAccessToken(accessToken);
-    addDataFromCurrentMonths();
-    updateIndoorChart();
-    updateOutdoorChart();
-}
-
-void MainWindow::updateIndoorChart(QString measurementType, int durationInHours) {
-    if (measurementType == "") measurementType = _measurementType;
-    if (durationInHours == 0) durationInHours = _durationInHours;
-    if (accessToken != "") indoorChart->gatherChartData(accessToken, measurementType, true, durationInHours);
-}
-
-void MainWindow::updateOutdoorChart(QString measurementType, int durationInHours) {
-    if (measurementType == "") measurementType = _measurementType;
-    if (durationInHours == 0) durationInHours = _durationInHours;
-    if (accessToken != "") outdoorChart->gatherChartData(accessToken, measurementType, false, durationInHours);
+    if (!dataFromCurrentMonthsWasAdded) addDataFromCurrentMonths();
+    if (!dataFromLastDaysWasAdded) addDataFromLastDays();
 }
 
 void MainWindow::addDataFromCurrentMonths() {
@@ -226,6 +224,18 @@ void MainWindow::addDataFromCurrentMonths() {
                                               QDate::currentDate(), false);
     oldDataUploader->addDataFromCurrentMonths(lastAddedIndoorDate.addDays(1),
                                               QDate::currentDate(), true);
+    dataFromCurrentMonthsWasAdded = true;
+}
+
+void MainWindow::addDataFromLastDays() {
+    extern const QString lastOutdoorTimestampRecordsCreationQuery;
+    extern const QString lastIndoorTimestampRecordsCreationQuery;
+    dbHandlerCopy->getResultFromDatabase(lastOutdoorTimestampRecordsCreationQuery);
+    dbHandlerCopy->getResultFromDatabase(lastIndoorTimestampRecordsCreationQuery);
+    oldDataUploader->addExtTimestampRecordsFromCurrentMonth();
+    oldDataUploader->addIntTimestampRecordsFromCurrentMonth();
+
+    dataFromLastDaysWasAdded = true;
 }
 
 void MainWindow::updateCurrentExtTemperature(double currentTemperature) {
@@ -263,7 +273,7 @@ void MainWindow::updateMaxExtTemperature(double maxTemperature) {
                                                            deviceLocale->toString(maxTemperature, 'f', 1)));
 }
 
-void MainWindow::updateMinExtTemperatureTime(int timestamp) {
+void MainWindow::updateMinExtTemperatureTime(long long timestamp) {
     QDateTime dt = QDateTime();
     dt.setSecsSinceEpoch(timestamp);
     const int positionToReplace = currentMinExtTempLabel->text().length() - 7;
@@ -272,13 +282,24 @@ void MainWindow::updateMinExtTemperatureTime(int timestamp) {
                                                            dt.toString("(hh:mm)")));
 }
 
-void MainWindow::updateMaxExtTemperatureTime(int timestamp) {
+void MainWindow::updateMaxExtTemperatureTime(long long timestamp) {
     QDateTime dt = QDateTime();
     dt.setSecsSinceEpoch(timestamp);
     const int positionToReplace = currentMaxExtTempLabel->text().length() - 7;
     currentMaxExtTempLabel->setText(currentMaxExtTempLabel->text().replace(positionToReplace,
                                                            7,
                                                            dt.toString("(hh:mm)")));
+}
+
+void MainWindow::updateExtExtremeTemperaturesInfo() {
+    double minTemperature = analyzer->currentMinTemperatureInfo().first;
+    long long minTemperatureTimestamp = analyzer->currentMinTemperatureInfo().second;
+    double maxTemperature = analyzer->currentMaxTemperatureInfo().first;
+    long long maxTemperatureTimestamp = analyzer->currentMaxTemperatureInfo().second;
+    updateMinExtTemperature(minTemperature);
+    updateMinExtTemperatureTime(minTemperatureTimestamp);
+    updateMaxExtTemperature(maxTemperature);
+    updateMaxExtTemperatureTime(maxTemperatureTimestamp);
 }
 
 void MainWindow::updateMinIntTemperature(double minTemperature) {
@@ -464,8 +485,11 @@ void MainWindow::changeChartsOptions() {
     if (h4Option->isChecked()) _durationInHours = 4;
     if (h24Option->isChecked()) _durationInHours = 24;
     if (h192Option->isChecked()) _durationInHours = 192;
-    updateOutdoorChart();
-    updateIndoorChart();
+    indoorChart->setMeasurementType(_measurementType);
+    indoorChart->setDurationInHours(_durationInHours);
+    outdoorChart->setMeasurementType(_measurementType);
+    outdoorChart->setDurationInHours(_durationInHours);
+    emit recentDataShouldBeUpdated();
 }
 
 void MainWindow::showNormals() {
@@ -477,4 +501,27 @@ void MainWindow::showNormals() {
 void MainWindow::exploreData() {
     DataExplorator *explorator = new DataExplorator(dbHandlerCopy);
     explorator->show();
+}
+
+void MainWindow::postRecentDataRequests() {
+    int dateBegin = QDateTime::currentDateTime().toSecsSinceEpoch() - _durationInHours * 3600 - 600;
+    QString scale = "max";
+
+    if (_durationInHours > 48) {
+        scale = "30min";
+    }
+    if (accessToken != "") {
+        recentDataHandler->postRequests(
+                    dateBegin,
+                    scale,
+                    accessToken);
+    }
+}
+
+QString MainWindow::measurementType() {
+    return _measurementType;
+}
+
+int MainWindow::durationInHours() {
+    return _durationInHours;
 }
