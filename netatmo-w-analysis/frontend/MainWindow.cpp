@@ -9,6 +9,7 @@
 #include "../netatmo-w-analysis/frontend/NormalsVisualizer.h"
 #include "../netatmo-w-analysis/backend/APIMonitor.h"
 #include "../netatmo-w-analysis/backend/NormalComputer.h"
+#include "../netatmo-w-analysis/backend/WeatherAPIHandler.h"
 #include "../types/ExtTimestampRecord.h"
 
 extern QString PATH_TO_PROD_DATABASE;
@@ -30,6 +31,9 @@ MainWindow::MainWindow()
     oldDataUploader = new OldDataUploader(apiHandler);
     connect(this, SIGNAL(recentDataShouldBeUpdated()), SLOT(postRecentDataRequests()));
     buildWindow();
+
+    WeatherAPIHandler *weatherHandler = new WeatherAPIHandler();
+    weatherHandler->postWeatherRequest();
 }
 
 void MainWindow::buildWindow() {
