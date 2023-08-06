@@ -11,15 +11,24 @@ WeatherAPIHandler::WeatherAPIHandler()
 void WeatherAPIHandler::postWeatherRequest() {
     extern const QString infoclimatAuth;
     extern const QString infoclimatC;
-    QUrl url("https://www.infoclimat.fr/public-api/gfs/json?");
+    extern const QString openWeatherMapAPIKey;
+//    QUrl url("https://www.infoclimat.fr/public-api/gfs/json");
+    QUrl url("api.openweathermap.org/data/2.5/forecast");
     QNetworkRequest request(url);
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
     QUrlQuery params;
-    params.addQueryItem("_ll", "48.894410,2.336951");
-    params.addQueryItem("_auth", infoclimatAuth);
-    params.addQueryItem("_c", infoclimatC);
+//    params.addQueryItem("_ll", "48.894410,2.336951");
+//    params.addQueryItem("_auth", infoclimatAuth);
+//    params.addQueryItem("_c", infoclimatC);
+//    params.addQueryItem("%5Fll", "48.894410,2.336951");
+//    params.addQueryItem("%5Fauth", infoclimatAuth);
+//    params.addQueryItem("%5Fc", infoclimatC);
+    params.addQueryItem("lat", "48.894410");
+    params.addQueryItem("lon", "2.336951");
+    params.addQueryItem("appid", openWeatherMapAPIKey);
+    qDebug() << params.query().toUtf8();
     manager->post(request, params.query().toUtf8());
 }
 
