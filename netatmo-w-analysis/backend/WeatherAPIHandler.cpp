@@ -1,5 +1,6 @@
 #include "WeatherAPIHandler.h"
 #include <QUrlQuery>
+#include "../netatmo-w-analysis/types/WeatherPrediction.h"
 
 WeatherAPIHandler::WeatherAPIHandler()
 {
@@ -32,6 +33,10 @@ void WeatherAPIHandler::retrieveWeather(QNetworkReply *reply) {
         qDebug() << "ERROR with weather API" << bytes;
     }
     else if (bytes.size() >= 1) {
-        qDebug() << bytes;
+        WeatherPrediction *weatherPrediction = new WeatherPrediction(bytes);
+        qDebug() << "Longitude: " << weatherPrediction->longitude();
+        qDebug() << "Latitude: " << weatherPrediction->latitude();
+        qDebug() << "Lever de soleil: " << weatherPrediction->sunrise();
+        qDebug() << "Coucher de soleil: " << weatherPrediction->sunset();
     }
 }
