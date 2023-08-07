@@ -38,5 +38,6 @@ void WeatherAPIHandler::retrieveWeather(QNetworkReply *reply) {
         qDebug() << "Latitude: " << weatherPrediction->latitude();
         qDebug() << "Lever de soleil: " << weatherPrediction->sunrise();
         qDebug() << "Coucher de soleil: " << weatherPrediction->sunset();
+        qDebug() << "Heure de la première prédiction: " << weatherPrediction->firstItem().dateTime();
     }
 }

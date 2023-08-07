@@ -5,6 +5,7 @@ HEADERS += \
     $$PWD/ExtendedExtDailyRecord.h \
     $$PWD/IntDailyRecord.h \
     $$PWD/IntTimestampRecord.h \
+    $$PWD/PredictionItem.h \
     $$PWD/TimestampRecord.h \
     $$PWD/WeatherPrediction.h
 
@@ -15,5 +16,6 @@ SOURCES += \
     $$PWD/ExtendedExtDailyRecord.cpp \
     $$PWD/IntDailyRecord.cpp \
     $$PWD/IntTimestampRecord.cpp \
+    $$PWD/PredictionItem.cpp \
     $$PWD/TimestampRecord.cpp \
     $$PWD/WeatherPrediction.cpp
