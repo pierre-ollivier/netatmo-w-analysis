@@ -23,6 +23,13 @@ PredictionItem::PredictionItem(QJsonObject jsonObject) {
     _weatherMain = weatherObject["main"].toString();
     _weatherDescription = weatherObject["description"].toString();
     _weatherIcon = weatherObject["icon"].toString();
+
+    _clouds = jsonObject["clouds"].toObject()["all"].toInt();
+
+    QJsonObject windObject = jsonObject["wind"].toObject();
+    _windSpeed = windObject["speed"].toDouble();
+    _windGust = windObject["gust"].toDouble();
+    _windAngle = windObject["deg"].toInt();
 }
 
 QDateTime PredictionItem::dateTime() {return _dateTime;}
@@ -32,11 +39,15 @@ double PredictionItem::feltTemperature() {return _feltTemperature;}
 double PredictionItem::minTemperature() {return _minTemperature;}
 double PredictionItem::maxTemperature() {return _maxTemperature;}
 double PredictionItem::pressure() {return _pressure;}
-
 int PredictionItem::humidity() {return _humidity;}
 
 int PredictionItem::weatherId() {return _weatherId;}
-
 QString PredictionItem::weatherMain() {return _weatherMain;}
 QString PredictionItem::weatherDescription() {return _weatherDescription;}
 QString PredictionItem::weatherIcon() {return _weatherIcon;}
+
+int PredictionItem::clouds() {return _clouds;}
+
+double PredictionItem::windSpeed() {return _windSpeed;}
+double PredictionItem::windGust() {return _windGust;}
+int PredictionItem::windAngle() {return _windAngle;}
