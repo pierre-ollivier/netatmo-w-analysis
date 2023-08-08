@@ -13,9 +13,23 @@ public:
     PredictionItem(QJsonObject jsonObject);
 
     QDateTime dateTime();
+    double temperature();
+    double feltTemperature();
+    double minTemperature();
+    double maxTemperature();
+
+    double pressure();
+    int humidity();
 
 private:
     QDateTime _dateTime;
+    double _temperature;
+    double _feltTemperature;
+    double _minTemperature;
+    double _maxTemperature;
+    double _pressure;
+
+    int _humidity;
 };
 
 #endif // PREDICTIONITEM_H
