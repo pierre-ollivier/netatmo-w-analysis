@@ -9,7 +9,6 @@ class PredictionItem
 {
 public:
     PredictionItem();
-//    PredictionItem(QJsonDocument jsonDocument);
     PredictionItem(QJsonObject jsonObject);
 
     QDateTime dateTime();
