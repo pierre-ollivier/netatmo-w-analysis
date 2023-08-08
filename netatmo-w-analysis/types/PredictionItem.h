@@ -17,9 +17,14 @@ public:
     double feltTemperature();
     double minTemperature();
     double maxTemperature();
-
     double pressure();
+
     int humidity();
+
+    int weatherId();
+    QString weatherMain();
+    QString weatherDescription();
+    QString weatherIcon();
 
 private:
     QDateTime _dateTime;
@@ -30,6 +35,11 @@ private:
     double _pressure;
 
     int _humidity;
+
+    int _weatherId;
+    QString _weatherMain;
+    QString _weatherDescription;
+    QString _weatherIcon;
 };
 
 #endif // PREDICTIONITEM_H
