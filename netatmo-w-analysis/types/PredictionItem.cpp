@@ -51,3 +51,18 @@ int PredictionItem::clouds() {return _clouds;}
 double PredictionItem::windSpeed() {return _windSpeed;}
 double PredictionItem::windGust() {return _windGust;}
 int PredictionItem::windAngle() {return _windAngle;}
+
+QString PredictionItem::toString() {
+    return "Date et heure : " + _dateTime.toString() + "\n"
+            + "Température : " + QString::number(_temperature)
+            + ", ressentie : " + QString::number(_feltTemperature) + "\n"
+            + "Température min. : " + QString::number(_minTemperature)
+            + ", max. : " + QString::number(_maxTemperature) + "\n"
+            + "Pression : " + QString::number(_pressure)
+            + ", humidité relative : " + QString::number(_humidity) + "\n"
+            + "Vitesse du vent : " + QString::number(_windSpeed)+ "\n"
+            + "Direction : " + QString::number(_windAngle)
+            + ", rafales : " + QString::number(_windGust) + "\n"
+            + "Couverture nuageuse : " + QString::number(_clouds) + "\n"
+            + "Temps sensible : " + _weatherDescription;
+}

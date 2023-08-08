@@ -34,10 +34,10 @@ void WeatherAPIHandler::retrieveWeather(QNetworkReply *reply) {
     }
     else if (bytes.size() >= 1) {
         WeatherPrediction *weatherPrediction = new WeatherPrediction(bytes);
-        qDebug() << "Longitude: " << weatherPrediction->longitude();
-        qDebug() << "Latitude: " << weatherPrediction->latitude();
-        qDebug() << "Lever de soleil: " << weatherPrediction->sunrise();
-        qDebug() << "Coucher de soleil: " << weatherPrediction->sunset();
-        qDebug() << "Heure de la première prédiction: " << weatherPrediction->firstItem().dateTime();
+        qDebug() << "Longitude : " << weatherPrediction->longitude();
+        qDebug() << "Latitude : " << weatherPrediction->latitude();
+        qDebug() << "Lever de soleil : " << weatherPrediction->sunrise();
+        qDebug() << "Coucher de soleil : " << weatherPrediction->sunset();
+        qDebug() << "Première prédiction : " << weatherPrediction->firstItem().toString();
     }
 }

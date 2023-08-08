@@ -32,6 +32,8 @@ public:
     double windGust();
     int windAngle();
 
+    QString toString();
+
 private:
     QDateTime _dateTime;
     double _temperature;
