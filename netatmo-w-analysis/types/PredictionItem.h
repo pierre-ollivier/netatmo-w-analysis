@@ -26,6 +26,12 @@ public:
     QString weatherDescription();
     QString weatherIcon();
 
+    int clouds();
+
+    double windSpeed();
+    double windGust();
+    int windAngle();
+
 private:
     QDateTime _dateTime;
     double _temperature;
@@ -40,6 +46,12 @@ private:
     QString _weatherMain;
     QString _weatherDescription;
     QString _weatherIcon;
+
+    int _clouds;
+
+    double _windSpeed;
+    double _windGust;
+    int _windAngle;
 };
 
 #endif // PREDICTIONITEM_H
