@@ -12,6 +12,8 @@
 #include "../netatmo-w-analysis/backend/WeatherAPIHandler.h"
 #include "../types/ExtTimestampRecord.h"
 
+#include "../netatmo-w-analysis/frontend/PredictionWidget/PredictionWidget.h"
+
 extern QString PATH_TO_PROD_DATABASE;
 extern QString PATH_TO_COPY_DATABASE;
 
@@ -167,6 +169,12 @@ void MainWindow::buildLayouts() {
     mainLayout->addWidget(chartsDurationOptionsGroupBox, 5, 1, 1, 2);
     mainLayout->addWidget(chartsMeasurementOptionsGroupBox, 6, 1, 1, 2);
     mainLayout->addWidget(ephemerisPanel, 1, 4, 5, 1);
+
+    // provisional
+    PredictionWidget *predWidget = new PredictionWidget();
+    predWidget->setMaximumTemperature(10);
+    predWidget->setMinimumTemperature(5);
+    mainLayout->addWidget(predWidget, 6, 4);
 
     // set window's layout
     mainWidget->setLayout(mainLayout);
