@@ -1,6 +1,7 @@
 QT += charts
 QT += core
 
+include ($$PWD/PredictionWidget/PredictionWidget.pri)
 include ($$PWD/QueryBuilder/QueryBuilder.pri)
 
 HEADERS += \
