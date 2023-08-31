@@ -21,6 +21,10 @@ public:
     PredictionItem itemAt(int i);
 
     double maxTemperature(QDate date);
+    double maxTemperature(int daysFromNow);
+
+    double minTemperature(QDate date);
+    double minTemperature(int daysFromNow);
 
 private:
     double _longitude = 0;
@@ -30,6 +34,9 @@ private:
     QDateTime _sunset = QDateTime();
 
     QList<PredictionItem> _predictionItems = QList<PredictionItem>();
+
+    double maxTemperatureBetweenIndexes(int firstIndex, int lastIndex);
+    double minTemperatureBetweenIndexes(int firstIndex, int lastIndex);
 };
 
 #endif // WEATHERPREDICTION_H

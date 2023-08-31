@@ -39,5 +39,7 @@ void WeatherAPIHandler::retrieveWeather(QNetworkReply *reply) {
         qDebug() << "Lever de soleil : " << weatherPrediction->sunrise();
         qDebug() << "Coucher de soleil : " << weatherPrediction->sunset();
         qDebug() << "Première prédiction : " << weatherPrediction->firstItem().toString();
+        qDebug() << "Température maximale de demain : " << weatherPrediction->maxTemperature(1) << "°C";
+        qDebug() << "Température minimale de demain : " << weatherPrediction->minTemperature(1) << "°C";
     }
 }
