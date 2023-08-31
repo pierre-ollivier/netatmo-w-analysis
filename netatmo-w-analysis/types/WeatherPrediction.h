@@ -18,6 +18,9 @@ public:
     QDateTime sunset();
 
     PredictionItem firstItem();
+    PredictionItem itemAt(int i);
+
+    double maxTemperature(QDate date);
 
 private:
     double _longitude = 0;
@@ -26,7 +29,7 @@ private:
     QDateTime _sunrise = QDateTime();
     QDateTime _sunset = QDateTime();
 
-    PredictionItem _firstItem = PredictionItem();
+    QList<PredictionItem> _predictionItems = QList<PredictionItem>();
 };
 
 #endif // WEATHERPREDICTION_H
