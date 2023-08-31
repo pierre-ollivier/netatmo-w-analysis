@@ -1,6 +1,6 @@
 #include "PredictionWidget.h"
 
-PredictionWidget::PredictionWidget(QWidget *parent) : QWidget(parent)
+PredictionWidget::PredictionWidget(QWidget *parent) : QGroupBox(parent)
 {
     maxTemperatureLabel = new QLabel("0 °C");
     minTemperatureLabel = new QLabel("0 °C");

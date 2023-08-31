@@ -2,10 +2,11 @@
 #define PREDICTIONWIDGET_H
 
 #include <QGridLayout>
+#include <QGroupBox>
 #include <QLabel>
 #include <QWidget>
 
-class PredictionWidget : public QWidget
+class PredictionWidget : public QGroupBox
 {
     Q_OBJECT
 public:
@@ -16,8 +17,10 @@ public slots:
     void setMinimumTemperature(int minTemperature);
 
 private:
+
     QLabel *maxTemperatureLabel;
     QLabel *minTemperatureLabel;
+    QLabel *dateLabel;
 
     QGridLayout *layout;
 

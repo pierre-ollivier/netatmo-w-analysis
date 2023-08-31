@@ -174,6 +174,7 @@ void MainWindow::buildLayouts() {
     PredictionWidget *predWidget = new PredictionWidget();
     predWidget->setMaximumTemperature(10);
     predWidget->setMinimumTemperature(5);
+    predWidget->setTitle("31 août");
     mainLayout->addWidget(predWidget, 6, 4);
 
     // set window's layout
