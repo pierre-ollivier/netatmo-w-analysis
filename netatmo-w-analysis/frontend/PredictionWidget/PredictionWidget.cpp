@@ -12,12 +12,12 @@ PredictionWidget::PredictionWidget(QWidget *parent) : QGroupBox(parent)
     setLayout(layout);
 }
 
-void PredictionWidget::setMaximumTemperature(int maxTemperature) {
+void PredictionWidget::setMaximumTemperature(double maxTemperature) {
     _maxTemperature = maxTemperature;
-    maxTemperatureLabel->setText(QString::number(_maxTemperature) + " °C");
+    maxTemperatureLabel->setText(QString::number(_maxTemperature, 'f', 0) + " °C");
 }
 
-void PredictionWidget::setMinimumTemperature(int minTemperature) {
+void PredictionWidget::setMinimumTemperature(double minTemperature) {
     _minTemperature = minTemperature;
-    minTemperatureLabel->setText(QString::number(_minTemperature) + " °C");
+    minTemperatureLabel->setText(QString::number(_minTemperature, 'f', 0) + " °C");
 }
