@@ -3,16 +3,13 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QFileDialog>
+
+#include "../netatmo-w-analysis/backend/NormalComputer.h"
 #include "../netatmo-w-analysis/frontend/DataExplorator.h"
 #include "../netatmo-w-analysis/frontend/MonthlyReport.h"
-#include "../netatmo-w-analysis/frontend/YearlyReport.h"
 #include "../netatmo-w-analysis/frontend/NormalsVisualizer.h"
-#include "../netatmo-w-analysis/backend/APIMonitor.h"
-#include "../netatmo-w-analysis/backend/NormalComputer.h"
-#include "../netatmo-w-analysis/backend/WeatherAPIHandler.h"
+#include "../netatmo-w-analysis/frontend/YearlyReport.h"
 #include "../types/ExtTimestampRecord.h"
-
-#include "../netatmo-w-analysis/frontend/PredictionWidget/PredictionWidget.h"
 
 extern QString PATH_TO_PROD_DATABASE;
 extern QString PATH_TO_COPY_DATABASE;
@@ -34,7 +31,7 @@ MainWindow::MainWindow()
     connect(this, SIGNAL(recentDataShouldBeUpdated()), SLOT(postRecentDataRequests()));
     buildWindow();
 
-    WeatherAPIHandler *weatherHandler = new WeatherAPIHandler();
+    weatherHandler = new WeatherAPIHandler();
     weatherHandler->postWeatherRequest();
     connect(weatherHandler, SIGNAL(predictionDataRetrieved(WeatherPrediction)), SLOT(updatePredictionWidgets(WeatherPrediction)));
 }
