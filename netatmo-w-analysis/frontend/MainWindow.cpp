@@ -36,6 +36,7 @@ MainWindow::MainWindow()
 
     WeatherAPIHandler *weatherHandler = new WeatherAPIHandler();
     weatherHandler->postWeatherRequest();
+    connect(weatherHandler, SIGNAL(predictionDataRetrieved(WeatherPrediction)), SLOT(updatePredictionWidgets(WeatherPrediction)));
 }
 
 void MainWindow::buildWindow() {
@@ -367,6 +368,14 @@ void MainWindow::updateRequestCounts() {
                              "Requêtes restantes : <br><b>"
                              + QString::number(remainingRequests10s) + "</b> / 10 secondes<br>"
                              + "<b>" + QString::number(remainingRequests1h) + "</b> / 1 heure");
+}
+
+void MainWindow::updatePredictionWidgets(WeatherPrediction prediction) {
+    for (int i = 0; i < 4; i++) {
+        predictionWidgets[i]->setMaximumTemperature(prediction.maxTemperature(i + 1));
+        predictionWidgets[i]->setMinimumTemperature(prediction.minTemperature(i + 1));
+        predictionWidgets[i]->setTitle(QDate::currentDate().addDays(i + 1).toString("d MMM"));
+    }
 }
 
 void MainWindow::addMonthData() {

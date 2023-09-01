@@ -3,6 +3,7 @@
 
 #include <QNetworkReply>
 #include <QObject>
+#include "../netatmo-w-analysis/types/WeatherPrediction.h"
 
 class WeatherAPIHandler : public QObject
 {
@@ -13,6 +14,9 @@ public:
 public slots:
     void postWeatherRequest();
     void retrieveWeather(QNetworkReply *);
+
+signals:
+    void predictionDataRetrieved(WeatherPrediction);
 
 private:
     QNetworkAccessManager *manager;
