@@ -17,6 +17,7 @@
 #include "../netatmo-w-analysis/backend/RecentDataHandler.h"
 #include "../netatmo-w-analysis/frontend/HomePageChart.h"
 #include "../netatmo-w-analysis/frontend/EphemerisPanel.h"
+#include "../netatmo-w-analysis/frontend/PredictionWidget/PredictionWidget.h"
 
 
 class MainWindow : public QMainWindow
@@ -32,6 +33,7 @@ public:
     void buildCharts();
     void buildEphemerisPanel();
     void buildLayouts();
+    void buildPredictionWidgets();
     void createMenus();
     void createActions();
 
@@ -94,6 +96,7 @@ private:
 
     //layouts
     QGridLayout *mainLayout;
+    QHBoxLayout *predictionLayout;
 
     //API handlers
     NetatmoAPIHandler *apiHandler;
@@ -102,6 +105,9 @@ private:
     //database handlers
     DatabaseHandler *dbHandlerProd;
     DatabaseHandler *dbHandlerCopy;
+
+    //prediction widgets
+    PredictionWidget *predictionWidgets[4];
 
     //other (provisional)
     QString accessToken = "";
