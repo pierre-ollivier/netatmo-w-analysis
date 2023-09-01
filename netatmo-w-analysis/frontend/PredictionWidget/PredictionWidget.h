@@ -13,8 +13,8 @@ public:
     explicit PredictionWidget(QWidget *parent = nullptr);
 
 public slots:
-    void setMaximumTemperature(int maxTemperature);
-    void setMinimumTemperature(int minTemperature);
+    void setMaximumTemperature(double maxTemperature);
+    void setMinimumTemperature(double minTemperature);
 
 private:
 
@@ -24,8 +24,8 @@ private:
 
     QGridLayout *layout;
 
-    int _maxTemperature = 0;
-    int _minTemperature = 0;
+    double _maxTemperature = 0;
+    double _minTemperature = 0;
 
 };
 
