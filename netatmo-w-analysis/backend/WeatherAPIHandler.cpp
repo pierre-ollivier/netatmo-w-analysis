@@ -1,6 +1,5 @@
 #include "WeatherAPIHandler.h"
 #include <QUrlQuery>
-#include "../netatmo-w-analysis/types/WeatherPrediction.h"
 
 WeatherAPIHandler::WeatherAPIHandler()
 {
@@ -41,5 +40,6 @@ void WeatherAPIHandler::retrieveWeather(QNetworkReply *reply) {
         qDebug() << "Première prédiction : " << weatherPrediction->firstItem().toString();
         qDebug() << "Température maximale de demain : " << weatherPrediction->maxTemperature(1) << "°C";
         qDebug() << "Température minimale de demain : " << weatherPrediction->minTemperature(1) << "°C";
+        emit predictionDataRetrieved(*weatherPrediction);
     }
 }

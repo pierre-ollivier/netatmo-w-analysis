@@ -15,9 +15,10 @@
 #include "../netatmo-w-analysis/backend/NetatmoAPIHandler.h"
 #include "../netatmo-w-analysis/backend/OldDataUploader.h"
 #include "../netatmo-w-analysis/backend/RecentDataHandler.h"
-#include "../netatmo-w-analysis/frontend/HomePageChart.h"
 #include "../netatmo-w-analysis/frontend/EphemerisPanel.h"
+#include "../netatmo-w-analysis/frontend/HomePageChart.h"
 #include "../netatmo-w-analysis/frontend/PredictionWidget/PredictionWidget.h"
+#include "../netatmo-w-analysis/types/WeatherPrediction.h"
 
 
 class MainWindow : public QMainWindow
@@ -59,6 +60,8 @@ public slots:
     void updateLastMeasurementDate(int timestamp);
     void updateActualisationDate(QDateTime timestamp);
     void updateRequestCounts();
+
+    void updatePredictionWidgets(WeatherPrediction prediction);
 
     void addMonthData();
     void addMultipleMonthsData();
