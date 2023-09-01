@@ -10,6 +10,8 @@ PredictionWidget::PredictionWidget(QWidget *parent) : QGroupBox(parent)
     layout->addWidget(minTemperatureLabel, 2, 1);
 
     setLayout(layout);
+
+    setAlignment(Qt::AlignHCenter);
 }
 
 void PredictionWidget::setMaximumTemperature(double maxTemperature) {
