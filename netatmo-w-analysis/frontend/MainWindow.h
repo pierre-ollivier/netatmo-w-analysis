@@ -15,6 +15,7 @@
 #include "../netatmo-w-analysis/backend/NetatmoAPIHandler.h"
 #include "../netatmo-w-analysis/backend/OldDataUploader.h"
 #include "../netatmo-w-analysis/backend/RecentDataHandler.h"
+#include "../netatmo-w-analysis/backend/WeatherAPIHandler.h"
 #include "../netatmo-w-analysis/frontend/EphemerisPanel.h"
 #include "../netatmo-w-analysis/frontend/HomePageChart.h"
 #include "../netatmo-w-analysis/frontend/PredictionWidget/PredictionWidget.h"
@@ -97,22 +98,23 @@ private:
     // buttons
     QPushButton *actualisationButton;
 
-    //layouts
+    // layouts
     QGridLayout *mainLayout;
     QHBoxLayout *predictionLayout;
 
-    //API handlers
+    // API handlers
     NetatmoAPIHandler *apiHandler;
     RecentDataHandler *recentDataHandler;
+    WeatherAPIHandler *weatherHandler;
 
-    //database handlers
+    // database handlers
     DatabaseHandler *dbHandlerProd;
     DatabaseHandler *dbHandlerCopy;
 
-    //prediction widgets
+    // prediction widgets
     PredictionWidget *predictionWidgets[4];
 
-    //other (provisional)
+    // other (provisional)
     QString accessToken = "";
     QLocale *deviceLocale;
     APIMonitor *apiMonitor;
@@ -120,10 +122,10 @@ private:
     HomePageChart *outdoorChart;
     MetricsAnalyzer *analyzer;
 
-    //data uploader
+    // data uploader
     OldDataUploader *oldDataUploader;
 
-    //actions
+    // actions
     QAction *requestCountsAction;
     QAction *addMonthDataAction;
     QAction *addMultipleMonthsDataAction;
@@ -134,7 +136,7 @@ private:
     QAction *displayYearlyReportAction;
     QAction *normalsAction;
 
-    //chart options
+    // chart options
     QRadioButton *h4Option;
     QRadioButton *h24Option;
     QRadioButton *h192Option;
