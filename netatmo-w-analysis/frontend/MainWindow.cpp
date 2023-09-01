@@ -44,6 +44,7 @@ void MainWindow::buildWindow() {
     buildLabels();
     buildButtons();
     buildEphemerisPanel();
+    buildPredictionWidgets();
     buildLayouts();
     createActions();
     createMenus();
@@ -155,6 +156,11 @@ void MainWindow::buildLayouts() {
     chartsMeasurementOptionsGroupBox = new QGroupBox("");
     chartsMeasurementOptionsGroupBox->setLayout(chartsMeasurementOptionsLayout);
 
+    predictionLayout = new QHBoxLayout();
+    for (int i = 0;i < 4; i++) {
+        predictionLayout->addWidget(predictionWidgets[i]);
+    }
+
     mainLayout = new QGridLayout();
     mainLayout->addWidget(currentExtTempLabel, 1, 0, 2, 1);
     mainLayout->addWidget(statusLabel, 0, 0);
@@ -169,16 +175,23 @@ void MainWindow::buildLayouts() {
     mainLayout->addWidget(chartsDurationOptionsGroupBox, 5, 1, 1, 2);
     mainLayout->addWidget(chartsMeasurementOptionsGroupBox, 6, 1, 1, 2);
     mainLayout->addWidget(ephemerisPanel, 1, 4, 5, 1);
+    mainLayout->addLayout(predictionLayout, 6, 4);
 
     // provisional
-    PredictionWidget *predWidget = new PredictionWidget();
-    predWidget->setMaximumTemperature(10);
-    predWidget->setMinimumTemperature(5);
-    predWidget->setTitle("31 août");
-    mainLayout->addWidget(predWidget, 6, 4);
+//    PredictionWidget *predWidget = new PredictionWidget();
+//    predWidget->setMaximumTemperature(10);
+//    predWidget->setMinimumTemperature(5);
+//    predWidget->setTitle("31 août");
+//    mainLayout->addWidget(predWidget, 6, 4);
 
     // set window's layout
     mainWidget->setLayout(mainLayout);
+}
+
+void MainWindow::buildPredictionWidgets() {
+    for (int i = 0; i < 4; i++) {
+        predictionWidgets[i] = new PredictionWidget();
+    }
 }
 
 void MainWindow::createActions() {
