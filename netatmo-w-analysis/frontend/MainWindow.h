@@ -80,6 +80,8 @@ public slots:
     void changeChartsOptions();
 
     void showNormals();
+    void showCredits();
+
     void postRecentDataRequests();
 
 signals:
@@ -135,6 +137,7 @@ private:
     QAction *displayMonthlyReportAction;
     QAction *displayYearlyReportAction;
     QAction *normalsAction;
+    QAction *creditsAction;
 
     // chart options
     QRadioButton *h4Option;

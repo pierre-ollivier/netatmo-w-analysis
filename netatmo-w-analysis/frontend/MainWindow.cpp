@@ -212,8 +212,12 @@ void MainWindow::createActions() {
     connect(displayMonthlyReportAction, SIGNAL(triggered()), SLOT(displayMonthlyReport()));
     displayYearlyReportAction = new QAction("Climatologie générale");
     connect(displayYearlyReportAction, SIGNAL(triggered()), SLOT(displayYearlyReport()));
+
     normalsAction = new QAction("Normales");
     connect(normalsAction, SIGNAL(triggered()), SLOT(showNormals()));
+
+    creditsAction = new QAction("Crédits");
+    connect(creditsAction, SIGNAL(triggered()), SLOT(showCredits()));
 }
 
 void MainWindow::createMenus() {
@@ -230,6 +234,8 @@ void MainWindow::createMenus() {
     climatologyMenu->addAction(displayMonthlyReportAction);
     climatologyMenu->addAction(displayYearlyReportAction);
     climatologyMenu->addAction(normalsAction);
+    QMenu *creditsMenu = menuBar->addMenu(tr("C&rédits"));
+    creditsMenu->addAction(creditsAction);
 }
 
 void MainWindow::setAccessToken(QString newAccessToken) {
@@ -529,6 +535,12 @@ void MainWindow::showNormals() {
     NormalComputer *computer = new NormalComputer(dbHandlerCopy);
     NormalsVisualizer *visualizer = new NormalsVisualizer(computer);
     visualizer->show();
+}
+
+void MainWindow::showCredits() {
+    QMessageBox::information(this, "Crédits",
+                             "Auteur : Pierre OLLIVIER\n\n"
+                             "API météo et icônes : Openweathermap");
 }
 
 void MainWindow::exploreData() {
