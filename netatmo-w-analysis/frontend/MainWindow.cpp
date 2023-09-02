@@ -102,7 +102,8 @@ void MainWindow::buildButtons() {
     actualisationButton = new QPushButton("Actualiser");
     actualisationButton->setFont(QFont("Verdana", 14));
     actualisationButton->setIcon(QIcon(
-        "D:/Mes programmes/netatmo-w-analysis/images/Image actualisation.png"
+        QCoreApplication::applicationDirPath()
+            + "/../../netatmo-w-analysis/netatmo-w-analysis/images/Image actualisation.png"
         ));
     connect(actualisationButton, SIGNAL(pressed()),
             apiHandler, SLOT(postCurrentConditionsRequest()));
