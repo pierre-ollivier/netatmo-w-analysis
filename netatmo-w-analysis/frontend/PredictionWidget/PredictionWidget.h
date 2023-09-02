@@ -15,11 +15,13 @@ public:
 public slots:
     void setMaximumTemperature(double maxTemperature);
     void setMinimumTemperature(double minTemperature);
+    void setPictogram(QString iconId);
 
 private:
 
     QLabel *maxTemperatureLabel;
     QLabel *minTemperatureLabel;
+    QLabel *pictogramLabel;
     QLabel *dateLabel;
 
     QGridLayout *layout;
