@@ -372,6 +372,7 @@ void MainWindow::updatePredictionWidgets(WeatherPrediction prediction) {
         predictionWidgets[i]->setMaximumTemperature(prediction.maxTemperature(i + 1));
         predictionWidgets[i]->setMinimumTemperature(prediction.minTemperature(i + 1));
         predictionWidgets[i]->setTitle(QDate::currentDate().addDays(i + 1).toString("d MMM"));
+        predictionWidgets[i]->setPictogram(""); // provisional
     }
 }
 
