@@ -26,6 +26,8 @@ public:
     double minTemperature(QDate date);
     double minTemperature(int daysFromNow);
 
+    QString dayPictogram(int i);
+
 private:
     double _longitude = 0;
     double _latitude = 0;

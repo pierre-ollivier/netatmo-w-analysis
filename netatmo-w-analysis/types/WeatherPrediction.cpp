@@ -80,3 +80,7 @@ double WeatherPrediction::minTemperatureBetweenIndexes(int firstIndex, int lastI
     }
     return minTemperature;
 }
+
+QString WeatherPrediction::dayPictogram(int i) {
+    return "10d";  // provisional
+}

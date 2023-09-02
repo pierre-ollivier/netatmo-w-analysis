@@ -16,8 +16,6 @@ PredictionWidget::PredictionWidget(QWidget *parent) : QGroupBox(parent)
     setLayout(layout);
 
     setAlignment(Qt::AlignHCenter);
-
-    setPictogram("");
 }
 
 void PredictionWidget::setMaximumTemperature(double maxTemperature) {
@@ -33,9 +31,12 @@ void PredictionWidget::setMinimumTemperature(double minTemperature) {
 }
 
 void PredictionWidget::setPictogram(QString iconId) {
-    qDebug() << "Setting pictogram...";
     QString relativeImagePath = QCoreApplication::applicationDirPath()
-            + "/../../netatmo-w-analysis/netatmo-w-analysis/images/10d@4x.png";
-    qDebug() << QPixmap(relativeImagePath);
+            + "/../../netatmo-w-analysis/netatmo-w-analysis/images/" + iconId + "@4x.png";
+
+    if (QPixmap(relativeImagePath).isNull()) {
+        qDebug() << "Unnown pixmap code: " << iconId;
+    }
+
     pictogramLabel->setPixmap(QPixmap(relativeImagePath));
 }
