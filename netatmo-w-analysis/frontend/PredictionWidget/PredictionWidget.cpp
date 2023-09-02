@@ -1,8 +1,6 @@
 #include "PredictionWidget.h"
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QUrl>
-#include <QUrlQuery>
+#include <QCoreApplication>
+#include <QDebug>
 
 PredictionWidget::PredictionWidget(QWidget *parent) : QGroupBox(parent)
 {
@@ -36,34 +34,8 @@ void PredictionWidget::setMinimumTemperature(double minTemperature) {
 
 void PredictionWidget::setPictogram(QString iconId) {
     qDebug() << "Setting pictogram...";
-    QUrl imageUrl("http://openweathermap.org/img/wn/10d.png");
-    // Create a network access manager to download the image.
-    QNetworkAccessManager networkManager;
-    QNetworkRequest request(imageUrl);
-
-    QNetworkReply *reply = networkManager.get(request);
-
-    QObject::connect(reply, &QNetworkReply::finished, [&]() {
-        qDebug() << reply->readAll();
-        if (reply->error() == QNetworkReply::NoError) {
-            // Read the image data from the reply.
-            QByteArray imageData = reply->readAll();
-
-            // Load the image data into a QPixmap and set it in the QLabel.
-            QPixmap pixmap;
-            pixmap.loadFromData(imageData);
-
-            if (!pixmap.isNull()) {
-                pictogramLabel->setPixmap(pixmap);
-                pictogramLabel->setScaledContents(true); // Scale the image to fit the label.
-                qDebug() << "Pixmap set.";
-            } else {
-                qDebug() << "Failed to load image.";
-            }
-        } else {
-            qDebug() << "Network error: " << reply->errorString();
-        }
-
-        reply->deleteLater();
-    });
+    QString relativeImagePath = QCoreApplication::applicationDirPath()
+            + "/../../netatmo-w-analysis/netatmo-w-analysis/images/10d@4x.png";
+    qDebug() << QPixmap(relativeImagePath);
+    pictogramLabel->setPixmap(QPixmap(relativeImagePath));
 }
