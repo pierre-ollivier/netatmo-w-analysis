@@ -81,6 +81,11 @@ double WeatherPrediction::minTemperatureBetweenIndexes(int firstIndex, int lastI
     return minTemperature;
 }
 
-QString WeatherPrediction::dayPictogram(int i) {
-    return "10d";  // provisional
+QString WeatherPrediction::dayPictogram(int daysFromNow) {
+    QDateTime currentDateTimeUTC = QDateTime::currentDateTimeUtc();
+    int mod = currentDateTimeUTC.time().hour() / 3;
+
+    // Take the icon from 12 UTC
+    // TODO do something better
+    return itemAt(4 - mod + 8 * daysFromNow).weatherIcon();
 }
