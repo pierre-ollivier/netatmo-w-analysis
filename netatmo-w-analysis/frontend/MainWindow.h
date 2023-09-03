@@ -81,6 +81,7 @@ public slots:
 
     void showNormals();
     void showCredits();
+    void showPredictionWindow();
 
     void postRecentDataRequests();
 
