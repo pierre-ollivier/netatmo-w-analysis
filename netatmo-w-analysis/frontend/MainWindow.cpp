@@ -173,15 +173,8 @@ void MainWindow::buildLayouts() {
     mainLayout->addWidget(indoorChart, 3, 1, 2, 2);
     mainLayout->addWidget(chartsDurationOptionsGroupBox, 5, 1, 1, 2);
     mainLayout->addWidget(chartsMeasurementOptionsGroupBox, 6, 1, 1, 2);
-    mainLayout->addWidget(ephemerisPanel, 1, 4, 5, 1);
-    mainLayout->addLayout(predictionLayout, 6, 4);
-
-    // provisional
-//    PredictionWidget *predWidget = new PredictionWidget();
-//    predWidget->setMaximumTemperature(10);
-//    predWidget->setMinimumTemperature(5);
-//    predWidget->setTitle("31 août");
-//    mainLayout->addWidget(predWidget, 6, 4);
+    mainLayout->addWidget(ephemerisPanel, 0, 4, 5, 1);
+    mainLayout->addLayout(predictionLayout, 5, 4, 2, 1);
 
     // set window's layout
     mainWidget->setLayout(mainLayout);
