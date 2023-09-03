@@ -8,6 +8,7 @@
 #include "../netatmo-w-analysis/frontend/DataExplorator.h"
 #include "../netatmo-w-analysis/frontend/MonthlyReport.h"
 #include "../netatmo-w-analysis/frontend/NormalsVisualizer.h"
+#include "../netatmo-w-analysis/frontend/PredictionWindow.h"
 #include "../netatmo-w-analysis/frontend/YearlyReport.h"
 #include "../types/ExtTimestampRecord.h"
 
@@ -34,6 +35,8 @@ MainWindow::MainWindow()
     weatherHandler = new WeatherAPIHandler();
     weatherHandler->postWeatherRequest();
     connect(weatherHandler, SIGNAL(predictionDataRetrieved(WeatherPrediction)), SLOT(updatePredictionWidgets(WeatherPrediction)));
+
+    showPredictionWindow();  // provisional
 }
 
 void MainWindow::buildWindow() {
@@ -535,6 +538,11 @@ void MainWindow::showCredits() {
     QMessageBox::information(this, "Crédits",
                              "Auteur : Pierre OLLIVIER\n\n"
                              "API météo et icônes : Openweathermap");
+}
+
+void MainWindow::showPredictionWindow() {
+    PredictionWindow *predictionWindow = new PredictionWindow(new WeatherPrediction());
+    predictionWindow->show();
 }
 
 void MainWindow::exploreData() {
