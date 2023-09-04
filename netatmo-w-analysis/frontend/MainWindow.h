@@ -35,7 +35,7 @@ public:
     void buildCharts();
     void buildEphemerisPanel();
     void buildLayouts();
-    void buildPredictionWidgets();
+    void buildWeatherObjects();
     void createMenus();
     void createActions();
 
@@ -114,8 +114,9 @@ private:
     DatabaseHandler *dbHandlerProd;
     DatabaseHandler *dbHandlerCopy;
 
-    // prediction widgets
+    // weather objects
     PredictionWidget *predictionWidgets[4];
+    WeatherPrediction weatherPrediction;
 
     // other (provisional)
     QString accessToken = "";

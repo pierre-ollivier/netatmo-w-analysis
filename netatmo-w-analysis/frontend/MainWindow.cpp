@@ -35,8 +35,6 @@ MainWindow::MainWindow()
     weatherHandler = new WeatherAPIHandler();
     weatherHandler->postWeatherRequest();
     connect(weatherHandler, SIGNAL(predictionDataRetrieved(WeatherPrediction)), SLOT(updatePredictionWidgets(WeatherPrediction)));
-
-    showPredictionWindow();  // provisional
 }
 
 void MainWindow::buildWindow() {
@@ -45,7 +43,7 @@ void MainWindow::buildWindow() {
     buildLabels();
     buildButtons();
     buildEphemerisPanel();
-    buildPredictionWidgets();
+    buildWeatherObjects();
     buildLayouts();
     createActions();
     createMenus();
@@ -183,7 +181,8 @@ void MainWindow::buildLayouts() {
     mainWidget->setLayout(mainLayout);
 }
 
-void MainWindow::buildPredictionWidgets() {
+void MainWindow::buildWeatherObjects() {
+    weatherPrediction = WeatherPrediction();
     for (int i = 0; i < 4; i++) {
         predictionWidgets[i] = new PredictionWidget();
     }
@@ -371,12 +370,14 @@ void MainWindow::updateRequestCounts() {
 }
 
 void MainWindow::updatePredictionWidgets(WeatherPrediction prediction) {
+    weatherPrediction = prediction;
     for (int i = 0; i < 4; i++) {
         predictionWidgets[i]->setMaximumTemperature(prediction.maxTemperature(i + 1));
         predictionWidgets[i]->setMinimumTemperature(prediction.minTemperature(i + 1));
         predictionWidgets[i]->setTitle(QDate::currentDate().addDays(i + 1).toString("d MMM"));
         predictionWidgets[i]->setPictogram(prediction.dayPictogram(i + 1));
     }
+    showPredictionWindow();  // provisional
 }
 
 void MainWindow::addMonthData() {
@@ -541,7 +542,7 @@ void MainWindow::showCredits() {
 }
 
 void MainWindow::showPredictionWindow() {
-    PredictionWindow *predictionWindow = new PredictionWindow(new WeatherPrediction());
+    PredictionWindow *predictionWindow = new PredictionWindow(&weatherPrediction);
     predictionWindow->show();
 }
 
