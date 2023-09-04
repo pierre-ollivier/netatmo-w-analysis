@@ -14,6 +14,7 @@ HEADERS += \
     $$PWD/MonthlyReport.h \
     $$PWD/NormalsVisualizer.h \
     $$PWD/PredictionWindow.h \
+    $$PWD/WeatherPredictionContainer.h \
     $$PWD/YearMonthPicker.h \
     $$PWD/YearlyReport.h
 
@@ -27,5 +28,6 @@ SOURCES += \
     $$PWD/MonthlyReport.cpp \
     $$PWD/NormalsVisualizer.cpp \
     $$PWD/PredictionWindow.cpp \
+    $$PWD/WeatherPredictionContainer.cpp \
     $$PWD/YearMonthPicker.cpp \
     $$PWD/YearlyReport.cpp

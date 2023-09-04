@@ -19,6 +19,7 @@
 #include "../netatmo-w-analysis/frontend/EphemerisPanel.h"
 #include "../netatmo-w-analysis/frontend/HomePageChart.h"
 #include "../netatmo-w-analysis/frontend/PredictionWidget/PredictionWidget.h"
+#include "../netatmo-w-analysis/frontend/WeatherPredictionContainer.h"
 #include "../netatmo-w-analysis/types/WeatherPrediction.h"
 
 
@@ -117,6 +118,7 @@ private:
     // weather objects
     PredictionWidget *predictionWidgets[4];
     WeatherPrediction weatherPrediction;
+    WeatherPredictionContainer *weatherContainer;
 
     // other (provisional)
     QString accessToken = "";
