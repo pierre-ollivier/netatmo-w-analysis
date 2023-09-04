@@ -161,6 +161,8 @@ void MainWindow::buildLayouts() {
         predictionLayout->addWidget(predictionWidgets[i]);
     }
 
+    weatherContainer->setLayout(predictionLayout);
+
     mainLayout = new QGridLayout();
     mainLayout->addWidget(currentExtTempLabel, 1, 0, 2, 1);
     mainLayout->addWidget(statusLabel, 0, 0);
@@ -175,7 +177,7 @@ void MainWindow::buildLayouts() {
     mainLayout->addWidget(chartsDurationOptionsGroupBox, 5, 1, 1, 2);
     mainLayout->addWidget(chartsMeasurementOptionsGroupBox, 6, 1, 1, 2);
     mainLayout->addWidget(ephemerisPanel, 0, 4, 5, 1);
-    mainLayout->addLayout(predictionLayout, 5, 4, 2, 1);
+    mainLayout->addWidget(weatherContainer, 5, 4, 2, 1);
 
     // set window's layout
     mainWidget->setLayout(mainLayout);
@@ -183,9 +185,11 @@ void MainWindow::buildLayouts() {
 
 void MainWindow::buildWeatherObjects() {
     weatherPrediction = WeatherPrediction();
+    weatherContainer = new WeatherPredictionContainer();
     for (int i = 0; i < 4; i++) {
         predictionWidgets[i] = new PredictionWidget();
     }
+    connect(weatherContainer, SIGNAL(clicked()), SLOT(showPredictionWindow()));
 }
 
 void MainWindow::createActions() {
