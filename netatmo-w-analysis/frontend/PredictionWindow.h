@@ -4,7 +4,7 @@
 #include <QGridLayout>
 #include <QWidget>
 #include "../netatmo-w-analysis/types/WeatherPrediction.h"
-#include "../netatmo-w-analysis/frontend/PredictionWidget/PredictionWidget.h"
+#include "../netatmo-w-analysis/frontend/PredictionWidget/BigPredictionWidget.h"
 
 class PredictionWindow : public QWidget
 {
@@ -18,7 +18,7 @@ public slots:
 
 private:
     QGridLayout *layout;
-    PredictionWidget *predictionWidgets[4];
+    BigPredictionWidget *predictionWidgets[4];
     WeatherPrediction *_weatherPrediction;
 
 signals:
