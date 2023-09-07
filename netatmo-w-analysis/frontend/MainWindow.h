@@ -42,6 +42,7 @@ public:
 
     QString measurementType();
     int durationInHours();
+    void setBackgroundColor(const QColor &color);
 
 public slots:
     void setAccessToken(QString);
@@ -88,6 +89,9 @@ public slots:
 
 signals:
     void recentDataShouldBeUpdated();
+
+protected:
+    void paintEvent(QPaintEvent *event) override;
 
 private:
     // labels
@@ -164,6 +168,7 @@ private:
     int _durationInHours = 4;
     bool dataFromCurrentMonthsWasAdded = false;
     bool dataFromLastDaysWasAdded = false;
+    QColor backgroundColor;
 
 
 };

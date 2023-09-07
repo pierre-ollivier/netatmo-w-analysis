@@ -31,6 +31,8 @@ HomePageChart::HomePageChart(QString tableName, bool indoor) : QChartView()
 
     setChart(chart);
     setFixedSize(500, 300);
+
+    setBackgroundBrush(QBrush(QColor(219, 197, 236)));
 }
 
 void HomePageChart::drawChart(QList<ExtTimestampRecord> records) {
