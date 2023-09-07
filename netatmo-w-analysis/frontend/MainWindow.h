@@ -168,8 +168,7 @@ private:
     int _durationInHours = 4;
     bool dataFromCurrentMonthsWasAdded = false;
     bool dataFromLastDaysWasAdded = false;
-    QColor backgroundColor;
-
+    QColor backgroundColor = QColor(Qt::white);
 
 };
 
