@@ -1,4 +1,5 @@
 #include "PredictionWindow.h"
+#include <QPainter>
 
 PredictionWindow::PredictionWindow(QWidget *parent) : QWidget(parent)
 {
@@ -10,6 +11,7 @@ PredictionWindow::PredictionWindow(QWidget *parent) : QWidget(parent)
     }
 
     setLayout(layout);
+    setBackgroundColor(QColor(219, 197, 236));
 }
 
 PredictionWindow::PredictionWindow(WeatherPrediction *weatherPrediction) : QWidget()
@@ -23,6 +25,7 @@ PredictionWindow::PredictionWindow(WeatherPrediction *weatherPrediction) : QWidg
 
     setLayout(layout);
     setWeatherPrediction(weatherPrediction);
+    setBackgroundColor(QColor(219, 197, 236));
 }
 
 void PredictionWindow::setWeatherPrediction(WeatherPrediction *weatherPrediction) {
@@ -40,4 +43,16 @@ void PredictionWindow::setWeatherPrediction(WeatherPrediction *weatherPrediction
             predictionWidgets[i]->setPictogram(weatherPrediction->itemAt(8 * i + j + 7 - mod).weatherIcon(), j);
         }
     }
+}
+
+void PredictionWindow::setBackgroundColor(const QColor &color) {
+    backgroundColor = color;
+    // Ensure the widget is repainted with the new background color
+    update();
+}
+
+void PredictionWindow::paintEvent(QPaintEvent *event) {
+    // Paint the widget's background with the specified color
+    QPainter painter(this);
+    painter.fillRect(rect(), backgroundColor);
 }
