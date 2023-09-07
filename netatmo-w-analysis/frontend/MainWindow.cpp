@@ -47,6 +47,7 @@ void MainWindow::buildWindow() {
     buildLayouts();
     createActions();
     createMenus();
+    setBackgroundColor(QColor(219, 197, 236));
 }
 
 void MainWindow::buildAPIHandlers() {
@@ -575,4 +576,16 @@ QString MainWindow::measurementType() {
 
 int MainWindow::durationInHours() {
     return _durationInHours;
+}
+
+void MainWindow::setBackgroundColor(const QColor &color) {
+    backgroundColor = color;
+    // Ensure the widget is repainted with the new background color
+    update();
+}
+
+void MainWindow::paintEvent(QPaintEvent *event) {
+    // Paint the widget's background with the specified color
+    QPainter painter(this);
+    painter.fillRect(rect(), backgroundColor);
 }
