@@ -4,18 +4,18 @@
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
-#include <QWidget>
 
 class PredictionWidget : public QGroupBox
 {
     Q_OBJECT
 public:
     explicit PredictionWidget(QWidget *parent = nullptr);
+    QGridLayout* layout();
 
 public slots:
     void setMaximumTemperature(double maxTemperature);
     void setMinimumTemperature(double minTemperature);
-    void setPictogram(QString iconId);
+    void setMainPictogram(QString iconId);
 
 private:
 
@@ -24,7 +24,7 @@ private:
     QLabel *pictogramLabel;
     QLabel *dateLabel;
 
-    QGridLayout *layout;
+    QGridLayout *_layout;
 
     double _maxTemperature = 0;
     double _minTemperature = 0;

@@ -8,12 +8,12 @@ PredictionWidget::PredictionWidget(QWidget *parent) : QGroupBox(parent)
     minTemperatureLabel = new QLabel("0 °C");
     pictogramLabel = new QLabel();
 
-    layout = new QGridLayout();
-    layout->addWidget(maxTemperatureLabel, 1, 1);
-    layout->addWidget(minTemperatureLabel, 2, 1);
-    layout->addWidget(pictogramLabel, 1, 2, 2, 1);
+    _layout = new QGridLayout();
+    _layout->addWidget(maxTemperatureLabel, 1, 1);
+    _layout->addWidget(minTemperatureLabel, 2, 1);
+    _layout->addWidget(pictogramLabel, 1, 2, 2, 1);
 
-    setLayout(layout);
+    setLayout(_layout);
 
     setAlignment(Qt::AlignHCenter);
 }
@@ -30,13 +30,13 @@ void PredictionWidget::setMinimumTemperature(double minTemperature) {
                                  + QString::number(_minTemperature, 'f', 0) + " °C");
 }
 
-void PredictionWidget::setPictogram(QString iconId) {
+void PredictionWidget::setMainPictogram(QString iconId) {
     QString relativeImagePath = QCoreApplication::applicationDirPath()
             + "/../../netatmo-w-analysis/netatmo-w-analysis/images/" + iconId + "@4x.png";
 
-    if (QPixmap(relativeImagePath).isNull()) {
-        qDebug() << "Unnown pixmap code: " << iconId;
-    }
-
     pictogramLabel->setPixmap(QPixmap(relativeImagePath));
+}
+
+QGridLayout* PredictionWidget::layout() {
+    return _layout;
 }
