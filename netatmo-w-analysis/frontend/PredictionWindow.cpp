@@ -26,7 +26,9 @@ PredictionWindow::PredictionWindow(WeatherPrediction *weatherPrediction) : QWidg
 }
 
 void PredictionWindow::setWeatherPrediction(WeatherPrediction *weatherPrediction) {
+    int mod = QDateTime::currentDateTimeUtc().time().hour() / 3;  // TODO store this information in _weatherPrediction
     _weatherPrediction = weatherPrediction;
+
     for (int i = 0; i < 4; i++) {
         predictionWidgets[i]->setMaximumTemperature(weatherPrediction->maxTemperature(i + 1));
         predictionWidgets[i]->setMinimumTemperature(weatherPrediction->minTemperature(i + 1));
@@ -34,8 +36,8 @@ void PredictionWindow::setWeatherPrediction(WeatherPrediction *weatherPrediction
         predictionWidgets[i]->setTitle(QDate::currentDate().addDays(i + 1).toString("d MMMM"));
 
         for (int j = 0; j < 8; j++) {
-            predictionWidgets[i]->setTemperature(weatherPrediction->itemAt(8 * i + j).temperature(), j);
-            predictionWidgets[i]->setPictogram(weatherPrediction->itemAt(8 * i + j).weatherIcon(), j);
+            predictionWidgets[i]->setTemperature(weatherPrediction->itemAt(8 * i + j + 7 - mod).temperature(), j);
+            predictionWidgets[i]->setPictogram(weatherPrediction->itemAt(8 * i + j + 7 - mod).weatherIcon(), j);
         }
     }
 }
