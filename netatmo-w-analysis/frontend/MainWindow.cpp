@@ -14,6 +14,7 @@
 
 extern QString PATH_TO_PROD_DATABASE;
 extern QString PATH_TO_COPY_DATABASE;
+extern QColor mainBackgroundColor;
 
 MainWindow::MainWindow()
 {
@@ -21,6 +22,7 @@ MainWindow::MainWindow()
     setCentralWidget(mainWidget);
     menuBar = new QMenuBar();
     setMenuBar(menuBar);
+    setBackgroundColor(mainBackgroundColor);
     deviceLocale = new QLocale();
     apiMonitor = new APIMonitor();
     analyzer = new MetricsAnalyzer();
@@ -47,7 +49,6 @@ void MainWindow::buildWindow() {
     buildLayouts();
     createActions();
     createMenus();
-    setBackgroundColor(QColor(219, 197, 236));
 }
 
 void MainWindow::buildAPIHandlers() {

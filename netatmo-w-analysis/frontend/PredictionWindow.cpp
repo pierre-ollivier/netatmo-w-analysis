@@ -1,6 +1,8 @@
 #include "PredictionWindow.h"
 #include <QPainter>
 
+extern QColor mainBackgroundColor;
+
 PredictionWindow::PredictionWindow(QWidget *parent) : QWidget(parent)
 {
     layout = new QGridLayout();
@@ -11,7 +13,7 @@ PredictionWindow::PredictionWindow(QWidget *parent) : QWidget(parent)
     }
 
     setLayout(layout);
-    setBackgroundColor(QColor(219, 197, 236));
+    setBackgroundColor(mainBackgroundColor);
 }
 
 PredictionWindow::PredictionWindow(WeatherPrediction *weatherPrediction) : QWidget()
@@ -25,7 +27,7 @@ PredictionWindow::PredictionWindow(WeatherPrediction *weatherPrediction) : QWidg
 
     setLayout(layout);
     setWeatherPrediction(weatherPrediction);
-    setBackgroundColor(QColor(219, 197, 236));
+    setBackgroundColor(mainBackgroundColor);
 }
 
 void PredictionWindow::setWeatherPrediction(WeatherPrediction *weatherPrediction) {

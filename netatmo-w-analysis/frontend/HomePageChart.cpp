@@ -3,6 +3,7 @@
 #include "../types/ExtTimestampRecord.h"
 
 extern QString PATH_TO_COPY_DATABASE;
+extern QColor mainBackgroundColor;
 
 HomePageChart::HomePageChart(QString tableName, bool indoor) : QChartView()
 {
@@ -32,7 +33,7 @@ HomePageChart::HomePageChart(QString tableName, bool indoor) : QChartView()
     setChart(chart);
     setFixedSize(500, 300);
 
-    setBackgroundBrush(QBrush(QColor(219, 197, 236)));
+    setBackgroundBrush(QBrush(mainBackgroundColor));
 }
 
 void HomePageChart::drawChart(QList<ExtTimestampRecord> records) {
