@@ -15,7 +15,7 @@ BigPredictionWidget::BigPredictionWidget() : PredictionWidget()
 
 void BigPredictionWidget::setTemperature(double temperature, int i) {
     _temperatures[i] = temperature;
-    temperatureLabels[i]->setText(QString::number(temperature - 273.15, 'f', 0) + " °C");  // convert to °C
+    temperatureLabels[i]->setText("<b>" + QString::number(temperature - 273.15, 'f', 0) + "</b> °C");  // convert to °C
 }
 
 void BigPredictionWidget::setPictogram(QString iconId, int i) {
@@ -28,6 +28,6 @@ void BigPredictionWidget::setPictogram(QString iconId, int i) {
 void BigPredictionWidget::setDaylightTime(bool isDaylightTime) {
     int offsetFromUTC = isDaylightTime ? 2 : 1;
     for (int h = 0; h <= 21; h += 3) {
-        timeLabels[h / 3]->setText("<b>" + QString::number(h + offsetFromUTC) + " h</b>");
+        timeLabels[h / 3]->setText(QString::number(h + offsetFromUTC) + " h");
     }
 }
