@@ -13,8 +13,10 @@ public:
 public slots:
     void setTemperature(double temperature, int i);
     void setPictogram(QString iconId, int i);
+    void setDaylightTime(bool isDaylightTime);
 
 private:
+    QLabel *timeLabels[8];
     QLabel *temperatureLabels[8];
     QLabel *pictogramLabels[8];
     double _temperatures[8] = {0, 0, 0, 0, 0, 0, 0, 0};
