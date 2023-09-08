@@ -11,7 +11,7 @@ PredictionWidget::PredictionWidget(QWidget *parent) : QGroupBox(parent)
     _layout = new QGridLayout();
     _layout->addWidget(maxTemperatureLabel, 1, 1);
     _layout->addWidget(minTemperatureLabel, 2, 1);
-    _layout->addWidget(pictogramLabel, 1, 2, 2, 1);
+    _layout->addWidget(pictogramLabel, 1, 2, 2, 2);
 
     setLayout(_layout);
 
