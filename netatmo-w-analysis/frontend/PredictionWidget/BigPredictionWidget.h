@@ -13,6 +13,7 @@ public:
 public slots:
     void setTemperature(double temperature, int i);
     void setPictogram(QString iconId, int i);
+    void setToolTip(QString toolTip, int i);
     void setDaylightTime(bool isDaylightTime);
     void emphasizeDailyValues();
 
