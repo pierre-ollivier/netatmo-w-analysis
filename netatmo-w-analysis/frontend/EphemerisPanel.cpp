@@ -7,6 +7,13 @@ EphemerisPanel::EphemerisPanel() : QWidget()
 {
     mainGroupBox = new QGroupBox();
 
+    _sunriseDateTime = new QDateTime();
+    _sunsetDateTime = new QDateTime();
+
+    ephemerisLabel = new QLabel("Lever du soleil : __:__ - Coucher du soleil : __:__");
+    ephemerisLabel->setFont(QFont("Arial", 9));
+    ephemerisLabel->setAlignment(Qt::AlignCenter);
+
     txxLabel = new QLabel("__,_ °C (____)");
     tnnLabel = new QLabel("__,_ °C (____)");
     txmLabel = new QLabel("__,_ °C");
@@ -18,6 +25,7 @@ EphemerisPanel::EphemerisPanel() : QWidget()
     mainLayout = new QGridLayout();
     boxLayout = new QGridLayout();
 
+    boxLayout->addWidget(ephemerisLabel, 0, 1, 1, 2);
     boxLayout->addWidget(new QLabel("Température maximale absolue : "), 1, 1);
     boxLayout->addWidget(txxLabel, 1, 2);
     boxLayout->addWidget(new QLabel("Température minimale absolue : "), 2, 1);
@@ -109,4 +117,16 @@ void EphemerisPanel::updateStatistics() {
 
 void EphemerisPanel::updateStdevLabel() {
     stdevLabel->setText(analyzer->text(dbHandler));
+}
+
+void EphemerisPanel::setSunrise(QDateTime sunriseDateTime) {
+    *_sunriseDateTime = sunriseDateTime;
+    ephemerisLabel->setText("Lever du soleil : " + _sunriseDateTime->toString("hh:mm")
+                            + " - Coucher du soleil : " + _sunsetDateTime->toString("hh:mm"));
+}
+
+void EphemerisPanel::setSunset(QDateTime sunsetDateTime) {
+    *_sunsetDateTime = sunsetDateTime;
+    ephemerisLabel->setText("Lever du soleil : " + _sunriseDateTime->toString("hh:mm")
+                            + " - Coucher du soleil : " + _sunsetDateTime->toString("hh:mm"));
 }

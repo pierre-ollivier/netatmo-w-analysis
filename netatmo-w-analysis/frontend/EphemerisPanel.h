@@ -2,6 +2,7 @@
 #define EPHEMERISPANEL_H
 
 #include <QDate>
+#include <QDateTime>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
@@ -20,17 +21,27 @@ public:
 public slots:
     void updateStdevLabel();
     void updateStatistics();
+    void setSunrise(QDateTime sunriseDateTime);
+    void setSunset(QDateTime sunsetDateTime);
 
 private:
     QGroupBox *mainGroupBox;
+
     QLabel *txxLabel;
+    QLabel *ephemerisLabel;
     QLabel *tnnLabel;
     QLabel *txmLabel;
     QLabel *tnmLabel;
     QLabel *stdevLabel;
+
     QLocale *deviceLocale;
+
     QGridLayout *boxLayout;
     QGridLayout *mainLayout;
+
+    QDateTime *_sunriseDateTime;
+    QDateTime *_sunsetDateTime;
+
     DatabaseHandler *dbHandler;
     NormalComputer *normalComputer;
     MetricsAnalyzer *analyzer;
