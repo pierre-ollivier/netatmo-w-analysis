@@ -383,6 +383,7 @@ void MainWindow::updatePredictionWidgets(WeatherPrediction prediction) {
         predictionWidgets[i]->setTitle(QDate::currentDate().addDays(i + 1).toString("d MMM"));
         predictionWidgets[i]->setMainPictogram(prediction.dayPictogram(i + 1));
     }
+    // TODO use sunrise and sunset data to put it in the ephemeris panel
 }
 
 void MainWindow::addMonthData() {
