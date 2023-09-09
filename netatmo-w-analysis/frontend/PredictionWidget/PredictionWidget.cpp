@@ -15,6 +15,16 @@ PredictionWidget::PredictionWidget(QWidget *parent) : QGroupBox(parent)
 
     setLayout(_layout);
 
+    setStyleSheet(
+                "QGroupBox {"
+                "  border: 1px solid gray;"
+                "  border-radius: 3px;"
+                "  margin-top: 8px;"
+                "}"
+                "QGroupBox::title {"
+                "  subcontrol-origin: margin;"
+                "  subcontrol-position: top center;"
+                "}");
     setAlignment(Qt::AlignHCenter);
 }
 
