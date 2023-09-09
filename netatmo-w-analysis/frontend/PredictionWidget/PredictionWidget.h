@@ -11,6 +11,9 @@ class PredictionWidget : public QGroupBox
 public:
     explicit PredictionWidget(QWidget *parent = nullptr);
     QGridLayout* layout();
+    QLabel* maxTemperatureLabel();
+    QLabel* minTemperatureLabel();
+    QLabel* pictogramLabel();
 
 public slots:
     void setMaximumTemperature(double maxTemperature);
@@ -19,10 +22,11 @@ public slots:
 
 private:
 
-    QLabel *maxTemperatureLabel;
-    QLabel *minTemperatureLabel;
-    QLabel *pictogramLabel;
-    QLabel *dateLabel;
+    QLabel *_maxTemperatureLabel;
+    QLabel *_minTemperatureLabel;
+    QLabel *_pictogramLabel;
+
+    QFont *temperatureFont;
 
     QGridLayout *_layout;
 

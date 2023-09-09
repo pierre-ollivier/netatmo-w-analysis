@@ -40,6 +40,7 @@ void PredictionWindow::setWeatherPrediction(WeatherPrediction *weatherPrediction
         predictionWidgets[i]->setMainPictogram(weatherPrediction->dayPictogram(i + 1));
         predictionWidgets[i]->setTitle(QDate::currentDate().addDays(i + 1).toString("d MMMM"));
         predictionWidgets[i]->setDaylightTime(QDateTime::currentDateTime().isDaylightTime());
+        predictionWidgets[i]->emphasizeDailyValues();
 
         for (int j = 0; j < 8; j++) {
             predictionWidgets[i]->setTemperature(weatherPrediction->itemAt(8 * i + j + 7 - mod).temperature(), j);

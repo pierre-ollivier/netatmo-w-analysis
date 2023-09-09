@@ -1,12 +1,20 @@
 #include "BigPredictionWidget.h"
 #include <QCoreApplication>
 
+extern const QFont defaultTemperatureFont;
+
 BigPredictionWidget::BigPredictionWidget() : PredictionWidget()
 {
+    underscoreLabel = new QLabel("__________");
+    underscoreLabel->setAlignment(Qt::AlignCenter);
+    layout()->addWidget(underscoreLabel, 9, 2);
+
     for (int i = 0; i < 8; i++) {
         timeLabels[i] = new QLabel("<b>0 h</b>");
         temperatureLabels[i] = new QLabel("0 °C");
+        temperatureLabels[i]->setFont(defaultTemperatureFont);
         pictogramLabels[i] = new QLabel();
+
         layout()->addWidget(timeLabels[i], 10 + i, 1);
         layout()->addWidget(temperatureLabels[i], 10 + i, 2);
         layout()->addWidget(pictogramLabels[i], 10 + i, 3);
@@ -30,4 +38,11 @@ void BigPredictionWidget::setDaylightTime(bool isDaylightTime) {
     for (int h = 0; h <= 21; h += 3) {
         timeLabels[h / 3]->setText(QString::number(h + offsetFromUTC) + " h");
     }
+}
+
+void BigPredictionWidget::emphasizeDailyValues() {
+    maxTemperatureLabel()->setFont(QFont("Segoe UI", 12));
+    minTemperatureLabel()->setFont(QFont("Segoe UI", 12));
+    pictogramLabel()->setMinimumHeight(120);
+    pictogramLabel()->setAlignment(Qt::AlignCenter);
 }
