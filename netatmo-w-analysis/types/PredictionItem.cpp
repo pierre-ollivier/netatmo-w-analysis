@@ -1,5 +1,6 @@
 #include "PredictionItem.h"
 #include <QJsonArray>
+#include "../netatmo-w-analysis/types/TimestampRecord.h"
 
 PredictionItem::PredictionItem()
 {
@@ -53,16 +54,16 @@ double PredictionItem::windGust() {return _windGust;}
 int PredictionItem::windAngle() {return _windAngle;}
 
 QString PredictionItem::toString() {
-    return "Date et heure : " + _dateTime.toString() + "\n"
-            + "Température : " + QString::number(_temperature)
-            + ", ressentie : " + QString::number(_feltTemperature) + "\n"
-            + "Température min. : " + QString::number(_minTemperature)
-            + ", max. : " + QString::number(_maxTemperature) + "\n"
-            + "Pression : " + QString::number(_pressure)
-            + ", humidité relative : " + QString::number(_humidity) + "\n"
-            + "Vitesse du vent : " + QString::number(_windSpeed)+ "\n"
-            + "Direction : " + QString::number(_windAngle)
-            + ", rafales : " + QString::number(_windGust) + "\n"
-            + "Couverture nuageuse : " + QString::number(_clouds) + "\n"
-            + "Temps sensible : " + _weatherDescription;
+    TimestampRecord record(0, _temperature - 273.15, _humidity);
+    return "Température : " + QString::number(_temperature - 273.15, 'f', 0) + " °C"
+            + ", ressentie : " + QString::number(record.humidex(), 'f', 0) + "\n"
+            + "Point de rosée : " + QString::number(record.dewPoint(), 'f', 0) + " °C" + "\n"
+            + "Température min. : " + QString::number(_minTemperature - 273.15, 'f', 0) + " °C"
+            + ", max. : " + QString::number(_maxTemperature - 273.15, 'f', 0) + " °C" + "\n"
+            + "Pression : " + QString::number(_pressure) + " hPa"
+            + ", humidité relative : " + QString::number(_humidity) + " %" + "\n"
+            + "Vitesse du vent : " + QString::number(_windSpeed * 3.6, 'f', 0) + " km/h" + "\n"
+            + "Direction : " + QString::number(_windAngle) + "°"
+            + ", rafales : " + QString::number(_windGust * 3.6, 'f', 0) + " km/h" + "\n"
+            + "Couverture nuageuse : " + QString::number(_clouds) + " %";
 }

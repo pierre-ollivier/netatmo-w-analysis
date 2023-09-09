@@ -45,6 +45,7 @@ void PredictionWindow::setWeatherPrediction(WeatherPrediction *weatherPrediction
         for (int j = 0; j < 8; j++) {
             predictionWidgets[i]->setTemperature(weatherPrediction->itemAt(8 * i + j + 7 - mod).temperature(), j);
             predictionWidgets[i]->setPictogram(weatherPrediction->itemAt(8 * i + j + 7 - mod).weatherIcon(), j);
+            predictionWidgets[i]->setToolTip(weatherPrediction->itemAt(8 * i + j + 7 - mod).toString(), j);
         }
     }
 }

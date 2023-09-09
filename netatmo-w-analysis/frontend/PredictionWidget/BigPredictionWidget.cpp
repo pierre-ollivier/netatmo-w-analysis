@@ -33,6 +33,10 @@ void BigPredictionWidget::setPictogram(QString iconId, int i) {
     pictogramLabels[i]->setPixmap(QPixmap(relativeImagePath));
 }
 
+void BigPredictionWidget::setToolTip(QString toolTip, int i) {
+    temperatureLabels[i]->setToolTip(toolTip);
+}
+
 void BigPredictionWidget::setDaylightTime(bool isDaylightTime) {
     int offsetFromUTC = isDaylightTime ? 2 : 1;
     for (int h = 0; h <= 21; h += 3) {
