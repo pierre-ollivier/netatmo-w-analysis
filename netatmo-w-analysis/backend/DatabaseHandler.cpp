@@ -410,19 +410,24 @@ void DatabaseHandler::postFromIndoorCsv(QString pathToCsv, QString tableName, QD
 }
 
 void DatabaseHandler::postFromMultipleOutdoorCsv(QString path, QString tableName, QString beginMonth, QString endMonth) {
-    // TODO: make this function and the following one more robust to paths ending or not with /
+    if (path[path.size() - 1] != "/") {
+        path += "/";
+    }
     QDate beginDate = QDate::fromString("01/" + beginMonth, "dd/MM/yyyy");
     QDate endDate = QDate::fromString("01/" + endMonth, "dd/MM/yyyy");
     for (QDate date = beginDate; date <= endDate; date = date.addMonths(1)) {
-        postFromOutdoorCsv(path + "/" + date.toString("yyyy-MM") + ".csv", tableName);
+        postFromOutdoorCsv(path + date.toString("yyyy-MM") + ".csv", tableName);
     }
 }
 
 void DatabaseHandler::postFromMultipleIndoorCsv(QString path, QString tableName, QString beginMonth, QString endMonth) {
+    if (path[path.size() - 1] != "/") {
+        path += "/";
+    }
     QDate beginDate = QDate::fromString("01/" + beginMonth, "dd/MM/yyyy");
     QDate endDate = QDate::fromString("01/" + endMonth, "dd/MM/yyyy");
     for (QDate date = beginDate; date <= endDate; date = date.addMonths(1)) {
-        postFromIndoorCsv(path + "/C" + date.toString("yyyy-MM") + ".csv", tableName);
+        postFromIndoorCsv(path + "C" + date.toString("yyyy-MM") + ".csv", tableName);
     }
 }
 
