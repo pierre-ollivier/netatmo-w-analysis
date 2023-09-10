@@ -11,46 +11,43 @@ TimestampRecord::TimestampRecord(
     _timestamp = timestamp;
     _temperature = temperature;
     _humidity = humidity;
+    _date = QDateTime::fromSecsSinceEpoch(timestamp).date();
+    _time = QDateTime::fromSecsSinceEpoch(timestamp).time();
 }
 
 long long TimestampRecord::timestamp() {
     return _timestamp;
 }
 QDate TimestampRecord::date() {
-    QDateTime dt;
-    dt.setSecsSinceEpoch(_timestamp);
-    return dt.date();
+    return _date;
 }
 QTime TimestampRecord::time() {
-    QDateTime dt;
-    dt.setSecsSinceEpoch(_timestamp);
-    return dt.time();
+    return _time;
 }
-// TODO: maybe store date and time to not recalculate them every time
 int TimestampRecord::year() {
-    return date().year();
+    return _date.year();
 }
 int TimestampRecord::month() {
-    return date().month();
+    return _date.month();
 }
 int TimestampRecord::day() {
-    return date().day();
+    return _date.day();
 }
 int TimestampRecord::decade() {
-    int result =day() <= 10 ? 1 : day() <= 20 ? 2 : 3;
+    int result = day() <= 10 ? 1 : day() <= 20 ? 2 : 3;
     return result + 3 * (month() - 1);
 }
 int TimestampRecord::weekNumber() {
-    return date().weekNumber();
+    return _date.weekNumber();
 }
 int TimestampRecord::hour() {
-    return time().hour();
+    return _time.hour();
 }
 int TimestampRecord::minute() {
-    return time().minute();
+    return _time.minute();
 }
 int TimestampRecord::second() {
-    return time().second();
+    return _time.second();
 }
 
 double TimestampRecord::temperature() {

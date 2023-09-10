@@ -1,6 +1,7 @@
 QT += charts
 QT += core
 
+include ($$PWD/PredictionWidget/PredictionWidget.pri)
 include ($$PWD/QueryBuilder/QueryBuilder.pri)
 
 HEADERS += \
@@ -12,6 +13,8 @@ HEADERS += \
     $$PWD/MainWindow.h \
     $$PWD/MonthlyReport.h \
     $$PWD/NormalsVisualizer.h \
+    $$PWD/PredictionWindow.h \
+    $$PWD/WeatherPredictionContainer.h \
     $$PWD/YearMonthPicker.h \
     $$PWD/YearlyReport.h
 
@@ -24,5 +27,7 @@ SOURCES += \
     $$PWD/MainWindow.cpp \
     $$PWD/MonthlyReport.cpp \
     $$PWD/NormalsVisualizer.cpp \
+    $$PWD/PredictionWindow.cpp \
+    $$PWD/WeatherPredictionContainer.cpp \
     $$PWD/YearMonthPicker.cpp \
     $$PWD/YearlyReport.cpp

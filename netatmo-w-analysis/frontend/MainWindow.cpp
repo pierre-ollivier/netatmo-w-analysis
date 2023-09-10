@@ -3,16 +3,18 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QFileDialog>
+
+#include "../netatmo-w-analysis/backend/NormalComputer.h"
 #include "../netatmo-w-analysis/frontend/DataExplorator.h"
 #include "../netatmo-w-analysis/frontend/MonthlyReport.h"
-#include "../netatmo-w-analysis/frontend/YearlyReport.h"
 #include "../netatmo-w-analysis/frontend/NormalsVisualizer.h"
-#include "../netatmo-w-analysis/backend/APIMonitor.h"
-#include "../netatmo-w-analysis/backend/NormalComputer.h"
+#include "../netatmo-w-analysis/frontend/PredictionWindow.h"
+#include "../netatmo-w-analysis/frontend/YearlyReport.h"
 #include "../types/ExtTimestampRecord.h"
 
 extern QString PATH_TO_PROD_DATABASE;
 extern QString PATH_TO_COPY_DATABASE;
+extern QColor mainBackgroundColor;
 
 MainWindow::MainWindow()
 {
@@ -20,6 +22,7 @@ MainWindow::MainWindow()
     setCentralWidget(mainWidget);
     menuBar = new QMenuBar();
     setMenuBar(menuBar);
+    setBackgroundColor(mainBackgroundColor);
     deviceLocale = new QLocale();
     apiMonitor = new APIMonitor();
     analyzer = new MetricsAnalyzer();
@@ -30,6 +33,10 @@ MainWindow::MainWindow()
     oldDataUploader = new OldDataUploader(apiHandler);
     connect(this, SIGNAL(recentDataShouldBeUpdated()), SLOT(postRecentDataRequests()));
     buildWindow();
+
+    weatherHandler = new WeatherAPIHandler();
+    weatherHandler->postWeatherRequest();
+    connect(weatherHandler, SIGNAL(predictionDataRetrieved(WeatherPrediction)), SLOT(updatePredictionWidgets(WeatherPrediction)));
 }
 
 void MainWindow::buildWindow() {
@@ -38,6 +45,7 @@ void MainWindow::buildWindow() {
     buildLabels();
     buildButtons();
     buildEphemerisPanel();
+    buildWeatherObjects();
     buildLayouts();
     createActions();
     createMenus();
@@ -97,7 +105,8 @@ void MainWindow::buildButtons() {
     actualisationButton = new QPushButton("Actualiser");
     actualisationButton->setFont(QFont("Verdana", 14));
     actualisationButton->setIcon(QIcon(
-        "D:/Mes programmes/netatmo-w-analysis/images/Image actualisation.png"
+        QCoreApplication::applicationDirPath()
+            + "/../../netatmo-w-analysis/netatmo-w-analysis/images/Image actualisation.png"
         ));
     connect(actualisationButton, SIGNAL(pressed()),
             apiHandler, SLOT(postCurrentConditionsRequest()));
@@ -149,6 +158,13 @@ void MainWindow::buildLayouts() {
     chartsMeasurementOptionsGroupBox = new QGroupBox("");
     chartsMeasurementOptionsGroupBox->setLayout(chartsMeasurementOptionsLayout);
 
+    predictionLayout = new QHBoxLayout();
+    for (int i = 0;i < 4; i++) {
+        predictionLayout->addWidget(predictionWidgets[i]);
+    }
+
+    weatherContainer->setLayout(predictionLayout);
+
     mainLayout = new QGridLayout();
     mainLayout->addWidget(currentExtTempLabel, 1, 0, 2, 1);
     mainLayout->addWidget(statusLabel, 0, 0);
@@ -162,10 +178,20 @@ void MainWindow::buildLayouts() {
     mainLayout->addWidget(indoorChart, 3, 1, 2, 2);
     mainLayout->addWidget(chartsDurationOptionsGroupBox, 5, 1, 1, 2);
     mainLayout->addWidget(chartsMeasurementOptionsGroupBox, 6, 1, 1, 2);
-    mainLayout->addWidget(ephemerisPanel, 1, 4, 5, 1);
+    mainLayout->addWidget(ephemerisPanel, 0, 4, 5, 1);
+    mainLayout->addWidget(weatherContainer, 5, 4, 2, 1);
 
     // set window's layout
     mainWidget->setLayout(mainLayout);
+}
+
+void MainWindow::buildWeatherObjects() {
+    weatherPrediction = WeatherPrediction();
+    weatherContainer = new WeatherPredictionContainer();
+    for (int i = 0; i < 4; i++) {
+        predictionWidgets[i] = new PredictionWidget();
+    }
+    connect(weatherContainer, SIGNAL(clicked()), SLOT(showPredictionWindow()));
 }
 
 void MainWindow::createActions() {
@@ -188,8 +214,12 @@ void MainWindow::createActions() {
     connect(displayMonthlyReportAction, SIGNAL(triggered()), SLOT(displayMonthlyReport()));
     displayYearlyReportAction = new QAction("Climatologie générale");
     connect(displayYearlyReportAction, SIGNAL(triggered()), SLOT(displayYearlyReport()));
+
     normalsAction = new QAction("Normales");
     connect(normalsAction, SIGNAL(triggered()), SLOT(showNormals()));
+
+    creditsAction = new QAction("Crédits");
+    connect(creditsAction, SIGNAL(triggered()), SLOT(showCredits()));
 }
 
 void MainWindow::createMenus() {
@@ -206,6 +236,8 @@ void MainWindow::createMenus() {
     climatologyMenu->addAction(displayMonthlyReportAction);
     climatologyMenu->addAction(displayYearlyReportAction);
     climatologyMenu->addAction(normalsAction);
+    QMenu *creditsMenu = menuBar->addMenu(tr("C&rédits"));
+    creditsMenu->addAction(creditsAction);
 }
 
 void MainWindow::setAccessToken(QString newAccessToken) {
@@ -341,6 +373,18 @@ void MainWindow::updateRequestCounts() {
                              "Requêtes restantes : <br><b>"
                              + QString::number(remainingRequests10s) + "</b> / 10 secondes<br>"
                              + "<b>" + QString::number(remainingRequests1h) + "</b> / 1 heure");
+}
+
+void MainWindow::updatePredictionWidgets(WeatherPrediction prediction) {
+    weatherPrediction = prediction;
+    for (int i = 0; i < 4; i++) {
+        predictionWidgets[i]->setMaximumTemperature(prediction.maxTemperature(i + 1));
+        predictionWidgets[i]->setMinimumTemperature(prediction.minTemperature(i + 1));
+        predictionWidgets[i]->setTitle(QDate::currentDate().addDays(i + 1).toString("d MMM"));
+        predictionWidgets[i]->setMainPictogram(prediction.dayPictogram(i + 1));
+    }
+    ephemerisPanel->setSunrise(prediction.sunrise());
+    ephemerisPanel->setSunset(prediction.sunset());
 }
 
 void MainWindow::addMonthData() {
@@ -498,6 +542,17 @@ void MainWindow::showNormals() {
     visualizer->show();
 }
 
+void MainWindow::showCredits() {
+    QMessageBox::information(this, "Crédits",
+                             "Auteur : Pierre OLLIVIER\n\n"
+                             "API météo et icônes : Openweathermap");
+}
+
+void MainWindow::showPredictionWindow() {
+    PredictionWindow *predictionWindow = new PredictionWindow(&weatherPrediction);
+    predictionWindow->show();
+}
+
 void MainWindow::exploreData() {
     DataExplorator *explorator = new DataExplorator(dbHandlerCopy);
     explorator->show();
@@ -524,4 +579,16 @@ QString MainWindow::measurementType() {
 
 int MainWindow::durationInHours() {
     return _durationInHours;
+}
+
+void MainWindow::setBackgroundColor(const QColor &color) {
+    backgroundColor = color;
+    // Ensure the widget is repainted with the new background color
+    update();
+}
+
+void MainWindow::paintEvent(QPaintEvent *event) {
+    // Paint the widget's background with the specified color
+    QPainter painter(this);
+    painter.fillRect(rect(), backgroundColor);
 }
