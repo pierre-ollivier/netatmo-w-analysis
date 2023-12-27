@@ -277,6 +277,10 @@ void NetatmoAPIHandler::retrieveCurrentConditions(QNetworkReply *reply) {
     QByteArray bytes = reply->readAll();
     if (bytes.contains("error")) {
         qDebug() << "ERROR with current conditions" << bytes;
+        if (bytes.contains("Access token expired")) {
+            postTokensRequest();
+            qDebug() << "Refreshing the token...";
+        }
     }
     else if (bytes.size() >= 1) {
         QJsonDocument js = QJsonDocument::fromJson(bytes);
