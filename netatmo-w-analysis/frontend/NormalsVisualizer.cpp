@@ -197,15 +197,15 @@ QList<QPointF> NormalsVisualizer::createChartData(QList<double> averages,
     return points;
 }
 
-QList<QPointF> NormalsVisualizer::createCurrentYearData(QString tableName, QString measurement) {
+QList<QPointF> NormalsVisualizer::createGivenYearData(int year, QString tableName, QString measurement) {
     QList<QPointF> result = QList<QPointF>();
-    QList<double> currentYearData = _computer->createValuesFromCurrentYear(tableName, measurement);
+    QList<double> yearData = _computer->createValuesFromGivenYear(year, tableName, measurement);
     QDate xDate = QDate(2020, 1, 1);
 
-    for (double value : currentYearData) {
-        result.append(QPointF(QDateTime(xDate, QTime(0, 0)).toMSecsSinceEpoch(), value));
+    for (double value : yearData) {
+        result.append(QPointF(QDateTime(xDate, QTime(12, 0)).toMSecsSinceEpoch(), value));
         xDate = xDate.addDays(1);
-        if (xDate == QDate(2020, 2, 29) && !QDate::isLeapYear(QDate::currentDate().year())) {
+        if (xDate == QDate(2020, 2, 29) && !QDate::isLeapYear(year)) {
             xDate = xDate.addDays(1);
         }
     }
@@ -367,6 +367,6 @@ void NormalsVisualizer::changeChartOptions() {
         pointsMap.insert(stdCount, points);
     }
 
-    QList<QPointF> currentYearPoints = createCurrentYearData(tableName, measurementType);
+    QList<QPointF> currentYearPoints = createGivenYearData(2023, tableName, measurementType);
     drawChart(pointsMap, currentYearPoints);
 }

@@ -43,6 +43,10 @@ public:
     QList<double> createValuesFromCurrentYear(QString tableName,
                                               QString measurement);
 
+    QList<double> createValuesFromGivenYear(int year,
+                                            QString tableName,
+                                            QString measurement);
+
 private:
     DatabaseHandler *_dbHandler;
 };

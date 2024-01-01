@@ -16,7 +16,7 @@ public:
                                    QList<double> standardDeviation = QList<double>(),
                                    int standardDeviationsThousands = 0);
 
-    QList<QPointF> createCurrentYearData(QString tableName, QString measurement);
+    QList<QPointF> createGivenYearData(int year, QString tableName, QString measurement);
 
     void drawChart(QMap<int, QList<QPointF>> pointsMap, QList<QPointF> currentYearPoints);
 

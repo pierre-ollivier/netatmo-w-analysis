@@ -146,3 +146,20 @@ QList<double> NormalComputer::createValuesFromCurrentYear(QString tableName, QSt
     }
     return result;
 }
+
+QList<double> NormalComputer::createValuesFromGivenYear(int year, QString tableName, QString measurement) {
+    QList<double> result = QList<double>();
+    QDate date = QDate::currentDate();
+    date = date.addYears(year - date.year());
+    QDate firstDayOfCurrentYear = date.addDays(1 - date.dayOfYear());
+    QDate lastDate = _dbHandler->getLatestDateTimeFromDatabase(tableName, measurement).date();
+
+    for (QDate d = firstDayOfCurrentYear; d <= lastDate; d = d.addDays(1)) {
+        QString query = "SELECT " + measurement + " FROM " + tableName + " ";
+        query += "WHERE day = " + QString::number(d.day()) + " ";
+        query += "AND month = " + QString::number(d.month()) + " ";
+        query += "AND year = " + QString::number(d.year());
+        result.append(_dbHandler->getResultFromDatabase(query).toDouble());
+    }
+    return result;
+}
