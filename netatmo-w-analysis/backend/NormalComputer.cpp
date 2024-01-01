@@ -1,5 +1,6 @@
 #include "NormalComputer.h"
 #include <cmath>
+#include <QDebug>
 
 NormalComputer::NormalComputer(DatabaseHandler *dbHandler)
 {
@@ -154,12 +155,23 @@ QList<double> NormalComputer::createValuesFromCurrentYear(QString tableName, QSt
 
 QList<double> NormalComputer::createValuesFromGivenYear(int year, QString tableName, QString measurement) {
     QList<double> result = QList<double>();
-    QDate date = QDate::currentDate();
-    date = date.addYears(year - date.year());
-    const QDate firstDayOfCurrentYear = date.addDays(1 - date.dayOfYear());
-    const QDate lastDate = _dbHandler->getLatestDateTimeFromDatabase(tableName, measurement).date();
+    const QDate firstDayOfCurrentYear = QDate(year, 1, 1);
+    const QDate lastDayOfCurrentYear = QDate(year, 12, 31);
+    QDate firstDate = _dbHandler->getFirstDateTimeFromDatabase(tableName, measurement).date();
+    QDate lastDate = _dbHandler->getLatestDateTimeFromDatabase(tableName, measurement).date();
 
-    for (QDate d = firstDayOfCurrentYear; d <= lastDate; d = d.addDays(1)) {
+    if (firstDayOfCurrentYear >= firstDate) {
+        firstDate = firstDayOfCurrentYear;
+    }
+    else {
+        // since the left part of the graph is missing, we add nans at the beginning to avoid an offset
+        for (int _ = 0; _ < firstDayOfCurrentYear.daysTo(firstDate); _++) {
+            result.append(nan(""));
+        }
+    }
+    if (lastDayOfCurrentYear < lastDate) lastDate = lastDayOfCurrentYear;
+
+    for (QDate d = firstDate; d <= lastDate; d = d.addDays(1)) {
         QString query = "SELECT " + measurement + " FROM " + tableName + " ";
         query += "WHERE day = " + QString::number(d.day()) + " ";
         query += "AND month = " + QString::number(d.month()) + " ";

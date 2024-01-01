@@ -1,4 +1,5 @@
 #include "NormalsVisualizer.h"
+#include <cmath>
 #include <QPair>
 
 NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
@@ -92,6 +93,7 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
 
     currentYearSeries = new QLineSeries();
     currentYearSeries->setPen(QPen(QBrush(Qt::black), 2));
+    currentYearSeries->setUseOpenGL(true);
     chart->addSeries(currentYearSeries);
 
     chart->setLocalizeNumbers(true);
@@ -136,6 +138,7 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     for (int year = firstYear; year <= QDate::currentDate().year(); year++) {
         yearComboBox->addItem(QString::number(year));
     }
+    yearComboBox->setCurrentIndex(QDate::currentDate().year() - firstYear);
     connect(yearComboBox, SIGNAL(currentIndexChanged(int)), SLOT(changeChartOptions()));
 
     daysSlider = new QSlider();
@@ -215,7 +218,7 @@ QList<QPointF> NormalsVisualizer::createGivenYearData(int year, QString tableNam
     QDate xDate = QDate(2020, 1, 1);
 
     for (double value : yearData) {
-        result.append(QPointF(QDateTime(xDate, QTime(0, 0)).toMSecsSinceEpoch(), value));
+        if (!std::isnan(value)) result.append(QPointF(QDateTime(xDate, QTime(0, 0)).toMSecsSinceEpoch(), value));
         xDate = xDate.addDays(1);
         if (xDate == QDate(2020, 2, 29) && !QDate::isLeapYear(year)) {
             xDate = xDate.addDays(1);

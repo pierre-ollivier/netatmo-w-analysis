@@ -37,7 +37,10 @@ public:
     std::vector<QVariant> getResultsFromDatabase(QString query, int limit = 0);
     int getNumberOfResultsFromDatabase(QString query);
 
+    QDateTime getExtremeDateTimeFromDatabase(QString tableName, QString measurement = "", bool asc = true);
+    QDateTime getFirstDateTimeFromDatabase(QString tableName, QString measurement = "");
     QDateTime getLatestDateTimeFromDatabase(QString tableName, QString measurement = "");
+    long long getFirstTimestampFromDatabaseInS(QString tableName, QString measurement = "");
     long long getLatestTimestampFromDatabaseInS(QString tableName, QString measurement = "");
 
     void updateOutdoorDailyRecords(QDate beginDate, QDate endDate, bool verbose = true);

@@ -811,30 +811,43 @@ void DatabaseHandler::updateIndoorDailyRecords(QDate beginDate, QDate endDate, b
     }
 }
 
-QDateTime DatabaseHandler::getLatestDateTimeFromDatabase(QString tableName, QString measurement) {
+QDateTime DatabaseHandler::getExtremeDateTimeFromDatabase(QString tableName, QString measurement, bool asc) {
+    const QString desc = asc ? "" : "desc";
     if (measurement == "") measurement = "date";
-    if (tableName == QString("OutdoorDailyRecords") || tableName == "IndoorDailyRecords") {
-        QString latestDate = getResultFromDatabase(
+    if (tableName == "OutdoorDailyRecords" || tableName == "IndoorDailyRecords") {
+        QString extremeDate = getResultFromDatabase(
                     "SELECT date from " + tableName + " "
                     "WHERE " + measurement + " IS NOT NULL "
-                    "ORDER BY year desc, month desc, day desc "
+                    "ORDER BY year " + desc + ", month " + desc + ", day " + desc + " "
                     "LIMIT 1").toString();
-        return QDateTime(QDate::fromString(latestDate, "dd/MM/yyyy"));
+        return QDateTime(QDate::fromString(extremeDate, "dd/MM/yyyy"));
     }
     else {
-        QString latestDate = getResultFromDatabase(
+        QString extremeDate = getResultFromDatabase(
                     "SELECT date from " + tableName + " "
                     "WHERE " + measurement + " IS NOT NULL "
-                    "ORDER BY year desc, month desc, day desc "
+                    "ORDER BY year " + desc + ", month " + desc + ", day " + desc + " "
                     "LIMIT 1").toString();
-        QString latestTime = getResultFromDatabase(
+        QString extremeTime = getResultFromDatabase(
                     "SELECT time from " + tableName + " "
-                    "WHERE date = \"" + latestDate + "\" "
+                    "WHERE date = \"" + extremeDate + "\" "
                     "AND " + measurement + " IS NOT NULL "
-                    "ORDER BY hour desc, minute desc, second desc "
+                    "ORDER BY hour " + desc + ", minute " + desc + ", second " + desc + " "
                     "LIMIT 1").toString();
-        return QDateTime(QDate::fromString(latestDate, "dd/MM/yyyy"), QTime::fromString(latestTime, "hh:mm:ss"));
+        return QDateTime(QDate::fromString(extremeDate, "dd/MM/yyyy"), QTime::fromString(extremeTime, "hh:mm:ss"));
     }
+}
+
+QDateTime DatabaseHandler::getFirstDateTimeFromDatabase(QString tableName, QString measurement) {
+    return getExtremeDateTimeFromDatabase(tableName, measurement, true);
+}
+
+QDateTime DatabaseHandler::getLatestDateTimeFromDatabase(QString tableName, QString measurement) {
+    return getExtremeDateTimeFromDatabase(tableName, measurement, false);
+}
+
+long long DatabaseHandler::getFirstTimestampFromDatabaseInS(QString tableName, QString measurement) {
+    return getFirstDateTimeFromDatabase(tableName, measurement).toSecsSinceEpoch();
 }
 
 long long DatabaseHandler::getLatestTimestampFromDatabaseInS(QString tableName, QString measurement) {
