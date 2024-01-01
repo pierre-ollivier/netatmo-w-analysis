@@ -171,14 +171,29 @@ QList<double> NormalComputer::createValuesFromGivenYear(int year, QString tableN
     }
     if (lastDayOfCurrentYear < lastDate) lastDate = lastDayOfCurrentYear;
 
-    for (QDate d = firstDate; d <= lastDate; d = d.addDays(1)) {
-        QString query = "SELECT " + measurement + " FROM " + tableName + " ";
-        query += "WHERE day = " + QString::number(d.day()) + " ";
-        query += "AND month = " + QString::number(d.month()) + " ";
-        query += "AND year = " + QString::number(d.year());
-        QVariant dbResult = _dbHandler->getResultFromDatabase(query);
-        if (!dbResult.isNull()) result.append(dbResult.toDouble());
-        else result.append(nan(""));
+    QString query = "SELECT " + measurement + " FROM " + tableName + " ";
+    query += "WHERE 10000 * year + 100 * month + day BETWEEN " + firstDate.toString("yyyyMMdd") + " ";
+    query += "AND " + lastDate.toString("yyyyMMdd") + " ";
+    query += "ORDER BY year, month, day";
+    std::vector<QVariant> dbResults = _dbHandler->getResultsFromDatabase(query);
+
+    QString dateQuery = "SELECT date FROM " + tableName + " ";
+    dateQuery += "WHERE 10000 * year + 100 * month + day BETWEEN " + firstDate.toString("yyyyMMdd") + " ";
+    dateQuery += "AND " + lastDate.toString("yyyyMMdd") + " ";
+    dateQuery += "ORDER BY year, month, day";
+    std::vector<QVariant> dates = _dbHandler->getResultsFromDatabase(dateQuery);
+
+    int addedNans = 0;
+    for (unsigned int dateIndex = 0; dateIndex < dates.size(); dateIndex++) {
+        QDate date = QDate::fromString(dates[dateIndex].toString(), "dd/MM/yyyy");
+        while (date > firstDate.addDays(dateIndex + addedNans)) {
+            // Since the dates don't match, one date before is missing.
+            // Thus, we add a NaN value before to account for the missing data point.
+            addedNans++;
+            result.append(nan(""));
+        }
+        result.append(dbResults[dateIndex].toDouble());
     }
+
     return result;
 }
