@@ -6,6 +6,11 @@ NormalComputer::NormalComputer(DatabaseHandler *dbHandler)
     _dbHandler = dbHandler;
 }
 
+int NormalComputer::minYear(QString tableName) {
+    const QString query = "SELECT MIN(year) FROM " + tableName;
+    return _dbHandler->getResultFromDatabase(query).toInt();
+}
+
 double NormalComputer::normalMeasurementByMovingAverage(
         QString tableName,
         QDate date,
@@ -14,7 +19,7 @@ double NormalComputer::normalMeasurementByMovingAverage(
 
     QString query = "SELECT AVG(" + measurement + ") FROM " + tableName + " ";
     int dayGap = daysCount / 2; // number of days on each side
-    QDate beginDate = date.addDays(-dayGap), endDate = date.addDays(dayGap);
+    const QDate beginDate = date.addDays(-dayGap), endDate = date.addDays(dayGap);
 
     if (beginDate.year() == endDate.year()) {
         query += "WHERE 100 * month + day BETWEEN "
@@ -42,7 +47,7 @@ double NormalComputer::stdevMeasurementByMovingAverage(
     QString query = "SELECT AVG(" + measurement + " * " + measurement + ") "
                     "- AVG(" + measurement + ") * AVG(" + measurement + ") FROM " + tableName + " ";
     int dayGap = daysCount / 2; // number of days on each side
-    QDate beginDate = date.addDays(-dayGap), endDate = date.addDays(dayGap);
+    const QDate beginDate = date.addDays(-dayGap), endDate = date.addDays(dayGap);
 
     if (beginDate.year() == endDate.year()) {
         query += "WHERE 100 * month + day BETWEEN "
@@ -71,7 +76,7 @@ double NormalComputer::stdevMeasurementByMovingAverage(
     QString query = "SELECT AVG(" + measurement + " * " + measurement + ") "
                     "- " + QString::number(pow(average, 2)) + " FROM " + tableName + " ";
     int dayGap = daysCount / 2; // number of days on each side
-    QDate beginDate = date.addDays(-dayGap), endDate = date.addDays(dayGap);
+    const  QDate beginDate = date.addDays(-dayGap), endDate = date.addDays(dayGap);
 
     if (beginDate.year() == endDate.year()) {
         query += "WHERE 100 * month + day BETWEEN "
@@ -133,9 +138,9 @@ QList<double> NormalComputer::createStandardDeviationList(
 
 QList<double> NormalComputer::createValuesFromCurrentYear(QString tableName, QString measurement) {
     QList<double> result = QList<double>();
-    QDate date = QDate::currentDate();
-    QDate firstDayOfCurrentYear = date.addDays(1 - date.dayOfYear());
-    QDate lastDate = _dbHandler->getLatestDateTimeFromDatabase(tableName, measurement).date();
+    const QDate date = QDate::currentDate();
+    const QDate firstDayOfCurrentYear = date.addDays(1 - date.dayOfYear());
+    const QDate lastDate = _dbHandler->getLatestDateTimeFromDatabase(tableName, measurement).date();
 
     for (QDate d = firstDayOfCurrentYear; d <= lastDate; d = d.addDays(1)) {
         QString query = "SELECT " + measurement + " FROM " + tableName + " ";
@@ -151,15 +156,17 @@ QList<double> NormalComputer::createValuesFromGivenYear(int year, QString tableN
     QList<double> result = QList<double>();
     QDate date = QDate::currentDate();
     date = date.addYears(year - date.year());
-    QDate firstDayOfCurrentYear = date.addDays(1 - date.dayOfYear());
-    QDate lastDate = _dbHandler->getLatestDateTimeFromDatabase(tableName, measurement).date();
+    const QDate firstDayOfCurrentYear = date.addDays(1 - date.dayOfYear());
+    const QDate lastDate = _dbHandler->getLatestDateTimeFromDatabase(tableName, measurement).date();
 
     for (QDate d = firstDayOfCurrentYear; d <= lastDate; d = d.addDays(1)) {
         QString query = "SELECT " + measurement + " FROM " + tableName + " ";
         query += "WHERE day = " + QString::number(d.day()) + " ";
         query += "AND month = " + QString::number(d.month()) + " ";
         query += "AND year = " + QString::number(d.year());
-        result.append(_dbHandler->getResultFromDatabase(query).toDouble());
+        QVariant dbResult = _dbHandler->getResultFromDatabase(query);
+        if (!dbResult.isNull()) result.append(dbResult.toDouble());
+        else result.append(nan(""));
     }
     return result;
 }

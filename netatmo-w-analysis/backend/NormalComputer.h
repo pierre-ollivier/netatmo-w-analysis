@@ -8,6 +8,7 @@ class NormalComputer
 {
 public:
     NormalComputer(DatabaseHandler *dbHandler);
+    int minYear(QString tableName);
     double normalMeasurementByMovingAverage(
             QString tableName,
             QDate date,

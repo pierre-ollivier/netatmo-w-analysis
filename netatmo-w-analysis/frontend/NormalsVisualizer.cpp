@@ -4,6 +4,7 @@
 NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
 {
     _computer = computer;
+    firstYear = _computer->minYear("OutdoorDailyRecords");
 
     view = new QChartView();
 
@@ -131,6 +132,12 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     indoorOrOutdoorCheckBox = new QCheckBox("Intérieur");
     connect(indoorOrOutdoorCheckBox, SIGNAL(clicked()), SLOT(changeChartOptions()));
 
+    yearComboBox = new QComboBox();
+    for (int year = firstYear; year <= QDate::currentDate().year(); year++) {
+        yearComboBox->addItem(QString::number(year));
+    }
+    connect(yearComboBox, SIGNAL(currentIndexChanged(int)), SLOT(changeChartOptions()));
+
     daysSlider = new QSlider();
     daysSlider->setOrientation(Qt::Horizontal);
     daysSlider->setRange(1, 121);
@@ -166,14 +173,19 @@ NormalsVisualizer::NormalsVisualizer(NormalComputer *computer) : QWidget()
     stdevLayout->addWidget(stdev1Option, 0, Qt::AlignCenter);
     stdevLayout->addWidget(stdev2Option, 0, Qt::AlignCenter);
 
+    yearChoiceLayout = new QHBoxLayout();
+    yearChoiceLayout->addWidget(new QLabel("Année :"), 0, Qt::AlignRight);
+    yearChoiceLayout->addWidget(yearComboBox, 1, Qt::AlignLeft);
+
     stdevGroupBox = new QGroupBox();
     stdevGroupBox->setLayout(stdevLayout);
 
     mainLayout = new QGridLayout();
-    mainLayout->addWidget(view, 0, 0);
-    mainLayout->addWidget(measurementsGroupBox, 1, 0);
-    mainLayout->addWidget(operationsGroupBox, 2, 0);
+    mainLayout->addWidget(view, 0, 0, 1, 2);
+    mainLayout->addWidget(measurementsGroupBox, 1, 0, 1, 2);
+    mainLayout->addWidget(operationsGroupBox, 2, 0, 1, 2);
     mainLayout->addWidget(stdevGroupBox, 3, 0);
+    mainLayout->addLayout(yearChoiceLayout, 3, 1);
     setLayout(mainLayout);
     changeChartOptions();
 
@@ -203,7 +215,7 @@ QList<QPointF> NormalsVisualizer::createGivenYearData(int year, QString tableNam
     QDate xDate = QDate(2020, 1, 1);
 
     for (double value : yearData) {
-        result.append(QPointF(QDateTime(xDate, QTime(12, 0)).toMSecsSinceEpoch(), value));
+        result.append(QPointF(QDateTime(xDate, QTime(0, 0)).toMSecsSinceEpoch(), value));
         xDate = xDate.addDays(1);
         if (xDate == QDate(2020, 2, 29) && !QDate::isLeapYear(year)) {
             xDate = xDate.addDays(1);
@@ -244,8 +256,8 @@ void NormalsVisualizer::drawChart(QMap<int, QList<QPointF>> pointsMap, QList<QPo
 
     for (int stdCount = -2000; stdCount <= 2000; stdCount += 200) {
         if (drawSeries.contains(stdCount) && drawSeries.value(stdCount)) {
-            QList<QPointF> points = pointsMap.value(stdCount);
-            for (QPointF point: points) {
+            const QList<QPointF> points = pointsMap.value(stdCount);
+            for (const QPointF point: points) {
                 if (maxOfSeries.isNull() || point.y() > maxOfSeries.toDouble()) maxOfSeries = point.y();
                 if (minOfSeries.isNull() || point.y() < minOfSeries.toDouble()) minOfSeries = point.y();
             }
@@ -253,7 +265,7 @@ void NormalsVisualizer::drawChart(QMap<int, QList<QPointF>> pointsMap, QList<QPo
     }
 
     for (int stdCount = -2000; stdCount <= 2000; stdCount += 200) {
-        QList<QPointF> points = pointsMap.value(stdCount);
+        const QList<QPointF> points = pointsMap.value(stdCount);
         seriesMap->value(stdCount)->clear();
         seriesMap->value(stdCount)->append(points);
         if (stdCount % 1000 == 0) {
@@ -367,7 +379,7 @@ void NormalsVisualizer::changeChartOptions() {
         pointsMap.insert(stdCount, points);
     }
 
-    int year = 2023;
+    int year = yearComboBox->currentIndex() + firstYear;
 
     QList<QPointF> currentYearPoints = createGivenYearData(year, tableName, measurementType);
     drawChart(pointsMap, currentYearPoints);

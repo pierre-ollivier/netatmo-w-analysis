@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QtCharts>
 #include <QGroupBox>
+#include <QComboBox>
 #include "../netatmo-w-analysis/backend/NormalComputer.h"
 
 class NormalsVisualizer : public QWidget
@@ -29,6 +30,8 @@ public slots:
     void changeChartOptions();
 
 private:
+    int firstYear;
+
     QChart *chart;
     QChartView *view;
     QCategoryAxis *xAxis;
@@ -64,6 +67,9 @@ private:
     QRadioButton *stdev2Option;
     QHBoxLayout *stdevLayout;
     QGroupBox *stdevGroupBox;
+
+    QComboBox *yearComboBox;
+    QHBoxLayout *yearChoiceLayout;
 
     QCheckBox *indoorOrOutdoorCheckBox;
     QSlider *daysSlider;
