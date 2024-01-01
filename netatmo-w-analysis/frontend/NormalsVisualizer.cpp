@@ -367,6 +367,9 @@ void NormalsVisualizer::changeChartOptions() {
         pointsMap.insert(stdCount, points);
     }
 
-    QList<QPointF> currentYearPoints = createGivenYearData(2023, tableName, measurementType);
+    int year = 2023;
+
+    QList<QPointF> currentYearPoints = createGivenYearData(year, tableName, measurementType);
     drawChart(pointsMap, currentYearPoints);
+    chart->setTitle("Année " + QString::number(year));
 }
