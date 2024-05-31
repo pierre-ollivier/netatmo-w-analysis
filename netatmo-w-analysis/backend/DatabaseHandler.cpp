@@ -40,14 +40,14 @@ void DatabaseHandler::prepareQuery(QSqlQuery *query, QString tableName, QStringL
 }
 
 void DatabaseHandler::postOutdoorDailyRecord(ExtDailyRecord record, QString tableName) {
-    db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    db.setDatabaseName(_pathToDatabase);
     QSqlQuery *query = new QSqlQuery(db);
 
     if (!db.open()) {
-        qDebug() << "Database open error";
+        qDebug() << "Database open error. Path:" << _pathToDatabase;
     }
     if (!db.isOpen() ) {
-        qDebug() << "Database is not open";
+        qDebug() << "Database is not open. Path:" << _pathToDatabase;
     }
 
     prepareQuery(query, tableName, outdoorDailyRecordsParams);
@@ -122,14 +122,14 @@ void DatabaseHandler::postOutdoorDailyRecord(ExtDailyRecord record, QString tabl
 }
 
 void DatabaseHandler::postOutdoorTimestampRecord(ExtTimestampRecord record, QString tableName) {
-    db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    db.setDatabaseName(_pathToDatabase);
     QSqlQuery *query = new QSqlQuery(db);
 
     if (!db.open()) {
-        qDebug() << "Database open error";
+        qDebug() << "Database open error. Path:" << _pathToDatabase;
     }
     if (!db.isOpen() ) {
-        qDebug() << "Database is not open";
+        qDebug() << "Database is not open. Path:" << _pathToDatabase;
     }
 
     prepareQuery(query, tableName, outdoorTimestampsParams);
@@ -161,13 +161,13 @@ void DatabaseHandler::postOutdoorTimestampRecord(ExtTimestampRecord record, QStr
 }
 
 void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString tableName) {
-    db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    db.setDatabaseName(_pathToDatabase);
     QSqlQuery *query = new QSqlQuery(db);
     if (!db.open()) {
-        qDebug() << "Database open error";
+        qDebug() << "Database open error. Path:" << _pathToDatabase;
     }
     if (!db.isOpen() ) {
-        qDebug() << "Database is not open";
+        qDebug() << "Database is not open. Path:" << _pathToDatabase;
     }
 
     prepareQuery(query, tableName, indoorDailyRecordsParams);
@@ -264,14 +264,14 @@ void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString table
 }
 
 void DatabaseHandler::postIndoorTimestampRecord(IntTimestampRecord record, QString tableName) {
-    db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    db.setDatabaseName(_pathToDatabase);
     QSqlQuery *query = new QSqlQuery(db);
 
     if (!db.open()) {
-        qDebug() << "Database open error";
+        qDebug() << "Database open error. Path:" << _pathToDatabase;
     }
     if (!db.isOpen() ) {
-        qDebug() << "Database is not open";
+        qDebug() << "Database is not open. Path:" << _pathToDatabase;
     }
 
     prepareQuery(query, tableName, indoorTimestampsParams);
@@ -410,7 +410,7 @@ void DatabaseHandler::postFromIndoorCsv(QString pathToCsv, QString tableName, QD
 }
 
 void DatabaseHandler::postFromMultipleOutdoorCsv(QString path, QString tableName, QString beginMonth, QString endMonth) {
-    if (path[path.size() - 1] != "/") {
+    if (path[path.size() - 1] != '/') {
         path += "/";
     }
     QDate beginDate = QDate::fromString("01/" + beginMonth, "dd/MM/yyyy");
@@ -421,7 +421,7 @@ void DatabaseHandler::postFromMultipleOutdoorCsv(QString path, QString tableName
 }
 
 void DatabaseHandler::postFromMultipleIndoorCsv(QString path, QString tableName, QString beginMonth, QString endMonth) {
-    if (path[path.size() - 1] != "/") {
+    if (path[path.size() - 1] != '/') {
         path += "/";
     }
     QDate beginDate = QDate::fromString("01/" + beginMonth, "dd/MM/yyyy");
@@ -436,14 +436,14 @@ std::vector<IntTimestampRecord> DatabaseHandler::getIntTimestampRecordsFromDatab
         query += " LIMIT " + QString::number(N);
     }
     std::vector<IntTimestampRecord> result = std::vector<IntTimestampRecord>();
-    db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    db.setDatabaseName(_pathToDatabase);
     QSqlQuery _query(db);
 
     if (!db.open()) {
-        qDebug() << "Database open error";
+        qDebug() << "Database open error. Path:" << _pathToDatabase;
     }
     if (!db.isOpen() ) {
-        qDebug() << "Database is not open";
+        qDebug() << "Database is not open. Path:" << _pathToDatabase;
     }
     if (_query.exec(query)) {
         while (_query.next()) {
@@ -473,14 +473,14 @@ std::vector<ExtTimestampRecord> DatabaseHandler::getExtTimestampRecordsFromDatab
         query += " LIMIT " + QString::number(N);
     }
     std::vector<ExtTimestampRecord> result = std::vector<ExtTimestampRecord>();
-    db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    db.setDatabaseName(_pathToDatabase);
     QSqlQuery _query(db);
 
     if (!db.open()) {
-        qDebug() << "Database open error";
+        qDebug() << "Database open error. Path:" << _pathToDatabase;
     }
     if (!db.isOpen() ) {
-        qDebug() << "Database is not open";
+        qDebug() << "Database is not open. Path:" << _pathToDatabase;
     }
     if (_query.exec(query)) {
         while (_query.next()) {
@@ -504,14 +504,14 @@ std::vector<IntDailyRecord> DatabaseHandler::getIntDailyRecordsFromDatabase(QStr
         query += " LIMIT " + QString::number(N);
     }
     std::vector<IntDailyRecord> result = std::vector<IntDailyRecord>();
-    db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    db.setDatabaseName(_pathToDatabase);
     QSqlQuery _query(db);
 
     if (!db.open()) {
-        qDebug() << "Database open error";
+        qDebug() << "Database open error. Path:" << _pathToDatabase;
     }
     if (!db.isOpen() ) {
-        qDebug() << "Database is not open";
+        qDebug() << "Database is not open. Path:" << _pathToDatabase;
     }
     if (_query.exec(query)) {
         while (_query.next()) {
@@ -595,14 +595,14 @@ std::vector<ExtDailyRecord> DatabaseHandler::getExtDailyRecordsFromDatabase(QStr
         query += " LIMIT " + QString::number(N);
     }
     std::vector<ExtDailyRecord> result = std::vector<ExtDailyRecord>();
-    db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    db.setDatabaseName(_pathToDatabase);
     QSqlQuery _query(db);
 
     if (!db.open()) {
-        qDebug() << "Database open error";
+        qDebug() << "Database open error. Path:" << _pathToDatabase;
     }
     if (!db.isOpen() ) {
-        qDebug() << "Database is not open";
+        qDebug() << "Database is not open. Path:" << _pathToDatabase;
     }
     if (_query.exec(query)) {
         while (_query.next()) {
@@ -660,14 +660,14 @@ std::vector<ExtDailyRecord> DatabaseHandler::getExtDailyRecordsFromDatabase(QStr
 }
 
 QVariant DatabaseHandler::getResultFromDatabase(QString query) {
-    db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    db.setDatabaseName(_pathToDatabase);
     QSqlQuery _query(db);
 
     if (!db.open()) {
-        qDebug() << "Database open error";
+        qDebug() << "Database open error. Path:" << _pathToDatabase;
     }
     if (!db.isOpen() ) {
-        qDebug() << "Database is not open";
+        qDebug() << "Database is not open. Path:" << _pathToDatabase;
     }
     if (_query.exec(query)) {
         if (_query.next()) {
@@ -688,14 +688,14 @@ QVariant DatabaseHandler::getResultFromDatabase(QString query) {
 
 std::vector<QVariant> DatabaseHandler::getResultsFromDatabase(QString query, int limit) {
     std::vector<QVariant> result = std::vector<QVariant>();
-    db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    db.setDatabaseName(_pathToDatabase);
     QSqlQuery _query(db);
 
     if (!db.open()) {
-        qDebug() << "Database open error";
+        qDebug() << "Database open error. Path:" << _pathToDatabase;
     }
     if (!db.isOpen() ) {
-        qDebug() << "Database is not open";
+        qDebug() << "Database is not open. Path:" << _pathToDatabase;
     }
     if (_query.exec(query)) {
         while (_query.next() && (limit == 0 || int(result.size()) < limit)) {
@@ -710,15 +710,15 @@ std::vector<QVariant> DatabaseHandler::getResultsFromDatabase(QString query, int
 }
 
 int DatabaseHandler::getNumberOfResultsFromDatabase(QString query) {
-    db.setDatabaseName("../netatmo-w-analysis/" + _pathToDatabase);
+    db.setDatabaseName(_pathToDatabase);
     QSqlQuery _query(db);
     int result = 0;
 
     if (!db.open()) {
-        qDebug() << "Database open error";
+        qDebug() << "Database open error. Path:" << _pathToDatabase;
     }
     if (!db.isOpen() ) {
-        qDebug() << "Database is not open";
+        qDebug() << "Database is not open. Path:" << _pathToDatabase;
     }
     if (_query.exec(query)) {
         while (_query.next()) result++;
@@ -820,7 +820,7 @@ QDateTime DatabaseHandler::getExtremeDateTimeFromDatabase(QString tableName, QSt
                     "WHERE " + measurement + " IS NOT NULL "
                     "ORDER BY year " + desc + ", month " + desc + ", day " + desc + " "
                     "LIMIT 1").toString();
-        return QDateTime(QDate::fromString(extremeDate, "dd/MM/yyyy"));
+        return QDateTime(QDate::fromString(extremeDate, "dd/MM/yyyy"), QTime(0, 0));
     }
     else {
         QString extremeDate = getResultFromDatabase(

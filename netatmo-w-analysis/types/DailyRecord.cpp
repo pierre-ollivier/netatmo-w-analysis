@@ -75,8 +75,7 @@ int DailyRecord::weekNumber() {
     return _date.weekNumber();
 }
 long long DailyRecord::timestamp() {
-    QDateTime dt(_date);
-    dt.setTime(QTime(12, 0));
+    QDateTime dt(_date, QTime(12, 0));
     return dt.toMSecsSinceEpoch();
 }
 

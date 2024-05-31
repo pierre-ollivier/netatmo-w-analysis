@@ -2,6 +2,7 @@
 #include <QPainter>
 
 extern QColor mainBackgroundColor;
+extern QLocale LOCALE;
 
 PredictionWindow::PredictionWindow(QWidget *parent) : QWidget(parent)
 {
@@ -38,7 +39,7 @@ void PredictionWindow::setWeatherPrediction(WeatherPrediction *weatherPrediction
         predictionWidgets[i]->setMaximumTemperature(weatherPrediction->maxTemperature(i + 1));
         predictionWidgets[i]->setMinimumTemperature(weatherPrediction->minTemperature(i + 1));
         predictionWidgets[i]->setMainPictogram(weatherPrediction->dayPictogram(i + 1));
-        predictionWidgets[i]->setTitle(QDate::currentDate().addDays(i + 1).toString("d MMMM"));
+        predictionWidgets[i]->setTitle(LOCALE.toString(QDate::currentDate().addDays(i + 1), "d MMMM"));
         predictionWidgets[i]->setDaylightTime(QDateTime::currentDateTime().isDaylightTime());
         predictionWidgets[i]->emphasizeDailyValues();
 

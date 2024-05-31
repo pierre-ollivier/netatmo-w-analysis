@@ -201,7 +201,7 @@ QList<QPointF> NormalsVisualizer::createChartData(QList<double> averages,
                                                   int standardDeviationsThousands) {
     QList<QPointF> points = QList<QPointF>();
     for (QDate date = QDate(2020, 1, 1); date.year() < 2021; date = date.addDays(1)) {
-        long long x = QDateTime(date).toMSecsSinceEpoch();
+        long long x = QDateTime(date, QTime(0, 0)).toMSecsSinceEpoch();
         double y = averages.value(date.dayOfYear() - 1);
         if (standardDeviationsThousands != 0)
             y += standardDeviationsThousands * 0.001

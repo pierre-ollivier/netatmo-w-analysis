@@ -21,12 +21,12 @@ RecentDataHandler::RecentDataHandler(APIMonitor *monitor)
 
     dbHandlerLastRecords = new DatabaseHandler(PATH_TO_COPY_DATABASE);
 
-    connect(outdoorChartRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveOutdoorChartRequest(QNetworkReply *)));
-    connect(indoorChartRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveIndoorChartRequest(QNetworkReply *)));
-    connect(longOutdoorChartRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveLongOutdoorChartRequest(QNetworkReply *)));
-    connect(longOutdoorLastRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveLongOutdoorLastRequest(QNetworkReply *)));
-    connect(longIndoorChartRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveLongIndoorChartRequest(QNetworkReply *)));
-    connect(longIndoorLastRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveLongIndoorLastRequest(QNetworkReply *)));
+    connect(outdoorChartRequestManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveOutdoorChartRequest(QNetworkReply*)));
+    connect(indoorChartRequestManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveIndoorChartRequest(QNetworkReply*)));
+    connect(longOutdoorChartRequestManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveLongOutdoorChartRequest(QNetworkReply*)));
+    connect(longOutdoorLastRequestManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveLongOutdoorLastRequest(QNetworkReply*)));
+    connect(longIndoorChartRequestManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveLongIndoorChartRequest(QNetworkReply*)));
+    connect(longIndoorLastRequestManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveLongIndoorLastRequest(QNetworkReply*)));
 }
 
 void RecentDataHandler::postRequests(int date_begin, QString scale, QString accessToken) {

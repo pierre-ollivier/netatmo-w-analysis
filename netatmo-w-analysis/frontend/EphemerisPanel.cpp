@@ -1,6 +1,7 @@
 #include "EphemerisPanel.h"
 #include <QDebug>
 
+extern const QLocale LOCALE;
 extern const QString PATH_TO_COPY_DATABASE;
 
 EphemerisPanel::EphemerisPanel() : QWidget()
@@ -20,7 +21,7 @@ EphemerisPanel::EphemerisPanel() : QWidget()
     tnmLabel = new QLabel("__,_ °C");
     stdevLabel = new QLabel("_________________________");
 
-    deviceLocale = new QLocale();
+    deviceLocale = new QLocale(LOCALE);
 
     mainLayout = new QGridLayout();
     boxLayout = new QGridLayout();
@@ -69,8 +70,8 @@ void EphemerisPanel::setDate(QDate date) {
 
 
 void EphemerisPanel::updateStatistics() {
-    mainGroupBox->setTitle("Statistiques pour un " + _date.toString("d MMMM"));
-    if (_date.day() == 1) mainGroupBox->setTitle("Statistiques pour un " + _date.toString("der MMMM"));
+    mainGroupBox->setTitle("Statistiques pour un " + deviceLocale->toString(_date, "d MMMM"));
+    if (_date.day() == 1) mainGroupBox->setTitle("Statistiques pour un " + deviceLocale->toString(_date, "der MMMM"));
 
     double txx = dbHandler->getResultFromDatabase(
                 "SELECT max(maxTemperature) FROM OutdoorDailyRecords "

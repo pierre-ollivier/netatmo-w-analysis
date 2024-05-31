@@ -16,16 +16,16 @@ OldDataUploader::OldDataUploader(NetatmoAPIHandler* apiHandler, QString accessTo
     connect(apiHandler, SIGNAL(extDailyRecordRetrieved(ExtDailyRecord)), SLOT(logExtDailyRecord(ExtDailyRecord)));
     connect(apiHandler, SIGNAL(intDailyRecordRetrieved(IntDailyRecord)), SLOT(logIntDailyRecord(IntDailyRecord)));
     connect(apiHandler,
-            SIGNAL(ext3hRecordsRetrieved(QMap<QDate, std::tuple<double, double>>)),
-            SLOT(log3hRecords(QMap<QDate, std::tuple<double, double>>)));
+            SIGNAL(ext3hRecordsRetrieved(QMap<QDate,std::tuple<double,double> >)),
+            SLOT(log3hRecords(QMap<QDate,std::tuple<double,double> >)));
 }
 
 void OldDataUploader::addDataFromCurrentMonths(QDate beginDate, QDate endDate, bool indoor) {
     if (_accessToken == "") qDebug() << "Warning: undefined access token in OldDataUploader";
     _beginDate = beginDate; _endDate = endDate;
 
-    long long beginTimestamp = QDateTime(beginDate).toSecsSinceEpoch();
-    long long endTimestamp = QDateTime(endDate).toSecsSinceEpoch();
+    long long beginTimestamp = QDateTime(beginDate, QTime(0, 0)).toSecsSinceEpoch();
+    long long endTimestamp = QDateTime(endDate, QTime(0, 0)).toSecsSinceEpoch();
     if (indoor) {
         _apiHandler->postFullIndoorDailyRequest(beginTimestamp, endTimestamp, "1day", _accessToken);
     }

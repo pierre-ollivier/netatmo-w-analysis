@@ -12,6 +12,7 @@
 #include "../netatmo-w-analysis/frontend/YearlyReport.h"
 #include "../types/ExtTimestampRecord.h"
 
+extern const QLocale LOCALE;
 extern QString PATH_TO_PROD_DATABASE;
 extern QString PATH_TO_COPY_DATABASE;
 extern QColor mainBackgroundColor;
@@ -23,7 +24,8 @@ MainWindow::MainWindow()
     menuBar = new QMenuBar();
     setMenuBar(menuBar);
     setBackgroundColor(mainBackgroundColor);
-    deviceLocale = new QLocale();
+    deviceLocale = new QLocale(LOCALE);
+
     apiMonitor = new APIMonitor();
     analyzer = new MetricsAnalyzer();
     apiHandler = new NetatmoAPIHandler(apiMonitor, 20000);
@@ -56,16 +58,16 @@ void MainWindow::buildAPIHandlers() {
     connect(apiHandler, SIGNAL(accessTokenChanged(QString)),
             apiHandler, SLOT(postCurrentConditionsRequest(QString)));
     connect(apiHandler, SIGNAL(accessTokenChanged(QString)), SLOT(setAccessToken(QString)));
-    connect(apiHandler, SIGNAL(extTemperatureChanged(double)), this, SLOT(updateCurrentExtTemperature(double)));
-    connect(apiHandler, SIGNAL(intTemperatureChanged(double)), this, SLOT(updateCurrentIntTemperature(double)));
-    connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), this, SLOT(updateLastMeasurementDate(int)));
-    connect(apiHandler, SIGNAL(currentTimeChanged(QDateTime)), this, SLOT(updateActualisationDate(QDateTime)));
-    connect(apiHandler, SIGNAL(intMinTemperatureChanged(double)), this, SLOT(updateMinIntTemperature(double)));
-    connect(apiHandler, SIGNAL(intMaxTemperatureChanged(double)), this, SLOT(updateMaxIntTemperature(double)));
+    connect(apiHandler, SIGNAL(extTemperatureChanged(double)), SLOT(updateCurrentExtTemperature(double)));
+    connect(apiHandler, SIGNAL(intTemperatureChanged(double)), SLOT(updateCurrentIntTemperature(double)));
+    connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), SLOT(updateLastMeasurementDate(int)));
+    connect(apiHandler, SIGNAL(currentTimeChanged(QDateTime)), SLOT(updateActualisationDate(QDateTime)));
+    connect(apiHandler, SIGNAL(intMinTemperatureChanged(double)), SLOT(updateMinIntTemperature(double)));
+    connect(apiHandler, SIGNAL(intMaxTemperatureChanged(double)), SLOT(updateMaxIntTemperature(double)));
     connect(apiHandler, SIGNAL(intMinTemperatureTimeChanged(int)),
-            this, SLOT(updateMinIntTemperatureTime(int)));
+            SLOT(updateMinIntTemperatureTime(int)));
     connect(apiHandler, SIGNAL(intMaxTemperatureTimeChanged(int)),
-            this, SLOT(updateMaxIntTemperatureTime(int)));
+            SLOT(updateMaxIntTemperatureTime(int)));
 
     connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), SIGNAL(recentDataShouldBeUpdated()));
     connect(apiHandler, SIGNAL(intUTCTimeChanged(int)), SIGNAL(recentDataShouldBeUpdated()));
@@ -120,19 +122,19 @@ void MainWindow::buildCharts() {
     h24Option = new QRadioButton("24 heures");
     h192Option = new QRadioButton("8 jours");
     h4Option->setChecked(true);
-    QObject::connect(h4Option, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
-    QObject::connect(h24Option, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
-    QObject::connect(h192Option, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
+    QObject::connect(h4Option, SIGNAL(clicked(bool)), SLOT(changeChartsOptions()));
+    QObject::connect(h24Option, SIGNAL(clicked(bool)), SLOT(changeChartsOptions()));
+    QObject::connect(h192Option, SIGNAL(clicked(bool)), SLOT(changeChartsOptions()));
 
     temperatureOption = new QRadioButton("Température");
     humidityOption = new QRadioButton("Humidité");
     dewPointOption = new QRadioButton("Point de rosée");
     humidexOption = new QRadioButton("Humidex");
     temperatureOption->setChecked(true);
-    QObject::connect(temperatureOption, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
-    QObject::connect(humidityOption, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
-    QObject::connect(dewPointOption, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
-    QObject::connect(humidexOption, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
+    QObject::connect(temperatureOption, SIGNAL(clicked(bool)), SLOT(changeChartsOptions()));
+    QObject::connect(humidityOption, SIGNAL(clicked(bool)), SLOT(changeChartsOptions()));
+    QObject::connect(dewPointOption, SIGNAL(clicked(bool)), SLOT(changeChartsOptions()));
+    QObject::connect(humidexOption, SIGNAL(clicked(bool)), SLOT(changeChartsOptions()));
 }
 
 void MainWindow::buildEphemerisPanel() {
@@ -159,7 +161,7 @@ void MainWindow::buildLayouts() {
     chartsMeasurementOptionsGroupBox->setLayout(chartsMeasurementOptionsLayout);
 
     predictionLayout = new QHBoxLayout();
-    for (int i = 0;i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         predictionLayout->addWidget(predictionWidgets[i]);
     }
 
@@ -380,7 +382,7 @@ void MainWindow::updatePredictionWidgets(WeatherPrediction prediction) {
     for (int i = 0; i < 4; i++) {
         predictionWidgets[i]->setMaximumTemperature(prediction.maxTemperature(i + 1));
         predictionWidgets[i]->setMinimumTemperature(prediction.minTemperature(i + 1));
-        predictionWidgets[i]->setTitle(QDate::currentDate().addDays(i + 1).toString("d MMM"));
+        predictionWidgets[i]->setTitle(LOCALE.toString(QDate::currentDate().addDays(i + 1), "d MMM"));
         predictionWidgets[i]->setMainPictogram(prediction.dayPictogram(i + 1));
     }
     ephemerisPanel->setSunrise(prediction.sunrise());

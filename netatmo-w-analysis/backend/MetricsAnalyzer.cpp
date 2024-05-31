@@ -1,6 +1,7 @@
 #include "MetricsAnalyzer.h"
 #include <algorithm>
 
+extern const QLocale LOCALE;
 extern const QString PATH_TO_COPY_DATABASE;
 
 QString unitWithLeadingSpaceFromIndex(int index) {
@@ -19,7 +20,7 @@ MetricsAnalyzer::MetricsAnalyzer(QDate date)
 {
     _date = date;
     computer = new NormalComputer(new DatabaseHandler(PATH_TO_COPY_DATABASE));
-    locale = new QLocale();
+    locale = new QLocale(LOCALE);
 }
 
 double MetricsAnalyzer::stdevFromMeasurement(QString measurementType, double measurementValue, bool currentDateIsUsed) {

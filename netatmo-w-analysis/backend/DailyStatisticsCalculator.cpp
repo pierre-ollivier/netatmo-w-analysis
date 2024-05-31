@@ -428,7 +428,7 @@ double DailyStatisticsCalculator::getAvgNoiseFromDate(QDate date) {
 
 // others
 long long DailyStatisticsCalculator::getFirstTimestampFromDate(QDate date) {
-    QDateTime dt = QDateTime(date);
+    QDateTime dt = QDateTime(date, QTime(0, 0));
     return dt.toSecsSinceEpoch();
 }
 

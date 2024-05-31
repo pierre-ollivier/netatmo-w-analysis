@@ -7,12 +7,14 @@
 #include "../frontend/ColorUtils.h"
 #include "../frontend/QueryBuilder/QueryBuilder.h"
 
+extern const QLocale LOCALE;
+
 DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 {
     _dbHandler = dbHandler;
     analyzer = new QueryAnalyzer();
 
-    deviceLocale = new QLocale();
+    deviceLocale = new QLocale(LOCALE);
 
     monthComboBox = new QComboBox();
     monthComboBox->addItems({"Janvier", "Février", "Mars", "Avril", "Mai", "Juin",

@@ -3,6 +3,7 @@
 #include <QDebug>
 #include "../frontend/ColorUtils.h"
 
+extern const QLocale LOCALE;
 extern QString PATH_TO_PROD_DATABASE;
 extern QString PATH_TO_COPY_DATABASE;
 
@@ -11,7 +12,7 @@ YearlyReport::YearlyReport()
     mainView = new QTableView();
     mainModel = new QStandardItemModel();
 
-    deviceLocale = new QLocale();
+    deviceLocale = new QLocale(LOCALE);
 
     mainView->setModel(mainModel);
 

@@ -45,10 +45,10 @@ QueryBuilder::QueryBuilder()
     temperatureButton->setChecked(true);
     maximumButton->setChecked(true);
 
-    connect(measurementButtonGroup, SIGNAL(buttonClicked(QAbstractButton *)), SLOT(updateCurrentMeasurement()));
-    connect(operationButtonGroup, SIGNAL(buttonClicked(QAbstractButton *)), SLOT(updateCurrentMeasurement()));
-    connect(measurementButtonGroup, SIGNAL(buttonClicked(QAbstractButton *)), SLOT(updateQueryTextEdit()));
-    connect(operationButtonGroup, SIGNAL(buttonClicked(QAbstractButton *)), SLOT(updateQueryTextEdit()));
+    connect(measurementButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)), SLOT(updateCurrentMeasurement()));
+    connect(operationButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)), SLOT(updateCurrentMeasurement()));
+    connect(measurementButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)), SLOT(updateQueryTextEdit()));
+    connect(operationButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)), SLOT(updateQueryTextEdit()));
 
     indoorDailyButton = new QPushButton("Intérieur");
     outdoorDailyButton = new QPushButton("Extérieur");
