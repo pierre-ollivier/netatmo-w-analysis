@@ -1,7 +1,7 @@
 #include "PredictionWidget.h"
-#include <QCoreApplication>
 #include <QDebug>
 
+extern const QString PATH_TO_IMAGES_FOLDER;
 extern const QFont defaultTemperatureFont;
 
 PredictionWidget::PredictionWidget(QWidget *parent) : QGroupBox(parent)
@@ -47,9 +47,7 @@ void PredictionWidget::setMinimumTemperature(double minTemperature) {
 }
 
 void PredictionWidget::setMainPictogram(QString iconId) {
-    QString relativeImagePath = QCoreApplication::applicationDirPath()
-            + "/../../netatmo-w-analysis/netatmo-w-analysis/images/" + iconId + "@4x.png";
-
+    QString relativeImagePath = PATH_TO_IMAGES_FOLDER + iconId + "@4x.png";
     _pictogramLabel->setPixmap(QPixmap(relativeImagePath));
 }
 

@@ -15,6 +15,7 @@
 extern const QLocale LOCALE;
 extern QString PATH_TO_PROD_DATABASE;
 extern QString PATH_TO_COPY_DATABASE;
+extern QString PATH_TO_IMAGES_FOLDER;
 extern QColor mainBackgroundColor;
 
 MainWindow::MainWindow()
@@ -107,8 +108,7 @@ void MainWindow::buildButtons() {
     actualisationButton = new QPushButton("Actualiser");
     actualisationButton->setFont(QFont("Verdana", 14));
     actualisationButton->setIcon(QIcon(
-        QCoreApplication::applicationDirPath()
-            + "/../../netatmo-w-analysis/netatmo-w-analysis/images/Image actualisation.png"
+        PATH_TO_IMAGES_FOLDER + "Image actualisation.png"
         ));
     connect(actualisationButton, SIGNAL(pressed()),
             apiHandler, SLOT(postCurrentConditionsRequest()));

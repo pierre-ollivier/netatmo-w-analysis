@@ -1,6 +1,6 @@
 #include "BigPredictionWidget.h"
-#include <QCoreApplication>
 
+extern const QString PATH_TO_IMAGES_FOLDER;
 extern const QFont defaultTemperatureFont;
 
 BigPredictionWidget::BigPredictionWidget() : PredictionWidget()
@@ -27,9 +27,7 @@ void BigPredictionWidget::setTemperature(double temperature, int i) {
 }
 
 void BigPredictionWidget::setPictogram(QString iconId, int i) {
-    QString relativeImagePath = QCoreApplication::applicationDirPath()
-            + "/../../netatmo-w-analysis/netatmo-w-analysis/images/" + iconId + "@4x.png";
-
+    QString relativeImagePath = PATH_TO_IMAGES_FOLDER + iconId + "@4x.png";
     pictogramLabels[i]->setPixmap(QPixmap(relativeImagePath));
 }
 

@@ -87,5 +87,5 @@ QString WeatherPrediction::dayPictogram(int daysFromNow) {
 
     // Take the icon from 12 UTC
     // TODO do something better
-    return itemAt(4 - mod + 8 * daysFromNow).weatherIcon();
+    return itemAt(3 - mod + 8 * daysFromNow).weatherIcon();
 }
