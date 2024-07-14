@@ -19,7 +19,7 @@ SOURCES += \
     $$PWD/DatabaseHandler.cpp \
     $$PWD/MetricsAnalyzer.cpp \
     $$PWD/NetatmoAPIHandler.cpp \
-    $$PWD/NewdataUploader.cpp \
+    $$PWD/NewDataUploader.cpp \
     $$PWD/NormalComputer.cpp \
     $$PWD/OldDataUploader.cpp \
     $$PWD/QueryAnalyzer.cpp \

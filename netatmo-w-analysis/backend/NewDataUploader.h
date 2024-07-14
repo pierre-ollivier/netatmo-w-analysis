@@ -4,8 +4,8 @@
 #include <QDate>
 #include <QObject>
 
-#include "../netatmo-w-analysis/backend/DatabaseHandler.h"
 #include "../netatmo-w-analysis/backend/DailyStatisticsCalculator.h"
+#include "../netatmo-w-analysis/backend/DatabaseHandler.h"
 
 class NewDataUploader : public QObject
 {
