@@ -2,14 +2,16 @@
 #define METRICSANALYZER_H
 
 #include <QDate>
+#include <QObject>
 #include <QLocale>
 #include "../netatmo-w-analysis/backend/DatabaseHandler.h"
 #include "../netatmo-w-analysis/backend/NormalComputer.h"
 
-class MetricsAnalyzer
+class MetricsAnalyzer : public QObject
 {
 public:
     MetricsAnalyzer(QDate date = QDate::currentDate());
+    MetricsAnalyzer(QObject *parent, QDate date = QDate::currentDate());
 
     QString text(DatabaseHandler *dbHandler);
     double stdevFromMeasurement(QString measurementType, double measurementValue, bool currentDateIsUsed = true);
@@ -24,6 +26,8 @@ private:
     NormalComputer *computer;
 
     QLocale *locale;
+
+    DatabaseHandler *dbHandler;
 
     double mensualLow(QString measurement, int month);
     double mensualHigh(QString measurement, int month);

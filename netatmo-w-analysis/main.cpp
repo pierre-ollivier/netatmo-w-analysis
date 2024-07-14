@@ -17,9 +17,9 @@ int main(int argc, char *argv[]) {
 
     if (valid) {
         QApplication app(argc, argv);
-        MainWindow mainWin;
-        mainWin.show();
-        mainWin.setWindowTitle("netatmo-w-analysis v" + VERSION);
+        MainWindow *mainWin = new MainWindow();
+        mainWin->show();
+        mainWin->setWindowTitle("netatmo-w-analysis v" + VERSION);
 
         executeAllPlaygroundFunctions();
         int result = 3;
@@ -31,6 +31,8 @@ int main(int argc, char *argv[]) {
         catch (const std::exception& ex) {
             qDebug() << ex.what();
         }
+
+        delete mainWin;
 
         QFile copyDatabase(PATH_TO_COPY_DATABASE);
         copyDatabase.close();

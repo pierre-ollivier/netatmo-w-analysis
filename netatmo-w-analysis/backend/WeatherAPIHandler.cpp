@@ -1,11 +1,11 @@
 #include "WeatherAPIHandler.h"
 #include <QUrlQuery>
 
-WeatherAPIHandler::WeatherAPIHandler()
+WeatherAPIHandler::WeatherAPIHandler(QObject *parent) : QObject(parent)
 {
-    manager = new QNetworkAccessManager();
-    connect(manager, SIGNAL(finished(QNetworkReply *)),
-            SLOT(retrieveWeather(QNetworkReply *)));
+    manager = new QNetworkAccessManager(this);
+    connect(manager, SIGNAL(finished(QNetworkReply*)),
+            SLOT(retrieveWeather(QNetworkReply*)));
 }
 
 void WeatherAPIHandler::postWeatherRequest() {

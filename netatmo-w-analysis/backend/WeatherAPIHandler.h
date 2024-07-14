@@ -9,7 +9,7 @@ class WeatherAPIHandler : public QObject
 {
     Q_OBJECT
 public:
-    WeatherAPIHandler();
+    WeatherAPIHandler(QObject *parent);
 
 public slots:
     void postWeatherRequest();

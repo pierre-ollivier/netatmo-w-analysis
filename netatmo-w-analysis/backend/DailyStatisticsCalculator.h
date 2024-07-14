@@ -2,13 +2,15 @@
 #define DAILYSTATISTICSCALCULATOR_H
 
 #include <QDate>
-#include "DatabaseHandler.h"
-#include "DailyAverageCalculator.h"
+#include <QObject>
+#include "../netatmo-w-analysis/backend/DatabaseHandler.h"
+#include "../netatmo-w-analysis/backend/DailyAverageCalculator.h"
 
-class DailyStatisticsCalculator
+class DailyStatisticsCalculator : public QObject
 {
 public:
-    DailyStatisticsCalculator(QString pathToDatabase);
+    DailyStatisticsCalculator(QString pathToDatabase, DatabaseHandler *dbHandler);
+    DailyStatisticsCalculator(QObject *parent, QString pathToDatabase, DatabaseHandler *dbHandler);
 
     //temperature
 
@@ -101,7 +103,7 @@ public:
 
 private:
     QString _pathToDatabase;
-    DatabaseHandler *dbHandler;
+    DatabaseHandler *_dbHandler;
     DailyAverageCalculator *indoorAverageCalculator;
     DailyAverageCalculator *outdoorAverageCalculator;
 };

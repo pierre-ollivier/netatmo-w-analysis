@@ -16,7 +16,7 @@ YearlyReport::YearlyReport()
 
     mainView->setModel(mainModel);
 
-    dbHandler = new DatabaseHandler(PATH_TO_COPY_DATABASE);
+    dbHandler = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
 
     temperatureRadioButton = new QRadioButton("Température");
     humidityRadioButton = new QRadioButton("Humidité");

@@ -37,9 +37,9 @@ EphemerisPanel::EphemerisPanel() : QWidget()
     boxLayout->addWidget(tnmLabel, 4, 2);
     boxLayout->addWidget(stdevLabel, 5, 1, 1, 2);
 
-    dbHandler = new DatabaseHandler(PATH_TO_COPY_DATABASE);
-    normalComputer = new NormalComputer(dbHandler);
-    analyzer = new MetricsAnalyzer();
+    dbHandler = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
+    normalComputer = new NormalComputer(this, dbHandler);
+    analyzer = new MetricsAnalyzer(this);
 
     mainGroupBox->setTitle("Statistiques pour un _ _");
     mainGroupBox->setFont(QFont("Arial", 12));

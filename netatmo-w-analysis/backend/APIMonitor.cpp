@@ -2,7 +2,7 @@
 #include <QDateTime>
 #include <QDebug>
 
-APIMonitor::APIMonitor()
+APIMonitor::APIMonitor(QObject *parent) : QObject(parent)
 {
     requestsTimestamps = std::queue<int>();
 }
@@ -11,7 +11,7 @@ APIMonitor::APIMonitor(std::queue<int> timestampsQueue) {
     requestsTimestamps = timestampsQueue;
 }
 
-APIMonitor::APIMonitor(const APIMonitor &other) {
+APIMonitor::APIMonitor(QObject *parent, const APIMonitor &other) : QObject(parent) {
     requestsTimestamps = other.requestsTimestamps;
 }
 

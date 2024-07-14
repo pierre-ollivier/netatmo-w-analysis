@@ -1,6 +1,6 @@
 #include "QueryAnalyzer.h"
 
-QueryAnalyzer::QueryAnalyzer()
+QueryAnalyzer::QueryAnalyzer(QObject *parent) : QObject(parent)
 {
 
 }

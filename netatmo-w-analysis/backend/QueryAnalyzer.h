@@ -1,12 +1,13 @@
 #ifndef QUERYANALYZER_H
 #define QUERYANALYZER_H
 
+#include <QObject>
 #include <QString>
 
-class QueryAnalyzer
+class QueryAnalyzer : public QObject
 {
 public:
-    QueryAnalyzer();
+    QueryAnalyzer(QObject *parent = nullptr);
 
     QString dateQueryFromMeasurementQuery(QString measurementQuery);
     QString toASC(QString query);

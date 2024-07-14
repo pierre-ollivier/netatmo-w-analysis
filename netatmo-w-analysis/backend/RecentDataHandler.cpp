@@ -12,14 +12,35 @@ RecentDataHandler::RecentDataHandler(APIMonitor *monitor)
 {
     apiMonitor = monitor;
 
-    outdoorChartRequestManager = new QNetworkAccessManager();
-    indoorChartRequestManager = new QNetworkAccessManager();
-    longOutdoorLastRequestManager = new QNetworkAccessManager();
-    longOutdoorChartRequestManager = new QNetworkAccessManager();
-    longIndoorLastRequestManager = new QNetworkAccessManager();
-    longIndoorChartRequestManager = new QNetworkAccessManager();
+    outdoorChartRequestManager = new QNetworkAccessManager(this);
+    indoorChartRequestManager = new QNetworkAccessManager(this);
+    longOutdoorLastRequestManager = new QNetworkAccessManager(this);
+    longOutdoorChartRequestManager = new QNetworkAccessManager(this);
+    longIndoorLastRequestManager = new QNetworkAccessManager(this);
+    longIndoorChartRequestManager = new QNetworkAccessManager(this);
 
-    dbHandlerLastRecords = new DatabaseHandler(PATH_TO_COPY_DATABASE);
+    dbHandlerLastRecords = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
+
+    connect(outdoorChartRequestManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveOutdoorChartRequest(QNetworkReply*)));
+    connect(indoorChartRequestManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveIndoorChartRequest(QNetworkReply*)));
+    connect(longOutdoorChartRequestManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveLongOutdoorChartRequest(QNetworkReply*)));
+    connect(longOutdoorLastRequestManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveLongOutdoorLastRequest(QNetworkReply*)));
+    connect(longIndoorChartRequestManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveLongIndoorChartRequest(QNetworkReply*)));
+    connect(longIndoorLastRequestManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveLongIndoorLastRequest(QNetworkReply*)));
+}
+
+RecentDataHandler::RecentDataHandler(QObject *parent, APIMonitor *monitor) : QObject(parent)
+{
+    apiMonitor = monitor;
+
+    outdoorChartRequestManager = new QNetworkAccessManager(this);
+    indoorChartRequestManager = new QNetworkAccessManager(this);
+    longOutdoorLastRequestManager = new QNetworkAccessManager(this);
+    longOutdoorChartRequestManager = new QNetworkAccessManager(this);
+    longIndoorLastRequestManager = new QNetworkAccessManager(this);
+    longIndoorChartRequestManager = new QNetworkAccessManager(this);
+
+    dbHandlerLastRecords = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
 
     connect(outdoorChartRequestManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveOutdoorChartRequest(QNetworkReply*)));
     connect(indoorChartRequestManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveIndoorChartRequest(QNetworkReply*)));

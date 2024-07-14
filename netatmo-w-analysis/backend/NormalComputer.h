@@ -2,12 +2,14 @@
 #define NORMALCOMPUTER_H
 
 #include <QDate>
+#include <QObject>
 #include "../netatmo-w-analysis/backend/DatabaseHandler.h"
 
-class NormalComputer
+class NormalComputer : public QObject
 {
 public:
     NormalComputer(DatabaseHandler *dbHandler);
+    NormalComputer(QObject *parent, DatabaseHandler *dbHandler);
     int minYear(QString tableName);
     double normalMeasurementByMovingAverage(
             QString tableName,

@@ -14,6 +14,7 @@ class RecentDataHandler : public QObject
     Q_OBJECT
 public:
     RecentDataHandler(APIMonitor *monitor);
+    RecentDataHandler(QObject *parent, APIMonitor *monitor);
     void setMinTimestamp(int minTimestamp);
 
 public slots:

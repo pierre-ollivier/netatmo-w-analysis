@@ -6,18 +6,35 @@
 #include <QFile>
 #include <QDateTime>
 #include <QProgressDialog>
-#include "DailyStatisticsCalculator.h"
 
 extern const QStringList indoorDailyRecordsParams;
 extern const QStringList outdoorDailyRecordsParams;
 extern const QStringList indoorTimestampsParams;
 extern const QStringList outdoorTimestampsParams;
 
-QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "connection_name");
+int DatabaseHandler::id = 0;
 
-DatabaseHandler::DatabaseHandler(QString pathToDatabase)
+DatabaseHandler::DatabaseHandler(QString pathToDatabase) : QObject()
 {
+    id++;
+    instance_id = id;
+    db = QSqlDatabase::addDatabase("QSQLITE", pathToDatabase + "_" + QString::number(instance_id));
+    db.setDatabaseName(pathToDatabase);
     _pathToDatabase = pathToDatabase;
+}
+
+DatabaseHandler::DatabaseHandler(QObject *parent, QString pathToDatabase) : QObject(parent)
+{
+    id++;
+    instance_id = id;
+    db = QSqlDatabase::addDatabase("QSQLITE", pathToDatabase + "_" + QString::number(instance_id));
+    db.setDatabaseName(pathToDatabase);
+    _pathToDatabase = pathToDatabase;
+}
+
+DatabaseHandler::~DatabaseHandler() {
+    QSqlDatabase::removeDatabase(_pathToDatabase + "_" + QString::number(instance_id));
+    db.close();
 }
 
 void DatabaseHandler::prepareQuery(QSqlQuery *query, QString tableName, QStringList params) {
@@ -40,9 +57,7 @@ void DatabaseHandler::prepareQuery(QSqlQuery *query, QString tableName, QStringL
 }
 
 void DatabaseHandler::postOutdoorDailyRecord(ExtDailyRecord record, QString tableName) {
-    db.setDatabaseName(_pathToDatabase);
     QSqlQuery *query = new QSqlQuery(db);
-
     if (!db.open()) {
         qDebug() << "Database open error. Path:" << _pathToDatabase;
     }
@@ -118,11 +133,11 @@ void DatabaseHandler::postOutdoorDailyRecord(ExtDailyRecord record, QString tabl
     if (!query->exec()) {
         qDebug() << "ERROR:" << query->lastError().text();
     }
-    db.close();
+
+    delete query;
 }
 
 void DatabaseHandler::postOutdoorTimestampRecord(ExtTimestampRecord record, QString tableName) {
-    db.setDatabaseName(_pathToDatabase);
     QSqlQuery *query = new QSqlQuery(db);
 
     if (!db.open()) {
@@ -156,12 +171,11 @@ void DatabaseHandler::postOutdoorTimestampRecord(ExtTimestampRecord record, QStr
     if (!query->exec()) {
         qDebug() << "ERROR:" << query->lastError().text();
     }
-    db.close();
 
+    delete query;
 }
 
 void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString tableName) {
-    db.setDatabaseName(_pathToDatabase);
     QSqlQuery *query = new QSqlQuery(db);
     if (!db.open()) {
         qDebug() << "Database open error. Path:" << _pathToDatabase;
@@ -260,11 +274,11 @@ void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString table
     if (!query->exec()) {
         qDebug() << "ERROR:" << query->lastError().text();
     }
-    db.close();
+
+    delete query;
 }
 
 void DatabaseHandler::postIndoorTimestampRecord(IntTimestampRecord record, QString tableName) {
-    db.setDatabaseName(_pathToDatabase);
     QSqlQuery *query = new QSqlQuery(db);
 
     if (!db.open()) {
@@ -301,7 +315,8 @@ void DatabaseHandler::postIndoorTimestampRecord(IntTimestampRecord record, QStri
     if (!query->exec()) {
         qDebug() << "ERROR:" << query->lastError().text();
     }
-    db.close();
+
+    delete query;
 }
 
 void DatabaseHandler::postFromOutdoorCsv(QString pathToCsv, QString tableName, QDate beginDate, QDate endDate) {
@@ -436,8 +451,7 @@ std::vector<IntTimestampRecord> DatabaseHandler::getIntTimestampRecordsFromDatab
         query += " LIMIT " + QString::number(N);
     }
     std::vector<IntTimestampRecord> result = std::vector<IntTimestampRecord>();
-    db.setDatabaseName(_pathToDatabase);
-    QSqlQuery _query(db);
+    QSqlQuery *_query = new QSqlQuery(db);
 
     if (!db.open()) {
         qDebug() << "Database open error. Path:" << _pathToDatabase;
@@ -445,14 +459,14 @@ std::vector<IntTimestampRecord> DatabaseHandler::getIntTimestampRecordsFromDatab
     if (!db.isOpen() ) {
         qDebug() << "Database is not open. Path:" << _pathToDatabase;
     }
-    if (_query.exec(query)) {
-        while (_query.next()) {
-            long long timestamp = _query.value(1).toLongLong();
-            double temperature = _query.value(12).toDouble();
-            int humidity = _query.value(13).toInt();
-            double pressure = _query.value(17).toDouble();
-            int co2 = _query.value(18).toInt();
-            int noise = _query.value(19).toInt();
+    if (_query->exec(query)) {
+        while (_query->next()) {
+            long long timestamp = _query->value(1).toLongLong();
+            double temperature = _query->value(12).toDouble();
+            int humidity = _query->value(13).toInt();
+            double pressure = _query->value(17).toDouble();
+            int co2 = _query->value(18).toInt();
+            int noise = _query->value(19).toInt();
             result.push_back(
                         IntTimestampRecord(
                             timestamp,
@@ -464,7 +478,7 @@ std::vector<IntTimestampRecord> DatabaseHandler::getIntTimestampRecordsFromDatab
                         );
         }
     }
-    db.close();
+    delete _query;
     return result;
 }
 
@@ -473,8 +487,7 @@ std::vector<ExtTimestampRecord> DatabaseHandler::getExtTimestampRecordsFromDatab
         query += " LIMIT " + QString::number(N);
     }
     std::vector<ExtTimestampRecord> result = std::vector<ExtTimestampRecord>();
-    db.setDatabaseName(_pathToDatabase);
-    QSqlQuery _query(db);
+    QSqlQuery *_query = new QSqlQuery(db);
 
     if (!db.open()) {
         qDebug() << "Database open error. Path:" << _pathToDatabase;
@@ -482,11 +495,11 @@ std::vector<ExtTimestampRecord> DatabaseHandler::getExtTimestampRecordsFromDatab
     if (!db.isOpen() ) {
         qDebug() << "Database is not open. Path:" << _pathToDatabase;
     }
-    if (_query.exec(query)) {
-        while (_query.next()) {
-            long long timestamp = _query.value(1).toLongLong();
-            double temperature = _query.value(12).toDouble();
-            int humidity = _query.value(13).toInt();
+    if (_query->exec(query)) {
+        while (_query->next()) {
+            long long timestamp = _query->value(1).toLongLong();
+            double temperature = _query->value(12).toDouble();
+            int humidity = _query->value(13).toInt();
             result.push_back(
                         ExtTimestampRecord(
                             timestamp,
@@ -495,7 +508,7 @@ std::vector<ExtTimestampRecord> DatabaseHandler::getExtTimestampRecordsFromDatab
                         );
         }
     }
-    db.close();
+    delete _query;
     return result;
 }
 
@@ -504,8 +517,7 @@ std::vector<IntDailyRecord> DatabaseHandler::getIntDailyRecordsFromDatabase(QStr
         query += " LIMIT " + QString::number(N);
     }
     std::vector<IntDailyRecord> result = std::vector<IntDailyRecord>();
-    db.setDatabaseName(_pathToDatabase);
-    QSqlQuery _query(db);
+    QSqlQuery *_query = new QSqlQuery(db);
 
     if (!db.open()) {
         qDebug() << "Database open error. Path:" << _pathToDatabase;
@@ -513,42 +525,42 @@ std::vector<IntDailyRecord> DatabaseHandler::getIntDailyRecordsFromDatabase(QStr
     if (!db.isOpen() ) {
         qDebug() << "Database is not open. Path:" << _pathToDatabase;
     }
-    if (_query.exec(query)) {
-        while (_query.next()) {
-            int year = _query.value(1).toInt();
-            int month = _query.value(2).toInt();
-            int day = _query.value(3).toInt();
-            double maxTemperature = _query.value(7).toDouble();
-            double minTemperature = _query.value(8).toDouble();
-            double avgTemperature = _query.value(9).toDouble();
-            int maxHumidity = _query.value(10).toInt();
-            int minHumidity = _query.value(11).toInt();
-            double avgHumidity = _query.value(12).toDouble();
-            double maxDewPoint = _query.value(13).toDouble();
-            double minDewPoint = _query.value(14).toDouble();
-            double avgDewPoint = _query.value(15).toDouble();
-            int maxHumidex = _query.value(16).toInt();
-            int minHumidex = _query.value(17).toInt();
-            double avgHumidex = _query.value(18).toDouble();
-            double maxPressure = _query.value(19).toDouble();
-            double minPressure = _query.value(20).toDouble();
-            double avgPressure = _query.value(21).toDouble();
-            int maxCO2 = _query.value(22).toInt();
-            int minCO2 = _query.value(23).toInt();
-            double avgCO2 = _query.value(24).toDouble();
-            int maxNoise = _query.value(25).toInt();
-            int minNoise = _query.value(26).toInt();
-            double avgNoise = _query.value(27).toDouble();
-            long long maxTemperatureTimestamp = _query.value(28).toLongLong();
-            long long minTemperatureTimestamp = _query.value(32).toLongLong();
-            long long maxHumidityTimestamp = _query.value(36).toLongLong();
-            long long minHumidityTimestamp = _query.value(40).toLongLong();
-            long long maxDewPointTimestamp = _query.value(44).toLongLong();
-            long long minDewPointTimestamp = _query.value(48).toLongLong();
-            long long maxHumidexTimestamp = _query.value(52).toLongLong();
-            long long minHumidexTimestamp = _query.value(56).toLongLong();
-            long long maxPressureTimestamp = _query.value(60).toLongLong();
-            long long minPressureTimestamp = _query.value(64).toLongLong();
+    if (_query->exec(query)) {
+        while (_query->next()) {
+            int year = _query->value(1).toInt();
+            int month = _query->value(2).toInt();
+            int day = _query->value(3).toInt();
+            double maxTemperature = _query->value(7).toDouble();
+            double minTemperature = _query->value(8).toDouble();
+            double avgTemperature = _query->value(9).toDouble();
+            int maxHumidity = _query->value(10).toInt();
+            int minHumidity = _query->value(11).toInt();
+            double avgHumidity = _query->value(12).toDouble();
+            double maxDewPoint = _query->value(13).toDouble();
+            double minDewPoint = _query->value(14).toDouble();
+            double avgDewPoint = _query->value(15).toDouble();
+            int maxHumidex = _query->value(16).toInt();
+            int minHumidex = _query->value(17).toInt();
+            double avgHumidex = _query->value(18).toDouble();
+            double maxPressure = _query->value(19).toDouble();
+            double minPressure = _query->value(20).toDouble();
+            double avgPressure = _query->value(21).toDouble();
+            int maxCO2 = _query->value(22).toInt();
+            int minCO2 = _query->value(23).toInt();
+            double avgCO2 = _query->value(24).toDouble();
+            int maxNoise = _query->value(25).toInt();
+            int minNoise = _query->value(26).toInt();
+            double avgNoise = _query->value(27).toDouble();
+            long long maxTemperatureTimestamp = _query->value(28).toLongLong();
+            long long minTemperatureTimestamp = _query->value(32).toLongLong();
+            long long maxHumidityTimestamp = _query->value(36).toLongLong();
+            long long minHumidityTimestamp = _query->value(40).toLongLong();
+            long long maxDewPointTimestamp = _query->value(44).toLongLong();
+            long long minDewPointTimestamp = _query->value(48).toLongLong();
+            long long maxHumidexTimestamp = _query->value(52).toLongLong();
+            long long minHumidexTimestamp = _query->value(56).toLongLong();
+            long long maxPressureTimestamp = _query->value(60).toLongLong();
+            long long minPressureTimestamp = _query->value(64).toLongLong();
             result.push_back(
                         IntDailyRecord(
                             QDate(year, month, day),
@@ -586,7 +598,7 @@ std::vector<IntDailyRecord> DatabaseHandler::getIntDailyRecordsFromDatabase(QStr
                         );
         }
     }
-    db.close();
+    delete _query;
     return result;
 }
 
@@ -595,8 +607,7 @@ std::vector<ExtDailyRecord> DatabaseHandler::getExtDailyRecordsFromDatabase(QStr
         query += " LIMIT " + QString::number(N);
     }
     std::vector<ExtDailyRecord> result = std::vector<ExtDailyRecord>();
-    db.setDatabaseName(_pathToDatabase);
-    QSqlQuery _query(db);
+    QSqlQuery *_query = new QSqlQuery(db);
 
     if (!db.open()) {
         qDebug() << "Database open error. Path:" << _pathToDatabase;
@@ -604,31 +615,31 @@ std::vector<ExtDailyRecord> DatabaseHandler::getExtDailyRecordsFromDatabase(QStr
     if (!db.isOpen() ) {
         qDebug() << "Database is not open. Path:" << _pathToDatabase;
     }
-    if (_query.exec(query)) {
-        while (_query.next()) {
-            int year = _query.value(1).toInt();
-            int month = _query.value(2).toInt();
-            int day = _query.value(3).toInt();
-            double maxTemperature = _query.value(7).toDouble();
-            double minTemperature = _query.value(8).toDouble();
-            double avgTemperature = _query.value(9).toDouble();
-            int maxHumidity = _query.value(10).toInt();
-            int minHumidity = _query.value(11).toInt();
-            double avgHumidity = _query.value(12).toDouble();
-            double maxDewPoint = _query.value(13).toDouble();
-            double minDewPoint = _query.value(14).toDouble();
-            double avgDewPoint = _query.value(15).toDouble();
-            double maxHumidex = _query.value(16).toDouble();
-            double minHumidex = _query.value(17).toDouble();
-            double avgHumidex = _query.value(18).toDouble();
-            long long maxTemperatureTimestamp = _query.value(19).toLongLong();
-            long long minTemperatureTimestamp = _query.value(23).toLongLong();
-            long long maxHumidityTimestamp = _query.value(27).toLongLong();
-            long long minHumidityTimestamp = _query.value(31).toLongLong();
-            long long maxDewPointTimestamp = _query.value(35).toLongLong();
-            long long minDewPointTimestamp = _query.value(39).toLongLong();
-            long long maxHumidexTimestamp = _query.value(43).toLongLong();
-            long long minHumidexTimestamp = _query.value(47).toLongLong();
+    if (_query->exec(query)) {
+        while (_query->next()) {
+            int year = _query->value(1).toInt();
+            int month = _query->value(2).toInt();
+            int day = _query->value(3).toInt();
+            double maxTemperature = _query->value(7).toDouble();
+            double minTemperature = _query->value(8).toDouble();
+            double avgTemperature = _query->value(9).toDouble();
+            int maxHumidity = _query->value(10).toInt();
+            int minHumidity = _query->value(11).toInt();
+            double avgHumidity = _query->value(12).toDouble();
+            double maxDewPoint = _query->value(13).toDouble();
+            double minDewPoint = _query->value(14).toDouble();
+            double avgDewPoint = _query->value(15).toDouble();
+            double maxHumidex = _query->value(16).toDouble();
+            double minHumidex = _query->value(17).toDouble();
+            double avgHumidex = _query->value(18).toDouble();
+            long long maxTemperatureTimestamp = _query->value(19).toLongLong();
+            long long minTemperatureTimestamp = _query->value(23).toLongLong();
+            long long maxHumidityTimestamp = _query->value(27).toLongLong();
+            long long minHumidityTimestamp = _query->value(31).toLongLong();
+            long long maxDewPointTimestamp = _query->value(35).toLongLong();
+            long long minDewPointTimestamp = _query->value(39).toLongLong();
+            long long maxHumidexTimestamp = _query->value(43).toLongLong();
+            long long minHumidexTimestamp = _query->value(47).toLongLong();
             result.push_back(
                         ExtDailyRecord(
                             QDate(year, month, day),
@@ -655,13 +666,12 @@ std::vector<ExtDailyRecord> DatabaseHandler::getExtDailyRecordsFromDatabase(QStr
                         );
         }
     }
-    db.close();
+    delete _query;
     return result;
 }
 
 QVariant DatabaseHandler::getResultFromDatabase(QString query) {
-    db.setDatabaseName(_pathToDatabase);
-    QSqlQuery _query(db);
+    QSqlQuery *_query = new QSqlQuery(db);
 
     if (!db.open()) {
         qDebug() << "Database open error. Path:" << _pathToDatabase;
@@ -669,10 +679,11 @@ QVariant DatabaseHandler::getResultFromDatabase(QString query) {
     if (!db.isOpen() ) {
         qDebug() << "Database is not open. Path:" << _pathToDatabase;
     }
-    if (_query.exec(query)) {
-        if (_query.next()) {
-            db.close();
-            return _query.value(0);
+    if (_query->exec(query)) {
+        if (_query->next()) {
+            QVariant result = _query->value(0);
+            delete _query;
+            return result;
         }
         else if (query.left(6) != "DELETE" && query.left(6) != "CREATE") {
             qDebug() << "Empty query result";
@@ -682,14 +693,13 @@ QVariant DatabaseHandler::getResultFromDatabase(QString query) {
     else {
         qDebug() << "Invalid query:" << query;
     }
-    db.close();
+    delete _query;
     return QVariant();
 }
 
 std::vector<QVariant> DatabaseHandler::getResultsFromDatabase(QString query, int limit) {
     std::vector<QVariant> result = std::vector<QVariant>();
-    db.setDatabaseName(_pathToDatabase);
-    QSqlQuery _query(db);
+    QSqlQuery *_query = new QSqlQuery(db);
 
     if (!db.open()) {
         qDebug() << "Database open error. Path:" << _pathToDatabase;
@@ -697,21 +707,20 @@ std::vector<QVariant> DatabaseHandler::getResultsFromDatabase(QString query, int
     if (!db.isOpen() ) {
         qDebug() << "Database is not open. Path:" << _pathToDatabase;
     }
-    if (_query.exec(query)) {
-        while (_query.next() && (limit == 0 || int(result.size()) < limit)) {
-            result.push_back(_query.value(0));
+    if (_query->exec(query)) {
+        while (_query->next() && (limit == 0 || int(result.size()) < limit)) {
+            result.push_back(_query->value(0));
         }
     }
     else {
         qDebug() << "Invalid query:" << query;
     }
-    db.close();
+    delete _query;
     return result;
 }
 
 int DatabaseHandler::getNumberOfResultsFromDatabase(QString query) {
-    db.setDatabaseName(_pathToDatabase);
-    QSqlQuery _query(db);
+    QSqlQuery *_query = new QSqlQuery(db);
     int result = 0;
 
     if (!db.open()) {
@@ -720,96 +729,17 @@ int DatabaseHandler::getNumberOfResultsFromDatabase(QString query) {
     if (!db.isOpen() ) {
         qDebug() << "Database is not open. Path:" << _pathToDatabase;
     }
-    if (_query.exec(query)) {
-        while (_query.next()) result++;
+    if (_query->exec(query)) {
+        while (_query->next()) result++;
     }
     else {
         qDebug() << "Invalid query:" << query;
     }
-    db.close();
+    delete _query;
     return result;
 }
 
-void DatabaseHandler::updateOutdoorDailyRecords(QDate beginDate, QDate endDate, bool verbose) {
-    DailyStatisticsCalculator dailyCalculator = DailyStatisticsCalculator(_pathToDatabase);
-    QProgressDialog progress("Ajout des nouvelles données...", "Annuler", beginDate.toJulianDay(), endDate.toJulianDay());
-    progress.setWindowModality(Qt::WindowModal);
-    progress.setValue(beginDate.toJulianDay());
-    if (!verbose) progress.reset();
-    for (QDate date = beginDate; date <= endDate; date = date.addDays(1)) {
-        ExtDailyRecord record(
-                    date,
-                    dailyCalculator.getMaxTemperatureFromDate(date),
-                    dailyCalculator.getMinTemperatureFromDate(date),
-                    dailyCalculator.getAvgTemperatureFromDate(date),
-                    dailyCalculator.getMaxHumidityFromDate(date),
-                    dailyCalculator.getMinHumidityFromDate(date),
-                    dailyCalculator.getAvgHumidityFromDate(date),
-                    dailyCalculator.getMaxDewPointFromDate(date),
-                    dailyCalculator.getMinDewPointFromDate(date),
-                    dailyCalculator.getAvgDewPointFromDate(date),
-                    dailyCalculator.getMaxHumidexFromDate(date),
-                    dailyCalculator.getMinHumidexFromDate(date),
-                    dailyCalculator.getAvgHumidexFromDate(date),
-                    dailyCalculator.getMaxTemperatureTimestampFromDate(date),
-                    dailyCalculator.getMinTemperatureTimestampFromDate(date),
-                    dailyCalculator.getMaxHumidityTimestampFromDate(date),
-                    dailyCalculator.getMinHumidityTimestampFromDate(date),
-                    dailyCalculator.getMaxDewPointTimestampFromDate(date),
-                    dailyCalculator.getMinDewPointTimestampFromDate(date),
-                    dailyCalculator.getMaxHumidexTimestampFromDate(date),
-                    dailyCalculator.getMinHumidexTimestampFromDate(date)
-                    );
-        postOutdoorDailyRecord(record, "OutdoorDailyRecords");
-        if (verbose) progress.setValue(date.toJulianDay());
-    }
-}
 
-void DatabaseHandler::updateIndoorDailyRecords(QDate beginDate, QDate endDate, bool verbose) {
-    DailyStatisticsCalculator dailyCalculator = DailyStatisticsCalculator(_pathToDatabase);
-    QProgressDialog progress("Ajout des nouvelles données...", "Annuler", beginDate.toJulianDay(), endDate.toJulianDay());
-    progress.setWindowModality(Qt::WindowModal);
-    progress.setValue(beginDate.toJulianDay());
-    if (!verbose) progress.reset();
-    for (QDate date = beginDate; date <= endDate; date = date.addDays(1)) {
-        IntDailyRecord record(
-                    date,
-                    dailyCalculator.getMaxTemperatureFromDate(date, true),
-                    dailyCalculator.getMinTemperatureFromDate(date, true),
-                    dailyCalculator.getAvgTemperatureFromDate(date, true),
-                    dailyCalculator.getMaxHumidityFromDate(date, true),
-                    dailyCalculator.getMinHumidityFromDate(date, true),
-                    dailyCalculator.getAvgHumidityFromDate(date, true),
-                    dailyCalculator.getMaxDewPointFromDate(date, true),
-                    dailyCalculator.getMinDewPointFromDate(date, true),
-                    dailyCalculator.getAvgDewPointFromDate(date, true),
-                    dailyCalculator.getMaxHumidexFromDate(date, true),
-                    dailyCalculator.getMinHumidexFromDate(date, true),
-                    dailyCalculator.getAvgHumidexFromDate(date, true),
-                    dailyCalculator.getMaxPressureFromDate(date),
-                    dailyCalculator.getMinPressureFromDate(date),
-                    dailyCalculator.getAvgPressureFromDate(date),
-                    dailyCalculator.getMaxCO2FromDate(date),
-                    dailyCalculator.getMinCO2FromDate(date),
-                    dailyCalculator.getAvgCO2FromDate(date),
-                    dailyCalculator.getMaxNoiseFromDate(date),
-                    dailyCalculator.getMinNoiseFromDate(date),
-                    dailyCalculator.getAvgNoiseFromDate(date),
-                    dailyCalculator.getMaxTemperatureTimestampFromDate(date, true),
-                    dailyCalculator.getMinTemperatureTimestampFromDate(date, true),
-                    dailyCalculator.getMaxHumidityTimestampFromDate(date, true),
-                    dailyCalculator.getMinHumidityTimestampFromDate(date, true),
-                    dailyCalculator.getMaxDewPointTimestampFromDate(date, true),
-                    dailyCalculator.getMinDewPointTimestampFromDate(date, true),
-                    dailyCalculator.getMaxHumidexTimestampFromDate(date, true),
-                    dailyCalculator.getMinHumidexTimestampFromDate(date, true),
-                    dailyCalculator.getMaxPressureTimestampFromDate(date),
-                    dailyCalculator.getMinPressureTimestampFromDate(date)
-                    );
-        postIndoorDailyRecord(record, "IndoorDailyRecords");
-        if (verbose) progress.setValue(date.toJulianDay());
-    }
-}
 
 QDateTime DatabaseHandler::getExtremeDateTimeFromDatabase(QString tableName, QString measurement, bool asc) {
     const QString desc = asc ? "" : "desc";

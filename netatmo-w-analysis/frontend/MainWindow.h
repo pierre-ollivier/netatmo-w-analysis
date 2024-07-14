@@ -13,6 +13,7 @@
 #include "../netatmo-w-analysis/backend/DatabaseHandler.h"
 #include "../netatmo-w-analysis/backend/MetricsAnalyzer.h"
 #include "../netatmo-w-analysis/backend/NetatmoAPIHandler.h"
+#include "../netatmo-w-analysis/backend/NewDataUploader.h"
 #include "../netatmo-w-analysis/backend/OldDataUploader.h"
 #include "../netatmo-w-analysis/backend/RecentDataHandler.h"
 #include "../netatmo-w-analysis/backend/WeatherAPIHandler.h"
@@ -132,8 +133,9 @@ private:
     HomePageChart *outdoorChart;
     MetricsAnalyzer *analyzer;
 
-    // data uploader
+    // data uploaders
     OldDataUploader *oldDataUploader;
+    NewDataUploader *newDataUploader;
 
     // actions
     QAction *requestCountsAction;

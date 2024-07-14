@@ -2,11 +2,15 @@
 #define DAILYAVERAGECALCULATOR_H
 
 #include <QDate>
+#include <QObject>
 
-class DailyAverageCalculator
+#include "../netatmo-w-analysis/backend/DatabaseHandler.h"
+
+class DailyAverageCalculator : public QObject
 {
 public:
     DailyAverageCalculator(QString pathToDatabase, bool indoor);
+    DailyAverageCalculator(QObject *parent, QString pathToDatabase, bool indoor);
     double getAverageMeasurementFromDate(QDate date, QString measurementType);
 
     double getFirstMeasurementFromDate(QDate date, QString measurementType);
@@ -17,6 +21,7 @@ public:
     QString indoorOrOutdoor();
 
 private:
+    DatabaseHandler *dbHandler;
     QString _pathToDatabase;
     bool _indoor;
 };

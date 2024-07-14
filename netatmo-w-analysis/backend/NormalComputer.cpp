@@ -7,6 +7,12 @@ NormalComputer::NormalComputer(DatabaseHandler *dbHandler)
     _dbHandler = dbHandler;
 }
 
+NormalComputer::NormalComputer(QObject *parent, DatabaseHandler *dbHandler) : QObject(parent)
+{
+    _dbHandler = dbHandler;
+}
+
+
 int NormalComputer::minYear(QString tableName) {
     const QString query = "SELECT MIN(year) FROM " + tableName;
     return _dbHandler->getResultFromDatabase(query).toInt();

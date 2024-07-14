@@ -18,26 +18,26 @@ extern QString PATH_TO_COPY_DATABASE;
 extern QString PATH_TO_IMAGES_FOLDER;
 extern QColor mainBackgroundColor;
 
-MainWindow::MainWindow()
+MainWindow::MainWindow() : QMainWindow()
 {
-    mainWidget = new QWidget();
+    mainWidget = new QWidget(this);
     setCentralWidget(mainWidget);
-    menuBar = new QMenuBar();
+    menuBar = new QMenuBar(this);
     setMenuBar(menuBar);
     setBackgroundColor(mainBackgroundColor);
     deviceLocale = new QLocale(LOCALE);
 
-    apiMonitor = new APIMonitor();
-    analyzer = new MetricsAnalyzer();
-    apiHandler = new NetatmoAPIHandler(apiMonitor, 20000);
-    recentDataHandler = new RecentDataHandler(apiMonitor);
-    dbHandlerProd = new DatabaseHandler(PATH_TO_PROD_DATABASE);
-    dbHandlerCopy = new DatabaseHandler(PATH_TO_COPY_DATABASE);
-    oldDataUploader = new OldDataUploader(apiHandler);
+    apiMonitor = new APIMonitor(this);
+    analyzer = new MetricsAnalyzer(this);
+    apiHandler = new NetatmoAPIHandler(this, apiMonitor, 20000);
+    recentDataHandler = new RecentDataHandler(this, apiMonitor);
+    dbHandlerProd = new DatabaseHandler(this, PATH_TO_PROD_DATABASE);
+    dbHandlerCopy = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
+    oldDataUploader = new OldDataUploader(this, apiHandler);
     connect(this, SIGNAL(recentDataShouldBeUpdated()), SLOT(postRecentDataRequests()));
     buildWindow();
 
-    weatherHandler = new WeatherAPIHandler();
+    weatherHandler = new WeatherAPIHandler(this);
     weatherHandler->postWeatherRequest();
     connect(weatherHandler, SIGNAL(predictionDataRetrieved(WeatherPrediction)), SLOT(updatePredictionWidgets(WeatherPrediction)));
 }
@@ -479,7 +479,7 @@ void MainWindow::updateDailyIndoorDatabase() {
     int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
 
     if (response == QMessageBox::Yes) {
-        dbHandlerProd->updateIndoorDailyRecords(
+        newDataUploader->uploadIndoorDailyRecords(
                     QDate::fromString(beginDate, "dd/MM/yyyy"),
                     QDate::fromString(endDate, "dd/MM/yyyy"));
     }
@@ -505,7 +505,7 @@ void MainWindow::updateDailyOutdoorDatabase() {
     int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
 
     if (response == QMessageBox::Yes) {
-        dbHandlerProd->updateOutdoorDailyRecords(
+        newDataUploader->uploadOutdoorDailyRecords(
                     QDate::fromString(beginDate, "dd/MM/yyyy"),
                     QDate::fromString(endDate, "dd/MM/yyyy"));
     }
@@ -539,7 +539,7 @@ void MainWindow::changeChartsOptions() {
 }
 
 void MainWindow::showNormals() {
-    NormalComputer *computer = new NormalComputer(dbHandlerCopy);
+    NormalComputer *computer = new NormalComputer(this, dbHandlerCopy);
     NormalsVisualizer *visualizer = new NormalsVisualizer(computer);
     visualizer->show();
 }

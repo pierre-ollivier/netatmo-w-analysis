@@ -4,6 +4,7 @@
 #include <QString>
 #include <QObject>
 #include <QDate>
+#include "../backend/DatabaseHandler.h"
 #include "../backend/NetatmoAPIHandler.h"
 #include "../types/ExtTimestampRecord.h"
 #include "../types/IntTimestampRecord.h"
@@ -17,6 +18,7 @@ class OldDataUploader : public QObject
 
 public:
     OldDataUploader(NetatmoAPIHandler *apiHandler, QString accessToken = "");
+    OldDataUploader(QObject *parent, NetatmoAPIHandler *apiHandler, QString accessToken = "");
     void setAccessToken(QString accessToken);
 
 signals:
@@ -42,6 +44,7 @@ private:
     QDate _beginDate = QDate();
     QDate _endDate = QDate();
     QMap<QDate, ExtendedExtDailyRecord *> extendedRecordsMap = QMap<QDate, ExtendedExtDailyRecord *>();
+    DatabaseHandler *dbHandler;
     int numberOfExtBatchesToRetrieve = 0;
     int numberOfIntBatchesToRetrieve = 0;
 };

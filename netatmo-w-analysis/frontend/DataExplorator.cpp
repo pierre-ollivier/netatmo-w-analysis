@@ -12,7 +12,7 @@ extern const QLocale LOCALE;
 DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 {
     _dbHandler = dbHandler;
-    analyzer = new QueryAnalyzer();
+    analyzer = new QueryAnalyzer(this);
 
     deviceLocale = new QLocale(LOCALE);
 

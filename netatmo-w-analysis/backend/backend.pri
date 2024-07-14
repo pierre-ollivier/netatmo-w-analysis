@@ -5,6 +5,7 @@ HEADERS += \
     $$PWD/DatabaseHandler.h \
     $$PWD/MetricsAnalyzer.h \
     $$PWD/NetatmoAPIHandler.h \
+    $$PWD/NewDataUploader.h \
     $$PWD/NormalComputer.h \
     $$PWD/OldDataUploader.h \
     $$PWD/QueryAnalyzer.h \
@@ -18,6 +19,7 @@ SOURCES += \
     $$PWD/DatabaseHandler.cpp \
     $$PWD/MetricsAnalyzer.cpp \
     $$PWD/NetatmoAPIHandler.cpp \
+    $$PWD/NewdataUploader.cpp \
     $$PWD/NormalComputer.cpp \
     $$PWD/OldDataUploader.cpp \
     $$PWD/QueryAnalyzer.cpp \
