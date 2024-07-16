@@ -18,8 +18,6 @@ DatabaseHandler::DatabaseHandler(QString pathToDatabase) : QObject()
 {
     id++;
     instance_id = id;
-    db = QSqlDatabase::addDatabase("QSQLITE", pathToDatabase + "_" + QString::number(instance_id));
-    db.setDatabaseName(pathToDatabase);
     _pathToDatabase = pathToDatabase;
 }
 
@@ -27,14 +25,7 @@ DatabaseHandler::DatabaseHandler(QObject *parent, QString pathToDatabase) : QObj
 {
     id++;
     instance_id = id;
-    db = QSqlDatabase::addDatabase("QSQLITE", pathToDatabase + "_" + QString::number(instance_id));
-    db.setDatabaseName(pathToDatabase);
     _pathToDatabase = pathToDatabase;
-}
-
-DatabaseHandler::~DatabaseHandler() {
-    QSqlDatabase::removeDatabase(_pathToDatabase + "_" + QString::number(instance_id));
-    db.close();
 }
 
 void DatabaseHandler::prepareQuery(QSqlQuery *query, QString tableName, QStringList params) {
@@ -57,266 +48,287 @@ void DatabaseHandler::prepareQuery(QSqlQuery *query, QString tableName, QStringL
 }
 
 void DatabaseHandler::postOutdoorDailyRecord(ExtDailyRecord record, QString tableName) {
-    QSqlQuery *query = new QSqlQuery(db);
-    if (!db.open()) {
-        qDebug() << "Database open error. Path:" << _pathToDatabase;
+    QString connectionName = _pathToDatabase + "_" + QString::number(instance_id);
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName(_pathToDatabase);
+        QSqlQuery query(db);
+        if (!db.open()) {
+            qDebug() << "Database open error. Path:" << _pathToDatabase;
+        }
+        if (!db.isOpen() ) {
+            qDebug() << "Database is not open. Path:" << _pathToDatabase;
+        }
+
+        prepareQuery(&query, tableName, outdoorDailyRecordsParams);
+
+        query.addBindValue(record.year());
+        query.addBindValue(record.month());
+        query.addBindValue(record.day());
+        query.addBindValue(record.date().toString("dd/MM/yyyy"));
+        query.addBindValue(record.decade());
+        query.addBindValue(record.weekNumber());
+
+        query.addBindValue(record.maxTemperature());
+        query.addBindValue(record.minTemperature());
+        query.addBindValue(record.avgTemperature());
+
+        query.addBindValue(record.maxHumidity());
+        query.addBindValue(record.minHumidity());
+        query.addBindValue(record.avgHumidity());
+
+        query.addBindValue(record.maxDewPoint());
+        query.addBindValue(record.minDewPoint());
+        query.addBindValue(record.avgDewPoint());
+
+        query.addBindValue(record.maxHumidex());
+        query.addBindValue(record.minHumidex());
+        query.addBindValue(record.avgHumidex());
+
+        query.addBindValue(record.maxTemperatureTimestamp());
+        query.addBindValue(record.maxTemperatureTime().hour());
+        query.addBindValue(record.maxTemperatureTime().minute());
+        query.addBindValue(record.maxTemperatureTime().second());
+
+        query.addBindValue(record.minTemperatureTimestamp());
+        query.addBindValue(record.minTemperatureTime().hour());
+        query.addBindValue(record.minTemperatureTime().minute());
+        query.addBindValue(record.minTemperatureTime().second());
+
+        query.addBindValue(record.maxHumidityTimestamp());
+        query.addBindValue(record.maxHumidityTime().hour());
+        query.addBindValue(record.maxHumidityTime().minute());
+        query.addBindValue(record.maxHumidityTime().second());
+
+        query.addBindValue(record.minHumidityTimestamp());
+        query.addBindValue(record.minHumidityTime().hour());
+        query.addBindValue(record.minHumidityTime().minute());
+        query.addBindValue(record.minHumidityTime().second());
+
+        query.addBindValue(record.maxDewPointTimestamp());
+        query.addBindValue(record.maxDewPointTime().hour());
+        query.addBindValue(record.maxDewPointTime().minute());
+        query.addBindValue(record.maxDewPointTime().second());
+
+        query.addBindValue(record.minDewPointTimestamp());
+        query.addBindValue(record.minDewPointTime().hour());
+        query.addBindValue(record.minDewPointTime().minute());
+        query.addBindValue(record.minDewPointTime().second());
+
+        query.addBindValue(record.maxHumidexTimestamp());
+        query.addBindValue(record.maxHumidexTime().hour());
+        query.addBindValue(record.maxHumidexTime().minute());
+        query.addBindValue(record.maxHumidexTime().second());
+
+        query.addBindValue(record.minHumidexTimestamp());
+        query.addBindValue(record.minHumidexTime().hour());
+        query.addBindValue(record.minHumidexTime().minute());
+        query.addBindValue(record.minHumidexTime().second());
+
+        if (!query.exec()) {
+            qDebug() << "ERROR:" << query.lastError().text();
+        }
     }
-    if (!db.isOpen() ) {
-        qDebug() << "Database is not open. Path:" << _pathToDatabase;
-    }
 
-    prepareQuery(query, tableName, outdoorDailyRecordsParams);
-
-    query->addBindValue(record.year());
-    query->addBindValue(record.month());
-    query->addBindValue(record.day());
-    query->addBindValue(record.date().toString("dd/MM/yyyy"));
-    query->addBindValue(record.decade());
-    query->addBindValue(record.weekNumber());
-
-    query->addBindValue(record.maxTemperature());
-    query->addBindValue(record.minTemperature());
-    query->addBindValue(record.avgTemperature());
-
-    query->addBindValue(record.maxHumidity());
-    query->addBindValue(record.minHumidity());
-    query->addBindValue(record.avgHumidity());
-
-    query->addBindValue(record.maxDewPoint());
-    query->addBindValue(record.minDewPoint());
-    query->addBindValue(record.avgDewPoint());
-
-    query->addBindValue(record.maxHumidex());
-    query->addBindValue(record.minHumidex());
-    query->addBindValue(record.avgHumidex());
-
-    query->addBindValue(record.maxTemperatureTimestamp());
-    query->addBindValue(record.maxTemperatureTime().hour());
-    query->addBindValue(record.maxTemperatureTime().minute());
-    query->addBindValue(record.maxTemperatureTime().second());
-
-    query->addBindValue(record.minTemperatureTimestamp());
-    query->addBindValue(record.minTemperatureTime().hour());
-    query->addBindValue(record.minTemperatureTime().minute());
-    query->addBindValue(record.minTemperatureTime().second());
-
-    query->addBindValue(record.maxHumidityTimestamp());
-    query->addBindValue(record.maxHumidityTime().hour());
-    query->addBindValue(record.maxHumidityTime().minute());
-    query->addBindValue(record.maxHumidityTime().second());
-
-    query->addBindValue(record.minHumidityTimestamp());
-    query->addBindValue(record.minHumidityTime().hour());
-    query->addBindValue(record.minHumidityTime().minute());
-    query->addBindValue(record.minHumidityTime().second());
-
-    query->addBindValue(record.maxDewPointTimestamp());
-    query->addBindValue(record.maxDewPointTime().hour());
-    query->addBindValue(record.maxDewPointTime().minute());
-    query->addBindValue(record.maxDewPointTime().second());
-
-    query->addBindValue(record.minDewPointTimestamp());
-    query->addBindValue(record.minDewPointTime().hour());
-    query->addBindValue(record.minDewPointTime().minute());
-    query->addBindValue(record.minDewPointTime().second());
-
-    query->addBindValue(record.maxHumidexTimestamp());
-    query->addBindValue(record.maxHumidexTime().hour());
-    query->addBindValue(record.maxHumidexTime().minute());
-    query->addBindValue(record.maxHumidexTime().second());
-
-    query->addBindValue(record.minHumidexTimestamp());
-    query->addBindValue(record.minHumidexTime().hour());
-    query->addBindValue(record.minHumidexTime().minute());
-    query->addBindValue(record.minHumidexTime().second());
-
-    if (!query->exec()) {
-        qDebug() << "ERROR:" << query->lastError().text();
-    }
-
-    delete query;
+    QSqlDatabase::removeDatabase(connectionName);
 }
 
 void DatabaseHandler::postOutdoorTimestampRecord(ExtTimestampRecord record, QString tableName) {
-    QSqlQuery *query = new QSqlQuery(db);
+    QString connectionName = _pathToDatabase + "_" + QString::number(instance_id);
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName(_pathToDatabase);
+        QSqlQuery query(db);
 
-    if (!db.open()) {
-        qDebug() << "Database open error. Path:" << _pathToDatabase;
+        if (!db.open()) {
+            qDebug() << "Database open error. Path:" << _pathToDatabase;
+        }
+        if (!db.isOpen() ) {
+            qDebug() << "Database is not open. Path:" << _pathToDatabase;
+        }
+
+        prepareQuery(&query, tableName, outdoorTimestampsParams);
+
+        query.addBindValue(record.timestamp());
+
+        query.addBindValue(record.year());
+        query.addBindValue(record.month());
+        query.addBindValue(record.day());
+        query.addBindValue(record.date().toString("dd/MM/yyyy"));
+        query.addBindValue(record.decade());
+        query.addBindValue(record.weekNumber());
+
+        query.addBindValue(record.hour());
+        query.addBindValue(record.minute());
+        query.addBindValue(record.second());
+        query.addBindValue(record.time().toString("hh:mm:ss"));
+
+        query.addBindValue(record.temperature());
+        query.addBindValue(record.humidity());
+        query.addBindValue(record.dewPoint());
+        query.addBindValue(record.humidex());
+
+        if (!query.exec()) {
+            qDebug() << "ERROR:" << query.lastError().text();
+        }
     }
-    if (!db.isOpen() ) {
-        qDebug() << "Database is not open. Path:" << _pathToDatabase;
-    }
 
-    prepareQuery(query, tableName, outdoorTimestampsParams);
-
-    query->addBindValue(record.timestamp());
-
-    query->addBindValue(record.year());
-    query->addBindValue(record.month());
-    query->addBindValue(record.day());
-    query->addBindValue(record.date().toString("dd/MM/yyyy"));
-    query->addBindValue(record.decade());
-    query->addBindValue(record.weekNumber());
-
-    query->addBindValue(record.hour());
-    query->addBindValue(record.minute());
-    query->addBindValue(record.second());
-    query->addBindValue(record.time().toString("hh:mm:ss"));
-
-    query->addBindValue(record.temperature());
-    query->addBindValue(record.humidity());
-    query->addBindValue(record.dewPoint());
-    query->addBindValue(record.humidex());
-
-    if (!query->exec()) {
-        qDebug() << "ERROR:" << query->lastError().text();
-    }
-
-    delete query;
+    QSqlDatabase::removeDatabase(connectionName);
 }
 
 void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString tableName) {
-    QSqlQuery *query = new QSqlQuery(db);
-    if (!db.open()) {
-        qDebug() << "Database open error. Path:" << _pathToDatabase;
+    QString connectionName = _pathToDatabase + "_" + QString::number(instance_id);
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName(_pathToDatabase);
+        QSqlQuery query(db);
+
+        if (!db.open()) {
+            qDebug() << "Database open error. Path:" << _pathToDatabase;
+        }
+        if (!db.isOpen() ) {
+            qDebug() << "Database is not open. Path:" << _pathToDatabase;
+        }
+
+        prepareQuery(&query, tableName, indoorDailyRecordsParams);
+
+        query.addBindValue(record.year());
+        query.addBindValue(record.month());
+        query.addBindValue(record.day());
+        query.addBindValue(record.date().toString("dd/MM/yyyy"));
+        query.addBindValue(record.decade());
+        query.addBindValue(record.weekNumber());
+
+        query.addBindValue(record.maxTemperature());
+        query.addBindValue(record.minTemperature());
+        query.addBindValue(record.avgTemperature());
+
+        query.addBindValue(record.maxHumidity());
+        query.addBindValue(record.minHumidity());
+        query.addBindValue(record.avgHumidity());
+
+        query.addBindValue(record.maxDewPoint());
+        query.addBindValue(record.minDewPoint());
+        query.addBindValue(record.avgDewPoint());
+
+        query.addBindValue(record.maxHumidex());
+        query.addBindValue(record.minHumidex());
+        query.addBindValue(record.avgHumidex());
+
+        query.addBindValue(record.maxPressure());
+        query.addBindValue(record.minPressure());
+        query.addBindValue(record.avgPressure());
+
+        query.addBindValue(record.maxCO2());
+        query.addBindValue(record.minCO2());
+        query.addBindValue(record.avgCO2());
+
+        query.addBindValue(record.maxNoise());
+        query.addBindValue(record.minNoise());
+        query.addBindValue(record.avgNoise());
+
+        query.addBindValue(record.maxTemperatureTimestamp());
+        query.addBindValue(record.maxTemperatureTime().hour());
+        query.addBindValue(record.maxTemperatureTime().minute());
+        query.addBindValue(record.maxTemperatureTime().second());
+
+        query.addBindValue(record.minTemperatureTimestamp());
+        query.addBindValue(record.minTemperatureTime().hour());
+        query.addBindValue(record.minTemperatureTime().minute());
+        query.addBindValue(record.minTemperatureTime().second());
+
+        query.addBindValue(record.maxHumidityTimestamp());
+        query.addBindValue(record.maxHumidityTime().hour());
+        query.addBindValue(record.maxHumidityTime().minute());
+        query.addBindValue(record.maxHumidityTime().second());
+
+        query.addBindValue(record.minHumidityTimestamp());
+        query.addBindValue(record.minHumidityTime().hour());
+        query.addBindValue(record.minHumidityTime().minute());
+        query.addBindValue(record.minHumidityTime().second());
+
+        query.addBindValue(record.maxDewPointTimestamp());
+        query.addBindValue(record.maxDewPointTime().hour());
+        query.addBindValue(record.maxDewPointTime().minute());
+        query.addBindValue(record.maxDewPointTime().second());
+
+        query.addBindValue(record.minDewPointTimestamp());
+        query.addBindValue(record.minDewPointTime().hour());
+        query.addBindValue(record.minDewPointTime().minute());
+        query.addBindValue(record.minDewPointTime().second());
+
+        query.addBindValue(record.maxHumidexTimestamp());
+        query.addBindValue(record.maxHumidexTime().hour());
+        query.addBindValue(record.maxHumidexTime().minute());
+        query.addBindValue(record.maxHumidexTime().second());
+
+        query.addBindValue(record.minHumidexTimestamp());
+        query.addBindValue(record.minHumidexTime().hour());
+        query.addBindValue(record.minHumidexTime().minute());
+        query.addBindValue(record.minHumidexTime().second());
+
+        query.addBindValue(record.maxPressureTimestamp());
+        query.addBindValue(record.maxPressureTime().hour());
+        query.addBindValue(record.maxPressureTime().minute());
+        query.addBindValue(record.maxPressureTime().second());
+
+        query.addBindValue(record.minPressureTimestamp());
+        query.addBindValue(record.minPressureTime().hour());
+        query.addBindValue(record.minPressureTime().minute());
+        query.addBindValue(record.minPressureTime().second());
+
+        if (!query.exec()) {
+            qDebug() << "ERROR:" << query.lastError().text();
+        }
     }
-    if (!db.isOpen() ) {
-        qDebug() << "Database is not open. Path:" << _pathToDatabase;
-    }
 
-    prepareQuery(query, tableName, indoorDailyRecordsParams);
-
-    query->addBindValue(record.year());
-    query->addBindValue(record.month());
-    query->addBindValue(record.day());
-    query->addBindValue(record.date().toString("dd/MM/yyyy"));
-    query->addBindValue(record.decade());
-    query->addBindValue(record.weekNumber());
-
-    query->addBindValue(record.maxTemperature());
-    query->addBindValue(record.minTemperature());
-    query->addBindValue(record.avgTemperature());
-
-    query->addBindValue(record.maxHumidity());
-    query->addBindValue(record.minHumidity());
-    query->addBindValue(record.avgHumidity());
-
-    query->addBindValue(record.maxDewPoint());
-    query->addBindValue(record.minDewPoint());
-    query->addBindValue(record.avgDewPoint());
-
-    query->addBindValue(record.maxHumidex());
-    query->addBindValue(record.minHumidex());
-    query->addBindValue(record.avgHumidex());
-
-    query->addBindValue(record.maxPressure());
-    query->addBindValue(record.minPressure());
-    query->addBindValue(record.avgPressure());
-
-    query->addBindValue(record.maxCO2());
-    query->addBindValue(record.minCO2());
-    query->addBindValue(record.avgCO2());
-
-    query->addBindValue(record.maxNoise());
-    query->addBindValue(record.minNoise());
-    query->addBindValue(record.avgNoise());
-
-    query->addBindValue(record.maxTemperatureTimestamp());
-    query->addBindValue(record.maxTemperatureTime().hour());
-    query->addBindValue(record.maxTemperatureTime().minute());
-    query->addBindValue(record.maxTemperatureTime().second());
-
-    query->addBindValue(record.minTemperatureTimestamp());
-    query->addBindValue(record.minTemperatureTime().hour());
-    query->addBindValue(record.minTemperatureTime().minute());
-    query->addBindValue(record.minTemperatureTime().second());
-
-    query->addBindValue(record.maxHumidityTimestamp());
-    query->addBindValue(record.maxHumidityTime().hour());
-    query->addBindValue(record.maxHumidityTime().minute());
-    query->addBindValue(record.maxHumidityTime().second());
-
-    query->addBindValue(record.minHumidityTimestamp());
-    query->addBindValue(record.minHumidityTime().hour());
-    query->addBindValue(record.minHumidityTime().minute());
-    query->addBindValue(record.minHumidityTime().second());
-
-    query->addBindValue(record.maxDewPointTimestamp());
-    query->addBindValue(record.maxDewPointTime().hour());
-    query->addBindValue(record.maxDewPointTime().minute());
-    query->addBindValue(record.maxDewPointTime().second());
-
-    query->addBindValue(record.minDewPointTimestamp());
-    query->addBindValue(record.minDewPointTime().hour());
-    query->addBindValue(record.minDewPointTime().minute());
-    query->addBindValue(record.minDewPointTime().second());
-
-    query->addBindValue(record.maxHumidexTimestamp());
-    query->addBindValue(record.maxHumidexTime().hour());
-    query->addBindValue(record.maxHumidexTime().minute());
-    query->addBindValue(record.maxHumidexTime().second());
-
-    query->addBindValue(record.minHumidexTimestamp());
-    query->addBindValue(record.minHumidexTime().hour());
-    query->addBindValue(record.minHumidexTime().minute());
-    query->addBindValue(record.minHumidexTime().second());
-
-    query->addBindValue(record.maxPressureTimestamp());
-    query->addBindValue(record.maxPressureTime().hour());
-    query->addBindValue(record.maxPressureTime().minute());
-    query->addBindValue(record.maxPressureTime().second());
-
-    query->addBindValue(record.minPressureTimestamp());
-    query->addBindValue(record.minPressureTime().hour());
-    query->addBindValue(record.minPressureTime().minute());
-    query->addBindValue(record.minPressureTime().second());
-
-    if (!query->exec()) {
-        qDebug() << "ERROR:" << query->lastError().text();
-    }
-
-    delete query;
+    QSqlDatabase::removeDatabase(connectionName);
 }
 
 void DatabaseHandler::postIndoorTimestampRecord(IntTimestampRecord record, QString tableName) {
-    QSqlQuery *query = new QSqlQuery(db);
+    QString connectionName = _pathToDatabase + "_" + QString::number(instance_id);
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName(_pathToDatabase);
+        QSqlQuery query(db);
 
-    if (!db.open()) {
-        qDebug() << "Database open error. Path:" << _pathToDatabase;
+        if (!db.open()) {
+            qDebug() << "Database open error. Path:" << _pathToDatabase;
+        }
+        if (!db.isOpen() ) {
+            qDebug() << "Database is not open. Path:" << _pathToDatabase;
+        }
+
+        prepareQuery(&query, tableName, indoorTimestampsParams);
+
+        query.addBindValue(record.timestamp());
+
+        query.addBindValue(record.year());
+        query.addBindValue(record.month());
+        query.addBindValue(record.day());
+        query.addBindValue(record.date().toString("dd/MM/yyyy"));
+        query.addBindValue(record.decade());
+        query.addBindValue(record.weekNumber());
+
+        query.addBindValue(record.hour());
+        query.addBindValue(record.minute());
+        query.addBindValue(record.second());
+        query.addBindValue(record.time().toString("hh:mm:ss"));
+
+        query.addBindValue(record.temperature());
+        query.addBindValue(record.humidity());
+        query.addBindValue(record.dewPoint());
+        query.addBindValue(record.humidex());
+        query.addBindValue(record.pressure());
+        query.addBindValue(record.co2());
+        query.addBindValue(record.noise());
+
+        if (!query.exec()) {
+            qDebug() << "ERROR:" << query.lastError().text();
+        }
     }
-    if (!db.isOpen() ) {
-        qDebug() << "Database is not open. Path:" << _pathToDatabase;
-    }
 
-    prepareQuery(query, tableName, indoorTimestampsParams);
-
-    query->addBindValue(record.timestamp());
-
-    query->addBindValue(record.year());
-    query->addBindValue(record.month());
-    query->addBindValue(record.day());
-    query->addBindValue(record.date().toString("dd/MM/yyyy"));
-    query->addBindValue(record.decade());
-    query->addBindValue(record.weekNumber());
-
-    query->addBindValue(record.hour());
-    query->addBindValue(record.minute());
-    query->addBindValue(record.second());
-    query->addBindValue(record.time().toString("hh:mm:ss"));
-
-    query->addBindValue(record.temperature());
-    query->addBindValue(record.humidity());
-    query->addBindValue(record.dewPoint());
-    query->addBindValue(record.humidex());
-    query->addBindValue(record.pressure());
-    query->addBindValue(record.co2());
-    query->addBindValue(record.noise());
-
-    if (!query->exec()) {
-        qDebug() << "ERROR:" << query->lastError().text();
-    }
-
-    delete query;
+    QSqlDatabase::removeDatabase(connectionName);
 }
 
 void DatabaseHandler::postFromOutdoorCsv(QString pathToCsv, QString tableName, QDate beginDate, QDate endDate) {
@@ -451,34 +463,39 @@ std::vector<IntTimestampRecord> DatabaseHandler::getIntTimestampRecordsFromDatab
         query += " LIMIT " + QString::number(N);
     }
     std::vector<IntTimestampRecord> result = std::vector<IntTimestampRecord>();
-    QSqlQuery *_query = new QSqlQuery(db);
+    QString connectionName = _pathToDatabase + "_" + QString::number(instance_id);
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName(_pathToDatabase);
+        QSqlQuery _query(db);
 
-    if (!db.open()) {
-        qDebug() << "Database open error. Path:" << _pathToDatabase;
-    }
-    if (!db.isOpen() ) {
-        qDebug() << "Database is not open. Path:" << _pathToDatabase;
-    }
-    if (_query->exec(query)) {
-        while (_query->next()) {
-            long long timestamp = _query->value(1).toLongLong();
-            double temperature = _query->value(12).toDouble();
-            int humidity = _query->value(13).toInt();
-            double pressure = _query->value(17).toDouble();
-            int co2 = _query->value(18).toInt();
-            int noise = _query->value(19).toInt();
-            result.push_back(
-                        IntTimestampRecord(
-                            timestamp,
-                            temperature,
-                            humidity,
-                            pressure,
-                            co2,
-                            noise)
-                        );
+        if (!db.open()) {
+            qDebug() << "Database open error. Path:" << _pathToDatabase;
+        }
+        if (!db.isOpen() ) {
+            qDebug() << "Database is not open. Path:" << _pathToDatabase;
+        }
+        if (_query.exec(query)) {
+            while (_query.next()) {
+                long long timestamp = _query.value(1).toLongLong();
+                double temperature = _query.value(12).toDouble();
+                int humidity = _query.value(13).toInt();
+                double pressure = _query.value(17).toDouble();
+                int co2 = _query.value(18).toInt();
+                int noise = _query.value(19).toInt();
+                result.push_back(
+                            IntTimestampRecord(
+                                timestamp,
+                                temperature,
+                                humidity,
+                                pressure,
+                                co2,
+                                noise)
+                            );
+            }
         }
     }
-    delete _query;
+    QSqlDatabase::removeDatabase(connectionName);
     return result;
 }
 
@@ -487,28 +504,33 @@ std::vector<ExtTimestampRecord> DatabaseHandler::getExtTimestampRecordsFromDatab
         query += " LIMIT " + QString::number(N);
     }
     std::vector<ExtTimestampRecord> result = std::vector<ExtTimestampRecord>();
-    QSqlQuery *_query = new QSqlQuery(db);
+    QString connectionName = _pathToDatabase + "_" + QString::number(instance_id);
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName(_pathToDatabase);
+        QSqlQuery _query(db);
 
-    if (!db.open()) {
-        qDebug() << "Database open error. Path:" << _pathToDatabase;
-    }
-    if (!db.isOpen() ) {
-        qDebug() << "Database is not open. Path:" << _pathToDatabase;
-    }
-    if (_query->exec(query)) {
-        while (_query->next()) {
-            long long timestamp = _query->value(1).toLongLong();
-            double temperature = _query->value(12).toDouble();
-            int humidity = _query->value(13).toInt();
-            result.push_back(
-                        ExtTimestampRecord(
-                            timestamp,
-                            temperature,
-                            humidity)
-                        );
+        if (!db.open()) {
+            qDebug() << "Database open error. Path:" << _pathToDatabase;
+        }
+        if (!db.isOpen() ) {
+            qDebug() << "Database is not open. Path:" << _pathToDatabase;
+        }
+        if (_query.exec(query)) {
+            while (_query.next()) {
+                long long timestamp = _query.value(1).toLongLong();
+                double temperature = _query.value(12).toDouble();
+                int humidity = _query.value(13).toInt();
+                result.push_back(
+                            ExtTimestampRecord(
+                                timestamp,
+                                temperature,
+                                humidity)
+                            );
+            }
         }
     }
-    delete _query;
+    QSqlDatabase::removeDatabase(connectionName);
     return result;
 }
 
@@ -517,88 +539,93 @@ std::vector<IntDailyRecord> DatabaseHandler::getIntDailyRecordsFromDatabase(QStr
         query += " LIMIT " + QString::number(N);
     }
     std::vector<IntDailyRecord> result = std::vector<IntDailyRecord>();
-    QSqlQuery *_query = new QSqlQuery(db);
+    QString connectionName = _pathToDatabase + "_" + QString::number(instance_id);
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName(_pathToDatabase);
+        QSqlQuery _query(db);
 
-    if (!db.open()) {
-        qDebug() << "Database open error. Path:" << _pathToDatabase;
-    }
-    if (!db.isOpen() ) {
-        qDebug() << "Database is not open. Path:" << _pathToDatabase;
-    }
-    if (_query->exec(query)) {
-        while (_query->next()) {
-            int year = _query->value(1).toInt();
-            int month = _query->value(2).toInt();
-            int day = _query->value(3).toInt();
-            double maxTemperature = _query->value(7).toDouble();
-            double minTemperature = _query->value(8).toDouble();
-            double avgTemperature = _query->value(9).toDouble();
-            int maxHumidity = _query->value(10).toInt();
-            int minHumidity = _query->value(11).toInt();
-            double avgHumidity = _query->value(12).toDouble();
-            double maxDewPoint = _query->value(13).toDouble();
-            double minDewPoint = _query->value(14).toDouble();
-            double avgDewPoint = _query->value(15).toDouble();
-            int maxHumidex = _query->value(16).toInt();
-            int minHumidex = _query->value(17).toInt();
-            double avgHumidex = _query->value(18).toDouble();
-            double maxPressure = _query->value(19).toDouble();
-            double minPressure = _query->value(20).toDouble();
-            double avgPressure = _query->value(21).toDouble();
-            int maxCO2 = _query->value(22).toInt();
-            int minCO2 = _query->value(23).toInt();
-            double avgCO2 = _query->value(24).toDouble();
-            int maxNoise = _query->value(25).toInt();
-            int minNoise = _query->value(26).toInt();
-            double avgNoise = _query->value(27).toDouble();
-            long long maxTemperatureTimestamp = _query->value(28).toLongLong();
-            long long minTemperatureTimestamp = _query->value(32).toLongLong();
-            long long maxHumidityTimestamp = _query->value(36).toLongLong();
-            long long minHumidityTimestamp = _query->value(40).toLongLong();
-            long long maxDewPointTimestamp = _query->value(44).toLongLong();
-            long long minDewPointTimestamp = _query->value(48).toLongLong();
-            long long maxHumidexTimestamp = _query->value(52).toLongLong();
-            long long minHumidexTimestamp = _query->value(56).toLongLong();
-            long long maxPressureTimestamp = _query->value(60).toLongLong();
-            long long minPressureTimestamp = _query->value(64).toLongLong();
-            result.push_back(
-                        IntDailyRecord(
-                            QDate(year, month, day),
-                            maxTemperature,
-                            minTemperature,
-                            avgTemperature,
-                            maxHumidity,
-                            minHumidity,
-                            avgHumidity,
-                            maxDewPoint,
-                            minDewPoint,
-                            avgDewPoint,
-                            maxHumidex,
-                            minHumidex,
-                            avgHumidex,
-                            maxPressure,
-                            minPressure,
-                            avgPressure,
-                            maxCO2,
-                            minCO2,
-                            avgCO2,
-                            maxNoise,
-                            minNoise,
-                            avgNoise,
-                            maxTemperatureTimestamp,
-                            minTemperatureTimestamp,
-                            maxHumidityTimestamp,
-                            minHumidityTimestamp,
-                            maxDewPointTimestamp,
-                            minDewPointTimestamp,
-                            maxHumidexTimestamp,
-                            minHumidexTimestamp,
-                            maxPressureTimestamp,
-                            minPressureTimestamp)
-                        );
+        if (!db.open()) {
+            qDebug() << "Database open error. Path:" << _pathToDatabase;
+        }
+        if (!db.isOpen() ) {
+            qDebug() << "Database is not open. Path:" << _pathToDatabase;
+        }
+        if (_query.exec(query)) {
+            while (_query.next()) {
+                int year = _query.value(1).toInt();
+                int month = _query.value(2).toInt();
+                int day = _query.value(3).toInt();
+                double maxTemperature = _query.value(7).toDouble();
+                double minTemperature = _query.value(8).toDouble();
+                double avgTemperature = _query.value(9).toDouble();
+                int maxHumidity = _query.value(10).toInt();
+                int minHumidity = _query.value(11).toInt();
+                double avgHumidity = _query.value(12).toDouble();
+                double maxDewPoint = _query.value(13).toDouble();
+                double minDewPoint = _query.value(14).toDouble();
+                double avgDewPoint = _query.value(15).toDouble();
+                int maxHumidex = _query.value(16).toInt();
+                int minHumidex = _query.value(17).toInt();
+                double avgHumidex = _query.value(18).toDouble();
+                double maxPressure = _query.value(19).toDouble();
+                double minPressure = _query.value(20).toDouble();
+                double avgPressure = _query.value(21).toDouble();
+                int maxCO2 = _query.value(22).toInt();
+                int minCO2 = _query.value(23).toInt();
+                double avgCO2 = _query.value(24).toDouble();
+                int maxNoise = _query.value(25).toInt();
+                int minNoise = _query.value(26).toInt();
+                double avgNoise = _query.value(27).toDouble();
+                long long maxTemperatureTimestamp = _query.value(28).toLongLong();
+                long long minTemperatureTimestamp = _query.value(32).toLongLong();
+                long long maxHumidityTimestamp = _query.value(36).toLongLong();
+                long long minHumidityTimestamp = _query.value(40).toLongLong();
+                long long maxDewPointTimestamp = _query.value(44).toLongLong();
+                long long minDewPointTimestamp = _query.value(48).toLongLong();
+                long long maxHumidexTimestamp = _query.value(52).toLongLong();
+                long long minHumidexTimestamp = _query.value(56).toLongLong();
+                long long maxPressureTimestamp = _query.value(60).toLongLong();
+                long long minPressureTimestamp = _query.value(64).toLongLong();
+                result.push_back(
+                            IntDailyRecord(
+                                QDate(year, month, day),
+                                maxTemperature,
+                                minTemperature,
+                                avgTemperature,
+                                maxHumidity,
+                                minHumidity,
+                                avgHumidity,
+                                maxDewPoint,
+                                minDewPoint,
+                                avgDewPoint,
+                                maxHumidex,
+                                minHumidex,
+                                avgHumidex,
+                                maxPressure,
+                                minPressure,
+                                avgPressure,
+                                maxCO2,
+                                minCO2,
+                                avgCO2,
+                                maxNoise,
+                                minNoise,
+                                avgNoise,
+                                maxTemperatureTimestamp,
+                                minTemperatureTimestamp,
+                                maxHumidityTimestamp,
+                                minHumidityTimestamp,
+                                maxDewPointTimestamp,
+                                minDewPointTimestamp,
+                                maxHumidexTimestamp,
+                                minHumidexTimestamp,
+                                maxPressureTimestamp,
+                                minPressureTimestamp)
+                            );
+            }
         }
     }
-    delete _query;
+    QSqlDatabase::removeDatabase(connectionName);
     return result;
 }
 
@@ -607,135 +634,154 @@ std::vector<ExtDailyRecord> DatabaseHandler::getExtDailyRecordsFromDatabase(QStr
         query += " LIMIT " + QString::number(N);
     }
     std::vector<ExtDailyRecord> result = std::vector<ExtDailyRecord>();
-    QSqlQuery *_query = new QSqlQuery(db);
+    QString connectionName = _pathToDatabase + "_" + QString::number(instance_id);
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName(_pathToDatabase);
+        QSqlQuery _query(db);
 
-    if (!db.open()) {
-        qDebug() << "Database open error. Path:" << _pathToDatabase;
-    }
-    if (!db.isOpen() ) {
-        qDebug() << "Database is not open. Path:" << _pathToDatabase;
-    }
-    if (_query->exec(query)) {
-        while (_query->next()) {
-            int year = _query->value(1).toInt();
-            int month = _query->value(2).toInt();
-            int day = _query->value(3).toInt();
-            double maxTemperature = _query->value(7).toDouble();
-            double minTemperature = _query->value(8).toDouble();
-            double avgTemperature = _query->value(9).toDouble();
-            int maxHumidity = _query->value(10).toInt();
-            int minHumidity = _query->value(11).toInt();
-            double avgHumidity = _query->value(12).toDouble();
-            double maxDewPoint = _query->value(13).toDouble();
-            double minDewPoint = _query->value(14).toDouble();
-            double avgDewPoint = _query->value(15).toDouble();
-            double maxHumidex = _query->value(16).toDouble();
-            double minHumidex = _query->value(17).toDouble();
-            double avgHumidex = _query->value(18).toDouble();
-            long long maxTemperatureTimestamp = _query->value(19).toLongLong();
-            long long minTemperatureTimestamp = _query->value(23).toLongLong();
-            long long maxHumidityTimestamp = _query->value(27).toLongLong();
-            long long minHumidityTimestamp = _query->value(31).toLongLong();
-            long long maxDewPointTimestamp = _query->value(35).toLongLong();
-            long long minDewPointTimestamp = _query->value(39).toLongLong();
-            long long maxHumidexTimestamp = _query->value(43).toLongLong();
-            long long minHumidexTimestamp = _query->value(47).toLongLong();
-            result.push_back(
-                        ExtDailyRecord(
-                            QDate(year, month, day),
-                            maxTemperature,
-                            minTemperature,
-                            avgTemperature,
-                            maxHumidity,
-                            minHumidity,
-                            avgHumidity,
-                            maxDewPoint,
-                            minDewPoint,
-                            avgDewPoint,
-                            maxHumidex,
-                            minHumidex,
-                            avgHumidex,
-                            maxTemperatureTimestamp,
-                            minTemperatureTimestamp,
-                            maxHumidityTimestamp,
-                            minHumidityTimestamp,
-                            maxDewPointTimestamp,
-                            minDewPointTimestamp,
-                            maxHumidexTimestamp,
-                            minHumidexTimestamp)
-                        );
+        if (!db.open()) {
+            qDebug() << "Database open error. Path:" << _pathToDatabase;
+        }
+        if (!db.isOpen() ) {
+            qDebug() << "Database is not open. Path:" << _pathToDatabase;
+        }
+        if (_query.exec(query)) {
+            while (_query.next()) {
+                int year = _query.value(1).toInt();
+                int month = _query.value(2).toInt();
+                int day = _query.value(3).toInt();
+                double maxTemperature = _query.value(7).toDouble();
+                double minTemperature = _query.value(8).toDouble();
+                double avgTemperature = _query.value(9).toDouble();
+                int maxHumidity = _query.value(10).toInt();
+                int minHumidity = _query.value(11).toInt();
+                double avgHumidity = _query.value(12).toDouble();
+                double maxDewPoint = _query.value(13).toDouble();
+                double minDewPoint = _query.value(14).toDouble();
+                double avgDewPoint = _query.value(15).toDouble();
+                double maxHumidex = _query.value(16).toDouble();
+                double minHumidex = _query.value(17).toDouble();
+                double avgHumidex = _query.value(18).toDouble();
+                long long maxTemperatureTimestamp = _query.value(19).toLongLong();
+                long long minTemperatureTimestamp = _query.value(23).toLongLong();
+                long long maxHumidityTimestamp = _query.value(27).toLongLong();
+                long long minHumidityTimestamp = _query.value(31).toLongLong();
+                long long maxDewPointTimestamp = _query.value(35).toLongLong();
+                long long minDewPointTimestamp = _query.value(39).toLongLong();
+                long long maxHumidexTimestamp = _query.value(43).toLongLong();
+                long long minHumidexTimestamp = _query.value(47).toLongLong();
+                result.push_back(
+                            ExtDailyRecord(
+                                QDate(year, month, day),
+                                maxTemperature,
+                                minTemperature,
+                                avgTemperature,
+                                maxHumidity,
+                                minHumidity,
+                                avgHumidity,
+                                maxDewPoint,
+                                minDewPoint,
+                                avgDewPoint,
+                                maxHumidex,
+                                minHumidex,
+                                avgHumidex,
+                                maxTemperatureTimestamp,
+                                minTemperatureTimestamp,
+                                maxHumidityTimestamp,
+                                minHumidityTimestamp,
+                                maxDewPointTimestamp,
+                                minDewPointTimestamp,
+                                maxHumidexTimestamp,
+                                minHumidexTimestamp)
+                            );
+            }
         }
     }
-    delete _query;
+    QSqlDatabase::removeDatabase(connectionName);
     return result;
 }
 
 QVariant DatabaseHandler::getResultFromDatabase(QString query) {
-    QSqlQuery *_query = new QSqlQuery(db);
+    QVariant result = QVariant();
+    QString connectionName = _pathToDatabase + "_" + QString::number(instance_id);
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName(_pathToDatabase);
+        QSqlQuery _query(db);
 
-    if (!db.open()) {
-        qDebug() << "Database open error. Path:" << _pathToDatabase;
-    }
-    if (!db.isOpen() ) {
-        qDebug() << "Database is not open. Path:" << _pathToDatabase;
-    }
-    if (_query->exec(query)) {
-        if (_query->next()) {
-            QVariant result = _query->value(0);
-            delete _query;
-            return result;
+        if (!db.open()) {
+            qDebug() << "Database open error. Path:" << _pathToDatabase;
         }
-        else if (query.left(6) != "DELETE" && query.left(6) != "CREATE") {
-            qDebug() << "Empty query result";
-            qDebug() << query;
+        if (!db.isOpen() ) {
+            qDebug() << "Database is not open. Path:" << _pathToDatabase;
+        }
+        if (_query.exec(query)) {
+            if (_query.next()) {
+                result = _query.value(0);
+            }
+            else if (query.left(6) != "DELETE" && query.left(6) != "CREATE") {
+                qDebug() << "Empty query result";
+                qDebug() << query;
+            }
+        }
+        else {
+            qDebug() << "Invalid query:" << query;
         }
     }
-    else {
-        qDebug() << "Invalid query:" << query;
-    }
-    delete _query;
-    return QVariant();
+    QSqlDatabase::removeDatabase(connectionName);
+    return result;
 }
 
 std::vector<QVariant> DatabaseHandler::getResultsFromDatabase(QString query, int limit) {
     std::vector<QVariant> result = std::vector<QVariant>();
-    QSqlQuery *_query = new QSqlQuery(db);
+    QString connectionName = _pathToDatabase + "_" + QString::number(instance_id);
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName(_pathToDatabase);
+        QSqlQuery _query(db);
 
-    if (!db.open()) {
-        qDebug() << "Database open error. Path:" << _pathToDatabase;
-    }
-    if (!db.isOpen() ) {
-        qDebug() << "Database is not open. Path:" << _pathToDatabase;
-    }
-    if (_query->exec(query)) {
-        while (_query->next() && (limit == 0 || int(result.size()) < limit)) {
-            result.push_back(_query->value(0));
+        if (!db.open()) {
+            qDebug() << "Database open error. Path:" << _pathToDatabase;
+        }
+        if (!db.isOpen() ) {
+            qDebug() << "Database is not open. Path:" << _pathToDatabase;
+        }
+        if (_query.exec(query)) {
+            while (_query.next() && (limit == 0 || int(result.size()) < limit)) {
+                result.push_back(_query.value(0));
+            }
+        }
+        else {
+            qDebug() << "Invalid query:" << query;
         }
     }
-    else {
-        qDebug() << "Invalid query:" << query;
-    }
-    delete _query;
+    QSqlDatabase::removeDatabase(connectionName);
     return result;
 }
 
 int DatabaseHandler::getNumberOfResultsFromDatabase(QString query) {
-    QSqlQuery *_query = new QSqlQuery(db);
     int result = 0;
+    QString connectionName = _pathToDatabase + "_" + QString::number(instance_id);
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName(_pathToDatabase);
+        QSqlQuery _query(db);
 
-    if (!db.open()) {
-        qDebug() << "Database open error. Path:" << _pathToDatabase;
+        if (!db.open()) {
+            qDebug() << "Database open error. Path:" << _pathToDatabase;
+        }
+        if (!db.isOpen() ) {
+            qDebug() << "Database is not open. Path:" << _pathToDatabase;
+        }
+        if (_query.exec(query)) {
+            while (_query.next()) result++;
+        }
+        else {
+            qDebug() << "Invalid query:" << query;
+        }
     }
-    if (!db.isOpen() ) {
-        qDebug() << "Database is not open. Path:" << _pathToDatabase;
-    }
-    if (_query->exec(query)) {
-        while (_query->next()) result++;
-    }
-    else {
-        qDebug() << "Invalid query:" << query;
-    }
-    delete _query;
+    QSqlDatabase::removeDatabase(connectionName);
     return result;
 }
 

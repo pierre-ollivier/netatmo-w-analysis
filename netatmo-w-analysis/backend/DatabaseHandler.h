@@ -18,7 +18,6 @@ class DatabaseHandler : public QObject
 public:
     DatabaseHandler(QString pathToDatabase);
     DatabaseHandler(QObject *parent, QString pathToDatabase);
-    ~DatabaseHandler();
 
     void prepareQuery(QSqlQuery *query, QString tableName, QStringList params);
 
@@ -51,7 +50,6 @@ public:
 private:
     static int id;
     int instance_id = -1;
-    QSqlDatabase db;
     QString _pathToDatabase;
 };
 
