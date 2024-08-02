@@ -44,13 +44,13 @@ YearlyReport::YearlyReport()
     optionsLayout->addWidget(humidexRadioButton);
     optionsLayout->addWidget(pressureRadioButton);
     optionsLayout->addWidget(interiorCheckBox);
-    optionsLayout->setContentsMargins(0, 380, 0, 380);
+    optionsLayout->setContentsMargins(0, 290, 0, 290);
 
     mainLayout->addWidget(mainView);
     mainLayout->addLayout(optionsLayout);
 
     setLayout(mainLayout);
-    setFixedSize(1480, 1000);
+    setFixedSize(1480, 750);
 
     fillBoard();
 }

@@ -14,7 +14,7 @@ MonthlyReport::MonthlyReport() : QWidget()
     connect(yearMonthPicker, SIGNAL(monthChanged(int)), SLOT(setMonth(int)));
     connect(yearMonthPicker, SIGNAL(yearChanged(int)), SLOT(setYear(int)));
 
-    this->setGeometry(300, 40, 1020, 950);
+    this->setGeometry(300, 40, 1020, 750);
     this->setFixedWidth(720);
     layout = new QGridLayout();
 

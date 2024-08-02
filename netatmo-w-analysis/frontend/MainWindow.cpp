@@ -33,7 +33,11 @@ MainWindow::MainWindow() : QMainWindow()
     recentDataHandler = new RecentDataHandler(this, apiMonitor);
     dbHandlerProd = new DatabaseHandler(this, PATH_TO_PROD_DATABASE);
     dbHandlerCopy = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
+
+    dailyCalculator = new DailyStatisticsCalculator(this, PATH_TO_PROD_DATABASE, dbHandlerProd);
+
     oldDataUploader = new OldDataUploader(this, apiHandler);
+    newDataUploader = new NewDataUploader(this, dbHandlerProd, dailyCalculator);
     connect(this, SIGNAL(recentDataShouldBeUpdated()), SLOT(postRecentDataRequests()));
     buildWindow();
 

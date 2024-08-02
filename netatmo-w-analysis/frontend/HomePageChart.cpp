@@ -32,7 +32,7 @@ HomePageChart::HomePageChart(QString tableName, bool indoor) : QChartView()
     chart->setLocalizeNumbers(true);
 
     setChart(chart);
-    setFixedSize(500, 300);
+    setFixedSize(500, 280);
 
     setBackgroundBrush(QBrush(mainBackgroundColor));
 }

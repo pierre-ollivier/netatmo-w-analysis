@@ -11,6 +11,7 @@
 
 #include "../netatmo-w-analysis/backend/APIMonitor.h"
 #include "../netatmo-w-analysis/backend/DatabaseHandler.h"
+#include "../netatmo-w-analysis/backend/DailyStatisticsCalculator.h"
 #include "../netatmo-w-analysis/backend/MetricsAnalyzer.h"
 #include "../netatmo-w-analysis/backend/NetatmoAPIHandler.h"
 #include "../netatmo-w-analysis/backend/NewDataUploader.h"
@@ -136,6 +137,9 @@ private:
     // data uploaders
     OldDataUploader *oldDataUploader;
     NewDataUploader *newDataUploader;
+
+    // calculator
+    DailyStatisticsCalculator *dailyCalculator;
 
     // actions
     QAction *requestCountsAction;
