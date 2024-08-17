@@ -12,6 +12,8 @@
 *.rej
 *.so
 *.so.*
+*.txt
+*.xlsx
 *_pch.h.cpp
 *_resource.rc
 *.qm
@@ -71,10 +73,22 @@ Thumbs.db
 *.dll
 *.exe
 
+# Databases
+*.db
+*.sqbpro
+
+# Filtering
+git-filter-repo
+filter.sh
+
 # Credentials
 credentials.cpp
 tests/credentials_test.cpp
 
 # Playground
 playground.cpp
+
+# Build
+*/build
+build-tests-Desktop_Qt_5_14_2_MinGW_64_bit-Debug
 

@@ -50,7 +50,6 @@ private:
 
     QDate *_date;
     DatabaseHandler *dbHandlerCopy;
-    QLocale *deviceLocale;
 
     QString measurementType = "temperature";
     QString abbreviatedMeasurement = "T.";

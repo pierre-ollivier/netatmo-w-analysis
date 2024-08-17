@@ -11,12 +11,18 @@
 
 #include "../netatmo-w-analysis/backend/APIMonitor.h"
 #include "../netatmo-w-analysis/backend/DatabaseHandler.h"
+#include "../netatmo-w-analysis/backend/DailyStatisticsCalculator.h"
 #include "../netatmo-w-analysis/backend/MetricsAnalyzer.h"
 #include "../netatmo-w-analysis/backend/NetatmoAPIHandler.h"
+#include "../netatmo-w-analysis/backend/NewDataUploader.h"
 #include "../netatmo-w-analysis/backend/OldDataUploader.h"
 #include "../netatmo-w-analysis/backend/RecentDataHandler.h"
-#include "../netatmo-w-analysis/frontend/HomePageChart.h"
+#include "../netatmo-w-analysis/backend/WeatherAPIHandler.h"
 #include "../netatmo-w-analysis/frontend/EphemerisPanel.h"
+#include "../netatmo-w-analysis/frontend/HomePageChart.h"
+#include "../netatmo-w-analysis/frontend/PredictionWidget/PredictionWidget.h"
+#include "../netatmo-w-analysis/frontend/WeatherPredictionContainer.h"
+#include "../netatmo-w-analysis/types/WeatherPrediction.h"
 
 
 class MainWindow : public QMainWindow
@@ -32,11 +38,13 @@ public:
     void buildCharts();
     void buildEphemerisPanel();
     void buildLayouts();
+    void buildWeatherObjects();
     void createMenus();
     void createActions();
 
     QString measurementType();
     int durationInHours();
+    void setBackgroundColor(const QColor &color);
 
 public slots:
     void setAccessToken(QString);
@@ -58,6 +66,8 @@ public slots:
     void updateActualisationDate(QDateTime timestamp);
     void updateRequestCounts();
 
+    void updatePredictionWidgets(WeatherPrediction prediction);
+
     void addMonthData();
     void addMultipleMonthsData();
 
@@ -74,10 +84,16 @@ public slots:
     void changeChartsOptions();
 
     void showNormals();
+    void showCredits();
+    void showPredictionWindow();
+
     void postRecentDataRequests();
 
 signals:
     void recentDataShouldBeUpdated();
+
+protected:
+    void paintEvent(QPaintEvent *event) override;
 
 private:
     // labels
@@ -92,18 +108,25 @@ private:
     // buttons
     QPushButton *actualisationButton;
 
-    //layouts
+    // layouts
     QGridLayout *mainLayout;
+    QHBoxLayout *predictionLayout;
 
-    //API handlers
+    // API handlers
     NetatmoAPIHandler *apiHandler;
     RecentDataHandler *recentDataHandler;
+    WeatherAPIHandler *weatherHandler;
 
-    //database handlers
+    // database handlers
     DatabaseHandler *dbHandlerProd;
     DatabaseHandler *dbHandlerCopy;
 
-    //other (provisional)
+    // weather objects
+    PredictionWidget *predictionWidgets[4];
+    WeatherPrediction weatherPrediction;
+    WeatherPredictionContainer *weatherContainer;
+
+    // other (provisional)
     QString accessToken = "";
     QLocale *deviceLocale;
     APIMonitor *apiMonitor;
@@ -111,10 +134,14 @@ private:
     HomePageChart *outdoorChart;
     MetricsAnalyzer *analyzer;
 
-    //data uploader
+    // data uploaders
     OldDataUploader *oldDataUploader;
+    NewDataUploader *newDataUploader;
 
-    //actions
+    // calculator
+    DailyStatisticsCalculator *dailyCalculator;
+
+    // actions
     QAction *requestCountsAction;
     QAction *addMonthDataAction;
     QAction *addMultipleMonthsDataAction;
@@ -124,8 +151,9 @@ private:
     QAction *displayMonthlyReportAction;
     QAction *displayYearlyReportAction;
     QAction *normalsAction;
+    QAction *creditsAction;
 
-    //chart options
+    // chart options
     QRadioButton *h4Option;
     QRadioButton *h24Option;
     QRadioButton *h192Option;
@@ -146,7 +174,7 @@ private:
     int _durationInHours = 4;
     bool dataFromCurrentMonthsWasAdded = false;
     bool dataFromLastDaysWasAdded = false;
-
+    QColor backgroundColor = QColor(Qt::white);
 
 };
 

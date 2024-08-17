@@ -17,12 +17,16 @@
 #include "../types/ExtDailyRecord.h"
 #include "../types/IntDailyRecord.h"
 
+extern const QString APP_PATH;
+extern const QString PATH_TO_REFRESH_TOKEN_FILE;
+
 class NetatmoAPIHandler: public QObject
 {
     Q_OBJECT
 
 public:
     NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequests = -1);
+    NetatmoAPIHandler(QObject *parent, APIMonitor *monitor, int timeBetweenRequests = -1);
     NetatmoAPIHandler(NetatmoAPIHandler &other);
 
 public slots:
@@ -111,7 +115,7 @@ private:
     void writeRefreshToken(QString pathToFile, QString refreshToken);
     void checkIfThereIsARefreshToken();
 
-    const QString pathToRefreshTokenFile = "../netatmo-w-analysis/netatmo-w-analysis/refresh_token.txt";
+    const QString pathToRefreshTokenFile = PATH_TO_REFRESH_TOKEN_FILE;
 
     QNetworkAccessManager *tokensManager;
     QNetworkAccessManager *currentConditionsManager;

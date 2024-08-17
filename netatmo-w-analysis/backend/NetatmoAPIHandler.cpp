@@ -8,27 +8,56 @@
 
 NetatmoAPIHandler::NetatmoAPIHandler(APIMonitor *monitor, int timeBetweenRequests)
 {
-    tokensManager = new QNetworkAccessManager();
-    currentConditionsManager = new QNetworkAccessManager();
-    dailyFullOutdoorRequestManager = new QNetworkAccessManager();
-    dailyFullIndoorRequestManager = new QNetworkAccessManager();
-    outdoor3hRequestManager = new QNetworkAccessManager();
-    outdoorTimestampRecordsRequestManager = new QNetworkAccessManager();
-    indoorTimestampRecordsRequestManager = new QNetworkAccessManager();
+    tokensManager = new QNetworkAccessManager(this);
+    currentConditionsManager = new QNetworkAccessManager(this);
+    dailyFullOutdoorRequestManager = new QNetworkAccessManager(this);
+    dailyFullIndoorRequestManager = new QNetworkAccessManager(this);
+    outdoor3hRequestManager = new QNetworkAccessManager(this);
+    outdoorTimestampRecordsRequestManager = new QNetworkAccessManager(this);
+    indoorTimestampRecordsRequestManager = new QNetworkAccessManager(this);
 
     apiMonitor = monitor;
 
-    connect(tokensManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveTokens(QNetworkReply *)));
-    connect(currentConditionsManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveCurrentConditions(QNetworkReply *)));
-    connect(dailyFullOutdoorRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveFullDailyOutdoorConditions(QNetworkReply *)));
-    connect(dailyFullIndoorRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieveFullDailyIndoorConditions(QNetworkReply *)));
-    connect(outdoor3hRequestManager, SIGNAL(finished(QNetworkReply *)), SLOT(retrieve3hOutdoorChartRequest(QNetworkReply *)));
-    connect(outdoorTimestampRecordsRequestManager, SIGNAL(finished(QNetworkReply *)),
-            SLOT(retrieveOutdoorTimestampRecordsRequest(QNetworkReply *)));
-    connect(indoorTimestampRecordsRequestManager, SIGNAL(finished(QNetworkReply *)),
-            SLOT(retrieveIndoorTimestampRecordsRequest(QNetworkReply *)));
+    connect(tokensManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveTokens(QNetworkReply*)));
+    connect(currentConditionsManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveCurrentConditions(QNetworkReply*)));
+    connect(dailyFullOutdoorRequestManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveFullDailyOutdoorConditions(QNetworkReply*)));
+    connect(dailyFullIndoorRequestManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveFullDailyIndoorConditions(QNetworkReply*)));
+    connect(outdoor3hRequestManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieve3hOutdoorChartRequest(QNetworkReply*)));
+    connect(outdoorTimestampRecordsRequestManager, SIGNAL(finished(QNetworkReply*)),
+            SLOT(retrieveOutdoorTimestampRecordsRequest(QNetworkReply*)));
+    connect(indoorTimestampRecordsRequestManager, SIGNAL(finished(QNetworkReply*)),
+            SLOT(retrieveIndoorTimestampRecordsRequest(QNetworkReply*)));
 
-    currentConditionsTimer = new QTimer();
+    currentConditionsTimer = new QTimer(this);
+    connect(currentConditionsTimer, SIGNAL(timeout()), this, SLOT(postCurrentConditionsRequest()));
+    _timeBetweenRequests = timeBetweenRequests;
+
+    checkIfThereIsARefreshToken();
+}
+
+NetatmoAPIHandler::NetatmoAPIHandler(QObject *parent, APIMonitor *monitor, int timeBetweenRequests) : QObject(parent)
+{
+    tokensManager = new QNetworkAccessManager(this);
+    currentConditionsManager = new QNetworkAccessManager(this);
+    dailyFullOutdoorRequestManager = new QNetworkAccessManager(this);
+    dailyFullIndoorRequestManager = new QNetworkAccessManager(this);
+    outdoor3hRequestManager = new QNetworkAccessManager(this);
+    outdoorTimestampRecordsRequestManager = new QNetworkAccessManager(this);
+    indoorTimestampRecordsRequestManager = new QNetworkAccessManager(this);
+
+    apiMonitor = monitor;
+
+    connect(tokensManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveTokens(QNetworkReply*)));
+    connect(currentConditionsManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveCurrentConditions(QNetworkReply*)));
+    connect(dailyFullOutdoorRequestManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveFullDailyOutdoorConditions(QNetworkReply*)));
+    connect(dailyFullIndoorRequestManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieveFullDailyIndoorConditions(QNetworkReply*)));
+    connect(outdoor3hRequestManager, SIGNAL(finished(QNetworkReply*)), SLOT(retrieve3hOutdoorChartRequest(QNetworkReply*)));
+    connect(outdoorTimestampRecordsRequestManager, SIGNAL(finished(QNetworkReply*)),
+            SLOT(retrieveOutdoorTimestampRecordsRequest(QNetworkReply*)));
+    connect(indoorTimestampRecordsRequestManager, SIGNAL(finished(QNetworkReply*)),
+            SLOT(retrieveIndoorTimestampRecordsRequest(QNetworkReply*)));
+
+    currentConditionsTimer = new QTimer(this);
     connect(currentConditionsTimer, SIGNAL(timeout()), this, SLOT(postCurrentConditionsRequest()));
     _timeBetweenRequests = timeBetweenRequests;
 
@@ -277,6 +306,10 @@ void NetatmoAPIHandler::retrieveCurrentConditions(QNetworkReply *reply) {
     QByteArray bytes = reply->readAll();
     if (bytes.contains("error")) {
         qDebug() << "ERROR with current conditions" << bytes;
+        if (bytes.contains("Access token expired")) {
+            postTokensRequest();
+            qDebug() << "Refreshing the token...";
+        }
     }
     else if (bytes.size() >= 1) {
         QJsonDocument js = QJsonDocument::fromJson(bytes);

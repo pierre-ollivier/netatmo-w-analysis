@@ -1,6 +1,7 @@
 #include "MetricsAnalyzer.h"
 #include <algorithm>
 
+extern const QLocale LOCALE;
 extern const QString PATH_TO_COPY_DATABASE;
 
 QString unitWithLeadingSpaceFromIndex(int index) {
@@ -18,8 +19,17 @@ int decimalsFromIndex(int index) {
 MetricsAnalyzer::MetricsAnalyzer(QDate date)
 {
     _date = date;
-    computer = new NormalComputer(new DatabaseHandler(PATH_TO_COPY_DATABASE));
-    locale = new QLocale();
+    dbHandler = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
+    computer = new NormalComputer(this, dbHandler);
+    locale = new QLocale(LOCALE);
+}
+
+MetricsAnalyzer::MetricsAnalyzer(QObject *parent, QDate date) : QObject(parent)
+{
+    _date = date;
+    dbHandler = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
+    computer = new NormalComputer(this, dbHandler);
+    locale = new QLocale(LOCALE);
 }
 
 double MetricsAnalyzer::stdevFromMeasurement(QString measurementType, double measurementValue, bool currentDateIsUsed) {
@@ -220,52 +230,47 @@ int MetricsAnalyzer::indexOfMaxElement(double *array) {
 }
 
 double MetricsAnalyzer::mensualLow(QString measurement, int month) {
-    DatabaseHandler dbHandler = DatabaseHandler(PATH_TO_COPY_DATABASE);
     bool indoor = measurement.contains("pressure", Qt::CaseInsensitive);
     QString database = indoor ? "IndoorDailyRecords" : "OutdoorDailyRecords";
-    return dbHandler.getResultFromDatabase(
+    return dbHandler->getResultFromDatabase(
                 "SELECT min(" + measurement + ") FROM " + database + " WHERE month = " + QString::number(month)
                 ).toDouble();
 }
 
 double MetricsAnalyzer::mensualHigh(QString measurement, int month) {
-    DatabaseHandler dbHandler = DatabaseHandler(PATH_TO_COPY_DATABASE);
     bool indoor = measurement.contains("pressure", Qt::CaseInsensitive);
     QString database = indoor ? "IndoorDailyRecords" : "OutdoorDailyRecords";
-    return dbHandler.getResultFromDatabase(
+    return dbHandler->getResultFromDatabase(
                 "SELECT max(" + measurement + ") FROM " + database + " WHERE month = " + QString::number(month)
                 ).toDouble();
 }
 
 double MetricsAnalyzer::annualLow(QString measurement) {
-    DatabaseHandler dbHandler = DatabaseHandler(PATH_TO_COPY_DATABASE);
     bool indoor = measurement.contains("pressure", Qt::CaseInsensitive);
     QString database = indoor ? "IndoorDailyRecords" : "OutdoorDailyRecords";
-    return dbHandler.getResultFromDatabase(
+    return dbHandler->getResultFromDatabase(
                 "SELECT min(" + measurement + ") FROM " + database
                 ).toDouble();
 }
 
 double MetricsAnalyzer::annualHigh(QString measurement) {
-    DatabaseHandler dbHandler = DatabaseHandler(PATH_TO_COPY_DATABASE);
     bool indoor = measurement.contains("pressure", Qt::CaseInsensitive);
     QString database = indoor ? "IndoorDailyRecords" : "OutdoorDailyRecords";
-    return dbHandler.getResultFromDatabase(
+    return dbHandler->getResultFromDatabase(
                 "SELECT max(" + measurement + ") FROM " + database
                 ).toDouble();
 }
 
 QPair<double, long long> MetricsAnalyzer::currentMaxTemperatureInfo() {
-    DatabaseHandler dbHandler = DatabaseHandler(PATH_TO_COPY_DATABASE);
     QDateTime nowUTC = QDateTime::currentDateTimeUtc();
     if (nowUTC.time().hour() >= 6) {
         nowUTC.setTime(QTime(6, 0));
         long long minTimestamp = nowUTC.toSecsSinceEpoch();
-        double maxTemperature = dbHandler.getResultFromDatabase(
+        double maxTemperature = dbHandler->getResultFromDatabase(
                     "SELECT max(temperature) FROM LastOutdoorTimestampRecords "
                     "WHERE timestamp >= " + QString::number(minTimestamp)
                     + " ORDER BY timestamp").toDouble();
-        long long maxTemperatureTimestamp = dbHandler.getResultFromDatabase(
+        long long maxTemperatureTimestamp = dbHandler->getResultFromDatabase(
                     "SELECT min(timestamp) FROM LastOutdoorTimestampRecords "
                     "WHERE timestamp >= " + QString::number(minTimestamp)
                     + " AND temperature = " + QString::number(maxTemperature)).toLongLong();
@@ -276,12 +281,12 @@ QPair<double, long long> MetricsAnalyzer::currentMaxTemperatureInfo() {
         long long maxTimestamp = nowUTC.toSecsSinceEpoch();
         nowUTC = nowUTC.addDays(-1);
         long long minTimestamp = nowUTC.toSecsSinceEpoch();
-        double maxTemperature = dbHandler.getResultFromDatabase(
+        double maxTemperature = dbHandler->getResultFromDatabase(
                     "SELECT max(temperature) FROM LastOutdoorTimestampRecords "
                     "WHERE timestamp BETWEEN " + QString::number(minTimestamp)
                     + " AND " + QString::number(maxTimestamp)
                     + " ORDER BY timestamp").toDouble();
-        long long maxTemperatureTimestamp = dbHandler.getResultFromDatabase(
+        long long maxTemperatureTimestamp = dbHandler->getResultFromDatabase(
                     "SELECT min(timestamp) FROM LastOutdoorTimestampRecords "
                     "WHERE timestamp BETWEEN " + QString::number(minTimestamp)
                     + " AND " + QString::number(maxTimestamp)
@@ -291,18 +296,17 @@ QPair<double, long long> MetricsAnalyzer::currentMaxTemperatureInfo() {
 }
 
 QPair<double, long long> MetricsAnalyzer::currentMinTemperatureInfo() {
-    DatabaseHandler dbHandler = DatabaseHandler(PATH_TO_COPY_DATABASE);
     QDateTime nowUTC = QDateTime::currentDateTimeUtc();
     nowUTC.setTime(QTime(18, 0));
     long long maxTimestamp = nowUTC.toSecsSinceEpoch();
     nowUTC = nowUTC.addDays(-1);
     long long minTimestamp = nowUTC.toSecsSinceEpoch();
-    double minTemperature = dbHandler.getResultFromDatabase(
+    double minTemperature = dbHandler->getResultFromDatabase(
                 "SELECT min(temperature) FROM LastOutdoorTimestampRecords "
                 "WHERE timestamp BETWEEN " + QString::number(minTimestamp)
                 + " AND " + QString::number(maxTimestamp)
                 + " ORDER BY timestamp").toDouble();
-    long long minTemperatureTimestamp = dbHandler.getResultFromDatabase(
+    long long minTemperatureTimestamp = dbHandler->getResultFromDatabase(
                 "SELECT min(timestamp) FROM LastOutdoorTimestampRecords "
                 "WHERE timestamp BETWEEN " + QString::number(minTimestamp)
                 + " AND " + QString::number(maxTimestamp)

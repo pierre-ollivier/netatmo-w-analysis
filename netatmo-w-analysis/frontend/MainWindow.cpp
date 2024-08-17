@@ -3,33 +3,47 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QFileDialog>
+
+#include "../netatmo-w-analysis/backend/NormalComputer.h"
 #include "../netatmo-w-analysis/frontend/DataExplorator.h"
 #include "../netatmo-w-analysis/frontend/MonthlyReport.h"
-#include "../netatmo-w-analysis/frontend/YearlyReport.h"
 #include "../netatmo-w-analysis/frontend/NormalsVisualizer.h"
-#include "../netatmo-w-analysis/backend/APIMonitor.h"
-#include "../netatmo-w-analysis/backend/NormalComputer.h"
+#include "../netatmo-w-analysis/frontend/PredictionWindow.h"
+#include "../netatmo-w-analysis/frontend/YearlyReport.h"
 #include "../types/ExtTimestampRecord.h"
 
+extern const QLocale LOCALE;
 extern QString PATH_TO_PROD_DATABASE;
 extern QString PATH_TO_COPY_DATABASE;
+extern QString PATH_TO_IMAGES_FOLDER;
+extern QColor mainBackgroundColor;
 
-MainWindow::MainWindow()
+MainWindow::MainWindow() : QMainWindow()
 {
-    mainWidget = new QWidget();
+    mainWidget = new QWidget(this);
     setCentralWidget(mainWidget);
-    menuBar = new QMenuBar();
+    menuBar = new QMenuBar(this);
     setMenuBar(menuBar);
-    deviceLocale = new QLocale();
-    apiMonitor = new APIMonitor();
-    analyzer = new MetricsAnalyzer();
-    apiHandler = new NetatmoAPIHandler(apiMonitor, 20000);
-    recentDataHandler = new RecentDataHandler(apiMonitor);
-    dbHandlerProd = new DatabaseHandler(PATH_TO_PROD_DATABASE);
-    dbHandlerCopy = new DatabaseHandler(PATH_TO_COPY_DATABASE);
-    oldDataUploader = new OldDataUploader(apiHandler);
+    setBackgroundColor(mainBackgroundColor);
+    deviceLocale = new QLocale(LOCALE);
+
+    apiMonitor = new APIMonitor(this);
+    analyzer = new MetricsAnalyzer(this);
+    apiHandler = new NetatmoAPIHandler(this, apiMonitor, 20000);
+    recentDataHandler = new RecentDataHandler(this, apiMonitor);
+    dbHandlerProd = new DatabaseHandler(this, PATH_TO_PROD_DATABASE);
+    dbHandlerCopy = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
+
+    dailyCalculator = new DailyStatisticsCalculator(this, PATH_TO_PROD_DATABASE, dbHandlerProd);
+
+    oldDataUploader = new OldDataUploader(this, apiHandler);
+    newDataUploader = new NewDataUploader(this, dbHandlerProd, dailyCalculator);
     connect(this, SIGNAL(recentDataShouldBeUpdated()), SLOT(postRecentDataRequests()));
     buildWindow();
+
+    weatherHandler = new WeatherAPIHandler(this);
+    weatherHandler->postWeatherRequest();
+    connect(weatherHandler, SIGNAL(predictionDataRetrieved(WeatherPrediction)), SLOT(updatePredictionWidgets(WeatherPrediction)));
 }
 
 void MainWindow::buildWindow() {
@@ -38,6 +52,7 @@ void MainWindow::buildWindow() {
     buildLabels();
     buildButtons();
     buildEphemerisPanel();
+    buildWeatherObjects();
     buildLayouts();
     createActions();
     createMenus();
@@ -48,16 +63,16 @@ void MainWindow::buildAPIHandlers() {
     connect(apiHandler, SIGNAL(accessTokenChanged(QString)),
             apiHandler, SLOT(postCurrentConditionsRequest(QString)));
     connect(apiHandler, SIGNAL(accessTokenChanged(QString)), SLOT(setAccessToken(QString)));
-    connect(apiHandler, SIGNAL(extTemperatureChanged(double)), this, SLOT(updateCurrentExtTemperature(double)));
-    connect(apiHandler, SIGNAL(intTemperatureChanged(double)), this, SLOT(updateCurrentIntTemperature(double)));
-    connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), this, SLOT(updateLastMeasurementDate(int)));
-    connect(apiHandler, SIGNAL(currentTimeChanged(QDateTime)), this, SLOT(updateActualisationDate(QDateTime)));
-    connect(apiHandler, SIGNAL(intMinTemperatureChanged(double)), this, SLOT(updateMinIntTemperature(double)));
-    connect(apiHandler, SIGNAL(intMaxTemperatureChanged(double)), this, SLOT(updateMaxIntTemperature(double)));
+    connect(apiHandler, SIGNAL(extTemperatureChanged(double)), SLOT(updateCurrentExtTemperature(double)));
+    connect(apiHandler, SIGNAL(intTemperatureChanged(double)), SLOT(updateCurrentIntTemperature(double)));
+    connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), SLOT(updateLastMeasurementDate(int)));
+    connect(apiHandler, SIGNAL(currentTimeChanged(QDateTime)), SLOT(updateActualisationDate(QDateTime)));
+    connect(apiHandler, SIGNAL(intMinTemperatureChanged(double)), SLOT(updateMinIntTemperature(double)));
+    connect(apiHandler, SIGNAL(intMaxTemperatureChanged(double)), SLOT(updateMaxIntTemperature(double)));
     connect(apiHandler, SIGNAL(intMinTemperatureTimeChanged(int)),
-            this, SLOT(updateMinIntTemperatureTime(int)));
+            SLOT(updateMinIntTemperatureTime(int)));
     connect(apiHandler, SIGNAL(intMaxTemperatureTimeChanged(int)),
-            this, SLOT(updateMaxIntTemperatureTime(int)));
+            SLOT(updateMaxIntTemperatureTime(int)));
 
     connect(apiHandler, SIGNAL(extUTCTimeChanged(int)), SIGNAL(recentDataShouldBeUpdated()));
     connect(apiHandler, SIGNAL(intUTCTimeChanged(int)), SIGNAL(recentDataShouldBeUpdated()));
@@ -97,7 +112,7 @@ void MainWindow::buildButtons() {
     actualisationButton = new QPushButton("Actualiser");
     actualisationButton->setFont(QFont("Verdana", 14));
     actualisationButton->setIcon(QIcon(
-        "D:/Mes programmes/netatmo-w-analysis/images/Image actualisation.png"
+        PATH_TO_IMAGES_FOLDER + "Image actualisation.png"
         ));
     connect(actualisationButton, SIGNAL(pressed()),
             apiHandler, SLOT(postCurrentConditionsRequest()));
@@ -111,19 +126,19 @@ void MainWindow::buildCharts() {
     h24Option = new QRadioButton("24 heures");
     h192Option = new QRadioButton("8 jours");
     h4Option->setChecked(true);
-    QObject::connect(h4Option, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
-    QObject::connect(h24Option, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
-    QObject::connect(h192Option, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
+    QObject::connect(h4Option, SIGNAL(clicked(bool)), SLOT(changeChartsOptions()));
+    QObject::connect(h24Option, SIGNAL(clicked(bool)), SLOT(changeChartsOptions()));
+    QObject::connect(h192Option, SIGNAL(clicked(bool)), SLOT(changeChartsOptions()));
 
     temperatureOption = new QRadioButton("Température");
     humidityOption = new QRadioButton("Humidité");
     dewPointOption = new QRadioButton("Point de rosée");
     humidexOption = new QRadioButton("Humidex");
     temperatureOption->setChecked(true);
-    QObject::connect(temperatureOption, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
-    QObject::connect(humidityOption, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
-    QObject::connect(dewPointOption, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
-    QObject::connect(humidexOption, SIGNAL(clicked(bool)), this, SLOT(changeChartsOptions()));
+    QObject::connect(temperatureOption, SIGNAL(clicked(bool)), SLOT(changeChartsOptions()));
+    QObject::connect(humidityOption, SIGNAL(clicked(bool)), SLOT(changeChartsOptions()));
+    QObject::connect(dewPointOption, SIGNAL(clicked(bool)), SLOT(changeChartsOptions()));
+    QObject::connect(humidexOption, SIGNAL(clicked(bool)), SLOT(changeChartsOptions()));
 }
 
 void MainWindow::buildEphemerisPanel() {
@@ -149,6 +164,13 @@ void MainWindow::buildLayouts() {
     chartsMeasurementOptionsGroupBox = new QGroupBox("");
     chartsMeasurementOptionsGroupBox->setLayout(chartsMeasurementOptionsLayout);
 
+    predictionLayout = new QHBoxLayout();
+    for (int i = 0; i < 4; i++) {
+        predictionLayout->addWidget(predictionWidgets[i]);
+    }
+
+    weatherContainer->setLayout(predictionLayout);
+
     mainLayout = new QGridLayout();
     mainLayout->addWidget(currentExtTempLabel, 1, 0, 2, 1);
     mainLayout->addWidget(statusLabel, 0, 0);
@@ -162,10 +184,20 @@ void MainWindow::buildLayouts() {
     mainLayout->addWidget(indoorChart, 3, 1, 2, 2);
     mainLayout->addWidget(chartsDurationOptionsGroupBox, 5, 1, 1, 2);
     mainLayout->addWidget(chartsMeasurementOptionsGroupBox, 6, 1, 1, 2);
-    mainLayout->addWidget(ephemerisPanel, 1, 4, 5, 1);
+    mainLayout->addWidget(ephemerisPanel, 0, 4, 5, 1);
+    mainLayout->addWidget(weatherContainer, 5, 4, 2, 1);
 
     // set window's layout
     mainWidget->setLayout(mainLayout);
+}
+
+void MainWindow::buildWeatherObjects() {
+    weatherPrediction = WeatherPrediction();
+    weatherContainer = new WeatherPredictionContainer();
+    for (int i = 0; i < 4; i++) {
+        predictionWidgets[i] = new PredictionWidget();
+    }
+    connect(weatherContainer, SIGNAL(clicked()), SLOT(showPredictionWindow()));
 }
 
 void MainWindow::createActions() {
@@ -188,8 +220,12 @@ void MainWindow::createActions() {
     connect(displayMonthlyReportAction, SIGNAL(triggered()), SLOT(displayMonthlyReport()));
     displayYearlyReportAction = new QAction("Climatologie générale");
     connect(displayYearlyReportAction, SIGNAL(triggered()), SLOT(displayYearlyReport()));
+
     normalsAction = new QAction("Normales");
     connect(normalsAction, SIGNAL(triggered()), SLOT(showNormals()));
+
+    creditsAction = new QAction("Crédits");
+    connect(creditsAction, SIGNAL(triggered()), SLOT(showCredits()));
 }
 
 void MainWindow::createMenus() {
@@ -206,6 +242,8 @@ void MainWindow::createMenus() {
     climatologyMenu->addAction(displayMonthlyReportAction);
     climatologyMenu->addAction(displayYearlyReportAction);
     climatologyMenu->addAction(normalsAction);
+    QMenu *creditsMenu = menuBar->addMenu(tr("C&rédits"));
+    creditsMenu->addAction(creditsAction);
 }
 
 void MainWindow::setAccessToken(QString newAccessToken) {
@@ -343,6 +381,18 @@ void MainWindow::updateRequestCounts() {
                              + "<b>" + QString::number(remainingRequests1h) + "</b> / 1 heure");
 }
 
+void MainWindow::updatePredictionWidgets(WeatherPrediction prediction) {
+    weatherPrediction = prediction;
+    for (int i = 0; i < 4; i++) {
+        predictionWidgets[i]->setMaximumTemperature(prediction.maxTemperature(i + 1));
+        predictionWidgets[i]->setMinimumTemperature(prediction.minTemperature(i + 1));
+        predictionWidgets[i]->setTitle(LOCALE.toString(QDate::currentDate().addDays(i + 1), "d MMM"));
+        predictionWidgets[i]->setMainPictogram(prediction.dayPictogram(i + 1));
+    }
+    ephemerisPanel->setSunrise(prediction.sunrise());
+    ephemerisPanel->setSunset(prediction.sunset());
+}
+
 void MainWindow::addMonthData() {
     QString fileName = QFileDialog::getOpenFileName(this, "Ouvrir un fichier", "D:/Mes programmes/RegressionTemperature/Données Netatmo", "*.csv");
     QString q = "Confirmer la saisie ? \n\n";
@@ -433,7 +483,7 @@ void MainWindow::updateDailyIndoorDatabase() {
     int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
 
     if (response == QMessageBox::Yes) {
-        dbHandlerProd->updateIndoorDailyRecords(
+        newDataUploader->uploadIndoorDailyRecords(
                     QDate::fromString(beginDate, "dd/MM/yyyy"),
                     QDate::fromString(endDate, "dd/MM/yyyy"));
     }
@@ -459,7 +509,7 @@ void MainWindow::updateDailyOutdoorDatabase() {
     int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
 
     if (response == QMessageBox::Yes) {
-        dbHandlerProd->updateOutdoorDailyRecords(
+        newDataUploader->uploadOutdoorDailyRecords(
                     QDate::fromString(beginDate, "dd/MM/yyyy"),
                     QDate::fromString(endDate, "dd/MM/yyyy"));
     }
@@ -493,9 +543,20 @@ void MainWindow::changeChartsOptions() {
 }
 
 void MainWindow::showNormals() {
-    NormalComputer *computer = new NormalComputer(dbHandlerCopy);
+    NormalComputer *computer = new NormalComputer(this, dbHandlerCopy);
     NormalsVisualizer *visualizer = new NormalsVisualizer(computer);
     visualizer->show();
+}
+
+void MainWindow::showCredits() {
+    QMessageBox::information(this, "Crédits",
+                             "Auteur : Pierre OLLIVIER\n\n"
+                             "API météo et icônes : Openweathermap");
+}
+
+void MainWindow::showPredictionWindow() {
+    PredictionWindow *predictionWindow = new PredictionWindow(&weatherPrediction);
+    predictionWindow->show();
 }
 
 void MainWindow::exploreData() {
@@ -524,4 +585,16 @@ QString MainWindow::measurementType() {
 
 int MainWindow::durationInHours() {
     return _durationInHours;
+}
+
+void MainWindow::setBackgroundColor(const QColor &color) {
+    backgroundColor = color;
+    // Ensure the widget is repainted with the new background color
+    update();
+}
+
+void MainWindow::paintEvent(QPaintEvent *event) {
+    // Paint the widget's background with the specified color
+    QPainter painter(this);
+    painter.fillRect(rect(), backgroundColor);
 }

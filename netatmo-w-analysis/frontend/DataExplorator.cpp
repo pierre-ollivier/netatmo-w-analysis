@@ -7,12 +7,14 @@
 #include "../frontend/ColorUtils.h"
 #include "../frontend/QueryBuilder/QueryBuilder.h"
 
+extern const QLocale LOCALE;
+
 DataExplorator::DataExplorator(DatabaseHandler *dbHandler) : QWidget()
 {
     _dbHandler = dbHandler;
-    analyzer = new QueryAnalyzer();
+    analyzer = new QueryAnalyzer(this);
 
-    deviceLocale = new QLocale();
+    deviceLocale = new QLocale(LOCALE);
 
     monthComboBox = new QComboBox();
     monthComboBox->addItems({"Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
@@ -186,7 +188,7 @@ void DataExplorator::fillBoards(QString query) {
                         dataDESC[i].toDouble(), 'f', decimalCount) + unitWithLeadingSpace);
         mainModelMax->item(i, 1)->setText(datesDESC[i].toString());
         if (i >= 1) {
-            if (dataDESC[i] == dataDESC[i - 1]) {
+            if (abs(dataDESC[i].toDouble() - dataDESC[i - 1].toDouble()) < 1e-6) {
                 mainModelMax->verticalHeaderItem(i)->setText(mainModelMax->verticalHeaderItem(i - 1)->text());
             }
         }
@@ -199,7 +201,7 @@ void DataExplorator::fillBoards(QString query) {
                         dataASC[i].toDouble(), 'f', decimalCount) + unitWithLeadingSpace);
         mainModelMin->item(i, 1)->setText(datesASC[i].toString());
         if (i >= 1) {
-            if (dataASC[i] == dataASC[i - 1]) {
+            if (abs(dataASC[i].toDouble() - dataASC[i - 1].toDouble()) < 1e-6) {
                 mainModelMin->verticalHeaderItem(i)->setText(mainModelMin->verticalHeaderItem(i - 1)->text());
             }
         }

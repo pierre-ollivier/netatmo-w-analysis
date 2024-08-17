@@ -1,19 +1,23 @@
 #ifndef DATABASEHANDLER_H
 #define DATABASEHANDLER_H
 
+#include <QObject>
 #include <QString>
+#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QDate>
-#include "../netatmo-w-analysis/types/IntDailyRecord.h"
+
 #include "../netatmo-w-analysis/types/ExtDailyRecord.h"
+#include "../netatmo-w-analysis/types/IntDailyRecord.h"
 #include "../netatmo-w-analysis/types/ExtTimestampRecord.h"
 #include "../netatmo-w-analysis/types/IntTimestampRecord.h"
 
-class DatabaseHandler
+class DatabaseHandler : public QObject
 {
 public:
     DatabaseHandler(QString pathToDatabase);
+    DatabaseHandler(QObject *parent, QString pathToDatabase);
 
     void prepareQuery(QSqlQuery *query, QString tableName, QStringList params);
 
@@ -37,13 +41,15 @@ public:
     std::vector<QVariant> getResultsFromDatabase(QString query, int limit = 0);
     int getNumberOfResultsFromDatabase(QString query);
 
+    QDateTime getExtremeDateTimeFromDatabase(QString tableName, QString measurement = "", bool asc = true);
+    QDateTime getFirstDateTimeFromDatabase(QString tableName, QString measurement = "");
     QDateTime getLatestDateTimeFromDatabase(QString tableName, QString measurement = "");
+    long long getFirstTimestampFromDatabaseInS(QString tableName, QString measurement = "");
     long long getLatestTimestampFromDatabaseInS(QString tableName, QString measurement = "");
 
-    void updateOutdoorDailyRecords(QDate beginDate, QDate endDate, bool verbose = true);
-    void updateIndoorDailyRecords(QDate beginDate, QDate endDate, bool verbose = true);
-
 private:
+    static int id;
+    int instance_id = -1;
     QString _pathToDatabase;
 };
 

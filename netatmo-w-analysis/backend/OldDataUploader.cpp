@@ -1,6 +1,5 @@
 #include "OldDataUploader.h"
 #include <QDateTime>
-#include "../backend/DatabaseHandler.h"
 
 extern const QString PATH_TO_COPY_DATABASE;
 
@@ -9,6 +8,8 @@ OldDataUploader::OldDataUploader(NetatmoAPIHandler* apiHandler, QString accessTo
     _apiHandler = apiHandler;
     _accessToken = accessToken;
 
+    dbHandler = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
+
     connect(apiHandler, SIGNAL(extTimestampRecordRetrieved(ExtTimestampRecord)),
             SLOT(addExtTimestampRecordToCopyDatabase(ExtTimestampRecord)));
     connect(apiHandler, SIGNAL(intTimestampRecordRetrieved(IntTimestampRecord)),
@@ -16,16 +17,34 @@ OldDataUploader::OldDataUploader(NetatmoAPIHandler* apiHandler, QString accessTo
     connect(apiHandler, SIGNAL(extDailyRecordRetrieved(ExtDailyRecord)), SLOT(logExtDailyRecord(ExtDailyRecord)));
     connect(apiHandler, SIGNAL(intDailyRecordRetrieved(IntDailyRecord)), SLOT(logIntDailyRecord(IntDailyRecord)));
     connect(apiHandler,
-            SIGNAL(ext3hRecordsRetrieved(QMap<QDate, std::tuple<double, double>>)),
-            SLOT(log3hRecords(QMap<QDate, std::tuple<double, double>>)));
+            SIGNAL(ext3hRecordsRetrieved(QMap<QDate,std::tuple<double,double> >)),
+            SLOT(log3hRecords(QMap<QDate,std::tuple<double,double> >)));
+}
+
+OldDataUploader::OldDataUploader(QObject *parent, NetatmoAPIHandler* apiHandler, QString accessToken) : QObject(parent)
+{
+    _apiHandler = apiHandler;
+    _accessToken = accessToken;
+
+    dbHandler = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
+
+    connect(apiHandler, SIGNAL(extTimestampRecordRetrieved(ExtTimestampRecord)),
+            SLOT(addExtTimestampRecordToCopyDatabase(ExtTimestampRecord)));
+    connect(apiHandler, SIGNAL(intTimestampRecordRetrieved(IntTimestampRecord)),
+            SLOT(addIntTimestampRecordToCopyDatabase(IntTimestampRecord)));
+    connect(apiHandler, SIGNAL(extDailyRecordRetrieved(ExtDailyRecord)), SLOT(logExtDailyRecord(ExtDailyRecord)));
+    connect(apiHandler, SIGNAL(intDailyRecordRetrieved(IntDailyRecord)), SLOT(logIntDailyRecord(IntDailyRecord)));
+    connect(apiHandler,
+            SIGNAL(ext3hRecordsRetrieved(QMap<QDate,std::tuple<double,double> >)),
+            SLOT(log3hRecords(QMap<QDate,std::tuple<double,double> >)));
 }
 
 void OldDataUploader::addDataFromCurrentMonths(QDate beginDate, QDate endDate, bool indoor) {
     if (_accessToken == "") qDebug() << "Warning: undefined access token in OldDataUploader";
     _beginDate = beginDate; _endDate = endDate;
 
-    long long beginTimestamp = QDateTime(beginDate).toSecsSinceEpoch();
-    long long endTimestamp = QDateTime(endDate).toSecsSinceEpoch();
+    long long beginTimestamp = QDateTime(beginDate, QTime(0, 0)).toSecsSinceEpoch();
+    long long endTimestamp = QDateTime(endDate, QTime(0, 0)).toSecsSinceEpoch();
     if (indoor) {
         _apiHandler->postFullIndoorDailyRequest(beginTimestamp, endTimestamp, "1day", _accessToken);
     }
@@ -38,7 +57,7 @@ void OldDataUploader::addDataFromCurrentMonths(QDate beginDate, QDate endDate, b
 }
 
 void OldDataUploader::addExtTimestampRecordsFromCurrentMonth() {
-    NetatmoAPIHandler *apiHandler = new NetatmoAPIHandler(_apiHandler->getAPIMonitor());
+    NetatmoAPIHandler *apiHandler = new NetatmoAPIHandler(this, _apiHandler->getAPIMonitor());
     connect(apiHandler,
             SIGNAL(outdoorRecordListRetrieved(QList<ExtTimestampRecord>)),
             SLOT(logOutdoorTimestampRecords(QList<ExtTimestampRecord>)));
@@ -49,7 +68,7 @@ void OldDataUploader::addExtTimestampRecordsFromCurrentMonth() {
 }
 
 void OldDataUploader::addIntTimestampRecordsFromCurrentMonth() {
-    NetatmoAPIHandler *apiHandler = new NetatmoAPIHandler(_apiHandler->getAPIMonitor());
+    NetatmoAPIHandler *apiHandler = new NetatmoAPIHandler(this, _apiHandler->getAPIMonitor());
     connect(apiHandler,
             SIGNAL(indoorRecordListRetrieved(QList<IntTimestampRecord>)),
             SLOT(logIndoorTimestampRecords(QList<IntTimestampRecord>)));
@@ -61,14 +80,12 @@ void OldDataUploader::addIntTimestampRecordsFromCurrentMonth() {
 
 
 void OldDataUploader::addExtTimestampRecordToCopyDatabase(ExtTimestampRecord record) {
-    DatabaseHandler dbHandlerCopy(PATH_TO_COPY_DATABASE);
-    dbHandlerCopy.postOutdoorTimestampRecord(record, "OutdoorTimestampRecords");
+    dbHandler->postOutdoorTimestampRecord(record, "OutdoorTimestampRecords");
 }
 
 
 void OldDataUploader::addIntTimestampRecordToCopyDatabase(IntTimestampRecord record) {
-    DatabaseHandler dbHandlerCopy(PATH_TO_COPY_DATABASE);
-    dbHandlerCopy.postIndoorTimestampRecord(record, "IndoorTimestampRecords");
+    dbHandler->postIndoorTimestampRecord(record, "IndoorTimestampRecords");
 }
 
 void OldDataUploader::setAccessToken(QString accessToken) {
@@ -78,11 +95,10 @@ void OldDataUploader::setAccessToken(QString accessToken) {
 void OldDataUploader::logExtDailyRecord(ExtDailyRecord record) {
     ExtDailyRecord *recordCopy = new ExtDailyRecord(record);
     QString tableName = "OutdoorDailyRecords";
-    DatabaseHandler dbHandler(PATH_TO_COPY_DATABASE);
     QDate date = record.date();
     if (extendedRecordsMap.contains(date)) {
         extendedRecordsMap[date]->setExtDailyRecord(recordCopy);
-        dbHandler.postOutdoorDailyRecord(extendedRecordsMap[date]->wrap(), tableName);
+        dbHandler->postOutdoorDailyRecord(extendedRecordsMap[date]->wrap(), tableName);
     }
     else {
         extendedRecordsMap.insert(date, new ExtendedExtDailyRecord());
@@ -92,18 +108,16 @@ void OldDataUploader::logExtDailyRecord(ExtDailyRecord record) {
 
 void OldDataUploader::logIntDailyRecord(IntDailyRecord record) {
     QString tableName = "IndoorDailyRecords";
-    DatabaseHandler dbHandler(PATH_TO_COPY_DATABASE);
-    dbHandler.postIndoorDailyRecord(record, tableName);
+    dbHandler->postIndoorDailyRecord(record, tableName);
 }
 
 void OldDataUploader::log3hRecords(QMap<QDate, std::tuple<double, double>> records) {
     QString tableName = "OutdoorDailyRecords";
-    DatabaseHandler dbHandler(PATH_TO_COPY_DATABASE);
     for (QDate date : records.keys()) {
         if (extendedRecordsMap.contains(date)) {
             extendedRecordsMap[date]->setMinTemperature(std::get<0>(records[date]));
             extendedRecordsMap[date]->setMaxTemperature(std::get<1>(records[date]));
-            dbHandler.postOutdoorDailyRecord(extendedRecordsMap[date]->wrap(), tableName);
+            dbHandler->postOutdoorDailyRecord(extendedRecordsMap[date]->wrap(), tableName);
         }
         else {
             extendedRecordsMap.insert(date, new ExtendedExtDailyRecord());
@@ -114,17 +128,15 @@ void OldDataUploader::log3hRecords(QMap<QDate, std::tuple<double, double>> recor
 }
 
 void OldDataUploader::logOutdoorTimestampRecords(QList<ExtTimestampRecord> records) {
-    DatabaseHandler dbHandler(PATH_TO_COPY_DATABASE);
     for (ExtTimestampRecord record : records) {
-        dbHandler.postOutdoorTimestampRecord(record, "LastOutdoorTimestampRecords");
+        dbHandler->postOutdoorTimestampRecord(record, "LastOutdoorTimestampRecords");
     }
     emit outdoorTimestampRecordsLogged();
 }
 
 void OldDataUploader::logIndoorTimestampRecords(QList<IntTimestampRecord> records) {
-    DatabaseHandler dbHandler(PATH_TO_COPY_DATABASE);
     for (IntTimestampRecord record : records) {
-        dbHandler.postIndoorTimestampRecord(record, "LastIndoorTimestampRecords");
+        dbHandler->postIndoorTimestampRecord(record, "LastIndoorTimestampRecords");
     }
     emit indoorTimestampRecordsLogged();
 }

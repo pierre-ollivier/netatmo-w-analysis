@@ -12,14 +12,14 @@ extern const QString APP_PATH;
 
 int main(int argc, char *argv[]) {
 
-    bool valid = QFile::copy(APP_PATH + "/" + PATH_TO_PROD_DATABASE,
-                             APP_PATH + "/" + PATH_TO_COPY_DATABASE);
+    bool valid = QFile::copy(PATH_TO_PROD_DATABASE,
+                             PATH_TO_COPY_DATABASE);
 
     if (valid) {
         QApplication app(argc, argv);
-        MainWindow mainWin;
-        mainWin.show();
-        mainWin.setWindowTitle("netatmo-w-analysis v" + VERSION);
+        MainWindow *mainWin = new MainWindow();
+        mainWin->show();
+        mainWin->setWindowTitle("netatmo-w-analysis v" + VERSION);
 
         executeAllPlaygroundFunctions();
         int result = 3;
@@ -32,7 +32,9 @@ int main(int argc, char *argv[]) {
             qDebug() << ex.what();
         }
 
-        QFile copyDatabase(APP_PATH + "/" + PATH_TO_COPY_DATABASE);
+        delete mainWin;
+
+        QFile copyDatabase(PATH_TO_COPY_DATABASE);
         copyDatabase.close();
         bool deleteValid = copyDatabase.remove();
         if (deleteValid) return result;
@@ -45,6 +47,7 @@ int main(int argc, char *argv[]) {
     }
 
     else {
+        qDebug() << "Error: impossible to copy the database from" << PATH_TO_PROD_DATABASE << "to" << PATH_TO_COPY_DATABASE;
         return 1;
     }
 }

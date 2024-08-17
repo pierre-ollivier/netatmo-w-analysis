@@ -1,20 +1,20 @@
 #include "MonthlyReport.h"
 #include "../frontend/ColorUtils.h"
 
+extern const QLocale LOCALE;
 extern QString PATH_TO_PROD_DATABASE;
 extern QString PATH_TO_COPY_DATABASE;
 
 MonthlyReport::MonthlyReport() : QWidget()
 {
     _date = new QDate(QDate::currentDate().addMonths(-1));
-    dbHandlerCopy = new DatabaseHandler(PATH_TO_COPY_DATABASE);
-    deviceLocale = new QLocale();
+    dbHandlerCopy = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
 
     yearMonthPicker = new YearMonthPicker(_date->year(), _date->month());
     connect(yearMonthPicker, SIGNAL(monthChanged(int)), SLOT(setMonth(int)));
     connect(yearMonthPicker, SIGNAL(yearChanged(int)), SLOT(setYear(int)));
 
-    this->setGeometry(300, 40, 1020, 950);
+    this->setGeometry(300, 40, 1020, 750);
     this->setFixedWidth(720);
     layout = new QGridLayout();
 
@@ -32,7 +32,7 @@ MonthlyReport::MonthlyReport() : QWidget()
     connect(add1MonthButton, SIGNAL(clicked()), this, SLOT(add1Month()));
     connect(substract1MonthButton, SIGNAL(clicked()), this, SLOT(substract1Month()));
 
-    currentMonthClickableLabel = new QPushButton(_date->toString("MMMM yyyy"));
+    currentMonthClickableLabel = new QPushButton(LOCALE.toString(*_date, "MMMM yyyy"));
     currentMonthClickableLabel->setFlat(true);
     currentMonthClickableLabel->setFont(QFont("Arial", 14));
     connect(currentMonthClickableLabel, SIGNAL(clicked()), yearMonthPicker, SLOT(show()));
@@ -47,12 +47,12 @@ MonthlyReport::MonthlyReport() : QWidget()
 
     interiorCheckBox = new QCheckBox("Intérieur");
 
-    connect(temperatureRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
-    connect(humidityRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
-    connect(dewPointRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
-    connect(humidexRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
-    connect(pressureRadioButton, SIGNAL(toggled(bool)), this, SLOT(changeMeasurement()));
-    connect(interiorCheckBox, SIGNAL(stateChanged(int)), this, SLOT(changeMeasurement()));
+    connect(temperatureRadioButton, SIGNAL(toggled(bool)), SLOT(changeMeasurement()));
+    connect(humidityRadioButton, SIGNAL(toggled(bool)), SLOT(changeMeasurement()));
+    connect(dewPointRadioButton, SIGNAL(toggled(bool)), SLOT(changeMeasurement()));
+    connect(humidexRadioButton, SIGNAL(toggled(bool)), SLOT(changeMeasurement()));
+    connect(pressureRadioButton, SIGNAL(toggled(bool)), SLOT(changeMeasurement()));
+    connect(interiorCheckBox, SIGNAL(stateChanged(int)), SLOT(changeMeasurement()));
 
     buttonsLayout = new QVBoxLayout();
     buttonsLayout->addWidget(temperatureRadioButton);
@@ -90,22 +90,22 @@ void MonthlyReport::fillBoard() {
                     "SELECT avg" + measurementTypeCapitalized + " FROM " + indoorOrOutdoorCapitalized + "DailyRecords "
                     "WHERE date = " + date.toString("\"dd/MM/yyyy\"") + " " + extraWhereClause);
 
-        model->setVerticalHeaderItem(day - 1, new QStandardItem(date.toString("dd/MM")));
+        model->setVerticalHeaderItem(day - 1, new QStandardItem(LOCALE.toString(date, "dd/MM")));
 
         if (minimumMeasurement.isNull())
             model->setItem(day - 1, 0, new QStandardItem());
         else
-            model->setItem(day - 1, 0, new QStandardItem(deviceLocale->toString(minimumMeasurement.toDouble(), 'f', decimals) + " " + unit));
+            model->setItem(day - 1, 0, new QStandardItem(LOCALE.toString(minimumMeasurement.toDouble(), 'f', decimals) + " " + unit));
 
         if (maximumMeasurement.isNull())
             model->setItem(day - 1, 1, new QStandardItem());
         else
-            model->setItem(day - 1, 1, new QStandardItem(deviceLocale->toString(maximumMeasurement.toDouble(), 'f', decimals) + " " + unit));
+            model->setItem(day - 1, 1, new QStandardItem(LOCALE.toString(maximumMeasurement.toDouble(), 'f', decimals) + " " + unit));
 
         if (averageMeasurement.isNull())
             model->setItem(day - 1, 2, new QStandardItem());
         else
-            model->setItem(day - 1, 2, new QStandardItem(deviceLocale->toString(averageMeasurement.toDouble(), 'f', decimals) + " " + unit));
+            model->setItem(day - 1, 2, new QStandardItem(LOCALE.toString(averageMeasurement.toDouble(), 'f', decimals) + " " + unit));
 
         model->item(day - 1, 0)->setEditable(false);
         model->item(day - 1, 0)->setTextAlignment(Qt::AlignCenter);
@@ -146,7 +146,7 @@ void MonthlyReport::add1Month() {
     QDate newDate = _date->addMonths(1), currentDate = QDate::currentDate();
     if (newDate.year() < currentDate.year() || (newDate.year() == currentDate.year() && newDate.month() <= currentDate.month())) {
         _date->operator=(newDate);
-        currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
+        currentMonthClickableLabel->setText(LOCALE.toString(newDate, "MMMM yyyy"));
         fillBoard();
         yearMonthPicker->setDate(newDate);
     }
@@ -156,7 +156,7 @@ void MonthlyReport::substract1Month() {
     QDate newDate = _date->addMonths(-1), minDate = QDate(2019, 10, 5);
     if (newDate.year() > minDate.year() || (newDate.year() == minDate.year() && newDate.month() >= minDate.month())) {
         _date->operator=(_date->addMonths(-1));
-        currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
+        currentMonthClickableLabel->setText(LOCALE.toString(newDate, "MMMM yyyy"));
         fillBoard();
         yearMonthPicker->setDate(newDate);
     }
@@ -164,13 +164,13 @@ void MonthlyReport::substract1Month() {
 
 void MonthlyReport::setMonth(int month) {
     _date->setDate(_date->year(), month, _date->day());
-    currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
+    currentMonthClickableLabel->setText(LOCALE.toString(*_date, "MMMM yyyy"));
     fillBoard();
 }
 
 void MonthlyReport::setYear(int year) {
     _date->setDate(year, _date->month(), _date->day());
-    currentMonthClickableLabel->setText(_date->toString("MMMM yyyy"));
+    currentMonthClickableLabel->setText(LOCALE.toString(*_date, "MMMM yyyy"));
     fillBoard();
 }
 

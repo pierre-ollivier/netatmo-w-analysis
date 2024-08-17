@@ -2,14 +2,16 @@
 #include <QDateTime>
 #include "../types/ExtTimestampRecord.h"
 
+extern const QLocale LOCALE;
 extern QString PATH_TO_COPY_DATABASE;
+extern QColor mainBackgroundColor;
 
 HomePageChart::HomePageChart(QString tableName, bool indoor) : QChartView()
 {
     _tableName = tableName;
     _indoor = indoor;
 
-    locale = new QLocale(QLocale::system());
+    locale = new QLocale(LOCALE);
 
     xAxis = new QDateTimeAxis();
     xAxis->setFormat("hh:mm");
@@ -30,7 +32,9 @@ HomePageChart::HomePageChart(QString tableName, bool indoor) : QChartView()
     chart->setLocalizeNumbers(true);
 
     setChart(chart);
-    setFixedSize(500, 300);
+    setFixedSize(500, 280);
+
+    setBackgroundBrush(QBrush(mainBackgroundColor));
 }
 
 void HomePageChart::drawChart(QList<ExtTimestampRecord> records) {

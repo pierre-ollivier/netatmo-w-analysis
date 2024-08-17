@@ -8,9 +8,9 @@ class APIMonitor : public QObject
 {
     Q_OBJECT
 public:
-    APIMonitor();
+    APIMonitor(QObject *parent = nullptr);
     APIMonitor(std::queue<int> timestampsQueue);
-    APIMonitor(const APIMonitor &other);
+    APIMonitor(QObject *parent, const APIMonitor &other);
 
 public slots:
     void addTimestamp();

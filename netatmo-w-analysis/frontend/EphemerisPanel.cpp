@@ -1,11 +1,19 @@
 #include "EphemerisPanel.h"
 #include <QDebug>
 
+extern const QLocale LOCALE;
 extern const QString PATH_TO_COPY_DATABASE;
 
 EphemerisPanel::EphemerisPanel() : QWidget()
 {
     mainGroupBox = new QGroupBox();
+
+    _sunriseDateTime = new QDateTime();
+    _sunsetDateTime = new QDateTime();
+
+    ephemerisLabel = new QLabel("Lever du soleil : __:__ - Coucher du soleil : __:__");
+    ephemerisLabel->setFont(QFont("Arial", 9));
+    ephemerisLabel->setAlignment(Qt::AlignCenter);
 
     txxLabel = new QLabel("__,_ °C (____)");
     tnnLabel = new QLabel("__,_ °C (____)");
@@ -13,11 +21,12 @@ EphemerisPanel::EphemerisPanel() : QWidget()
     tnmLabel = new QLabel("__,_ °C");
     stdevLabel = new QLabel("_________________________");
 
-    deviceLocale = new QLocale();
+    deviceLocale = new QLocale(LOCALE);
 
     mainLayout = new QGridLayout();
     boxLayout = new QGridLayout();
 
+    boxLayout->addWidget(ephemerisLabel, 0, 1, 1, 2);
     boxLayout->addWidget(new QLabel("Température maximale absolue : "), 1, 1);
     boxLayout->addWidget(txxLabel, 1, 2);
     boxLayout->addWidget(new QLabel("Température minimale absolue : "), 2, 1);
@@ -28,9 +37,9 @@ EphemerisPanel::EphemerisPanel() : QWidget()
     boxLayout->addWidget(tnmLabel, 4, 2);
     boxLayout->addWidget(stdevLabel, 5, 1, 1, 2);
 
-    dbHandler = new DatabaseHandler(PATH_TO_COPY_DATABASE);
-    normalComputer = new NormalComputer(dbHandler);
-    analyzer = new MetricsAnalyzer();
+    dbHandler = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
+    normalComputer = new NormalComputer(this, dbHandler);
+    analyzer = new MetricsAnalyzer(this);
 
     mainGroupBox->setTitle("Statistiques pour un _ _");
     mainGroupBox->setFont(QFont("Arial", 12));
@@ -61,8 +70,8 @@ void EphemerisPanel::setDate(QDate date) {
 
 
 void EphemerisPanel::updateStatistics() {
-    mainGroupBox->setTitle("Statistiques pour un " + _date.toString("d MMMM"));
-    if (_date.day() == 1) mainGroupBox->setTitle("Statistiques pour un " + _date.toString("der MMMM"));
+    mainGroupBox->setTitle("Statistiques pour un " + deviceLocale->toString(_date, "d MMMM"));
+    if (_date.day() == 1) mainGroupBox->setTitle("Statistiques pour un " + deviceLocale->toString(_date, "der MMMM"));
 
     double txx = dbHandler->getResultFromDatabase(
                 "SELECT max(maxTemperature) FROM OutdoorDailyRecords "
@@ -109,4 +118,16 @@ void EphemerisPanel::updateStatistics() {
 
 void EphemerisPanel::updateStdevLabel() {
     stdevLabel->setText(analyzer->text(dbHandler));
+}
+
+void EphemerisPanel::setSunrise(QDateTime sunriseDateTime) {
+    *_sunriseDateTime = sunriseDateTime;
+    ephemerisLabel->setText("Lever du soleil : " + _sunriseDateTime->toString("hh:mm")
+                            + " - Coucher du soleil : " + _sunsetDateTime->toString("hh:mm"));
+}
+
+void EphemerisPanel::setSunset(QDateTime sunsetDateTime) {
+    *_sunsetDateTime = sunsetDateTime;
+    ephemerisLabel->setText("Lever du soleil : " + _sunriseDateTime->toString("hh:mm")
+                            + " - Coucher du soleil : " + _sunsetDateTime->toString("hh:mm"));
 }

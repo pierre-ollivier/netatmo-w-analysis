@@ -1,6 +1,6 @@
 #include "QueryAnalyzer.h"
 
-QueryAnalyzer::QueryAnalyzer()
+QueryAnalyzer::QueryAnalyzer(QObject *parent) : QObject(parent)
 {
 
 }
@@ -86,7 +86,7 @@ QString QueryAnalyzer::operationFromQuery(QString query) {
     int indexOfFrom = queryLowered.indexOf(" from");
     QString measurementPart = queryLowered.mid(indexOfSelect + 7, indexOfFrom - indexOfSelect - 7);
 
-    if (measurementPart[0] == "(" && measurementPart.right(1) == ")" && measurementPart.contains("-")) {
+    if (measurementPart[0] == '(' && measurementPart.right(1) == ")" && measurementPart.contains("-")) {
         return "variation";
     }
     else {

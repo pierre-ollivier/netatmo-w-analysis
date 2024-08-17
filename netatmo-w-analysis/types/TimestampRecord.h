@@ -35,6 +35,8 @@ private:
     long long _timestamp;
     double _temperature;
     int _humidity;
+    QDate _date;
+    QTime _time;
 };
 
 #endif // TIMESTAMPRECORD_H

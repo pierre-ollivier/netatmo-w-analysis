@@ -3,6 +3,7 @@
 #include <QDebug>
 #include "../frontend/ColorUtils.h"
 
+extern const QLocale LOCALE;
 extern QString PATH_TO_PROD_DATABASE;
 extern QString PATH_TO_COPY_DATABASE;
 
@@ -11,11 +12,11 @@ YearlyReport::YearlyReport()
     mainView = new QTableView();
     mainModel = new QStandardItemModel();
 
-    deviceLocale = new QLocale();
+    deviceLocale = new QLocale(LOCALE);
 
     mainView->setModel(mainModel);
 
-    dbHandler = new DatabaseHandler(PATH_TO_COPY_DATABASE);
+    dbHandler = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
 
     temperatureRadioButton = new QRadioButton("Température");
     humidityRadioButton = new QRadioButton("Humidité");
@@ -43,13 +44,13 @@ YearlyReport::YearlyReport()
     optionsLayout->addWidget(humidexRadioButton);
     optionsLayout->addWidget(pressureRadioButton);
     optionsLayout->addWidget(interiorCheckBox);
-    optionsLayout->setContentsMargins(0, 380, 0, 380);
+    optionsLayout->setContentsMargins(0, 290, 0, 290);
 
     mainLayout->addWidget(mainView);
     mainLayout->addLayout(optionsLayout);
 
     setLayout(mainLayout);
-    setFixedSize(1480, 1000);
+    setFixedSize(1480, 750);
 
     fillBoard();
 }
