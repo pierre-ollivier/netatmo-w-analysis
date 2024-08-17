@@ -1,7 +1,7 @@
 #ifndef CUMULATIVECHART_H
 #define CUMULATIVECHART_H
 
-#include <QObject>
+#include <QGridLayout>
 #include <QWidget>
 #include <QtCharts>
 
@@ -11,6 +11,7 @@ class CumulativeChart : public QWidget
 public:
     CumulativeChart();
 
+    void scaleYAxis(QList<QPointF> points);
     void drawChart(QList<QPointF> points);
 
 private:
@@ -21,6 +22,8 @@ private:
     QValueAxis *yAxis;
 
     QLineSeries *series;
+
+    QGridLayout *layout;
 };
 
 #endif // CUMULATIVECHART_H
