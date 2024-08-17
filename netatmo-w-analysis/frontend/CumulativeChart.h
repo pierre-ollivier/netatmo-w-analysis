@@ -18,7 +18,7 @@ private:
     QChart *chart;
     QChartView *chartView;
 
-    QDateTimeAxis *xAxis;
+    QCategoryAxis *xAxis;
     QValueAxis *yAxis;
 
     QLineSeries *series;

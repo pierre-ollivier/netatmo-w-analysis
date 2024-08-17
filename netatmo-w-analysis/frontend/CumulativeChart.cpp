@@ -6,12 +6,16 @@ CumulativeChart::CumulativeChart() {
     chart = new QChart();
     chartView = new QChartView();
 
-    xAxis = new QDateTimeAxis();
-    xAxis->setFormat("dd/MM");
-    xAxis->setTickCount(13);
+    xAxis = new QCategoryAxis();
     xAxis->setLineVisible(false);
-    xAxis->setMin(QDateTime(QDate(2024, 1, 1), QTime(0, 0)));
-    xAxis->setMax(QDateTime(QDate(2025, 1, 1), QTime(0, 0)));
+    xAxis->setMin(QDate(2024, 1, 1).toJulianDay());
+    xAxis->setMax(QDate(2025, 1, 1).toJulianDay());
+
+    for (QDate d = QDate(2024, 1, 1); d <= QDate(2024, 12, 1); d = d.addMonths(1)) {
+        xAxis->append(d.toString("dd/MM"), d.toJulianDay());
+    }
+    xAxis->append(" 01/01 ", QDate(2025, 1, 1).toJulianDay());
+    xAxis->setLabelsPosition(QCategoryAxis::AxisLabelsPositionOnValue);
 
     yAxis = new QValueAxis();
 
@@ -30,13 +34,15 @@ CumulativeChart::CumulativeChart() {
     layout->addWidget(chartView, 1, 1);
     setLayout(layout);
 
+    setMinimumWidth(1000);
+
     // provisional data
     QList<QPointF> points = QList<QPointF>();
-    points.append(QPointF(QDateTime(QDate(2024, 1, 1), QTime(0, 0)).toMSecsSinceEpoch(), 0));
-    points.append(QPointF(QDateTime(QDate(2024, 2, 1), QTime(0, 0)).toMSecsSinceEpoch(), 1));
-    points.append(QPointF(QDateTime(QDate(2024, 3, 1), QTime(0, 0)).toMSecsSinceEpoch(), 1));
-    points.append(QPointF(QDateTime(QDate(2024, 4, 1), QTime(0, 0)).toMSecsSinceEpoch(), 6));
-    points.append(QPointF(QDateTime(QDate(2024, 5, 1), QTime(0, 0)).toMSecsSinceEpoch(), 15));
+    points.append(QPointF(QDate(2024, 1, 1).toJulianDay(), 0));
+    points.append(QPointF(QDate(2024, 2, 1).toJulianDay(), 1));
+    points.append(QPointF(QDate(2024, 3, 1).toJulianDay(), 1));
+    points.append(QPointF(QDate(2024, 4, 1).toJulianDay(), 6));
+    points.append(QPointF(QDate(2024, 5, 1).toJulianDay(), 15));
 
     drawChart(points);
 }
