@@ -5,6 +5,7 @@
 #include <QFileDialog>
 
 #include "../netatmo-w-analysis/backend/NormalComputer.h"
+#include "../netatmo-w-analysis/frontend/CumulativeChart.h"
 #include "../netatmo-w-analysis/frontend/DataExplorator.h"
 #include "../netatmo-w-analysis/frontend/MonthlyReport.h"
 #include "../netatmo-w-analysis/frontend/NormalsVisualizer.h"
@@ -215,6 +216,8 @@ void MainWindow::createActions() {
 
     exploreDataAction = new QAction("Explorer les données");
     connect(exploreDataAction, SIGNAL(triggered()), SLOT(exploreData()));
+    displayCumulativeChartAction = new QAction("Diagramme cumulatif");
+    connect(displayCumulativeChartAction, SIGNAL(triggered()), SLOT(displayCumulativeChart()));
 
     displayMonthlyReportAction = new QAction("Rapport mensuel");
     connect(displayMonthlyReportAction, SIGNAL(triggered()), SLOT(displayMonthlyReport()));
@@ -238,6 +241,7 @@ void MainWindow::createMenus() {
     handleDataMenu->addAction(updateDailyOutdoorDatabaseAction);
     QMenu *exploreDataMenu = menuBar->addMenu(tr("&Exploration des données"));
     exploreDataMenu->addAction(exploreDataAction);
+    exploreDataMenu->addAction(displayCumulativeChartAction);
     QMenu *climatologyMenu = menuBar->addMenu(tr("&Climatologie"));
     climatologyMenu->addAction(displayMonthlyReportAction);
     climatologyMenu->addAction(displayYearlyReportAction);
@@ -562,6 +566,11 @@ void MainWindow::showPredictionWindow() {
 void MainWindow::exploreData() {
     DataExplorator *explorator = new DataExplorator(dbHandlerCopy);
     explorator->show();
+}
+
+void MainWindow::displayCumulativeChart() {
+    CumulativeChart *cumulativeChart = new CumulativeChart();
+    cumulativeChart->show();
 }
 
 void MainWindow::postRecentDataRequests() {
