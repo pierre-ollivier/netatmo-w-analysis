@@ -36,13 +36,18 @@ CumulativeChart::CumulativeChart() {
 
     setMinimumWidth(1000);
 
+    aggregator = new CumulativeAggregator(this);
+
     // provisional data
+
+    QMap<QDate, int> counts = aggregator->countMaxTemperaturesHigherOrEqualThanThreshold(2022, 15.0);
     QList<QPointF> points = QList<QPointF>();
-    points.append(QPointF(QDate(2024, 1, 1).toJulianDay(), 0));
-    points.append(QPointF(QDate(2024, 2, 1).toJulianDay(), 1));
-    points.append(QPointF(QDate(2024, 3, 1).toJulianDay(), 1));
-    points.append(QPointF(QDate(2024, 4, 1).toJulianDay(), 6));
-    points.append(QPointF(QDate(2024, 5, 1).toJulianDay(), 15));
+
+    for (auto i = counts.cbegin(), end = counts.cend(); i != end; ++i) {
+        QDate date = i.key();
+        date.setDate(2024, date.month(), date.day());
+        points.append(QPointF(date.toJulianDay(), i.value()));
+    }
 
     drawChart(points);
 }

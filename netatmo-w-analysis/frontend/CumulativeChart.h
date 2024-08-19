@@ -5,6 +5,8 @@
 #include <QWidget>
 #include <QtCharts>
 
+#include "../netatmo-w-analysis/backend/CumulativeAggregator.h"
+
 class CumulativeChart : public QWidget
 {
     Q_OBJECT
@@ -24,6 +26,8 @@ private:
     QLineSeries *series;
 
     QGridLayout *layout;
+
+    CumulativeAggregator *aggregator;
 };
 
 #endif // CUMULATIVECHART_H
