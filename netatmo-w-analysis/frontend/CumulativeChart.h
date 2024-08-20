@@ -4,6 +4,7 @@
 #include <QGridLayout>
 #include <QWidget>
 #include <QtCharts>
+#include "QValueAxis"
 
 #include "../netatmo-w-analysis/backend/CumulativeAggregator.h"
 
@@ -14,6 +15,7 @@ public:
     CumulativeChart();
 
     void scaleYAxis(QList<QPointF> points);
+    void addTicksToYAxis(int maxOfSeries, int intervalBetweenTicks);
     void drawChart(QList<QPointF> points);
 
 private:
@@ -21,7 +23,7 @@ private:
     QChartView *chartView;
 
     QCategoryAxis *xAxis;
-    QValueAxis *yAxis;
+    QCategoryAxis *yAxis;
 
     QLineSeries *series;
 

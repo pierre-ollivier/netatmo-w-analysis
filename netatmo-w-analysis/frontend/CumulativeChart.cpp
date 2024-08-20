@@ -17,7 +17,10 @@ CumulativeChart::CumulativeChart() {
     xAxis->append(" 01/01 ", QDate(2025, 1, 1).toJulianDay());
     xAxis->setLabelsPosition(QCategoryAxis::AxisLabelsPositionOnValue);
 
-    yAxis = new QValueAxis();
+    yAxis = new QCategoryAxis();
+    yAxis->setLineVisible(false);
+    yAxis->setLabelsPosition(QCategoryAxis::AxisLabelsPositionOnValue);
+    yAxis->setMin(0);
 
     series = new QLineSeries();
 
@@ -54,15 +57,33 @@ CumulativeChart::CumulativeChart() {
 
 void CumulativeChart::scaleYAxis(QList<QPointF> points) {
     int maxOfSeries = 0;
+    int intervalBetweenTicks = 1;
     for (QPointF point: points) {
         if (point.y() > maxOfSeries) maxOfSeries = point.y();
     }
 
-    if (maxOfSeries > 100) maxOfSeries = maxOfSeries + 20 - maxOfSeries % 20;
-    else if (maxOfSeries > 50) maxOfSeries = maxOfSeries + 10 - maxOfSeries % 10;
-    else maxOfSeries = maxOfSeries + 5 - maxOfSeries % 5;
+    if (maxOfSeries > 100) {
+        maxOfSeries = maxOfSeries + 20 - maxOfSeries % 20;
+        intervalBetweenTicks = 20;
+    }
+    else if (maxOfSeries > 50) {
+        maxOfSeries = maxOfSeries + 10 - maxOfSeries % 10;
+        intervalBetweenTicks = 10;
+    }
+    else {
+        maxOfSeries = maxOfSeries + 5 - maxOfSeries % 5;
+        intervalBetweenTicks = 5;
+    }
 
     yAxis->setMax(maxOfSeries);
+    addTicksToYAxis(maxOfSeries, intervalBetweenTicks);
+    // yAxis->setTickCount(1 + maxOfSeries / intervalBetweenTicks);
+}
+
+void CumulativeChart::addTicksToYAxis(int maxOfSeries, int intervalBetweenTicks) {
+    for (int i = 0; i <= maxOfSeries; i += intervalBetweenTicks) {
+        yAxis->append(QString::number(i), i);
+    }
 }
 
 void CumulativeChart::drawChart(QList<QPointF> points) {
@@ -76,7 +97,7 @@ void CumulativeChart::drawChart(QList<QPointF> points) {
         chart->addAxis(yAxis, Qt::AlignLeft);
     }
 
-    chart->setLocalizeNumbers(true);
+    // chart->setLocalizeNumbers(true);
 
     if (series->attachedAxes().length() == 0) {
         series->attachAxis(xAxis);
