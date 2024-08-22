@@ -16,6 +16,9 @@ public:
 
     void scaleYAxis(QList<QPointF> points);
     void addTicksToYAxis(int maxOfSeries, int intervalBetweenTicks);
+
+public slots:
+    void drawChart();
     void drawChart(QList<QPointF> points);
 
 private:
@@ -24,6 +27,8 @@ private:
 
     QCategoryAxis *xAxis;
     QCategoryAxis *yAxis;
+
+    QComboBox *yearBox;
 
     QLineSeries *series;
 

@@ -22,6 +22,12 @@ CumulativeChart::CumulativeChart() {
     yAxis->setLabelsPosition(QCategoryAxis::AxisLabelsPositionOnValue);
     yAxis->setMin(0);
 
+    yearBox = new QComboBox();
+    for (int year = 2019; year <= QDate::currentDate().year(); year++) {
+        yearBox->addItem(QString::number(year));
+    }
+    connect(yearBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
+
     series = new QLineSeries();
 
     chart = new QChart();
@@ -35,24 +41,13 @@ CumulativeChart::CumulativeChart() {
 
     layout = new QGridLayout();
     layout->addWidget(chartView, 1, 1);
+    layout->addWidget(yearBox, 2, 1);
     setLayout(layout);
 
     setMinimumWidth(1000);
 
     aggregator = new CumulativeAggregator(this);
 
-    // provisional data
-
-    QMap<QDate, int> counts = aggregator->countMaxTemperaturesHigherOrEqualThanThreshold(2022, 15.0);
-    QList<QPointF> points = QList<QPointF>();
-
-    for (auto i = counts.cbegin(), end = counts.cend(); i != end; ++i) {
-        QDate date = i.key();
-        date.setDate(2024, date.month(), date.day());
-        points.append(QPointF(date.toJulianDay(), i.value()));
-    }
-
-    drawChart(points);
 }
 
 void CumulativeChart::scaleYAxis(QList<QPointF> points) {
@@ -84,6 +79,21 @@ void CumulativeChart::addTicksToYAxis(int maxOfSeries, int intervalBetweenTicks)
     for (int i = 0; i <= maxOfSeries; i += intervalBetweenTicks) {
         yAxis->append(QString::number(i), i);
     }
+}
+
+void CumulativeChart::drawChart() {
+    // provisional data
+
+    QMap<QDate, int> counts = aggregator->countMaxTemperaturesHigherOrEqualThanThreshold(yearBox->currentText().toInt(), 15.0);
+    QList<QPointF> points = QList<QPointF>();
+
+    for (auto i = counts.cbegin(), end = counts.cend(); i != end; ++i) {
+        QDate date = i.key();
+        date.setDate(2024, date.month(), date.day());
+        points.append(QPointF(date.toJulianDay(), i.value()));
+    }
+
+    drawChart(points);
 }
 
 void CumulativeChart::drawChart(QList<QPointF> points) {
