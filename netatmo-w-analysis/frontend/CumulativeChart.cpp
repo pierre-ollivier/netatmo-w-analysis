@@ -18,15 +18,16 @@ CumulativeChart::CumulativeChart() {
     xAxis->setLabelsPosition(QCategoryAxis::AxisLabelsPositionOnValue);
 
     yAxis = new QCategoryAxis();
-    yAxis->setLineVisible(false);
-    yAxis->setLabelsPosition(QCategoryAxis::AxisLabelsPositionOnValue);
-    yAxis->setMin(0);
+    initYAxis();
 
     yearBox = new QComboBox();
     for (int year = 2019; year <= QDate::currentDate().year(); year++) {
         yearBox->addItem(QString::number(year));
     }
     connect(yearBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
+
+    thresholdLineEdit = new QLineEdit();
+    connect(thresholdLineEdit, SIGNAL(returnPressed()), SLOT(drawChart()));
 
     series = new QLineSeries();
 
@@ -40,14 +41,26 @@ CumulativeChart::CumulativeChart() {
     chartView->setBackgroundBrush(QBrush(mainBackgroundColor));
 
     layout = new QGridLayout();
-    layout->addWidget(chartView, 1, 1);
-    layout->addWidget(yearBox, 2, 1);
+    layout->addWidget(chartView, 1, 1, 1, 2);
+    layout->addWidget(new QLabel("Année : ", this), 2, 1);
+    layout->addWidget(yearBox, 2, 2);
+    layout->addWidget(new QLabel("Seuil (°C) : "), 3, 1);
+    layout->addWidget(thresholdLineEdit, 3, 2);
     setLayout(layout);
 
     setMinimumWidth(1000);
 
     aggregator = new CumulativeAggregator(this);
 
+}
+
+void CumulativeChart::initYAxis() {
+    for (QString label: yAxis->categoriesLabels()) {
+        yAxis->remove(label);
+    }
+    yAxis->setLineVisible(false);
+    yAxis->setLabelsPosition(QCategoryAxis::AxisLabelsPositionOnValue);
+    yAxis->setMin(0);
 }
 
 void CumulativeChart::scaleYAxis(QList<QPointF> points) {
@@ -65,11 +78,20 @@ void CumulativeChart::scaleYAxis(QList<QPointF> points) {
         maxOfSeries = maxOfSeries + 10 - maxOfSeries % 10;
         intervalBetweenTicks = 10;
     }
-    else {
+    else if (maxOfSeries > 20) {
         maxOfSeries = maxOfSeries + 5 - maxOfSeries % 5;
         intervalBetweenTicks = 5;
     }
+    else if (maxOfSeries > 10) {
+        maxOfSeries = maxOfSeries + 2 - maxOfSeries % 2;
+        intervalBetweenTicks = 2;
+    }
+    else {
+        maxOfSeries = maxOfSeries + 1 - maxOfSeries % 1;
+        intervalBetweenTicks = 1;
+    }
 
+    initYAxis();
     yAxis->setMax(maxOfSeries);
     addTicksToYAxis(maxOfSeries, intervalBetweenTicks);
     // yAxis->setTickCount(1 + maxOfSeries / intervalBetweenTicks);
@@ -83,8 +105,9 @@ void CumulativeChart::addTicksToYAxis(int maxOfSeries, int intervalBetweenTicks)
 
 void CumulativeChart::drawChart() {
     // provisional data
+    double threshold = thresholdLineEdit->text().toDouble();
 
-    QMap<QDate, int> counts = aggregator->countMaxTemperaturesHigherOrEqualThanThreshold(yearBox->currentText().toInt(), 15.0);
+    QMap<QDate, int> counts = aggregator->countMaxTemperaturesHigherOrEqualThanThreshold(yearBox->currentText().toInt(), threshold);
     QList<QPointF> points = QList<QPointF>();
 
     for (auto i = counts.cbegin(), end = counts.cend(); i != end; ++i) {

@@ -14,6 +14,7 @@ class CumulativeChart : public QWidget
 public:
     CumulativeChart();
 
+    void initYAxis();
     void scaleYAxis(QList<QPointF> points);
     void addTicksToYAxis(int maxOfSeries, int intervalBetweenTicks);
 
@@ -29,6 +30,8 @@ private:
     QCategoryAxis *yAxis;
 
     QComboBox *yearBox;
+
+    QLineEdit *thresholdLineEdit;
 
     QLineSeries *series;
 
