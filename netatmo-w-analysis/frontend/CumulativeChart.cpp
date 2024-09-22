@@ -24,9 +24,10 @@ CumulativeChart::CumulativeChart() {
     for (int year = 2019; year <= QDate::currentDate().year(); year++) {
         yearBox->addItem(QString::number(year));
     }
+    yearBox->setCurrentText(QString::number(QDate::currentDate().year()));
     connect(yearBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
 
-    thresholdLineEdit = new QLineEdit();
+    thresholdLineEdit = new QLineEdit("10");
     connect(thresholdLineEdit, SIGNAL(returnPressed()), SLOT(drawChart()));
 
     series = new QLineSeries();
@@ -44,13 +45,15 @@ CumulativeChart::CumulativeChart() {
     layout->addWidget(chartView, 1, 1, 1, 2);
     layout->addWidget(new QLabel("Année : ", this), 2, 1);
     layout->addWidget(yearBox, 2, 2);
-    layout->addWidget(new QLabel("Seuil (°C) : "), 3, 1);
+    layout->addWidget(new QLabel("Seuil (°C) : ", this), 3, 1);
     layout->addWidget(thresholdLineEdit, 3, 2);
     setLayout(layout);
 
     setMinimumWidth(1000);
 
     aggregator = new CumulativeAggregator(this);
+
+    drawChart();
 
 }
 
@@ -94,7 +97,6 @@ void CumulativeChart::scaleYAxis(QList<QPointF> points) {
     initYAxis();
     yAxis->setMax(maxOfSeries);
     addTicksToYAxis(maxOfSeries, intervalBetweenTicks);
-    // yAxis->setTickCount(1 + maxOfSeries / intervalBetweenTicks);
 }
 
 void CumulativeChart::addTicksToYAxis(int maxOfSeries, int intervalBetweenTicks) {
