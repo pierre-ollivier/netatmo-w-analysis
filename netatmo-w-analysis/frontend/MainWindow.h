@@ -75,6 +75,7 @@ public slots:
     void updateDailyOutdoorDatabase();
 
     void exploreData();
+    void displayCumulativeChart();
 
     void displayMonthlyReport();
     void displayYearlyReport();
@@ -148,6 +149,7 @@ private:
     QAction *updateDailyIndoorDatabaseAction;
     QAction *updateDailyOutdoorDatabaseAction;
     QAction *exploreDataAction;
+    QAction *displayCumulativeChartAction;
     QAction *displayMonthlyReportAction;
     QAction *displayYearlyReportAction;
     QAction *normalsAction;

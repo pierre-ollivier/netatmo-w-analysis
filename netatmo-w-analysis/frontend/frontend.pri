@@ -6,6 +6,7 @@ include ($$PWD/QueryBuilder/QueryBuilder.pri)
 
 HEADERS += \
     $$PWD/ColorUtils.h \
+    $$PWD/CumulativeChart.h \
     $$PWD/CustomItemDelegate.h \
     $$PWD/DataExplorator.h \
     $$PWD/EphemerisPanel.h \
@@ -20,6 +21,7 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/ColorUtils.cpp \
+    $$PWD/CumulativeChart.cpp \
     $$PWD/CustomItemDelegate.cpp \
     $$PWD/DataExplorator.cpp \
     $$PWD/EphemerisPanel.cpp \

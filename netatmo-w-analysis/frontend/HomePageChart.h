@@ -3,7 +3,6 @@
 
 #include <QtCharts>
 #include "../netatmo-w-analysis/backend/RecentDataHandler.h"
-//#include "../netatmo-w-analysis/frontend/MainWindow.h"
 #include "../types/TimestampRecord.h"
 
 class HomePageChart : public QChartView

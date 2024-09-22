@@ -1,5 +1,6 @@
 HEADERS += \
     $$PWD/APIMonitor.h \
+    $$PWD/CumulativeAggregator.h \
     $$PWD/DailyAverageCalculator.h \
     $$PWD/DailyStatisticsCalculator.h \
     $$PWD/DatabaseHandler.h \
@@ -14,6 +15,7 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/APIMonitor.cpp \
+    $$PWD/CumulativeAggregator.cpp \
     $$PWD/DailyAverageCalculator.cpp \
     $$PWD/DailyStatisticsCalculator.cpp \
     $$PWD/DatabaseHandler.cpp \
