@@ -14,7 +14,8 @@ CumulativeChart::CumulativeChart() {
     for (QDate d = QDate(2024, 1, 1); d <= QDate(2024, 12, 1); d = d.addMonths(1)) {
         xAxis->append(d.toString("dd/MM"), d.toJulianDay());
     }
-    xAxis->append(" 01/01 ", QDate(2025, 1, 1).toJulianDay());
+    xAxis->append("‎01/01\0", QDate(2025, 1, 1).toJulianDay());
+
     xAxis->setLabelsPosition(QCategoryAxis::AxisLabelsPositionOnValue);
 
     yAxis = new QCategoryAxis();
@@ -41,10 +42,9 @@ CumulativeChart::CumulativeChart() {
     connect(thresholdLineEdit, SIGNAL(returnPressed()), SLOT(drawChart()));
 
     series = new QLineSeries();
+    series->setName("Données"); // provisional
 
     chart = new QChart();
-
-    chart->legend()->hide();
     chart->addSeries(series);
     chart->setLocalizeNumbers(true);
 
@@ -58,11 +58,11 @@ CumulativeChart::CumulativeChart() {
     layout->addWidget(new QLabel("Grandeur : ", this), 3, 1);
     layout->addWidget(measurementTypeBox, 3, 2);
     layout->addWidget(measurementOptionBox, 3, 3);
-    layout->addWidget(new QLabel("Seuil (°C) : ", this), 4, 1);
+    layout->addWidget(new QLabel("Seuil : ", this), 4, 1);
     layout->addWidget(thresholdLineEdit, 4, 2);
     setLayout(layout);
 
-    chartView->setMinimumWidth(1000);
+    // chartView->setMinimumWidth(500);
 
     aggregator = new CumulativeAggregator(this);
 
