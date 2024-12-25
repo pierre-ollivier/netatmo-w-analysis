@@ -28,7 +28,7 @@ CumulativeChart::CumulativeChart() {
     connect(yearBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
 
     measurementTypeBox = new QComboBox();
-    measurementTypeBox->addItem("Température");
+    measurementTypeBox->addItems({"Température", "Humidité", "Point de rosée", "Humidex"});
 
     connect(measurementTypeBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
 
@@ -86,7 +86,11 @@ void CumulativeChart::scaleYAxis(QList<QPointF> points) {
         if (point.y() > maxOfSeries) maxOfSeries = point.y();
     }
 
-    if (maxOfSeries > 100) {
+    if (maxOfSeries > 200) {
+        maxOfSeries = maxOfSeries + 50 - maxOfSeries % 50;
+        intervalBetweenTicks = 50;
+    }
+    else if (maxOfSeries > 100) {
         maxOfSeries = maxOfSeries + 20 - maxOfSeries % 20;
         intervalBetweenTicks = 20;
     }
@@ -122,19 +126,30 @@ void CumulativeChart::drawChart() {
     double threshold = thresholdLineEdit->text().toDouble();
     int year = yearBox->currentText().toInt();
 
-    QMap<QDate, int> counts = QMap<QDate, int>();
-    QList<QPointF> points = QList<QPointF>();
+    const QMap<QString, QString> measurementTypeBoxToMeasurementType = {
+        {"Température", "temperature"},
+        {"Humidité", "humidity"},
+        {"Point de rosée", "dewpoint"},
+        {"Humidex", "humidex"},
+        {"Pression", "pressure"},
+        {"CO2", "co2"},
+        {"Bruit", "noise"},
+    };
+    const QMap<QString, QString> measurementOptionBoxToMeasurementOption = {
+        {"max.", "max"},
+        {"min.", "min"},
+        {"moy.", "avg"},
+        {"var.", "diff"},
+    };
 
-    if (measurementTypeBox->currentText() == "Température") {
-        if (measurementOptionBox->currentText() == "min.")
-            counts = aggregator->countMeasurementsHigherOrEqualThanThreshold("temperature", "min", year, threshold);
-        else if (measurementOptionBox->currentText() == "max.")
-            counts = aggregator->countMeasurementsHigherOrEqualThanThreshold("temperature", "max", year, threshold);
-        else if (measurementOptionBox->currentText() == "moy.")
-            counts = aggregator->countMeasurementsHigherOrEqualThanThreshold("temperature", "avg", year, threshold);
-        else if (measurementOptionBox->currentText() == "var.")
-            counts = aggregator->countMeasurementsHigherOrEqualThanThreshold("temperature", "diff", year, threshold);
-    }
+    QMap<QDate, int> counts = aggregator->countMeasurementsHigherOrEqualThanThreshold(
+        measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
+        measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
+        year,
+        threshold
+    );
+
+    QList<QPointF> points = QList<QPointF>();
 
     for (auto i = counts.cbegin(), end = counts.cend(); i != end; ++i) {
         QDate date = i.key();

@@ -34,34 +34,6 @@ QString CumulativeAggregator::dateQuery(int year, bool indoor) {
     return "SELECT date FROM " + table + " WHERE year = " + QString::number(year) + " ORDER BY month, day";
 }
 
-QMap<QDate, int> CumulativeAggregator::countMaxTemperaturesHigherOrEqualThanThreshold(int year, double threshold) {
-    QString _measurementQuery = measurementQuery("temperature", "max", year);
-    QString _dateQuery = dateQuery(year);
-
-    std::vector<QVariant> measurementResults = dbHandler->getResultsFromDatabase(_measurementQuery);
-    std::vector<QVariant> dateResults = dbHandler->getResultsFromDatabase(_dateQuery);
-
-    QMap<QDate, int> counts = QMap<QDate, int>();
-    int count = 0;
-
-    for (unsigned int i = 0; i < measurementResults.size(); i++) {
-        if (measurementResults[i].toDouble() >= threshold) count++;
-        counts[QDate::fromString(dateResults[i].toString(), "dd/MM/yyyy")] = count;
-    }
-
-    return counts;
-}
-
-QMap<QDate, int> CumulativeAggregator::countMinTemperaturesHigherOrEqualThanThreshold(int year, double threshold) {
-    // TODO
-    return countMaxTemperaturesHigherOrEqualThanThreshold(year, threshold);
-}
-
-QMap<QDate, int> CumulativeAggregator::countAvgTemperaturesHigherOrEqualThanThreshold(int year, double threshold) {
-    // TODO
-    return countMaxTemperaturesHigherOrEqualThanThreshold(year, threshold);
-}
-
 QMap<QDate, int> CumulativeAggregator::countMeasurementsHigherOrEqualThanThreshold(
     QString measurementType,
     QString measurementOption,
