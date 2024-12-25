@@ -25,3 +25,13 @@ QMap<QDate, int> CumulativeAggregator::countMaxTemperaturesHigherOrEqualThanThre
 
     return counts;
 }
+
+QMap<QDate, int> CumulativeAggregator::countMinTemperaturesHigherOrEqualThanThreshold(int year, double threshold) {
+    // TODO
+    return countMaxTemperaturesHigherOrEqualThanThreshold(year, threshold);
+}
+
+QMap<QDate, int> CumulativeAggregator::countAvgTemperaturesHigherOrEqualThanThreshold(int year, double threshold) {
+    // TODO
+    return countMaxTemperaturesHigherOrEqualThanThreshold(year, threshold);
+}

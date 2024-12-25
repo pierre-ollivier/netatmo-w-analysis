@@ -31,6 +31,9 @@ private:
 
     QComboBox *yearBox;
 
+    QComboBox *measurementTypeBox;
+    QComboBox *measurementOptionBox;
+
     QLineEdit *thresholdLineEdit;
 
     QLineSeries *series;

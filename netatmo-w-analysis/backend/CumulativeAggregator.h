@@ -12,6 +12,8 @@ public:
     CumulativeAggregator(QObject *parent);
 
     QMap<QDate, int> countMaxTemperaturesHigherOrEqualThanThreshold(int year, double threshold);
+    QMap<QDate, int> countMinTemperaturesHigherOrEqualThanThreshold(int year, double threshold);
+    QMap<QDate, int> countAvgTemperaturesHigherOrEqualThanThreshold(int year, double threshold);
 
 private:
     DatabaseHandler *dbHandler;
