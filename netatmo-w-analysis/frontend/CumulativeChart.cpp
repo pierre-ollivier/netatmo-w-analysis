@@ -30,8 +30,12 @@ CumulativeChart::CumulativeChart() {
     measurementTypeBox = new QComboBox();
     measurementTypeBox->addItem("Température");
 
+    connect(measurementTypeBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
+
     measurementOptionBox = new QComboBox();
     measurementOptionBox->addItems({"min.", "max.", "moy.", "var."});
+
+    connect(measurementOptionBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
 
     thresholdLineEdit = new QLineEdit("10");
     connect(thresholdLineEdit, SIGNAL(returnPressed()), SLOT(drawChart()));
@@ -123,11 +127,13 @@ void CumulativeChart::drawChart() {
 
     if (measurementTypeBox->currentText() == "Température") {
         if (measurementOptionBox->currentText() == "min.")
-            counts = aggregator->countMinTemperaturesHigherOrEqualThanThreshold(year, threshold);
+            counts = aggregator->countMeasurementsHigherOrEqualThanThreshold("temperature", "min", year, threshold);
         else if (measurementOptionBox->currentText() == "max.")
-            counts = aggregator->countMaxTemperaturesHigherOrEqualThanThreshold(year, threshold);
+            counts = aggregator->countMeasurementsHigherOrEqualThanThreshold("temperature", "max", year, threshold);
         else if (measurementOptionBox->currentText() == "moy.")
-            counts = aggregator->countAvgTemperaturesHigherOrEqualThanThreshold(year, threshold);
+            counts = aggregator->countMeasurementsHigherOrEqualThanThreshold("temperature", "avg", year, threshold);
+        else if (measurementOptionBox->currentText() == "var.")
+            counts = aggregator->countMeasurementsHigherOrEqualThanThreshold("temperature", "diff", year, threshold);
     }
 
     for (auto i = counts.cbegin(), end = counts.cend(); i != end; ++i) {
