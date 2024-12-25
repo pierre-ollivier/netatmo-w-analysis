@@ -15,7 +15,6 @@ CumulativeChart::CumulativeChart() {
         xAxis->append(d.toString("dd/MM"), d.toJulianDay());
     }
     xAxis->append("‎01/01\0", QDate(2025, 1, 1).toJulianDay());
-
     xAxis->setLabelsPosition(QCategoryAxis::AxisLabelsPositionOnValue);
 
     yAxis = new QCategoryAxis();
@@ -61,8 +60,6 @@ CumulativeChart::CumulativeChart() {
     layout->addWidget(new QLabel("Seuil : ", this), 4, 1);
     layout->addWidget(thresholdLineEdit, 4, 2);
     setLayout(layout);
-
-    // chartView->setMinimumWidth(500);
 
     aggregator = new CumulativeAggregator(this);
 
