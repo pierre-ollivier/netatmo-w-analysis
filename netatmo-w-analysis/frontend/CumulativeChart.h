@@ -22,7 +22,10 @@ public slots:
     void drawChart();
     void drawChart(QList<QPointF> points);
 
-private:
+private slots:
+    void setUnitLabel(QString measurementType);
+
+private:    
     QChart *chart;
     QChartView *chartView;
 
@@ -36,6 +39,8 @@ private:
     QComboBox *conditionBox;
 
     QLineEdit *thresholdLineEdit;
+
+    QLabel *unitLabel;
 
     QLineSeries *series;
 

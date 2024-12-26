@@ -29,6 +29,7 @@ CumulativeChart::CumulativeChart() {
 
     measurementTypeBox = new QComboBox();
     measurementTypeBox->addItems({"Température", "Humidité", "Point de rosée", "Humidex"});
+    connect(measurementTypeBox, SIGNAL(currentTextChanged(QString)), SLOT(setUnitLabel(QString)));
     connect(measurementTypeBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
 
     measurementOptionBox = new QComboBox();
@@ -43,6 +44,8 @@ CumulativeChart::CumulativeChart() {
     thresholdLineEdit = new QLineEdit("10");
     connect(thresholdLineEdit, SIGNAL(returnPressed()), SLOT(drawChart()));
 
+    unitLabel = new QLabel("°C");
+
     series = new QLineSeries();
     series->setName("Données"); // provisional
 
@@ -54,7 +57,7 @@ CumulativeChart::CumulativeChart() {
     chartView->setBackgroundBrush(QBrush(mainBackgroundColor));
 
     layout = new QGridLayout();
-    layout->addWidget(chartView, 1, 1, 1, 4);
+    layout->addWidget(chartView, 1, 1, 1, 5);
     layout->addWidget(new QLabel("Année : ", this), 2, 1);
     layout->addWidget(yearBox, 2, 2);
     layout->addWidget(new QLabel("Grandeur : ", this), 3, 1);
@@ -62,13 +65,27 @@ CumulativeChart::CumulativeChart() {
     layout->addWidget(measurementOptionBox, 3, 3);
     layout->addWidget(new QLabel("Condition : ", this), 4, 1);
     layout->addWidget(conditionBox, 4, 2);
-    layout->addWidget(thresholdLineEdit, 4, 3);
+    layout->addWidget(thresholdLineEdit, 4, 3, 1, 2);
+    layout->addWidget(unitLabel, 4, 5);
     setLayout(layout);
 
     aggregator = new CumulativeAggregator(this);
 
     drawChart();
 
+}
+
+void CumulativeChart::setUnitLabel(QString measurementType) {
+    const QMap<QString, QString> measurementTypeToUnit = {
+        {"Température", "°C"},
+        {"Humidité", "%"},
+        {"Point de rosée", "°C"},
+        {"Humidex", ""},
+        {"Pression", "hPa"},
+        {"CO2", "ppm"},
+        {"Bruit", "dB"},
+        };
+    unitLabel->setText(measurementTypeToUnit[measurementType]);
 }
 
 void CumulativeChart::initYAxis() {
