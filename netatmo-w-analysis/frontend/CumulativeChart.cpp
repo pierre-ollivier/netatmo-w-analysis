@@ -29,13 +29,16 @@ CumulativeChart::CumulativeChart() {
 
     measurementTypeBox = new QComboBox();
     measurementTypeBox->addItems({"Température", "Humidité", "Point de rosée", "Humidex"});
-
     connect(measurementTypeBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
 
     measurementOptionBox = new QComboBox();
     measurementOptionBox->addItems({"min.", "max.", "moy.", "var."});
-
     connect(measurementOptionBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
+
+    conditionBox = new QComboBox();
+    conditionBox->addItems({"=", "<", "≤", ">", "≥", "≠"});
+    conditionBox->setCurrentIndex(1);
+    connect(conditionBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
 
     thresholdLineEdit = new QLineEdit("10");
     connect(thresholdLineEdit, SIGNAL(returnPressed()), SLOT(drawChart()));
@@ -57,8 +60,9 @@ CumulativeChart::CumulativeChart() {
     layout->addWidget(new QLabel("Grandeur : ", this), 3, 1);
     layout->addWidget(measurementTypeBox, 3, 2);
     layout->addWidget(measurementOptionBox, 3, 3);
-    layout->addWidget(new QLabel("Seuil : ", this), 4, 1);
-    layout->addWidget(thresholdLineEdit, 4, 2);
+    layout->addWidget(new QLabel("Condition : ", this), 4, 1);
+    layout->addWidget(conditionBox, 4, 2);
+    layout->addWidget(thresholdLineEdit, 4, 3);
     setLayout(layout);
 
     aggregator = new CumulativeAggregator(this);
@@ -138,13 +142,21 @@ void CumulativeChart::drawChart() {
         {"moy.", "avg"},
         {"var.", "diff"},
     };
+    const QMap<QString, std::function<bool(double)>> conditionBoxToCondition = {
+        {"=", [threshold](double measurement) {return measurement == threshold;}},
+        {"<", [threshold](double measurement) {return measurement < threshold;}},
+        {"≤", [threshold](double measurement) {return measurement <= threshold;}},
+        {">", [threshold](double measurement) {return measurement > threshold;}},
+        {"≥", [threshold](double measurement) {return measurement >= threshold;}},
+        {"≠", [threshold](double measurement) {return measurement != threshold;}}
+    };
 
-    QMap<QDate, int> counts = aggregator->countMeasurementsHigherOrEqualThanThreshold(
+    QMap<QDate, int> counts = aggregator->countMeasurementsMeetingCriteria(
         measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
         measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
         year,
-        threshold
-    );
+        conditionBoxToCondition[conditionBox->currentText()]
+        );
 
     QList<QPointF> points = QList<QPointF>();
 
@@ -167,8 +179,6 @@ void CumulativeChart::drawChart(QList<QPointF> points) {
         chart->addAxis(xAxis, Qt::AlignBottom);
         chart->addAxis(yAxis, Qt::AlignLeft);
     }
-
-    // chart->setLocalizeNumbers(true);
 
     if (series->attachedAxes().length() == 0) {
         series->attachAxis(xAxis);

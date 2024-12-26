@@ -34,12 +34,12 @@ QString CumulativeAggregator::dateQuery(int year, bool indoor) {
     return "SELECT date FROM " + table + " WHERE year = " + QString::number(year) + " ORDER BY month, day";
 }
 
-QMap<QDate, int> CumulativeAggregator::countMeasurementsHigherOrEqualThanThreshold(
+QMap<QDate, int> CumulativeAggregator::countMeasurementsMeetingCriteria(
     QString measurementType,
     QString measurementOption,
     int year,
-    double threshold
-) {
+    std::function<bool(double)> criteria
+    ) {
     QString _measurementQuery = measurementQuery(measurementType, measurementOption, year);
     QString _dateQuery = dateQuery(year);
 
@@ -50,7 +50,7 @@ QMap<QDate, int> CumulativeAggregator::countMeasurementsHigherOrEqualThanThresho
     int count = 0;
 
     for (unsigned int i = 0; i < measurementResults.size(); i++) {
-        if (measurementResults[i].toDouble() >= threshold) count++;
+        if (criteria(measurementResults[i].toDouble())) count++;
         counts[QDate::fromString(dateResults[i].toString(), "dd/MM/yyyy")] = count;
     }
 

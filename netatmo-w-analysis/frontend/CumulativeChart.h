@@ -33,6 +33,7 @@ private:
 
     QComboBox *measurementTypeBox;
     QComboBox *measurementOptionBox;
+    QComboBox *conditionBox;
 
     QLineEdit *thresholdLineEdit;
 

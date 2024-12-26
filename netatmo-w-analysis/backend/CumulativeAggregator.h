@@ -11,7 +11,12 @@ class CumulativeAggregator : public QObject
 public:
     CumulativeAggregator(QObject *parent);
 
-    QMap<QDate, int> countMeasurementsHigherOrEqualThanThreshold(QString measurementType, QString measurementOption, int year, double threshold);
+    QMap<QDate, int> countMeasurementsMeetingCriteria(
+        QString measurementType,
+        QString measurementOption,
+        int year,
+        std::function<bool(double)> criteria
+    );
 
 private:
     DatabaseHandler *dbHandler;
