@@ -28,7 +28,7 @@ CumulativeChart::CumulativeChart() {
     connect(yearBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
 
     measurementTypeBox = new QComboBox();
-    measurementTypeBox->addItems({"Température", "Humidité", "Point de rosée", "Humidex"});
+    measurementTypeBox->addItems({"Température", "Humidité", "Point de rosée", "Humidex", "Pression", "CO2", "Bruit"});
     connect(measurementTypeBox, SIGNAL(currentTextChanged(QString)), SLOT(setUnitLabel(QString)));
     connect(measurementTypeBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
 
@@ -40,6 +40,10 @@ CumulativeChart::CumulativeChart() {
     conditionBox->addItems({"=", "<", "≤", ">", "≥", "≠"});
     conditionBox->setCurrentIndex(1);
     connect(conditionBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
+
+    locationBox = new QComboBox();
+    locationBox->addItems({"ext.", "int."});
+    connect(locationBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
 
     thresholdLineEdit = new QLineEdit("10");
     connect(thresholdLineEdit, SIGNAL(returnPressed()), SLOT(drawChart()));
@@ -57,16 +61,17 @@ CumulativeChart::CumulativeChart() {
     chartView->setBackgroundBrush(QBrush(mainBackgroundColor));
 
     layout = new QGridLayout();
-    layout->addWidget(chartView, 1, 1, 1, 5);
+    layout->addWidget(chartView, 1, 1, 1, 6);
     layout->addWidget(new QLabel("Année : ", this), 2, 1);
     layout->addWidget(yearBox, 2, 2);
     layout->addWidget(new QLabel("Grandeur : ", this), 3, 1);
     layout->addWidget(measurementTypeBox, 3, 2);
     layout->addWidget(measurementOptionBox, 3, 3);
+    layout->addWidget(locationBox, 3, 4);
     layout->addWidget(new QLabel("Condition : ", this), 4, 1);
     layout->addWidget(conditionBox, 4, 2);
-    layout->addWidget(thresholdLineEdit, 4, 3, 1, 2);
-    layout->addWidget(unitLabel, 4, 5);
+    layout->addWidget(thresholdLineEdit, 4, 3, 1, 3);
+    layout->addWidget(unitLabel, 4, 6);
     setLayout(layout);
 
     aggregator = new CumulativeAggregator(this);
@@ -167,12 +172,14 @@ void CumulativeChart::drawChart() {
         {"≥", [threshold](double measurement) {return measurement >= threshold;}},
         {"≠", [threshold](double measurement) {return measurement != threshold;}}
     };
+    const bool indoor = locationBox->currentText() == "int." || measurementTypeBox->currentIndex() >= 4;
 
     QMap<QDate, int> counts = aggregator->countMeasurementsMeetingCriteria(
         measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
         measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
         year,
-        conditionBoxToCondition[conditionBox->currentText()]
+        conditionBoxToCondition[conditionBox->currentText()],
+        indoor
         );
 
     QList<QPointF> points = QList<QPointF>();

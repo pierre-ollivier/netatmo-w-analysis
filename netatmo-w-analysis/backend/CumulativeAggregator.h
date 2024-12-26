@@ -15,7 +15,8 @@ public:
         QString measurementType,
         QString measurementOption,
         int year,
-        std::function<bool(double)> criteria
+        std::function<bool(double)> criteria,
+        bool indoor
     );
 
 private:

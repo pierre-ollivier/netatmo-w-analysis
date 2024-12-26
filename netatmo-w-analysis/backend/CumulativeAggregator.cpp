@@ -38,10 +38,11 @@ QMap<QDate, int> CumulativeAggregator::countMeasurementsMeetingCriteria(
     QString measurementType,
     QString measurementOption,
     int year,
-    std::function<bool(double)> criteria
+    std::function<bool(double)> criteria,
+    bool indoor
     ) {
-    QString _measurementQuery = measurementQuery(measurementType, measurementOption, year);
-    QString _dateQuery = dateQuery(year);
+    QString _measurementQuery = measurementQuery(measurementType, measurementOption, year, indoor);
+    QString _dateQuery = dateQuery(year, indoor);
 
     std::vector<QVariant> measurementResults = dbHandler->getResultsFromDatabase(_measurementQuery);
     std::vector<QVariant> dateResults = dbHandler->getResultsFromDatabase(_dateQuery);
