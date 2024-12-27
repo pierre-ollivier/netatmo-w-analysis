@@ -74,14 +74,14 @@ YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) :
 
     connect(
         monthView->selectionModel(),
-        SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-        SLOT(handleMonthItemChanged(const QItemSelection &, const QItemSelection &))
+        SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+        SLOT(handleMonthItemChanged(QItemSelection,QItemSelection))
     );
 
     connect(
         yearView->selectionModel(),
-        SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-        SLOT(handleYearItemChanged(const QItemSelection &, const QItemSelection &))
+        SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+        SLOT(handleYearItemChanged(QItemSelection,QItemSelection))
     );
 
     setModal(true);
@@ -112,8 +112,8 @@ void YearMonthPicker::setYear(int year) {
                                        QItemSelectionModel::Select);
     connect(
         yearView->selectionModel(),
-        SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-        SLOT(handleYearItemChanged(const QItemSelection &, const QItemSelection &))
+        SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+        SLOT(handleYearItemChanged(QItemSelection,QItemSelection))
     );
 }
 
@@ -126,8 +126,8 @@ void YearMonthPicker::setMonth(int month) {
                                         QItemSelectionModel::Select);
     connect(
         monthView->selectionModel(),
-        SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-        SLOT(handleMonthItemChanged(const QItemSelection &, const QItemSelection &))
+        SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+        SLOT(handleMonthItemChanged(QItemSelection,QItemSelection))
     );
 }
 
