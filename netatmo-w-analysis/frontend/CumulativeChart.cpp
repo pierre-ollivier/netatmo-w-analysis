@@ -58,9 +58,17 @@ CumulativeChart::CumulativeChart() {
 
 for (int year = START_YEAR; year <= QDate::currentDate().year(); year++) {
         QLineSeries *series = new QLineSeries();
+        series->setName(QString::number(year));
+        if (year == QDate::currentDate().year()) {
+            series->setMarkerSize(3); // useless - to be removed
+        }
+        else {
+            series->setOpacity(0.25);
+        }
+
         yearSeries->insert(year, series);
-        yearSeries->value(year)->setName(QString::number(year));
-        chart->addSeries(yearSeries->value(year));
+        chart->addSeries(series);
+
     }
 
     chartView->setChart(chart);
