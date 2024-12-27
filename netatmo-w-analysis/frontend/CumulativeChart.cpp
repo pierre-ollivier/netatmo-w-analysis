@@ -174,13 +174,20 @@ void CumulativeChart::drawChart() {
     };
     const bool indoor = locationBox->currentText() == "int." || measurementTypeBox->currentIndex() >= 4;
 
-    QMap<QDate, int> counts = aggregator->countMeasurementsMeetingCriteria(
+    // QMap<QDate, int> counts = aggregator->countMeasurementsMeetingCriteria(
+    //     measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
+    //     measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
+    //     year,
+    //     conditionBoxToCondition[conditionBox->currentText()],
+    //     indoor
+    // );
+
+    QMap<QDate, double> counts = aggregator->countMeasurementsMeetingCriteriaAveraged(
         measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
         measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
-        year,
         conditionBoxToCondition[conditionBox->currentText()],
         indoor
-        );
+    );
 
     QList<QPointF> points = QList<QPointF>();
 

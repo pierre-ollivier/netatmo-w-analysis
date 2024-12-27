@@ -18,12 +18,21 @@ public:
         std::function<bool(double)> criteria,
         bool indoor
     );
+    QMap<QDate, double> countMeasurementsMeetingCriteriaAveraged(
+        QString measurementType,
+        QString measurementOption,
+        std::function<bool(double)> criteria,
+        bool indoor
+    );
 
 private:
     DatabaseHandler *dbHandler;
 
     QString measurementQuery(QString measurementType, QString measurementOption, int year, bool indoor = false);
+    QString measurementQuery(QString measurementType, QString measurementOption, bool indoor = false);
+
     QString dateQuery(int year, bool indoor = false);
+    QString dateQuery(bool indoor = false);
 };
 
 #endif // CUMULATIVEAGGREGATOR_H
