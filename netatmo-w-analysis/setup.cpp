@@ -1,4 +1,5 @@
 #include <QColor>
+#include <QDate>
 #include <QFont>
 #include <QLocale>
 #include <QString>
@@ -16,3 +17,6 @@ extern const QColor mainBackgroundColor = QColor(231, 216, 243);
 extern const QFont defaultTemperatureFont = QFont("Segoe UI", 9);
 
 extern const QLocale LOCALE = QLocale(QLocale::French, QLocale::France);
+
+extern const QDate START_DATE = QDate(2019, 10, 5);
+extern const int START_YEAR = 2019;

@@ -9,6 +9,8 @@
 #include <QStandardItemModel>
 #include <QHBoxLayout>
 
+extern int START_YEAR;
+
 class YearMonthPicker : public QDialog
 {
     Q_OBJECT
@@ -28,7 +30,6 @@ signals:
     void yearChanged(int);
 
 private:
-    const int START_YEAR = 2019;
     const int CURRENT_YEAR = QDate::currentDate().year();
     const int CURRENT_MONTH = QDate::currentDate().month();
     const int NUMBER_OF_YEARS = CURRENT_YEAR - START_YEAR + 1;

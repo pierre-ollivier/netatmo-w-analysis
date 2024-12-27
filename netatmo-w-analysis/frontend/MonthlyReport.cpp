@@ -4,6 +4,7 @@
 extern const QLocale LOCALE;
 extern QString PATH_TO_PROD_DATABASE;
 extern QString PATH_TO_COPY_DATABASE;
+extern QDate START_DATE;
 
 MonthlyReport::MonthlyReport() : QWidget()
 {
@@ -159,7 +160,7 @@ void MonthlyReport::add1Month() {
 }
 
 void MonthlyReport::substract1Month() {
-    QDate newDate = _date->addMonths(-1), minDate = QDate(2019, 10, 5);
+    QDate newDate = _date->addMonths(-1), minDate = START_DATE;
     if (newDate.year() > minDate.year() || (newDate.year() == minDate.year() && newDate.month() >= minDate.month())) {
         _date->operator=(_date->addMonths(-1));
         currentMonthClickableLabel->setText(LOCALE.toString(newDate, "MMMM yyyy"));

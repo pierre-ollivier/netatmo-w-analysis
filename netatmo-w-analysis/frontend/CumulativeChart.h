@@ -20,7 +20,6 @@ public:
 
 public slots:
     void drawChart();
-    void drawChart(QList<QPointF> points);
     void drawChart(QMap<int, QList<QPointF>> points);
 
 private slots:
@@ -44,7 +43,6 @@ private:
 
     QLabel *unitLabel;
 
-    QLineSeries *series;
     QMap<int, QLineSeries *> *yearSeries;
 
     QGridLayout *layout;

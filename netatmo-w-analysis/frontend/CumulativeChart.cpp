@@ -1,6 +1,7 @@
 #include "CumulativeChart.h"
 
 extern QColor mainBackgroundColor;
+extern int START_YEAR;
 
 CumulativeChart::CumulativeChart() {
     chart = new QChart();
@@ -21,7 +22,7 @@ CumulativeChart::CumulativeChart() {
     initYAxis();
 
     yearBox = new QComboBox();
-    for (int year = 2019; year <= QDate::currentDate().year(); year++) {
+    for (int year = START_YEAR; year <= QDate::currentDate().year(); year++) {
         yearBox->addItem(QString::number(year));
     }
     yearBox->setCurrentText(QString::number(QDate::currentDate().year()));
@@ -55,8 +56,8 @@ CumulativeChart::CumulativeChart() {
 
     yearSeries = new QMap<int, QLineSeries *>();
 
-    for (int year = 2019; year <= QDate::currentDate().year(); year++) {
-        series = new QLineSeries();
+for (int year = START_YEAR; year <= QDate::currentDate().year(); year++) {
+        QLineSeries *series = new QLineSeries();
         yearSeries->insert(year, series);
         yearSeries->value(year)->setName(QString::number(year));
         chart->addSeries(yearSeries->value(year));
@@ -191,7 +192,7 @@ void CumulativeChart::drawChart() {
 
     QMap<int, QList<QPointF>> points = QMap<int, QList<QPointF>>();
 
-    for (int year = 2019; year <= QDate::currentDate().year(); year++) {
+    for (int year = START_YEAR; year <= QDate::currentDate().year(); year++) {
         points[year] = QList<QPointF>();
 
         QMap<QDate, int> counts = aggregator->countMeasurementsMeetingCriteria(
