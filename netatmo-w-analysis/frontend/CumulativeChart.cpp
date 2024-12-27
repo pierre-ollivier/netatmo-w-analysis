@@ -50,12 +50,17 @@ CumulativeChart::CumulativeChart() {
 
     unitLabel = new QLabel("°C");
 
-    series = new QLineSeries();
-    series->setName("Données"); // provisional
-
     chart = new QChart();
-    chart->addSeries(series);
     chart->setLocalizeNumbers(true);
+
+    yearSeries = new QMap<int, QLineSeries *>();
+
+    for (int year = 2019; year <= QDate::currentDate().year(); year++) {
+        series = new QLineSeries();
+        yearSeries->insert(year, series);
+        yearSeries->value(year)->setName(QString::number(year));
+        chart->addSeries(yearSeries->value(year));
+    }
 
     chartView->setChart(chart);
     chartView->setBackgroundBrush(QBrush(mainBackgroundColor));
@@ -102,11 +107,13 @@ void CumulativeChart::initYAxis() {
     yAxis->setMin(0);
 }
 
-void CumulativeChart::scaleYAxis(QList<QPointF> points) {
+void CumulativeChart::scaleYAxis(QMap<int, QList<QPointF>> points) {
     int maxOfSeries = 0;
     int intervalBetweenTicks = 1;
-    for (QPointF point: points) {
-        if (point.y() > maxOfSeries) maxOfSeries = point.y();
+    for (int year: points.keys()) {
+        for (QPointF point: points[year]) {
+            if (point.y() > maxOfSeries) maxOfSeries = point.y();
+        }
     }
 
     if (maxOfSeries > 200) {
@@ -147,7 +154,6 @@ void CumulativeChart::addTicksToYAxis(int maxOfSeries, int intervalBetweenTicks)
 
 void CumulativeChart::drawChart() {
     double threshold = thresholdLineEdit->text().toDouble();
-    int year = yearBox->currentText().toInt();
 
     const QMap<QString, QString> measurementTypeBoxToMeasurementType = {
         {"Température", "temperature"},
@@ -174,45 +180,52 @@ void CumulativeChart::drawChart() {
     };
     const bool indoor = locationBox->currentText() == "int." || measurementTypeBox->currentIndex() >= 4;
 
-    // QMap<QDate, int> counts = aggregator->countMeasurementsMeetingCriteria(
+
+
+    // QMap<QDate, double> counts = aggregator->countMeasurementsMeetingCriteriaAveraged(
     //     measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
     //     measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
-    //     year,
     //     conditionBoxToCondition[conditionBox->currentText()],
     //     indoor
     // );
 
-    QMap<QDate, double> counts = aggregator->countMeasurementsMeetingCriteriaAveraged(
-        measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
-        measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
-        conditionBoxToCondition[conditionBox->currentText()],
-        indoor
-    );
+    QMap<int, QList<QPointF>> points = QMap<int, QList<QPointF>>();
 
-    QList<QPointF> points = QList<QPointF>();
+    for (int year = 2019; year <= QDate::currentDate().year(); year++) {
+        points[year] = QList<QPointF>();
 
-    for (auto i = counts.cbegin(), end = counts.cend(); i != end; ++i) {
-        QDate date = i.key();
-        date.setDate(2024, date.month(), date.day());
-        points.append(QPointF(date.toJulianDay(), i.value()));
+        QMap<QDate, int> counts = aggregator->countMeasurementsMeetingCriteria(
+            measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
+            measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
+            year,
+            conditionBoxToCondition[conditionBox->currentText()],
+            indoor
+        );
+
+        for (auto i = counts.cbegin(), end = counts.cend(); i != end; ++i) {
+            QDate date = i.key();
+            date.setDate(2024, date.month(), date.day());
+            points[year].append(QPointF(date.toJulianDay(), i.value()));
+        }
     }
 
     drawChart(points);
 }
 
-void CumulativeChart::drawChart(QList<QPointF> points) {
-    series->clear();
-    series->append(points);
-
-    scaleYAxis(points);
-
+void CumulativeChart::drawChart(QMap<int, QList<QPointF>> points) {
     if (chart->axes().length() == 0) {
         chart->addAxis(xAxis, Qt::AlignBottom);
         chart->addAxis(yAxis, Qt::AlignLeft);
     }
+    scaleYAxis(points);
 
-    if (series->attachedAxes().length() == 0) {
-        series->attachAxis(xAxis);
-        series->attachAxis(yAxis);
+    for (int year : points.keys()) {
+        yearSeries->value(year)->clear();
+        yearSeries->value(year)->append(points[year]);
+
+        if (yearSeries->value(year)->attachedAxes().length() == 0) {
+            yearSeries->value(year)->attachAxis(xAxis);
+            yearSeries->value(year)->attachAxis(yAxis);
+        }
     }
 }

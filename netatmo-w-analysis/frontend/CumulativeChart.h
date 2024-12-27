@@ -15,12 +15,13 @@ public:
     CumulativeChart();
 
     void initYAxis();
-    void scaleYAxis(QList<QPointF> points);
+    void scaleYAxis(QMap<int, QList<QPointF>> points);
     void addTicksToYAxis(int maxOfSeries, int intervalBetweenTicks);
 
 public slots:
     void drawChart();
     void drawChart(QList<QPointF> points);
+    void drawChart(QMap<int, QList<QPointF>> points);
 
 private slots:
     void setUnitLabel(QString measurementType);
@@ -44,6 +45,7 @@ private:
     QLabel *unitLabel;
 
     QLineSeries *series;
+    QMap<int, QLineSeries *> *yearSeries;
 
     QGridLayout *layout;
 
