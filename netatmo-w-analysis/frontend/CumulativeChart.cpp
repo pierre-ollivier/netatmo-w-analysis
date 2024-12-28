@@ -56,11 +56,11 @@ CumulativeChart::CumulativeChart() {
 
     yearSeries = new QMap<int, QLineSeries *>();
 
-for (int year = START_YEAR; year <= QDate::currentDate().year(); year++) {
+    for (int year = START_YEAR; year <= QDate::currentDate().year(); year++) {
         QLineSeries *series = new QLineSeries();
         series->setName(QString::number(year));
         if (year == QDate::currentDate().year()) {
-            series->setMarkerSize(3); // useless - to be removed
+            series->setPen(QPen(QBrush(Qt::blue), 2));
         }
         else {
             series->setOpacity(0.25);
@@ -68,8 +68,11 @@ for (int year = START_YEAR; year <= QDate::currentDate().year(); year++) {
 
         yearSeries->insert(year, series);
         chart->addSeries(series);
-
     }
+    averageSeries = new QLineSeries();
+    averageSeries->setName("Moyenne");
+    averageSeries->setPen(QPen(QBrush(Qt::black), 3));
+    chart->addSeries(averageSeries);
 
     chartView->setChart(chart);
     chartView->setBackgroundBrush(QBrush(mainBackgroundColor));
@@ -189,19 +192,11 @@ void CumulativeChart::drawChart() {
     };
     const bool indoor = locationBox->currentText() == "int." || measurementTypeBox->currentIndex() >= 4;
 
-
-
-    // QMap<QDate, double> counts = aggregator->countMeasurementsMeetingCriteriaAveraged(
-    //     measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
-    //     measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
-    //     conditionBoxToCondition[conditionBox->currentText()],
-    //     indoor
-    // );
-
-    QMap<int, QList<QPointF>> points = QMap<int, QList<QPointF>>();
+    QMap<int, QList<QPointF>> yearPoints = QMap<int, QList<QPointF>>();
+    QList<QPointF> averagePoints = QList<QPointF>();
 
     for (int year = START_YEAR; year <= QDate::currentDate().year(); year++) {
-        points[year] = QList<QPointF>();
+        yearPoints[year] = QList<QPointF>();
 
         QMap<QDate, int> counts = aggregator->countMeasurementsMeetingCriteria(
             measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
@@ -214,27 +209,48 @@ void CumulativeChart::drawChart() {
         for (auto i = counts.cbegin(), end = counts.cend(); i != end; ++i) {
             QDate date = i.key();
             date.setDate(2024, date.month(), date.day());
-            points[year].append(QPointF(date.toJulianDay(), i.value()));
+            yearPoints[year].append(QPointF(date.toJulianDay(), i.value()));
         }
     }
 
-    drawChart(points);
+    QMap<QDate, double> counts = aggregator->countMeasurementsMeetingCriteriaAveraged(
+        measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
+        measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
+        conditionBoxToCondition[conditionBox->currentText()],
+        indoor
+    );
+
+    for (auto i = counts.cbegin(), end = counts.cend(); i != end; ++i) {
+        QDate date = i.key();
+        date.setDate(2024, date.month(), date.day());
+        averagePoints.append(QPointF(date.toJulianDay(), i.value()));
+    }
+
+    drawChart(yearPoints, averagePoints);
 }
 
-void CumulativeChart::drawChart(QMap<int, QList<QPointF>> points) {
+void CumulativeChart::drawChart(QMap<int, QList<QPointF>> yearPoints, QList<QPointF> averagePoints) {
     if (chart->axes().length() == 0) {
         chart->addAxis(xAxis, Qt::AlignBottom);
         chart->addAxis(yAxis, Qt::AlignLeft);
     }
-    scaleYAxis(points);
+    scaleYAxis(yearPoints);
 
-    for (int year : points.keys()) {
+    for (int year : yearPoints.keys()) {
         yearSeries->value(year)->clear();
-        yearSeries->value(year)->append(points[year]);
+        yearSeries->value(year)->append(yearPoints[year]);
 
         if (yearSeries->value(year)->attachedAxes().length() == 0) {
             yearSeries->value(year)->attachAxis(xAxis);
             yearSeries->value(year)->attachAxis(yAxis);
         }
+    }
+
+    averageSeries->clear();
+    averageSeries->append(averagePoints);
+
+    if (averageSeries->attachedAxes().length() == 0) {
+        averageSeries->attachAxis(xAxis);
+        averageSeries->attachAxis(yAxis);
     }
 }

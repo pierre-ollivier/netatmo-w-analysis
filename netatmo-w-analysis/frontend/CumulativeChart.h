@@ -20,7 +20,7 @@ public:
 
 public slots:
     void drawChart();
-    void drawChart(QMap<int, QList<QPointF>> points);
+    void drawChart(QMap<int, QList<QPointF>> yearPoints, QList<QPointF> averagePoints);
 
 private slots:
     void setUnitLabel(QString measurementType);
@@ -44,6 +44,7 @@ private:
     QLabel *unitLabel;
 
     QMap<int, QLineSeries *> *yearSeries;
+    QLineSeries *averageSeries;
 
     QGridLayout *layout;
 
