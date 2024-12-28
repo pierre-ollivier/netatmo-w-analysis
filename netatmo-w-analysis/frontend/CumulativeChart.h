@@ -39,6 +39,8 @@ private:
     QComboBox *conditionBox;
     QComboBox *locationBox;
 
+    QCheckBox *includeCurrentYearCheckBox;
+
     QLineEdit *thresholdLineEdit;
 
     QLabel *unitLabel;

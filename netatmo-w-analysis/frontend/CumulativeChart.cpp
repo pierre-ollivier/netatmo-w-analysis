@@ -46,6 +46,10 @@ CumulativeChart::CumulativeChart() {
     locationBox->addItems({"ext.", "int."});
     connect(locationBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
 
+    includeCurrentYearCheckBox = new QCheckBox("Inclure l'année actuelle dans le calcul de la moyenne");
+    includeCurrentYearCheckBox->setChecked(true);
+    connect(includeCurrentYearCheckBox, SIGNAL(clicked()), SLOT(drawChart()));
+
     thresholdLineEdit = new QLineEdit("10");
     connect(thresholdLineEdit, SIGNAL(returnPressed()), SLOT(drawChart()));
 
@@ -89,6 +93,7 @@ CumulativeChart::CumulativeChart() {
     layout->addWidget(conditionBox, 4, 2);
     layout->addWidget(thresholdLineEdit, 4, 3, 1, 3);
     layout->addWidget(unitLabel, 4, 6);
+    layout->addWidget(includeCurrentYearCheckBox, 5, 1, 1, 3);
     setLayout(layout);
 
     aggregator = new CumulativeAggregator(this);
@@ -217,7 +222,8 @@ void CumulativeChart::drawChart() {
         measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
         measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
         conditionBoxToCondition[conditionBox->currentText()],
-        indoor
+        indoor,
+        !includeCurrentYearCheckBox->isChecked()
     );
 
     for (auto i = counts.cbegin(), end = counts.cend(); i != end; ++i) {

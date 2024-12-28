@@ -29,7 +29,7 @@ QString CumulativeAggregator::measurementQuery(QString measurementType, QString 
     return "SELECT " + measurement + " FROM " + table + " WHERE year = " + QString::number(year) + " ORDER BY month, day";
 }
 
-QString CumulativeAggregator::measurementQuery(QString measurementType, QString measurementOption, bool indoor) {
+QString CumulativeAggregator::measurementQuery(QString measurementType, QString measurementOption, bool indoor, bool excludeCurrentYear) {
     const QMap<QString, QString> measurementToPascalCase = {
         {"temperature", "Temperature"},
         {"humidity", "Humidity"},
@@ -49,7 +49,11 @@ QString CumulativeAggregator::measurementQuery(QString measurementType, QString 
     }
 
     QString table = indoor ? "IndoorDailyRecords" : "OutdoorDailyRecords";
-    return "SELECT " + measurement + " FROM " + table + " ORDER BY year, month, day";
+    QString exclusionCondition = "";
+    if (excludeCurrentYear) {
+        exclusionCondition = " WHERE year < " + QDate::currentDate().toString("yyyy");
+    }
+    return "SELECT " + measurement + " FROM " + table + exclusionCondition + " ORDER BY year, month, day";
 }
 
 QString CumulativeAggregator::dateQuery(int year, bool indoor) {
@@ -57,9 +61,13 @@ QString CumulativeAggregator::dateQuery(int year, bool indoor) {
     return "SELECT date FROM " + table + " WHERE year = " + QString::number(year) + " ORDER BY month, day";
 }
 
-QString CumulativeAggregator::dateQuery(bool indoor) {
+QString CumulativeAggregator::dateQuery(bool indoor, bool excludeCurrentYear) {
     QString table = indoor ? "IndoorDailyRecords" : "OutdoorDailyRecords";
-    return "SELECT date FROM " + table + " ORDER BY year, month, day";
+    QString exclusionCondition = "";
+    if (excludeCurrentYear) {
+        exclusionCondition = " WHERE year < " + QDate::currentDate().toString("yyyy");
+    }
+    return "SELECT date FROM " + table + exclusionCondition + " ORDER BY year, month, day";
 }
 
 QMap<QDate, int> CumulativeAggregator::countMeasurementsMeetingCriteria(
@@ -90,10 +98,11 @@ QMap<QDate, double> CumulativeAggregator::countMeasurementsMeetingCriteriaAverag
     QString measurementType,
     QString measurementOption,
     std::function<bool(double)> criteria,
-    bool indoor
+    bool indoor,
+    bool excludeCurrentYear
     ) {
-    QString _measurementQuery = measurementQuery(measurementType, measurementOption, indoor);
-    QString _dateQuery = dateQuery(indoor);
+    QString _measurementQuery = measurementQuery(measurementType, measurementOption, indoor, excludeCurrentYear);
+    QString _dateQuery = dateQuery(indoor, excludeCurrentYear);
 
     std::vector<QVariant> measurementResults = dbHandler->getResultsFromDatabase(_measurementQuery);
     std::vector<QVariant> dateResults = dbHandler->getResultsFromDatabase(_dateQuery);
