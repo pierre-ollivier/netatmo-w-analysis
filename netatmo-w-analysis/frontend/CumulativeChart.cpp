@@ -4,6 +4,8 @@ extern QColor mainBackgroundColor;
 extern int START_YEAR;
 
 CumulativeChart::CumulativeChart() {
+    aggregator = new CumulativeAggregator(this);
+
     chart = new QChart();
     chartView = new QChartView();
 
@@ -25,8 +27,7 @@ CumulativeChart::CumulativeChart() {
     for (int year = START_YEAR; year <= QDate::currentDate().year(); year++) {
         yearBox->addItem(QString::number(year));
     }
-    yearBox->setCurrentText(QString::number(QDate::currentDate().year()));
-    connect(yearBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
+    connect(yearBox, SIGNAL(currentIndexChanged(int)), SLOT(setSeriesPens(int)));
 
     measurementTypeBox = new QComboBox();
     measurementTypeBox->addItems({"Température", "Humidité", "Point de rosée", "Humidex", "Pression", "CO2", "Bruit"});
@@ -63,19 +64,13 @@ CumulativeChart::CumulativeChart() {
     for (int year = START_YEAR; year <= QDate::currentDate().year(); year++) {
         QLineSeries *series = new QLineSeries();
         series->setName(QString::number(year));
-        if (year == QDate::currentDate().year()) {
-            series->setPen(QPen(QBrush(Qt::blue), 2));
-        }
-        else {
-            series->setOpacity(0.25);
-        }
 
         yearSeries->insert(year, series);
         chart->addSeries(series);
     }
     averageSeries = new QLineSeries();
     averageSeries->setName("Moyenne");
-    averageSeries->setPen(QPen(QBrush(Qt::black), 3));
+    averageSeries->setPen(QPen(QBrush(Qt::red), 2));
     chart->addSeries(averageSeries);
 
     chartView->setChart(chart);
@@ -96,10 +91,23 @@ CumulativeChart::CumulativeChart() {
     layout->addWidget(includeCurrentYearCheckBox, 5, 1, 1, 3);
     setLayout(layout);
 
-    aggregator = new CumulativeAggregator(this);
+    // Set pens for all the year series and draw the chart
+    yearBox->setCurrentIndex(QDate::currentDate().year() - START_YEAR);
 
+}
+
+void CumulativeChart::setSeriesPens(int emphasizedIndex) {
+    for (int year : yearSeries->keys()) {
+        if (year == START_YEAR + emphasizedIndex) {
+            yearSeries->value(year)->setPen(QPen(QBrush(Qt::blue), 2));
+        }
+        else {
+            int grayLevel = 208 - 160 * (year - START_YEAR) / (QDate::currentDate().year() - START_YEAR);
+            QColor color = QColor(grayLevel, grayLevel, grayLevel);
+            yearSeries->value(year)->setPen(QPen(QBrush(color), 1));
+        }
+    }
     drawChart();
-
 }
 
 void CumulativeChart::setUnitLabel(QString measurementType) {

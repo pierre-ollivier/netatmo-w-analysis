@@ -24,6 +24,7 @@ public slots:
 
 private slots:
     void setUnitLabel(QString measurementType);
+    void setSeriesPens(int emphasizedIndex);
 
 private:    
     QChart *chart;
