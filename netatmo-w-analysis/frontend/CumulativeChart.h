@@ -15,14 +15,18 @@ public:
     CumulativeChart();
 
     void initYAxis();
-    void scaleYAxis(QList<QPointF> points);
+    void scaleYAxis(QMap<int, QList<QPointF>> points);
     void addTicksToYAxis(int maxOfSeries, int intervalBetweenTicks);
 
 public slots:
     void drawChart();
-    void drawChart(QList<QPointF> points);
+    void drawChart(QMap<int, QList<QPointF>> yearPoints, QList<QPointF> averagePoints);
 
-private:
+private slots:
+    void setUnitLabel(QString measurementType);
+    void setSeriesPens(int emphasizedIndex);
+
+private:    
     QChart *chart;
     QChartView *chartView;
 
@@ -31,9 +35,19 @@ private:
 
     QComboBox *yearBox;
 
+    QComboBox *measurementTypeBox;
+    QComboBox *measurementOptionBox;
+    QComboBox *conditionBox;
+    QComboBox *locationBox;
+
+    QCheckBox *includeCurrentYearCheckBox;
+
     QLineEdit *thresholdLineEdit;
 
-    QLineSeries *series;
+    QLabel *unitLabel;
+
+    QMap<int, QLineSeries *> *yearSeries;
+    QLineSeries *averageSeries;
 
     QGridLayout *layout;
 

@@ -4,6 +4,9 @@
 #include <QDebug>
 #include <QDate>
 
+extern int START_YEAR;
+extern QDate START_DATE;
+
 YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) : QDialog(parent)
 {
     _baseYear = baseYear;
@@ -71,14 +74,14 @@ YearMonthPicker::YearMonthPicker(int baseYear, int baseMonth, QWidget *parent) :
 
     connect(
         monthView->selectionModel(),
-        SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-        SLOT(handleMonthItemChanged(const QItemSelection &, const QItemSelection &))
+        SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+        SLOT(handleMonthItemChanged(QItemSelection,QItemSelection))
     );
 
     connect(
         yearView->selectionModel(),
-        SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-        SLOT(handleYearItemChanged(const QItemSelection &, const QItemSelection &))
+        SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+        SLOT(handleYearItemChanged(QItemSelection,QItemSelection))
     );
 
     setModal(true);
@@ -95,8 +98,8 @@ void YearMonthPicker::handleMonthItemChanged(const QItemSelection &selection, co
 
 void YearMonthPicker::handleYearItemChanged(const QItemSelection &selection, const QItemSelection &_) {
     int row = selection.indexes()[0].row();
-    emit yearChanged(row + 2019);
-    _baseYear = row + 2019;
+    emit yearChanged(row + START_YEAR);
+    _baseYear = row + START_YEAR;
     disableIrrelevantItems();
 }
 
@@ -109,8 +112,8 @@ void YearMonthPicker::setYear(int year) {
                                        QItemSelectionModel::Select);
     connect(
         yearView->selectionModel(),
-        SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-        SLOT(handleYearItemChanged(const QItemSelection &, const QItemSelection &))
+        SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+        SLOT(handleYearItemChanged(QItemSelection,QItemSelection))
     );
 }
 
@@ -123,8 +126,8 @@ void YearMonthPicker::setMonth(int month) {
                                         QItemSelectionModel::Select);
     connect(
         monthView->selectionModel(),
-        SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-        SLOT(handleMonthItemChanged(const QItemSelection &, const QItemSelection &))
+        SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+        SLOT(handleMonthItemChanged(QItemSelection,QItemSelection))
     );
 }
 
@@ -138,14 +141,18 @@ void YearMonthPicker::disableIrrelevantItems() {
     for (int month = 0; month <= 11; month++) monthModel->item(month / 3, month % 3)->setEnabled(true);
     for (int year = 0; year < NUMBER_OF_YEARS; year++) yearModel->item(year)->setEnabled(true);
 
-    // when the month is < 10, disable year 2019
-    if (_baseMonth < 10) yearModel->item(0)->setEnabled(false);
+    // when the month is < START_DATE.month(), disable year START_YEAR
+    if (_baseMonth < START_DATE.month()) yearModel->item(0)->setEnabled(false);
 
     // when the month is > CURRENT_MONTH, disable year CURRENT_YEAR
     if (_baseMonth > CURRENT_MONTH) yearModel->item(NUMBER_OF_YEARS - 1)->setEnabled(false);
 
-    // when the year is 2019, disable months < 10
-    if (_baseYear == 2019) {for (int month = 0; month <= 8; month++) monthModel->item(month / 3, month % 3)->setEnabled(false);}
+    // when the year is START_YEAR, disable months < START_DATE.month()
+    if (_baseYear == START_YEAR) {
+        for (int month = 0; month < START_DATE.month() - 1; month++) {
+            monthModel->item(month / 3, month % 3)->setEnabled(false);
+        }
+    }
 
     // when the year is CURRENT_YEAR, disable months > CURRENT_MONTH
     if (_baseYear == CURRENT_YEAR) {for (int month = CURRENT_MONTH; month <= 11; month++) monthModel->item(month / 3, month % 3)->setEnabled(false);}
