@@ -11,13 +11,13 @@ CumulativeChart::CumulativeChart() {
 
     xAxis = new QCategoryAxis();
     xAxis->setLineVisible(false);
-    xAxis->setMin(QDate(2024, 1, 1).toJulianDay());
-    xAxis->setMax(QDate(2025, 1, 1).toJulianDay());
+    xAxis->setMin(QDate(2024, 1, 1).toJulianDay() - 0.5);
+    xAxis->setMax(QDate(2025, 1, 1).toJulianDay() - 0.5);
 
     for (QDate d = QDate(2024, 1, 1); d <= QDate(2024, 12, 1); d = d.addMonths(1)) {
-        xAxis->append(d.toString("dd/MM"), d.toJulianDay());
+        xAxis->append(d.toString("dd/MM"), d.toJulianDay() - 0.5);
     }
-    xAxis->append("‎01/01\0", QDate(2025, 1, 1).toJulianDay());
+    xAxis->append("‎01/01\0", QDate(2025, 1, 1).toJulianDay() - 0.5);
     xAxis->setLabelsPosition(QCategoryAxis::AxisLabelsPositionOnValue);
 
     yAxis = new QCategoryAxis();
