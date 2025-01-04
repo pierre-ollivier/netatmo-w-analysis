@@ -87,6 +87,7 @@ QMap<QDate, int> CumulativeAggregator::countMeasurementsMeetingCriteria(
     int count = 0;
 
     for (unsigned int i = 0; i < measurementResults.size(); i++) {
+        if (measurementResults[i].isNull()) continue;
         if (criteria(measurementResults[i].toDouble())) count++;
         counts[QDate::fromString(dateResults[i].toString(), "dd/MM/yyyy")] = count;
     }
@@ -116,6 +117,7 @@ QMap<QDate, double> CumulativeAggregator::countMeasurementsMeetingCriteriaAverag
     }
 
     for (unsigned int i = 0; i < measurementResults.size(); i++) {
+        if (measurementResults[i].isNull()) continue;
         QDate date = QDate::fromString(dateResults[i].toString(), "dd/MM/yyyy");
         date = date.addYears(2024 - date.year());
         datesCounts[date]++;
