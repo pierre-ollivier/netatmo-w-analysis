@@ -76,6 +76,7 @@ public slots:
 
     void exploreData();
     void displayCumulativeChart();
+    void displayGrowthChart();
 
     void displayMonthlyReport();
     void displayYearlyReport();
@@ -150,6 +151,7 @@ private:
     QAction *updateDailyOutdoorDatabaseAction;
     QAction *exploreDataAction;
     QAction *displayCumulativeChartAction;
+    QAction *displayGrowthChartAction;
     QAction *displayMonthlyReportAction;
     QAction *displayYearlyReportAction;
     QAction *normalsAction;
