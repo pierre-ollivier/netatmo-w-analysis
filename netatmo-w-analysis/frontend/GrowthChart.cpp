@@ -1,4 +1,5 @@
 #include "GrowthChart.h"
+#include <float.h>
 
 extern QColor mainBackgroundColor;
 extern int START_YEAR;
@@ -82,4 +83,166 @@ GrowthChart::GrowthChart() {
 
     // Set pens for all the year series and draw the chart
     yearBox->setCurrentIndex(QDate::currentDate().year() - START_YEAR);
+}
+
+double maxOfVector(std::vector<QVariant> vector) {
+    if (vector.size() == 0) {
+        qDebug() << "Computing the maximum of empty vector, returning 0...";
+        return 0.0;
+    }
+    double result = -DBL_MAX;
+    for (QVariant variant: vector) {
+        if (!variant.isNull() && result < variant.toDouble()) result = variant.toDouble();
+    }
+    return result;
+}
+
+
+void GrowthChart::setSeriesPens(int emphasizedIndex) {
+    for (int year : yearSeries->keys()) {
+        if (year == START_YEAR + emphasizedIndex) {
+            yearSeries->value(year)->setPen(QPen(QBrush(Qt::blue), 2));
+        }
+        else {
+            int grayLevel = 208 - 160 * (year - START_YEAR) / (QDate::currentDate().year() - START_YEAR);
+            QColor color = QColor(grayLevel, grayLevel, grayLevel);
+            yearSeries->value(year)->setPen(QPen(QBrush(color), 1));
+        }
+    }
+    drawChart();
+}
+
+void GrowthChart::setUnitLabel(QString measurementType) {
+    const QMap<QString, QString> measurementTypeToUnit = {
+                                                          {"Température", "°C"},
+                                                          {"Humidité", "%"},
+                                                          {"Point de rosée", "°C"},
+                                                          {"Humidex", ""},
+                                                          {"Pression", "hPa"},
+                                                          {"CO2", "ppm"},
+                                                          {"Bruit", "dB"},
+                                                          };
+    // unitLabel->setText(measurementTypeToUnit[measurementType]);
+}
+
+void GrowthChart::initYAxis() {
+    for (QString label: yAxis->categoriesLabels()) {
+        yAxis->remove(label);
+    }
+    yAxis->setLineVisible(false);
+    yAxis->setLabelsPosition(QCategoryAxis::AxisLabelsPositionOnValue);
+    yAxis->setMin(0);
+}
+
+void GrowthChart::scaleYAxis(QMap<int, QList<QPointF>> points) {
+    int maxOfSeries = 0;
+    int intervalBetweenTicks = 1;
+    for (int year: points.keys()) {
+        for (QPointF point: points[year]) {
+            if (point.y() > maxOfSeries) maxOfSeries = point.y();
+        }
+    }
+
+    if (maxOfSeries > 200) {
+        maxOfSeries = maxOfSeries + 50 - maxOfSeries % 50;
+        intervalBetweenTicks = 50;
+    }
+    else if (maxOfSeries > 100) {
+        maxOfSeries = maxOfSeries + 20 - maxOfSeries % 20;
+        intervalBetweenTicks = 20;
+    }
+    else if (maxOfSeries > 50) {
+        maxOfSeries = maxOfSeries + 10 - maxOfSeries % 10;
+        intervalBetweenTicks = 10;
+    }
+    else if (maxOfSeries > 20) {
+        maxOfSeries = maxOfSeries + 5 - maxOfSeries % 5;
+        intervalBetweenTicks = 5;
+    }
+    else if (maxOfSeries > 10) {
+        maxOfSeries = maxOfSeries + 2 - maxOfSeries % 2;
+        intervalBetweenTicks = 2;
+    }
+    else {
+        maxOfSeries = maxOfSeries + 1 - maxOfSeries % 1;
+        intervalBetweenTicks = 1;
+    }
+
+    initYAxis();
+    yAxis->setMax(maxOfSeries);
+    addTicksToYAxis(maxOfSeries, intervalBetweenTicks);
+}
+
+void GrowthChart::addTicksToYAxis(int maxOfSeries, int intervalBetweenTicks) {
+    for (int i = 0; i <= maxOfSeries; i += intervalBetweenTicks) {
+        yAxis->append(QString::number(i), i);
+    }
+}
+
+void GrowthChart::drawChart() {
+    const QMap<QString, QString> measurementTypeBoxToMeasurementType = {
+                                                                        {"Température", "temperature"},
+                                                                        {"Humidité", "humidity"},
+                                                                        {"Point de rosée", "dewpoint"},
+                                                                        {"Humidex", "humidex"},
+                                                                        {"Pression", "pressure"},
+                                                                        {"CO2", "co2"},
+                                                                        {"Bruit", "noise"},
+                                                                        };
+    const QMap<QString, QString> measurementOptionBoxToMeasurementOption = {
+                                                                            {"max.", "max"},
+                                                                            {"min.", "min"},
+                                                                            {"moy.", "avg"},
+                                                                            {"var.", "diff"},
+                                                                            };
+    const bool indoor = locationBox->currentText() == "int." || measurementTypeBox->currentIndex() >= 4;
+
+    QMap<int, QList<QPointF>> yearPoints = QMap<int, QList<QPointF>>();
+    QList<QPointF> averagePoints = QList<QPointF>();
+
+    for (int year = START_YEAR; year <= QDate::currentDate().year(); year++) {
+        yearPoints[year] = QList<QPointF>();
+
+        QMap<QDate, double> values = aggregator->aggregateMeasurements(
+            measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
+            measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
+            year,
+            indoor,
+            maxOfVector
+        );
+
+        for (auto i = values.cbegin(), end = values.cend(); i != end; ++i) {
+            QDate date = i.key();
+            date.setDate(2024, date.month(), date.day());
+            yearPoints[year].append(QPointF(date.toJulianDay(), i.value()));
+        }
+    }
+
+    drawChart(yearPoints, averagePoints);
+}
+
+void GrowthChart::drawChart(QMap<int, QList<QPointF>> yearPoints, QList<QPointF> averagePoints) {
+    if (chart->axes().length() == 0) {
+        chart->addAxis(xAxis, Qt::AlignBottom);
+        chart->addAxis(yAxis, Qt::AlignLeft);
+    }
+    scaleYAxis(yearPoints);
+
+    for (int year : yearPoints.keys()) {
+        yearSeries->value(year)->clear();
+        yearSeries->value(year)->append(yearPoints[year]);
+
+        if (yearSeries->value(year)->attachedAxes().length() == 0) {
+            yearSeries->value(year)->attachAxis(xAxis);
+            yearSeries->value(year)->attachAxis(yAxis);
+        }
+    }
+
+    averageSeries->clear();
+    averageSeries->append(averagePoints);
+
+    if (averageSeries->attachedAxes().length() == 0) {
+        averageSeries->attachAxis(xAxis);
+        averageSeries->attachAxis(yAxis);
+    }
 }

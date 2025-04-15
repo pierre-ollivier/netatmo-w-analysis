@@ -25,6 +25,13 @@ public:
         bool indoor,
         bool excludeCurrentYear = false
     );
+    QMap<QDate, double> aggregateMeasurements(
+        QString measurementType,
+        QString measurementOption,
+        int year,
+        bool indoor,
+        std::function<double(std::vector<QVariant>)> aggregationFunction
+    );
 
 private:
     DatabaseHandler *dbHandler;

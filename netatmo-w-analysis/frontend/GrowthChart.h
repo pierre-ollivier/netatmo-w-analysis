@@ -14,6 +14,18 @@ class GrowthChart : public QWidget
 public:
     GrowthChart();
 
+    void initYAxis();
+    void scaleYAxis(QMap<int, QList<QPointF>> points);
+    void addTicksToYAxis(int maxOfSeries, int intervalBetweenTicks);
+
+public slots:
+    void drawChart();
+    void drawChart(QMap<int, QList<QPointF>> yearPoints, QList<QPointF> averagePoints);
+
+private slots:
+    void setUnitLabel(QString measurementType);
+    void setSeriesPens(int emphasizedIndex);
+
 private:
     QChart *chart;
     QChartView *chartView;
