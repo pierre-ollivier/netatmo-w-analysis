@@ -18,6 +18,14 @@ public:
         std::function<bool(double)> criteria,
         bool indoor
     );
+    QMap<QDate, int> countMeasurementsMeetingCriteria(
+        QString measurementType,
+        QString measurementOption,
+        QDate beginDate,
+        QDate endDate,
+        std::function<bool(double)> criteria,
+        bool indoor
+        );
     QMap<QDate, double> countMeasurementsMeetingCriteriaAveraged(
         QString measurementType,
         QString measurementOption,
@@ -37,9 +45,11 @@ private:
     DatabaseHandler *dbHandler;
 
     QString measurementQuery(QString measurementType, QString measurementOption, int year, bool indoor = false);
+    QString measurementQuery(QString measurementType, QString measurementOption, QDate beginDate, QDate endDate, bool indoor = false);
     QString measurementQuery(QString measurementType, QString measurementOption, bool indoor = false, bool excludeCurrentYear = false);
 
     QString dateQuery(int year, bool indoor = false);
+    QString dateQuery(QDate beginDate, QDate endDate, bool indoor = false);
     QString dateQuery(bool indoor = false, bool excludeCurrentYear = false);
 };
 

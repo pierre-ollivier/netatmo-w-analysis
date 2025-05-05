@@ -214,7 +214,8 @@ void CumulativeChart::drawChart() {
         QMap<QDate, int> counts = aggregator->countMeasurementsMeetingCriteria(
             measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
             measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
-            year,
+            QDate(year, 2, 1),
+            QDate(year, 5, 31),
             conditionBoxToCondition[conditionBox->currentText()],
             indoor
         );
