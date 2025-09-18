@@ -252,3 +252,27 @@ QMap<QDate, double> CumulativeAggregator::aggregateMeasurements(
 
     return results;
 }
+
+QMap<QDate, double> CumulativeAggregator::aggregateMeasurementsAveraged(
+        QMap<int, QMap<QDate, double>> valuesByYear,
+        bool includeCurrentYear
+    ) {
+    QMap<QDate, double> averageValues = QMap<QDate, double>();
+
+    for (QDate date = QDate(2024, 1, 1); date <= QDate(2024, 12, 31); date = date.addDays(1)) {
+        int numberOfValues = 0;
+        double sumOfValues = 0.;
+
+        for (int year : valuesByYear.keys()) {
+            if (year == QDate::currentDate().year() && !includeCurrentYear) continue;
+
+            if (valuesByYear[year].contains(QDate(year, date.month(), date.day()))) {
+                numberOfValues++;
+                sumOfValues += valuesByYear[year][QDate(year, date.month(), date.day())];
+            }
+        }
+
+        if (numberOfValues > 0) averageValues[date] = sumOfValues / numberOfValues;
+    }
+    return averageValues;
+}

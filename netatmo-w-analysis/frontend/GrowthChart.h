@@ -41,6 +41,7 @@ private:
     QComboBox *locationBox;
 
     QCheckBox *includeMissingConstantValuesCheckBox;
+    QCheckBox *includeCurrentYearCheckBox;
 
     QMap<int, QLineSeries *> *yearSeries;
     QLineSeries *averageSeries;

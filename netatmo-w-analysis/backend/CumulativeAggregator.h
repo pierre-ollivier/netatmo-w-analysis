@@ -41,6 +41,10 @@ public:
         std::function<double(std::vector<QVariant>)> aggregationFunction,
         bool recoverMissingConstantValues = false
     );
+    QMap<QDate, double> aggregateMeasurementsAveraged(
+        QMap<int, QMap<QDate, double>> valuesByYear,
+        bool includeCurrentYear = true
+    );
 
 private:
     DatabaseHandler *dbHandler;

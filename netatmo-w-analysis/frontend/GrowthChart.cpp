@@ -55,6 +55,9 @@ GrowthChart::GrowthChart() {
     includeMissingConstantValuesCheckBox->setChecked(true);
     connect(includeMissingConstantValuesCheckBox, SIGNAL(clicked()), SLOT(drawChart()));
 
+    includeCurrentYearCheckBox = new QCheckBox("Inclure l'année actuelle dans le calcul de la moyenne");
+    includeCurrentYearCheckBox->setChecked(true);
+    connect(includeCurrentYearCheckBox, SIGNAL(clicked()), SLOT(drawChart()));
 
     chart = new QChart();
     chart->setLocalizeNumbers(true);
@@ -87,6 +90,7 @@ GrowthChart::GrowthChart() {
     layout->addWidget(new QLabel("Condition : ", this), 4, 1);
     layout->addWidget(conditionBox, 4, 2);
     layout->addWidget(includeMissingConstantValuesCheckBox, 5, 1, 1, 4);
+    layout->addWidget(includeCurrentYearCheckBox, 6, 1, 1, 4);
     setLayout(layout);
 
     // Set pens for all the year series and draw the chart
@@ -275,16 +279,13 @@ void GrowthChart::drawChart() {
         }
     }
 
+    QMap<QDate, double> averageValues = aggregator->aggregateMeasurementsAveraged(
+        valuesByYear,
+        includeCurrentYearCheckBox->isChecked()
+    );
+
     for (QDate date = QDate(2024, 1, 1); date <= QDate(2024, 12, 31); date = date.addDays(1)) {
-        int numberOfValues = 0;
-        double sumOfValues = 0.;
-        for (int year = START_YEAR; year <= QDate::currentDate().year(); year++) {
-            if (valuesByYear[year].contains(QDate(year, date.month(), date.day()))) {
-                numberOfValues++;
-                sumOfValues += valuesByYear[year][QDate(year, date.month(), date.day())];
-            }
-        }
-        if (numberOfValues > 0) averagePoints.append(QPointF(date.toJulianDay(), sumOfValues / numberOfValues));
+        if (averageValues.contains(date)) averagePoints.append(QPointF(date.toJulianDay(), averageValues[date]));
     }
 
     drawChart(yearPoints, averagePoints);
