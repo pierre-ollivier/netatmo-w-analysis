@@ -27,6 +27,33 @@ QString dateCondition(QDate beginDate, QDate endDate, QString dateColumn = "date
         );
 }
 
+QString dateCondition(int beginMonth, int beginDay, int endMonth, int endDay, QString monthColumn = "month", QString dayColumn = "day") {
+    /*
+     * Returns a condition to select rows from a SQLite database where the months/days represented
+     * in `monthColumn` and `dayColumn` is between (beginMonth, beginDay) and (endMonth, endDay) inclusive.
+     * End months/days anterior to begin months/days are supported. The result will consider the interval
+     * formed by these two months/days and containing January 1st.
+     */
+
+    if (beginMonth < endMonth || (beginMonth == endMonth && beginDay <= endDay)) {
+        return (
+            " WHERE (" + monthColumn + ", " + dayColumn + ")"
+            + " BETWEEN (" + QString::number(beginMonth) + ", " + QString::number(beginDay) + ")"
+            + " AND (" + QString::number(endMonth) + ", " + QString::number(endDay) + ")"
+        );
+    }
+
+    else {
+        return (
+            " WHERE ((" + monthColumn + ", " + dayColumn + ")"
+            + " BETWEEN (" + QString::number(beginMonth) + ", " + QString::number(beginDay) + ")"
+            + " AND (12, 31)"
+            + " OR (" + monthColumn + ", " + dayColumn + ") BETWEEN (1, 1)"
+            + " AND (" + QString::number(endMonth) + ", " + QString::number(endDay) + "))"
+        );
+    }
+}
+
 CumulativeAggregator::CumulativeAggregator(QObject *parent) : QObject(parent) {
     dbHandler = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
 }
@@ -69,7 +96,39 @@ QString CumulativeAggregator::measurementQuery(
         + " FROM "
         + table
         + dateCondition(beginDate, endDate)
-        + " ORDER BY month, day"
+        + " ORDER BY year, month, day"
+        );
+}
+
+QString CumulativeAggregator::measurementQuery(
+    QString measurementType,
+    QString measurementOption,
+    int beginMonth,
+    int beginDay,
+    int endMonth,
+    int endDay,
+    bool indoor,
+    bool excludeCurrentYear
+    ) {
+
+    QString measurement = "";
+
+    if (measurementOption == "diff") {
+        measurement = "(max" + measurementToPascalCase[measurementType] + " - min" + measurementToPascalCase[measurementType] + ")";
+    }
+    else {
+        measurement = measurementOption + measurementToPascalCase[measurementType];
+    }
+
+    QString table = indoor ? "IndoorDailyRecords" : "OutdoorDailyRecords";
+    return (
+        "SELECT "
+        + measurement
+        + " FROM "
+        + table
+        + dateCondition(beginMonth, beginDay, endMonth, endDay)
+        + (excludeCurrentYear? " AND year < " + QDate::currentDate().toString("yyyy") : "")
+        + " ORDER BY year, month, day"
         );
 }
 
@@ -93,7 +152,7 @@ QString CumulativeAggregator::measurementQuery(QString measurementType, QString 
 
 QString CumulativeAggregator::dateQuery(int year, bool indoor) {
     QString table = indoor ? "IndoorDailyRecords" : "OutdoorDailyRecords";
-    return "SELECT date FROM " + table + " WHERE year = " + QString::number(year) + " ORDER BY month, day";
+    return "SELECT date FROM " + table + " WHERE year = " + QString::number(year) + " ORDER BY year, month, day";
 }
 
 QString CumulativeAggregator::dateQuery(QDate beginDate, QDate endDate, bool indoor) {
@@ -102,7 +161,7 @@ QString CumulativeAggregator::dateQuery(QDate beginDate, QDate endDate, bool ind
         "SELECT date FROM "
             + table
             + dateCondition(beginDate, endDate)
-            + " ORDER BY month, day"
+            + " ORDER BY year, month, day"
     );
 }
 
@@ -113,6 +172,28 @@ QString CumulativeAggregator::dateQuery(bool indoor, bool excludeCurrentYear) {
         exclusionCondition = " WHERE year < " + QDate::currentDate().toString("yyyy");
     }
     return "SELECT date FROM " + table + exclusionCondition + " ORDER BY year, month, day";
+}
+
+QString CumulativeAggregator::dateQuery(
+    int beginMonth,
+    int beginDay,
+    int endMonth,
+    int endDay,
+    bool indoor,
+    bool excludeCurrentYear
+) {
+    QString table = indoor ? "IndoorDailyRecords" : "OutdoorDailyRecords";
+    QString exclusionCondition = "";
+    if (excludeCurrentYear) {
+        exclusionCondition = " AND year < " + QDate::currentDate().toString("yyyy");
+    }
+    return (
+        "SELECT date FROM "
+        + table
+        + dateCondition(beginMonth, beginDay, endMonth, endDay)
+        + exclusionCondition
+        + " ORDER BY year, month, day"
+        );
 }
 
 QMap<QDate, int> CumulativeAggregator::countMeasurementsMeetingCriteria(
@@ -175,6 +256,62 @@ QMap<QDate, double> CumulativeAggregator::countMeasurementsMeetingCriteriaAverag
     ) {
     QString _measurementQuery = measurementQuery(measurementType, measurementOption, indoor, excludeCurrentYear);
     QString _dateQuery = dateQuery(indoor, excludeCurrentYear);
+
+    std::vector<QVariant> measurementResults = dbHandler->getResultsFromDatabase(_measurementQuery);
+    std::vector<QVariant> dateResults = dbHandler->getResultsFromDatabase(_dateQuery);
+
+    QMap<QDate, double> counts = QMap<QDate, double>();
+    QMap<QDate, int> datesCounts = QMap<QDate, int>();
+
+    for (QDate date = QDate(2024, 1, 1); date < QDate(2025, 1, 1); date = date.addDays(1)) {
+        counts[date] = 0.;
+        datesCounts[date] = 0;
+    }
+
+    for (unsigned int i = 0; i < measurementResults.size(); i++) {
+        if (measurementResults[i].isNull()) continue;
+        QDate date = QDate::fromString(dateResults[i].toString(), "dd/MM/yyyy");
+        date = date.addYears(2024 - date.year());
+        datesCounts[date]++;
+        if (criteria(measurementResults[i].toDouble())) counts[date]++;
+    }
+
+    for (QDate date : counts.keys()) {
+        counts[date] = datesCounts[date] == 0 ? 0. : counts[date] / datesCounts[date];
+    }
+
+    QMap<QDate, double> aggregatedCounts = QMap<QDate, double>();
+    double partialCount = 0.;
+    for (QDate date = QDate(2024, 1, 1); date < QDate(2025, 1, 1); date = date.addDays(1)) {
+        partialCount += counts[date];
+        aggregatedCounts[date] = partialCount;
+    }
+
+    return aggregatedCounts;
+}
+
+QMap<QDate, double> CumulativeAggregator::countMeasurementsMeetingCriteriaAveraged(
+    QString measurementType,
+    QString measurementOption,
+    int beginMonth,
+    int beginDay,
+    int endMonth,
+    int endDay,
+    std::function<bool(double)> criteria,
+    bool indoor,
+    bool excludeCurrentYear
+    ) {
+    QString _measurementQuery = measurementQuery(
+        measurementType,
+        measurementOption,
+        beginMonth,
+        beginDay,
+        endMonth,
+        endDay,
+        indoor,
+        excludeCurrentYear
+    );
+    QString _dateQuery = dateQuery(beginMonth, beginDay, endMonth, endDay, indoor, excludeCurrentYear);
 
     std::vector<QVariant> measurementResults = dbHandler->getResultsFromDatabase(_measurementQuery);
     std::vector<QVariant> dateResults = dbHandler->getResultsFromDatabase(_dateQuery);

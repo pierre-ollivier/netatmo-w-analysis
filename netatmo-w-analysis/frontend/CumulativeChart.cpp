@@ -263,6 +263,10 @@ void CumulativeChart::drawChart() {
     QMap<QDate, double> counts = aggregator->countMeasurementsMeetingCriteriaAveraged(
         measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
         measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
+        months[startMonthBox->currentText()],
+        1,
+        QDate(2024, 1, 1).addMonths(months[endMonthBox->currentText()]).addDays(-1).month(),
+        QDate(2024, 1, 1).addMonths(months[endMonthBox->currentText()]).addDays(-1).day(),
         conditionBoxToCondition[conditionBox->currentText()],
         indoor,
         !includeCurrentYearCheckBox->isChecked()

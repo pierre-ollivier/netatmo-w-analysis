@@ -33,6 +33,17 @@ public:
         bool indoor,
         bool excludeCurrentYear = false
     );
+    QMap<QDate, double> countMeasurementsMeetingCriteriaAveraged(
+        QString measurementType,
+        QString measurementOption,
+        int beginMonth,
+        int beginDay,
+        int endMonth,
+        int endDay,
+        std::function<bool(double)> criteria,
+        bool indoor,
+        bool excludeCurrentYear = false
+    );
     QMap<QDate, double> aggregateMeasurements(
         QString measurementType,
         QString measurementOption,
@@ -51,10 +62,28 @@ private:
 
     QString measurementQuery(QString measurementType, QString measurementOption, int year, bool indoor = false);
     QString measurementQuery(QString measurementType, QString measurementOption, QDate beginDate, QDate endDate, bool indoor = false);
+    QString measurementQuery(
+        QString measurementType,
+        QString measurementOption,
+        int beginMonth,
+        int beginDay,
+        int endMonth,
+        int endDay,
+        bool indoor = false,
+        bool excludeCurrentYear = false
+    );
     QString measurementQuery(QString measurementType, QString measurementOption, bool indoor = false, bool excludeCurrentYear = false);
 
     QString dateQuery(int year, bool indoor = false);
     QString dateQuery(QDate beginDate, QDate endDate, bool indoor = false);
+    QString dateQuery(
+        int beginMonth,
+        int beginDay,
+        int endMonth,
+        int endDay,
+        bool indoor = false,
+        bool excludeCurrentYear = false
+    );
     QString dateQuery(bool indoor = false, bool excludeCurrentYear = false);
 };
 
