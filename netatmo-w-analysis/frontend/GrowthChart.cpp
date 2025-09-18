@@ -158,7 +158,7 @@ void GrowthChart::setUnitLabel(QString measurementType) {
                                                           {"CO2", "ppm"},
                                                           {"Bruit", "dB"},
                                                           };
-    // unitLabel->setText(measurementTypeToUnit[measurementType]);
+    yAxis->setLabelFormat(QString("%.1f") + " " + measurementTypeToUnit[measurementType]);
 }
 
 void GrowthChart::setYAxisRange(double maxValue, double minValue) {
@@ -204,8 +204,20 @@ void GrowthChart::setYAxisTicks(double maxValue, double minValue) {
     else if (difference < 61) {
         yAxis->setTickInterval(10);
     }
-    else {
+    else if (difference < 121) {
         yAxis->setTickInterval(20);
+    }
+    else if (difference < 301) {
+        yAxis->setTickInterval(50);
+    }
+    else if (difference < 601) {
+        yAxis->setTickInterval(100);
+    }
+    else if (difference < 1201) {
+        yAxis->setTickInterval(200);
+    }
+    else {
+        yAxis->setTickInterval(500);
     }
 }
 
