@@ -200,10 +200,12 @@ void GrowthChart::drawChart() {
     QMap<int, QList<QPointF>> yearPoints = QMap<int, QList<QPointF>>();
     QList<QPointF> averagePoints = QList<QPointF>();
 
+    QMap<int, QMap<QDate, double>> valuesByYear = QMap<int, QMap<QDate, double>>();
+
     for (int year = START_YEAR; year <= QDate::currentDate().year(); year++) {
         yearPoints[year] = QList<QPointF>();
 
-        QMap<QDate, double> values = aggregator->aggregateMeasurements(
+        valuesByYear[year] = aggregator->aggregateMeasurements(
             measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
             measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
             year,
@@ -211,11 +213,23 @@ void GrowthChart::drawChart() {
             maxOfVector
         );
 
-        for (auto i = values.cbegin(), end = values.cend(); i != end; ++i) {
+        for (auto i = valuesByYear[year].cbegin(), end = valuesByYear[year].cend(); i != end; ++i) {
             QDate date = i.key();
             date.setDate(2024, date.month(), date.day());
             yearPoints[year].append(QPointF(date.toJulianDay(), i.value()));
         }
+    }
+
+    for (QDate date = QDate(2024, 1, 1); date <= QDate(2024, 12, 31); date = date.addDays(1)) {
+        int numberOfValues = 0;
+        double sumOfValues = 0.;
+        for (int year = START_YEAR; year <= QDate::currentDate().year(); year++) {
+            if (valuesByYear[year].contains(QDate(year, date.month(), date.day()))) {
+                numberOfValues++;
+                sumOfValues += valuesByYear[year][QDate(year, date.month(), date.day())];
+            }
+        }
+        if (numberOfValues > 0) averagePoints.append(QPointF(date.toJulianDay(), sumOfValues / numberOfValues));
     }
 
     drawChart(yearPoints, averagePoints);
