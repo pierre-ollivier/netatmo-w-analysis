@@ -3,19 +3,19 @@
 extern QColor mainBackgroundColor;
 extern int START_YEAR;
 
-QMap<QString, int> months = {
-    {"janvier", 1},
-    {"février", 2},
-    {"mars", 3},
-    {"avril", 4},
-    {"mai", 5},
-    {"juin", 6},
-    {"juillet", 7},
-    {"août", 8},
-    {"septembre", 9},
-    {"octobre", 10},
-    {"novembre", 11},
-    {"décembre", 12}
+QList<QString> frMonths = {
+    "janvier",
+    "février",
+    "mars",
+    "avril",
+    "mai",
+    "juin",
+    "juillet",
+    "août",
+    "septembre",
+    "octobre",
+    "novembre",
+    "décembre",
 };
 
 CumulativeChart::CumulativeChart() {
@@ -47,10 +47,8 @@ CumulativeChart::CumulativeChart() {
     startMonthBox = new QComboBox();
     endMonthBox = new QComboBox();
 
-    for (QString month: months.keys()) {
-        startMonthBox->addItem(month);
-        endMonthBox->addItem(month);
-    }
+    startMonthBox->addItems(frMonths);
+    endMonthBox->addItems(frMonths);
 
     startMonthBox->setCurrentText("janvier");
     endMonthBox->setCurrentText("décembre");
@@ -247,8 +245,8 @@ void CumulativeChart::drawChart() {
         QMap<QDate, int> counts = aggregator->countMeasurementsMeetingCriteria(
             measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
             measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
-            QDate(year, months[startMonthBox->currentText()], 1),
-            QDate(year, 1, 1).addMonths(months[endMonthBox->currentText()]).addDays(-1),
+            QDate(year, startMonthBox->currentIndex() + 1, 1),
+            QDate(year, 1, 1).addMonths(endMonthBox->currentIndex() + 1).addDays(-1),
             conditionBoxToCondition[conditionBox->currentText()],
             indoor
         );
@@ -263,10 +261,10 @@ void CumulativeChart::drawChart() {
     QMap<QDate, double> counts = aggregator->countMeasurementsMeetingCriteriaAveraged(
         measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
         measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
-        months[startMonthBox->currentText()],
+        startMonthBox->currentIndex() + 1,
         1,
-        QDate(2024, 1, 1).addMonths(months[endMonthBox->currentText()]).addDays(-1).month(),
-        QDate(2024, 1, 1).addMonths(months[endMonthBox->currentText()]).addDays(-1).day(),
+        QDate(2024, 1, 1).addMonths(endMonthBox->currentIndex() + 1).addDays(-1).month(),
+        QDate(2024, 1, 1).addMonths(endMonthBox->currentIndex() + 1).addDays(-1).day(),
         conditionBoxToCondition[conditionBox->currentText()],
         indoor,
         !includeCurrentYearCheckBox->isChecked()
