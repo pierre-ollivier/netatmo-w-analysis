@@ -40,6 +40,8 @@ private:
     QComboBox *conditionBox;
     QComboBox *locationBox;
 
+    QCheckBox *includeMissingConstantValuesCheckBox;
+
     QMap<int, QLineSeries *> *yearSeries;
     QLineSeries *averageSeries;
 

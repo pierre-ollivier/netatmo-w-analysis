@@ -51,6 +51,10 @@ GrowthChart::GrowthChart() {
     locationBox->addItems({"ext.", "int."});
     connect(locationBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
 
+    includeMissingConstantValuesCheckBox = new QCheckBox("Inclure les valeurs manquantes constantes");
+    includeMissingConstantValuesCheckBox->setChecked(true);
+    connect(includeMissingConstantValuesCheckBox, SIGNAL(clicked()), SLOT(drawChart()));
+
 
     chart = new QChart();
     chart->setLocalizeNumbers(true);
@@ -82,12 +86,11 @@ GrowthChart::GrowthChart() {
     layout->addWidget(locationBox, 3, 4);
     layout->addWidget(new QLabel("Condition : ", this), 4, 1);
     layout->addWidget(conditionBox, 4, 2);
+    layout->addWidget(includeMissingConstantValuesCheckBox, 5, 1, 1, 4);
     setLayout(layout);
 
     // Set pens for all the year series and draw the chart
     yearBox->setCurrentIndex(QDate::currentDate().year() - START_YEAR);
-
-    bool includeMissingConstantValues = true;
 }
 
 double maxOfVector(std::vector<QVariant> vector) {
@@ -262,7 +265,7 @@ void GrowthChart::drawChart() {
             year,
             indoor,
             aggregationFunctions[conditionBox->currentText()],
-            true //includeMissingConstantValues;
+            includeMissingConstantValuesCheckBox->isChecked()
         );
 
         for (auto i = valuesByYear[year].cbegin(), end = valuesByYear[year].cend(); i != end; ++i) {
