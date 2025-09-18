@@ -34,6 +34,8 @@ private:
     QCategoryAxis *yAxis;
 
     QComboBox *yearBox;
+    QComboBox *startMonthBox;
+    QComboBox *endMonthBox;
 
     QComboBox *measurementTypeBox;
     QComboBox *measurementOptionBox;

@@ -3,6 +3,21 @@
 extern QColor mainBackgroundColor;
 extern int START_YEAR;
 
+QMap<QString, int> months = {
+    {"janvier", 1},
+    {"février", 2},
+    {"mars", 3},
+    {"avril", 4},
+    {"mai", 5},
+    {"juin", 6},
+    {"juillet", 7},
+    {"août", 8},
+    {"septembre", 9},
+    {"octobre", 10},
+    {"novembre", 11},
+    {"décembre", 12}
+};
+
 CumulativeChart::CumulativeChart() {
     aggregator = new CumulativeAggregator(this);
 
@@ -28,6 +43,20 @@ CumulativeChart::CumulativeChart() {
         yearBox->addItem(QString::number(year));
     }
     connect(yearBox, SIGNAL(currentIndexChanged(int)), SLOT(setSeriesPens(int)));
+
+    startMonthBox = new QComboBox();
+    endMonthBox = new QComboBox();
+
+    for (QString month: months.keys()) {
+        startMonthBox->addItem(month);
+        endMonthBox->addItem(month);
+    }
+
+    startMonthBox->setCurrentText("janvier");
+    endMonthBox->setCurrentText("décembre");
+
+    connect(startMonthBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
+    connect(endMonthBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
 
     measurementTypeBox = new QComboBox();
     measurementTypeBox->addItems({"Température", "Humidité", "Point de rosée", "Humidex", "Pression", "CO2", "Bruit"});
@@ -80,6 +109,10 @@ CumulativeChart::CumulativeChart() {
     layout->addWidget(chartView, 1, 1, 1, 6);
     layout->addWidget(new QLabel("Année : ", this), 2, 1);
     layout->addWidget(yearBox, 2, 2);
+    layout->addWidget(new QLabel("Mois de début : ", this), 2, 3);
+    layout->addWidget(startMonthBox, 2, 4);
+    layout->addWidget(new QLabel("Mois de fin : ", this), 2, 5);
+    layout->addWidget(endMonthBox, 2, 6);
     layout->addWidget(new QLabel("Grandeur : ", this), 3, 1);
     layout->addWidget(measurementTypeBox, 3, 2);
     layout->addWidget(measurementOptionBox, 3, 3);
@@ -214,8 +247,8 @@ void CumulativeChart::drawChart() {
         QMap<QDate, int> counts = aggregator->countMeasurementsMeetingCriteria(
             measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
             measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
-            QDate(year, 2, 1),
-            QDate(year, 5, 31),
+            QDate(year, months[startMonthBox->currentText()], 1),
+            QDate(year, 1, 1).addMonths(months[endMonthBox->currentText()]).addDays(-1),
             conditionBoxToCondition[conditionBox->currentText()],
             indoor
         );
