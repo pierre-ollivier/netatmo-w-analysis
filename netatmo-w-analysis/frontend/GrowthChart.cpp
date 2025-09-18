@@ -21,7 +21,10 @@ GrowthChart::GrowthChart() {
     xAxis->append("‎01/01\0", QDate(2025, 1, 1).toJulianDay() - 0.5);
     xAxis->setLabelsPosition(QCategoryAxis::AxisLabelsPositionOnValue);
 
-    yAxis = new QCategoryAxis();
+    QString unitWithTrailingSpace = " °C";
+    yAxis = new QValueAxis();
+    yAxis->setLabelFormat(QString("%.1f") + unitWithTrailingSpace);
+    yAxis->setTickType(QValueAxis::TicksDynamic);
 
 
     yearBox = new QComboBox();
@@ -158,57 +161,51 @@ void GrowthChart::setUnitLabel(QString measurementType) {
     // unitLabel->setText(measurementTypeToUnit[measurementType]);
 }
 
-void GrowthChart::initYAxis() {
-    for (QString label: yAxis->categoriesLabels()) {
-        yAxis->remove(label);
+void GrowthChart::setYAxisRange(double maxValue, double minValue) {
+    double difference = maxValue - minValue;
+    if (difference < 0.2) {
+        difference = 0.2;
+        maxValue = (maxValue + minValue + difference) / 2;
+        minValue = (maxValue + minValue - difference) / 2;
     }
-    yAxis->setLineVisible(false);
-    yAxis->setLabelsPosition(QCategoryAxis::AxisLabelsPositionOnValue);
-    yAxis->setMin(0);
+    maxValue += 0.1 * difference;
+    minValue -= 0.1 * difference;
+    yAxis->setRange(minValue, maxValue);
+    setYAxisTicks(maxValue, minValue);
 }
 
-void GrowthChart::scaleYAxis(QMap<int, QList<QPointF>> points) {
-    int maxOfSeries = 0;
-    int intervalBetweenTicks = 1;
-    for (int year: points.keys()) {
-        for (QPointF point: points[year]) {
-            if (point.y() > maxOfSeries) maxOfSeries = point.y();
-        }
-    }
+void GrowthChart::setYAxisTicks(double maxValue, double minValue) {
+    double difference = maxValue - minValue;
 
-    if (maxOfSeries > 200) {
-        maxOfSeries = maxOfSeries + 50 - maxOfSeries % 50;
-        intervalBetweenTicks = 50;
+    if (difference < 0.7) {
+        yAxis->setTickInterval(0.1);
     }
-    else if (maxOfSeries > 100) {
-        maxOfSeries = maxOfSeries + 20 - maxOfSeries % 20;
-        intervalBetweenTicks = 20;
+    else if (difference < 1.3) {
+        yAxis->setTickInterval(0.2);
     }
-    else if (maxOfSeries > 50) {
-        maxOfSeries = maxOfSeries + 10 - maxOfSeries % 10;
-        intervalBetweenTicks = 10;
+    else if (difference < 2.0) {
+        yAxis->setTickInterval(0.4);
     }
-    else if (maxOfSeries > 20) {
-        maxOfSeries = maxOfSeries + 5 - maxOfSeries % 5;
-        intervalBetweenTicks = 5;
+    else if (difference < 3.1) {
+        yAxis->setTickInterval(0.5);
     }
-    else if (maxOfSeries > 10) {
-        maxOfSeries = maxOfSeries + 2 - maxOfSeries % 2;
-        intervalBetweenTicks = 2;
+    else if (difference < 6.1) {
+        yAxis->setTickInterval(1.0);
+    }
+    else if (difference < 12) {
+        yAxis->setTickInterval(2.0);
+    }
+    else if (difference < 15) {
+        yAxis->setTickInterval(2.5);
+    }
+    else if (difference < 31) {
+        yAxis->setTickInterval(5.0);
+    }
+    else if (difference < 61) {
+        yAxis->setTickInterval(10);
     }
     else {
-        maxOfSeries = maxOfSeries + 1 - maxOfSeries % 1;
-        intervalBetweenTicks = 1;
-    }
-
-    initYAxis();
-    yAxis->setMax(maxOfSeries);
-    addTicksToYAxis(maxOfSeries, intervalBetweenTicks);
-}
-
-void GrowthChart::addTicksToYAxis(int maxOfSeries, int intervalBetweenTicks) {
-    for (int i = 0; i <= maxOfSeries; i += intervalBetweenTicks) {
-        yAxis->append(QString::number(i), i);
+        yAxis->setTickInterval(20);
     }
 }
 
@@ -280,7 +277,16 @@ void GrowthChart::drawChart(QMap<int, QList<QPointF>> yearPoints, QList<QPointF>
         chart->addAxis(xAxis, Qt::AlignBottom);
         chart->addAxis(yAxis, Qt::AlignLeft);
     }
-    scaleYAxis(yearPoints);
+
+    double maxOfSeries = -DBL_MAX, minOfSeries = DBL_MAX;
+    for (int year: yearPoints.keys()) {
+        for (QPointF point: yearPoints[year]) {
+            if (point.y() > maxOfSeries) maxOfSeries = point.y();
+            if (point.y() < minOfSeries) minOfSeries = point.y();
+        }
+    }
+
+    setYAxisRange(maxOfSeries, minOfSeries);
 
     for (int year : yearPoints.keys()) {
         yearSeries->value(year)->clear();

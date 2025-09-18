@@ -14,9 +14,8 @@ class GrowthChart : public QWidget
 public:
     GrowthChart();
 
-    void initYAxis();
-    void scaleYAxis(QMap<int, QList<QPointF>> points);
-    void addTicksToYAxis(int maxOfSeries, int intervalBetweenTicks);
+    void setYAxisRange(double maxValue, double minValue);
+    void setYAxisTicks(double maxValue, double minValue);
 
 public slots:
     void drawChart();
@@ -31,7 +30,7 @@ private:
     QChartView *chartView;
 
     QCategoryAxis *xAxis;
-    QCategoryAxis *yAxis;
+    QValueAxis *yAxis;
 
     QComboBox *yearBox;
 
