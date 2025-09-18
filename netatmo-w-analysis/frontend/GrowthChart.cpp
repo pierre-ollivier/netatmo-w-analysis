@@ -40,7 +40,7 @@ GrowthChart::GrowthChart() {
     connect(measurementOptionBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
 
     conditionBox = new QComboBox();
-    conditionBox->addItems({"=", "<", "≤", ">", "≥", "≠"});
+    conditionBox->addItems({"Minimum", "Maximum", "Moyenne"});
     conditionBox->setCurrentIndex(1);
     connect(conditionBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
 
@@ -95,6 +95,39 @@ double maxOfVector(std::vector<QVariant> vector) {
         if (!variant.isNull() && result < variant.toDouble()) result = variant.toDouble();
     }
     return result;
+}
+
+double minOfVector(std::vector<QVariant> vector) {
+    if (vector.size() == 0) {
+        qDebug() << "Computing the minimum of empty vector, returning 0...";
+        return 0.0;
+    }
+    double result = DBL_MAX;
+    for (QVariant variant: vector) {
+        if (!variant.isNull() && result > variant.toDouble()) result = variant.toDouble();
+    }
+    return result;
+}
+
+double averageOfVector(std::vector<QVariant> vector) {
+    if (vector.size() == 0) {
+        qDebug() << "Computing the average of empty vector, returning 0...";
+        return 0.0;
+    }
+    double cumulatedResult = 0;
+    int numberOfNotNullValues = 0;
+
+    for (QVariant variant: vector) {
+        if (!variant.isNull()) {
+            cumulatedResult += variant.toDouble();
+            numberOfNotNullValues++;
+        }
+    }
+    if (numberOfNotNullValues == 0) {
+        qDebug() << "Computing the average of vector containing only null values, returning 0...";
+        return 0.0;
+    }
+    return cumulatedResult / numberOfNotNullValues;
 }
 
 
@@ -195,6 +228,13 @@ void GrowthChart::drawChart() {
                                                                             {"moy.", "avg"},
                                                                             {"var.", "diff"},
                                                                             };
+
+    const QMap<QString, std::function<double(std::vector<QVariant>)>> aggregationFunctions = {
+        {"Maximum", maxOfVector},
+        {"Minimum", minOfVector},
+        {"Moyenne", averageOfVector}
+    };
+
     const bool indoor = locationBox->currentText() == "int." || measurementTypeBox->currentIndex() >= 4;
 
     QMap<int, QList<QPointF>> yearPoints = QMap<int, QList<QPointF>>();
@@ -210,7 +250,7 @@ void GrowthChart::drawChart() {
             measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
             year,
             indoor,
-            maxOfVector
+            aggregationFunctions[conditionBox->currentText()]
         );
 
         for (auto i = valuesByYear[year].cbegin(), end = valuesByYear[year].cend(); i != end; ++i) {
