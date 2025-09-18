@@ -38,7 +38,8 @@ public:
         QString measurementOption,
         int year,
         bool indoor,
-        std::function<double(std::vector<QVariant>)> aggregationFunction
+        std::function<double(std::vector<QVariant>)> aggregationFunction,
+        bool recoverMissingConstantValues = false
     );
 
 private:

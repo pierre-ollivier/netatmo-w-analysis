@@ -86,6 +86,8 @@ GrowthChart::GrowthChart() {
 
     // Set pens for all the year series and draw the chart
     yearBox->setCurrentIndex(QDate::currentDate().year() - START_YEAR);
+
+    bool includeMissingConstantValues = true;
 }
 
 double maxOfVector(std::vector<QVariant> vector) {
@@ -259,7 +261,8 @@ void GrowthChart::drawChart() {
             measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
             year,
             indoor,
-            aggregationFunctions[conditionBox->currentText()]
+            aggregationFunctions[conditionBox->currentText()],
+            true //includeMissingConstantValues;
         );
 
         for (auto i = valuesByYear[year].cbegin(), end = valuesByYear[year].cend(); i != end; ++i) {
@@ -285,6 +288,17 @@ void GrowthChart::drawChart() {
 }
 
 void GrowthChart::drawChart(QMap<int, QList<QPointF>> yearPoints, QList<QPointF> averagePoints) {
+    for (int year: yearPoints.keys()) {
+        std::sort(yearPoints[year].begin(), yearPoints[year].end(),
+                  [](const QPointF &a, const QPointF &b) {
+                      return a.x() < b.x();
+                  });
+    }
+    std::sort(averagePoints.begin(), averagePoints.end(),
+              [](const QPointF &a, const QPointF &b) {
+                  return a.x() < b.x();
+              });
+
     if (chart->axes().length() == 0) {
         chart->addAxis(xAxis, Qt::AlignBottom);
         chart->addAxis(yAxis, Qt::AlignLeft);

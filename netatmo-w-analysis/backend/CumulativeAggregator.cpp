@@ -214,25 +214,40 @@ QMap<QDate, double> CumulativeAggregator::aggregateMeasurements(
     QString measurementOption,
     int year,
     bool indoor,
-    std::function<double(std::vector<QVariant>)> aggregationFunction
+    std::function<double(std::vector<QVariant>)> aggregationFunction,
+    bool recoverMissingConstantValues
     ) {
     QString _measurementQuery = measurementQuery(measurementType, measurementOption, year, indoor);
     QString _dateQuery = dateQuery(year, indoor);
 
     std::vector<QVariant> measurementResults = dbHandler->getResultsFromDatabase(_measurementQuery);
     std::vector<QVariant> dateResults = dbHandler->getResultsFromDatabase(_dateQuery);
+    std::vector<QDate> dates = std::vector<QDate>();
+
+    for (QVariant date: dateResults) {
+        dates.push_back(
+            QDate::fromString(date.toString(), "dd/MM/yyyy")
+        );
+    }
 
     QMap<QDate, double> results = QMap<QDate, double>();
 
     for (unsigned int i = 0; i < measurementResults.size(); i++) {
         std::vector<QVariant> truncatedMeasurements = measurementResults;
         truncatedMeasurements.resize(i + 1);
-        results[
-            QDate::fromString(
-                dateResults[i].toString(),
-                "dd/MM/yyyy"
-            )
-        ] = aggregationFunction(truncatedMeasurements);
+        results[dates[i]] = aggregationFunction(truncatedMeasurements);
+    }
+
+    if (recoverMissingConstantValues) {
+        for (unsigned int i = 0; i < measurementResults.size() - 1; i++) {
+            if (dates[i].daysTo(dates[i + 1]) == 1 || abs(results[dates[i]] - results[dates[i + 1]]) > 1e-6) {
+                continue;
+            }
+            double constantValue = results[dates[i]];
+            for (QDate date = dates[i].addDays(1); date < dates[i + 1]; date = date.addDays(1)) {
+                results[date] = constantValue;
+            }
+        }
     }
 
     return results;

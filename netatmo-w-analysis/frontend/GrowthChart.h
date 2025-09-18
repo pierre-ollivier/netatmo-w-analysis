@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QtCharts>
 #include "QValueAxis"
+#include <algorithm>
 
 #include "../netatmo-w-analysis/backend/CumulativeAggregator.h"
 
