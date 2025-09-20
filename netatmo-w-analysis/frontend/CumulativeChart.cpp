@@ -235,21 +235,25 @@ void CumulativeChart::drawChart() {
     QMap<int, QList<QPointF>> yearPoints = QMap<int, QList<QPointF>>();
     QList<QPointF> averagePoints = QList<QPointF>();
 
+    QDate minDate = QDate(2024, 1, 1).addMonths(startMonthBox->currentIndex());
+    QDate maxDate = QDate(2024, 1, 1).addMonths(endMonthBox->currentIndex() + 1);
+    if (endMonthBox->currentIndex() < startMonthBox->currentIndex()) maxDate = maxDate.addYears(1);
+
     for (int year = START_YEAR; year <= QDate::currentDate().year(); year++) {
         yearPoints[year] = QList<QPointF>();
 
         QMap<QDate, int> counts = aggregator->countMeasurementsMeetingCriteria(
             measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
             measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
-            QDate(year, startMonthBox->currentIndex() + 1, 1),
-            QDate(year, 1, 1).addMonths(endMonthBox->currentIndex() + 1).addDays(-1),
+            minDate.addYears(year - 2024),
+            maxDate.addYears(year - 2024).addDays(-1),
             conditionBoxToCondition[conditionBox->currentText()],
             indoor
         );
 
         for (auto i = counts.cbegin(), end = counts.cend(); i != end; ++i) {
             QDate date = i.key();
-            date.setDate(2024, date.month(), date.day());
+            date = date.addYears(2024 - year);
             yearPoints[year].append(QPointF(date.toJulianDay(), i.value()));
         }
     }
@@ -271,10 +275,6 @@ void CumulativeChart::drawChart() {
         date.setDate(2024, date.month(), date.day());
         averagePoints.append(QPointF(date.toJulianDay(), i.value()));
     }
-
-    QDate minDate = QDate(2024, 1, 1).addMonths(startMonthBox->currentIndex());
-    QDate maxDate = QDate(2024, 1, 1).addMonths(endMonthBox->currentIndex() + 1);
-    if (endMonthBox->currentIndex() < startMonthBox->currentIndex()) maxDate = maxDate.addYears(1);
 
     xAxis->setMin(minDate.toJulianDay() - 0.5);
     xAxis->setMax(maxDate.toJulianDay() - 0.5);
