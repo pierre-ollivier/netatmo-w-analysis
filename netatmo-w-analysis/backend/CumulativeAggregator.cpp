@@ -319,7 +319,11 @@ QMap<QDate, double> CumulativeAggregator::countMeasurementsMeetingCriteriaAverag
     QMap<QDate, double> counts = QMap<QDate, double>();
     QMap<QDate, int> datesCounts = QMap<QDate, int>();
 
-    for (QDate date = QDate(2024, 1, 1); date < QDate(2025, 1, 1); date = date.addDays(1)) {
+    QDate minDate = QDate(2024, beginMonth, beginDay);
+    QDate maxDate = QDate(2024, endMonth, endDay);
+    if (maxDate < minDate) maxDate = maxDate.addYears(1);
+
+    for (QDate date = minDate; date <= maxDate; date = date.addDays(1)) {
         counts[date] = 0.;
         datesCounts[date] = 0;
     }
@@ -328,6 +332,7 @@ QMap<QDate, double> CumulativeAggregator::countMeasurementsMeetingCriteriaAverag
         if (measurementResults[i].isNull()) continue;
         QDate date = QDate::fromString(dateResults[i].toString(), "dd/MM/yyyy");
         date = date.addYears(2024 - date.year());
+        //if ((date < minDate) && (date.addYears(1) <= maxDate)) date = date.addYears(1);
         datesCounts[date]++;
         if (criteria(measurementResults[i].toDouble())) counts[date]++;
     }
@@ -338,8 +343,9 @@ QMap<QDate, double> CumulativeAggregator::countMeasurementsMeetingCriteriaAverag
 
     QMap<QDate, double> aggregatedCounts = QMap<QDate, double>();
     double partialCount = 0.;
-    for (QDate date = QDate(2024, 1, 1); date < QDate(2025, 1, 1); date = date.addDays(1)) {
-        partialCount += counts[date];
+    for (QDate date = minDate; date <= maxDate; date = date.addDays(1)) {
+        QDate dateInReferenceYear = date.addYears(2024 - date.year());
+        partialCount += counts[dateInReferenceYear];
         aggregatedCounts[date] = partialCount;
     }
 

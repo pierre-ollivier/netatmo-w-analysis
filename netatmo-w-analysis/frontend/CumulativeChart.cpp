@@ -272,7 +272,6 @@ void CumulativeChart::drawChart() {
 
     for (auto i = counts.cbegin(), end = counts.cend(); i != end; ++i) {
         QDate date = i.key();
-        date.setDate(2024, date.month(), date.day());
         averagePoints.append(QPointF(date.toJulianDay(), i.value()));
     }
 
