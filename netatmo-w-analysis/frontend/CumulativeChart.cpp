@@ -23,16 +23,12 @@ CumulativeChart::CumulativeChart() {
 
     chart = new QChart();
     chartView = new QChartView();
+    chartView->setMinimumWidth(960);
 
     xAxis = new QCategoryAxis();
     xAxis->setLineVisible(false);
     xAxis->setMin(QDate(2024, 1, 1).toJulianDay() - 0.5);
     xAxis->setMax(QDate(2025, 1, 1).toJulianDay() - 0.5);
-
-    for (QDate d = QDate(2024, 1, 1); d <= QDate(2024, 12, 1); d = d.addMonths(1)) {
-        xAxis->append(d.toString("dd/MM"), d.toJulianDay() - 0.5);
-    }
-    xAxis->append("‎01/01\0", QDate(2025, 1, 1).toJulianDay() - 0.5);
     xAxis->setLabelsPosition(QCategoryAxis::AxisLabelsPositionOnValue);
 
     yAxis = new QCategoryAxis();
@@ -274,6 +270,26 @@ void CumulativeChart::drawChart() {
         QDate date = i.key();
         date.setDate(2024, date.month(), date.day());
         averagePoints.append(QPointF(date.toJulianDay(), i.value()));
+    }
+
+    QDate minDate = QDate(2024, 1, 1).addMonths(startMonthBox->currentIndex());
+    QDate maxDate = QDate(2024, 1, 1).addMonths(endMonthBox->currentIndex() + 1);
+    if (endMonthBox->currentIndex() < startMonthBox->currentIndex()) maxDate = maxDate.addYears(1);
+
+    xAxis->setMin(minDate.toJulianDay() - 0.5);
+    xAxis->setMax(maxDate.toJulianDay() - 0.5);
+
+    for (QString label : xAxis->categoriesLabels()) {
+        xAxis->remove(label);
+    }
+
+    for (
+        QDate d = minDate;
+        d <= maxDate;
+        d = d.addMonths(1)
+    ) {
+        QString label = d.year() == 2024 ? d.toString("dd/MM") : " " + d.toString("dd/MM") + " ";
+        xAxis->append(label, d.toJulianDay() - 0.5);
     }
 
     drawChart(yearPoints, averagePoints);
