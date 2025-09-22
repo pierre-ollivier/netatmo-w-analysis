@@ -2,6 +2,7 @@
 
 extern QColor mainBackgroundColor;
 extern int START_YEAR;
+extern int BASE_BISSEXTILE_YEAR;
 
 QList<QString> frMonths = {
     "janvier",
@@ -27,8 +28,8 @@ CumulativeChart::CumulativeChart() {
 
     xAxis = new QCategoryAxis();
     xAxis->setLineVisible(false);
-    xAxis->setMin(QDate(2024, 1, 1).toJulianDay() - 0.5);
-    xAxis->setMax(QDate(2025, 1, 1).toJulianDay() - 0.5);
+    xAxis->setMin(QDate(BASE_BISSEXTILE_YEAR, 1, 1).toJulianDay() - 0.5);
+    xAxis->setMax(QDate(BASE_BISSEXTILE_YEAR + 1, 1, 1).toJulianDay() - 0.5);
     xAxis->setLabelsPosition(QCategoryAxis::AxisLabelsPositionOnValue);
 
     yAxis = new QCategoryAxis();
@@ -235,8 +236,8 @@ void CumulativeChart::drawChart() {
     QMap<int, QList<QPointF>> yearPoints = QMap<int, QList<QPointF>>();
     QList<QPointF> averagePoints = QList<QPointF>();
 
-    QDate minDate = QDate(2024, 1, 1).addMonths(startMonthBox->currentIndex());
-    QDate maxDate = QDate(2024, 1, 1).addMonths(endMonthBox->currentIndex() + 1);
+    QDate minDate = QDate(BASE_BISSEXTILE_YEAR, 1, 1).addMonths(startMonthBox->currentIndex());
+    QDate maxDate = QDate(BASE_BISSEXTILE_YEAR, 1, 1).addMonths(endMonthBox->currentIndex() + 1);
     if (endMonthBox->currentIndex() < startMonthBox->currentIndex()) maxDate = maxDate.addYears(1);
 
     for (int year = START_YEAR; year <= QDate::currentDate().year(); year++) {
@@ -245,15 +246,15 @@ void CumulativeChart::drawChart() {
         QMap<QDate, int> counts = aggregator->countMeasurementsMeetingCriteria(
             measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
             measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
-            minDate.addYears(year - 2024),
-            maxDate.addYears(year - 2024).addDays(-1),
+            minDate.addYears(year - BASE_BISSEXTILE_YEAR),
+            maxDate.addYears(year - BASE_BISSEXTILE_YEAR).addDays(-1),
             conditionBoxToCondition[conditionBox->currentText()],
             indoor
         );
 
         for (auto i = counts.cbegin(), end = counts.cend(); i != end; ++i) {
             QDate date = i.key();
-            date = date.addYears(2024 - year);
+            date = date.addYears(BASE_BISSEXTILE_YEAR - year);
             yearPoints[year].append(QPointF(date.toJulianDay(), i.value()));
         }
     }
@@ -263,8 +264,8 @@ void CumulativeChart::drawChart() {
         measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
         startMonthBox->currentIndex() + 1,
         1,
-        QDate(2024, 1, 1).addMonths(endMonthBox->currentIndex() + 1).addDays(-1).month(),
-        QDate(2024, 1, 1).addMonths(endMonthBox->currentIndex() + 1).addDays(-1).day(),
+        QDate(BASE_BISSEXTILE_YEAR, 1, 1).addMonths(endMonthBox->currentIndex() + 1).addDays(-1).month(),
+        QDate(BASE_BISSEXTILE_YEAR, 1, 1).addMonths(endMonthBox->currentIndex() + 1).addDays(-1).day(),
         conditionBoxToCondition[conditionBox->currentText()],
         indoor,
         !includeCurrentYearCheckBox->isChecked()
@@ -272,6 +273,7 @@ void CumulativeChart::drawChart() {
 
     for (auto i = counts.cbegin(), end = counts.cend(); i != end; ++i) {
         QDate date = i.key();
+
         averagePoints.append(QPointF(date.toJulianDay(), i.value()));
     }
 
@@ -287,7 +289,7 @@ void CumulativeChart::drawChart() {
         d <= maxDate;
         d = d.addMonths(1)
     ) {
-        QString label = d.year() == 2024 ? d.toString("dd/MM") : " " + d.toString("dd/MM") + " ";
+        QString label = d.year() == BASE_BISSEXTILE_YEAR ? d.toString("dd/MM") : " " + d.toString("dd/MM") + " ";
         xAxis->append(label, d.toJulianDay() - 0.5);
     }
 

@@ -20,3 +20,5 @@ extern const QLocale LOCALE = QLocale(QLocale::French, QLocale::France);
 
 extern const QDate START_DATE = QDate(2019, 10, 5);
 extern const int START_YEAR = 2019;
+
+extern const int BASE_BISSEXTILE_YEAR = 2016;

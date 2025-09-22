@@ -3,6 +3,7 @@
 
 extern QColor mainBackgroundColor;
 extern int START_YEAR;
+extern int BASE_BISSEXTILE_YEAR;
 
 GrowthChart::GrowthChart() {
     aggregator = new CumulativeAggregator(this);
@@ -12,10 +13,14 @@ GrowthChart::GrowthChart() {
 
     xAxis = new QCategoryAxis();
     xAxis->setLineVisible(false);
-    xAxis->setMin(QDate(2024, 1, 1).toJulianDay() - 0.5);
-    xAxis->setMax(QDate(2025, 1, 1).toJulianDay() - 0.5);
+    xAxis->setMin(QDate(BASE_BISSEXTILE_YEAR, 1, 1).toJulianDay() - 0.5);
+    xAxis->setMax(QDate(BASE_BISSEXTILE_YEAR + 1, 1, 1).toJulianDay() - 0.5);
 
-    for (QDate d = QDate(2024, 1, 1); d <= QDate(2024, 12, 1); d = d.addMonths(1)) {
+    for (
+        QDate d = QDate(BASE_BISSEXTILE_YEAR, 1, 1);
+        d <= QDate(BASE_BISSEXTILE_YEAR, 12, 1);
+        d = d.addMonths(1)
+    ) {
         xAxis->append(d.toString("dd/MM"), d.toJulianDay() - 0.5);
     }
     xAxis->append("‎01/01\0", QDate(2025, 1, 1).toJulianDay() - 0.5);
@@ -274,7 +279,7 @@ void GrowthChart::drawChart() {
 
         for (auto i = valuesByYear[year].cbegin(), end = valuesByYear[year].cend(); i != end; ++i) {
             QDate date = i.key();
-            date.setDate(2024, date.month(), date.day());
+            date.setDate(BASE_BISSEXTILE_YEAR, date.month(), date.day());
             yearPoints[year].append(QPointF(date.toJulianDay(), i.value()));
         }
     }
@@ -284,7 +289,11 @@ void GrowthChart::drawChart() {
         includeCurrentYearCheckBox->isChecked()
     );
 
-    for (QDate date = QDate(2024, 1, 1); date <= QDate(2024, 12, 31); date = date.addDays(1)) {
+    for (
+        QDate date = QDate(BASE_BISSEXTILE_YEAR, 1, 1);
+        date <= QDate(BASE_BISSEXTILE_YEAR, 12, 31);
+        date = date.addDays(1)
+    ) {
         if (averageValues.contains(date)) averagePoints.append(QPointF(date.toJulianDay(), averageValues[date]));
     }
 
