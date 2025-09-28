@@ -100,6 +100,22 @@ CumulativeChart::CumulativeChart() {
     chartView->setChart(chart);
     chartView->setBackgroundBrush(QBrush(mainBackgroundColor));
 
+    springButton = new QPushButton("Printemps");
+    connect(springButton, SIGNAL(clicked()), SLOT(applySpringPeriod()));
+    summerButton = new QPushButton("Été");
+    connect(summerButton, SIGNAL(clicked()), SLOT(applySummerPeriod()));
+    fallButton = new QPushButton("Automne");
+    connect(fallButton, SIGNAL(clicked()), SLOT(applyFallPeriod()));
+    winterButton = new QPushButton("Hiver");
+    connect(winterButton, SIGNAL(clicked()), SLOT(applyWinterPeriod()));
+
+    seasonsLayout = new QGridLayout();
+    seasonsLayout->addWidget(springButton, 0, 0);
+    seasonsLayout->addWidget(summerButton, 0, 1);
+    seasonsLayout->addWidget(fallButton, 1, 0);
+    seasonsLayout->addWidget(winterButton, 1, 1);
+
+
     layout = new QGridLayout();
     layout->addWidget(chartView, 1, 1, 1, 6);
     layout->addWidget(new QLabel("Année : ", this), 2, 1);
@@ -117,6 +133,7 @@ CumulativeChart::CumulativeChart() {
     layout->addWidget(thresholdLineEdit, 4, 3, 1, 3);
     layout->addWidget(unitLabel, 4, 6);
     layout->addWidget(includeCurrentYearCheckBox, 5, 1, 1, 3);
+    layout->addLayout(seasonsLayout, 3, 6, 2, 1);
     setLayout(layout);
 
     // Set pens for all the year series and draw the chart
@@ -320,4 +337,24 @@ void CumulativeChart::drawChart(QMap<int, QList<QPointF>> yearPoints, QList<QPoi
         averageSeries->attachAxis(xAxis);
         averageSeries->attachAxis(yAxis);
     }
+}
+
+void CumulativeChart::applySpringPeriod() {
+    startMonthBox->setCurrentIndex(2);
+    endMonthBox->setCurrentIndex(4);
+}
+
+void CumulativeChart::applySummerPeriod() {
+    startMonthBox->setCurrentIndex(5);
+    endMonthBox->setCurrentIndex(7);
+}
+
+void CumulativeChart::applyFallPeriod() {
+    startMonthBox->setCurrentIndex(8);
+    endMonthBox->setCurrentIndex(10);
+}
+
+void CumulativeChart::applyWinterPeriod() {
+    startMonthBox->setCurrentIndex(11);
+    endMonthBox->setCurrentIndex(1);
 }

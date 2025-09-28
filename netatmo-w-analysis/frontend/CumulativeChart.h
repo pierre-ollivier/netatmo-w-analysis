@@ -25,6 +25,10 @@ public slots:
 private slots:
     void setUnitLabel(QString measurementType);
     void setSeriesPens(int emphasizedIndex);
+    void applySpringPeriod();
+    void applySummerPeriod();
+    void applyFallPeriod();
+    void applyWinterPeriod();
 
 private:    
     QChart *chart;
@@ -36,6 +40,11 @@ private:
     QComboBox *yearBox;
     QComboBox *startMonthBox;
     QComboBox *endMonthBox;
+
+    QPushButton *springButton;
+    QPushButton *summerButton;
+    QPushButton *fallButton;
+    QPushButton *winterButton;
 
     QComboBox *measurementTypeBox;
     QComboBox *measurementOptionBox;
@@ -52,6 +61,7 @@ private:
     QLineSeries *averageSeries;
 
     QGridLayout *layout;
+    QGridLayout *seasonsLayout;
 
     CumulativeAggregator *aggregator;
 };
