@@ -303,11 +303,15 @@ void GrowthChart::drawChart() {
 
     for (int year = START_YEAR; year <= QDate::currentDate().year(); year++) {
         yearPoints[year] = QList<QPointF>();
+        QDate startDate = QDate(year, 1, 1).addMonths(startMonthBox->currentIndex());
+        QDate endDate = QDate(year, 1, 1).addMonths(endMonthBox->currentIndex() + 1).addDays(-1);
+        if (startDate > endDate) endDate = endDate.addYears(1);
 
         valuesByYear[year] = aggregator->aggregateMeasurements(
             measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
             measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
-            year,
+            startDate,
+            endDate,
             indoor,
             aggregationFunctions[conditionBox->currentText()],
             includeMissingConstantValuesCheckBox->isChecked()

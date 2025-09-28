@@ -35,7 +35,8 @@ public:
     QMap<QDate, double> aggregateMeasurements(
         QString measurementType,
         QString measurementOption,
-        int year,
+        QDate startDate,
+        QDate endDate,
         bool indoor,
         std::function<double(std::vector<QVariant>)> aggregationFunction,
         bool recoverMissingConstantValues = false

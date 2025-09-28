@@ -291,13 +291,20 @@ QMap<QDate, double> CumulativeAggregator::countMeasurementsMeetingCriteriaAverag
 QMap<QDate, double> CumulativeAggregator::aggregateMeasurements(
     QString measurementType,
     QString measurementOption,
-    int year,
+    QDate startDate,
+    QDate endDate,
     bool indoor,
     std::function<double(std::vector<QVariant>)> aggregationFunction,
     bool recoverMissingConstantValues
     ) {
-    QString _measurementQuery = measurementQuery(measurementType, measurementOption, year, indoor);
-    QString _dateQuery = dateQuery(year, indoor);
+    QString _measurementQuery = measurementQuery(
+        measurementType,
+        measurementOption,
+        startDate,
+        endDate,
+        indoor
+    );
+    QString _dateQuery = dateQuery(startDate, endDate, indoor);
 
     std::vector<QVariant> measurementResults = dbHandler->getResultsFromDatabase(_measurementQuery);
     std::vector<QVariant> dateResults = dbHandler->getResultsFromDatabase(_dateQuery);
