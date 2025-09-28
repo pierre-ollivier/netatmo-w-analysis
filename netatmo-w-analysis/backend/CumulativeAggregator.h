@@ -43,6 +43,10 @@ public:
     );
     QMap<QDate, double> aggregateMeasurementsAveraged(
         QMap<int, QMap<QDate, double>> valuesByYear,
+        int beginMonth,
+        int beginDay,
+        int endMonth,
+        int endDay,
         bool includeCurrentYear = true
     );
 

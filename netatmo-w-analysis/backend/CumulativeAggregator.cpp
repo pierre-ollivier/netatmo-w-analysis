@@ -341,13 +341,21 @@ QMap<QDate, double> CumulativeAggregator::aggregateMeasurements(
 
 QMap<QDate, double> CumulativeAggregator::aggregateMeasurementsAveraged(
         QMap<int, QMap<QDate, double>> valuesByYear,
+        int beginMonth,
+        int beginDay,
+        int endMonth,
+        int endDay,
         bool includeCurrentYear
     ) {
     QMap<QDate, double> averageValues = QMap<QDate, double>();
 
+    QDate minDate = QDate(BASE_BISSEXTILE_YEAR, beginMonth, beginDay);
+    QDate maxDate = QDate(BASE_BISSEXTILE_YEAR, endMonth, endDay);
+    if (maxDate < minDate) maxDate = maxDate.addYears(1);
+
     for (
-        QDate date = QDate(BASE_BISSEXTILE_YEAR, 1, 1);
-        date <= QDate(BASE_BISSEXTILE_YEAR, 12, 31);
+        QDate date = minDate;
+        date <= maxDate;
         date = date.addDays(1)
     ) {
         int numberOfValues = 0;

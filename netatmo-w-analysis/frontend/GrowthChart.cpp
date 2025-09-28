@@ -324,17 +324,39 @@ void GrowthChart::drawChart() {
         }
     }
 
+    QDate minDate = QDate(BASE_BISSEXTILE_YEAR, 1, 1).addMonths(startMonthBox->currentIndex());
+    QDate maxDate = QDate(BASE_BISSEXTILE_YEAR, 1, 1).addMonths(endMonthBox->currentIndex() + 1).addDays(-1);
+    if (maxDate < minDate) maxDate = maxDate.addYears(1);
+
     QMap<QDate, double> averageValues = aggregator->aggregateMeasurementsAveraged(
         valuesByYear,
+        minDate.month(),
+        minDate.day(),
+        maxDate.month(),
+        maxDate.day(),
         includeCurrentYearCheckBox->isChecked()
     );
 
+    for (auto i = averageValues.cbegin(), end = averageValues.cend(); i != end; ++i) {
+        QDate date = i.key();
+
+        averagePoints.append(QPointF(date.toJulianDay(), i.value()));
+    }
+
+    xAxis->setMin(minDate.toJulianDay() - 0.5);
+    xAxis->setMax(maxDate.toJulianDay() - 0.5);
+
+    for (QString label : xAxis->categoriesLabels()) {
+        xAxis->remove(label);
+    }
+
     for (
-        QDate date = QDate(BASE_BISSEXTILE_YEAR, 1, 1);
-        date <= QDate(BASE_BISSEXTILE_YEAR, 12, 31);
-        date = date.addDays(1)
-    ) {
-        if (averageValues.contains(date)) averagePoints.append(QPointF(date.toJulianDay(), averageValues[date]));
+        QDate d = minDate;
+        d <= maxDate;
+        d = d.addMonths(1)
+        ) {
+        QString label = d.year() == BASE_BISSEXTILE_YEAR ? d.toString("dd/MM") : " " + d.toString("dd/MM") + " ";
+        xAxis->append(label, d.toJulianDay() - 0.5);
     }
 
     drawChart(yearPoints, averagePoints);
