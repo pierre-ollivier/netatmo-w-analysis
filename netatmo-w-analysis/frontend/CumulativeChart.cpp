@@ -183,6 +183,12 @@ void CumulativeChart::initYAxis() {
 }
 
 void CumulativeChart::scaleYAxis(QMap<int, QList<QPointF>> points) {
+    if (!isCumulativeCheckBox->isChecked()) {
+        initYAxis();
+        yAxis->setMax(1);
+        addTicksToYAxis(1, 0.1);
+        return;
+    }
     int maxOfSeries = 0;
     int intervalBetweenTicks = 1;
     for (int year: points.keys()) {
@@ -224,6 +230,12 @@ void CumulativeChart::scaleYAxis(QMap<int, QList<QPointF>> points) {
 void CumulativeChart::addTicksToYAxis(int maxOfSeries, int intervalBetweenTicks) {
     for (int i = 0; i <= maxOfSeries; i += intervalBetweenTicks) {
         yAxis->append(QString::number(i), i);
+    }
+}
+
+void CumulativeChart::addTicksToYAxis(int maxOfSeries, double intervalBetweenTicks) {
+    for (double i = 0; i <= maxOfSeries; i += intervalBetweenTicks) {
+        yAxis->append(QString::number(i, 'f', 1), i);
     }
 }
 

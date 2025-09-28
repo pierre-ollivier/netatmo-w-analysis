@@ -17,6 +17,7 @@ public:
     void initYAxis();
     void scaleYAxis(QMap<int, QList<QPointF>> points);
     void addTicksToYAxis(int maxOfSeries, int intervalBetweenTicks);
+    void addTicksToYAxis(int maxOfSeries, double intervalBetweenTicks);
 
 public slots:
     void drawChart();
