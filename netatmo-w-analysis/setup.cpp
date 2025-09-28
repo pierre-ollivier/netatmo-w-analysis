@@ -22,3 +22,18 @@ extern const QDate START_DATE = QDate(2019, 10, 5);
 extern const int START_YEAR = 2019;
 
 extern const int BASE_BISSEXTILE_YEAR = 2016;
+
+extern const QList<QString> frMonths = {
+    "janvier",
+    "février",
+    "mars",
+    "avril",
+    "mai",
+    "juin",
+    "juillet",
+    "août",
+    "septembre",
+    "octobre",
+    "novembre",
+    "décembre",
+};

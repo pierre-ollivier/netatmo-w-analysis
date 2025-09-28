@@ -4,6 +4,7 @@
 extern QColor mainBackgroundColor;
 extern int START_YEAR;
 extern int BASE_BISSEXTILE_YEAR;
+extern QList<QString> frMonths;
 
 GrowthChart::GrowthChart() {
     aggregator = new CumulativeAggregator(this);
@@ -37,6 +38,18 @@ GrowthChart::GrowthChart() {
         yearBox->addItem(QString::number(year));
     }
     connect(yearBox, SIGNAL(currentIndexChanged(int)), SLOT(setSeriesPens(int)));
+
+    startMonthBox = new QComboBox();
+    endMonthBox = new QComboBox();
+
+    startMonthBox->addItems(frMonths);
+    endMonthBox->addItems(frMonths);
+
+    startMonthBox->setCurrentText("janvier");
+    endMonthBox->setCurrentText("décembre");
+
+    connect(startMonthBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
+    connect(endMonthBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
 
     measurementTypeBox = new QComboBox();
     measurementTypeBox->addItems({"Température", "Humidité", "Point de rosée", "Humidex", "Pression", "CO2", "Bruit"});
@@ -84,11 +97,33 @@ GrowthChart::GrowthChart() {
     chartView->setChart(chart);
     chartView->setBackgroundBrush(QBrush(mainBackgroundColor));
 
+    springButton = new QPushButton("Printemps");
+    connect(springButton, SIGNAL(clicked()), SLOT(applySpringPeriod()));
+    summerButton = new QPushButton("Été");
+    connect(summerButton, SIGNAL(clicked()), SLOT(applySummerPeriod()));
+    fallButton = new QPushButton("Automne");
+    connect(fallButton, SIGNAL(clicked()), SLOT(applyFallPeriod()));
+    winterButton = new QPushButton("Hiver");
+    connect(winterButton, SIGNAL(clicked()), SLOT(applyWinterPeriod()));
+    fullYearButton = new QPushButton("Année complète");
+    connect(fullYearButton, SIGNAL(clicked()), SLOT(applyFullYearPeriod()));
+
+    seasonsLayout = new QGridLayout();
+    seasonsLayout->addWidget(springButton, 0, 0);
+    seasonsLayout->addWidget(summerButton, 0, 1);
+    seasonsLayout->addWidget(fallButton, 1, 0);
+    seasonsLayout->addWidget(winterButton, 1, 1);
+    seasonsLayout->addWidget(fullYearButton, 2, 0, 1, 2);
+
     layout = new QGridLayout();
     layout->addWidget(chartView, 1, 1, 1, 6);
     layout->addWidget(new QLabel("Année : ", this), 2, 1);
     layout->addWidget(yearBox, 2, 2);
     layout->addWidget(new QLabel("Grandeur : ", this), 3, 1);
+    layout->addWidget(new QLabel("Mois de début : ", this), 2, 3);
+    layout->addWidget(startMonthBox, 2, 4);
+    layout->addWidget(new QLabel("Mois de fin : ", this), 2, 5);
+    layout->addWidget(endMonthBox, 2, 6);
     layout->addWidget(measurementTypeBox, 3, 2);
     layout->addWidget(measurementOptionBox, 3, 3);
     layout->addWidget(locationBox, 3, 4);
@@ -96,6 +131,7 @@ GrowthChart::GrowthChart() {
     layout->addWidget(conditionBox, 4, 2);
     layout->addWidget(includeMissingConstantValuesCheckBox, 5, 1, 1, 4);
     layout->addWidget(includeCurrentYearCheckBox, 6, 1, 1, 4);
+    layout->addLayout(seasonsLayout, 3, 6, 3, 1);
     setLayout(layout);
 
     // Set pens for all the year series and draw the chart
@@ -344,4 +380,29 @@ void GrowthChart::drawChart(QMap<int, QList<QPointF>> yearPoints, QList<QPointF>
         averageSeries->attachAxis(xAxis);
         averageSeries->attachAxis(yAxis);
     }
+}
+
+void GrowthChart::applySpringPeriod() {
+    startMonthBox->setCurrentIndex(2);
+    endMonthBox->setCurrentIndex(4);
+}
+
+void GrowthChart::applySummerPeriod() {
+    startMonthBox->setCurrentIndex(5);
+    endMonthBox->setCurrentIndex(7);
+}
+
+void GrowthChart::applyFallPeriod() {
+    startMonthBox->setCurrentIndex(8);
+    endMonthBox->setCurrentIndex(10);
+}
+
+void GrowthChart::applyWinterPeriod() {
+    startMonthBox->setCurrentIndex(11);
+    endMonthBox->setCurrentIndex(1);
+}
+
+void GrowthChart::applyFullYearPeriod() {
+    startMonthBox->setCurrentIndex(0);
+    endMonthBox->setCurrentIndex(11);
 }

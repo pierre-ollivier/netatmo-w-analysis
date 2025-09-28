@@ -3,21 +3,7 @@
 extern QColor mainBackgroundColor;
 extern int START_YEAR;
 extern int BASE_BISSEXTILE_YEAR;
-
-QList<QString> frMonths = {
-    "janvier",
-    "février",
-    "mars",
-    "avril",
-    "mai",
-    "juin",
-    "juillet",
-    "août",
-    "septembre",
-    "octobre",
-    "novembre",
-    "décembre",
-};
+extern QList<QString> frMonths;
 
 CumulativeChart::CumulativeChart() {
     aggregator = new CumulativeAggregator(this);
@@ -120,7 +106,7 @@ CumulativeChart::CumulativeChart() {
     seasonsLayout->addWidget(summerButton, 0, 1);
     seasonsLayout->addWidget(fallButton, 1, 0);
     seasonsLayout->addWidget(winterButton, 1, 1);
-    seasonsLayout->addWidget(fullYearButton, 2, 1, 1, 2);
+    seasonsLayout->addWidget(fullYearButton, 2, 0, 1, 2);
 
 
     layout = new QGridLayout();
