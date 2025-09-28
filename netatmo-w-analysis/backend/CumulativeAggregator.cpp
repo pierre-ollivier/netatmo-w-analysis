@@ -228,7 +228,8 @@ QMap<QDate, int> CumulativeAggregator::countMeasurementsMeetingCriteria(
     QDate beginDate,
     QDate endDate,
     std::function<bool(double)> criteria,
-    bool indoor
+    bool indoor,
+    bool cumulative
     ) {
     QString _measurementQuery = measurementQuery(measurementType, measurementOption, beginDate, endDate, indoor);
     QString _dateQuery = dateQuery(beginDate, endDate, indoor);
@@ -241,7 +242,8 @@ QMap<QDate, int> CumulativeAggregator::countMeasurementsMeetingCriteria(
 
     for (unsigned int i = 0; i < measurementResults.size(); i++) {
         if (measurementResults[i].isNull()) continue;
-        if (criteria(measurementResults[i].toDouble())) count++;
+        int increment = criteria(measurementResults[i].toDouble()) ? 1 : 0;
+        count = cumulative ? count + increment : increment;
         counts[QDate::fromString(dateResults[i].toString(), "dd/MM/yyyy")] = count;
     }
 
@@ -308,7 +310,8 @@ QMap<QDate, double> CumulativeAggregator::countMeasurementsMeetingCriteriaAverag
     int endDay,
     std::function<bool(double)> criteria,
     bool indoor,
-    bool excludeCurrentYear
+    bool excludeCurrentYear,
+    bool cumulative
     ) {
     QString _measurementQuery = measurementQuery(
         measurementType,
@@ -353,7 +356,7 @@ QMap<QDate, double> CumulativeAggregator::countMeasurementsMeetingCriteriaAverag
     double partialCount = 0.;
     for (QDate date = minDate; date <= maxDate; date = date.addDays(1)) {
         QDate dateInReferenceYear = date.addYears(BASE_BISSEXTILE_YEAR - date.year());
-        partialCount += counts[dateInReferenceYear];
+        partialCount = cumulative ? partialCount + counts[dateInReferenceYear] : counts[dateInReferenceYear];
         aggregatedCounts[date] = partialCount;
     }
 

@@ -52,6 +52,7 @@ private:
     QComboBox *locationBox;
 
     QCheckBox *includeCurrentYearCheckBox;
+    QCheckBox *isCumulativeCheckBox;
 
     QLineEdit *thresholdLineEdit;
 

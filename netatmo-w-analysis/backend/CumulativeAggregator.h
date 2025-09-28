@@ -24,7 +24,8 @@ public:
         QDate beginDate,
         QDate endDate,
         std::function<bool(double)> criteria,
-        bool indoor
+        bool indoor,
+        bool cumulative = true
         );
     QMap<QDate, double> countMeasurementsMeetingCriteriaAveraged(
         QString measurementType,
@@ -42,7 +43,8 @@ public:
         int endDay,
         std::function<bool(double)> criteria,
         bool indoor,
-        bool excludeCurrentYear = false
+        bool excludeCurrentYear = false,
+        bool cumulative = true
     );
     QMap<QDate, double> aggregateMeasurements(
         QString measurementType,

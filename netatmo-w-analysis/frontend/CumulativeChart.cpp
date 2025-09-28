@@ -75,6 +75,10 @@ CumulativeChart::CumulativeChart() {
     includeCurrentYearCheckBox->setChecked(true);
     connect(includeCurrentYearCheckBox, SIGNAL(clicked()), SLOT(drawChart()));
 
+    isCumulativeCheckBox = new QCheckBox("Cumulatif");
+    isCumulativeCheckBox->setChecked(true);
+    connect(isCumulativeCheckBox, SIGNAL(clicked()), SLOT(drawChart()));
+
     thresholdLineEdit = new QLineEdit("10");
     connect(thresholdLineEdit, SIGNAL(returnPressed()), SLOT(drawChart()));
 
@@ -117,13 +121,14 @@ CumulativeChart::CumulativeChart() {
 
 
     layout = new QGridLayout();
-    layout->addWidget(chartView, 1, 1, 1, 6);
+    layout->addWidget(chartView, 1, 1, 1, 7);
     layout->addWidget(new QLabel("Année : ", this), 2, 1);
     layout->addWidget(yearBox, 2, 2);
     layout->addWidget(new QLabel("Mois de début : ", this), 2, 3);
     layout->addWidget(startMonthBox, 2, 4);
     layout->addWidget(new QLabel("Mois de fin : ", this), 2, 5);
     layout->addWidget(endMonthBox, 2, 6);
+    layout->addWidget(isCumulativeCheckBox, 2, 7);
     layout->addWidget(new QLabel("Grandeur : ", this), 3, 1);
     layout->addWidget(measurementTypeBox, 3, 2);
     layout->addWidget(measurementOptionBox, 3, 3);
@@ -266,7 +271,8 @@ void CumulativeChart::drawChart() {
             minDate.addYears(year - BASE_BISSEXTILE_YEAR),
             maxDate.addYears(year - BASE_BISSEXTILE_YEAR).addDays(-1),
             conditionBoxToCondition[conditionBox->currentText()],
-            indoor
+            indoor,
+            isCumulativeCheckBox->isChecked()
         );
 
         for (auto i = counts.cbegin(), end = counts.cend(); i != end; ++i) {
@@ -285,7 +291,8 @@ void CumulativeChart::drawChart() {
         QDate(BASE_BISSEXTILE_YEAR, 1, 1).addMonths(endMonthBox->currentIndex() + 1).addDays(-1).day(),
         conditionBoxToCondition[conditionBox->currentText()],
         indoor,
-        !includeCurrentYearCheckBox->isChecked()
+        !includeCurrentYearCheckBox->isChecked(),
+        isCumulativeCheckBox->isChecked()
     );
 
     for (auto i = counts.cbegin(), end = counts.cend(); i != end; ++i) {
