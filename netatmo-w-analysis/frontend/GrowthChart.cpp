@@ -319,7 +319,7 @@ void GrowthChart::drawChart() {
 
         for (auto i = valuesByYear[year].cbegin(), end = valuesByYear[year].cend(); i != end; ++i) {
             QDate date = i.key();
-            date.setDate(BASE_BISSEXTILE_YEAR, date.month(), date.day());
+            date = date.addYears(BASE_BISSEXTILE_YEAR - startDate.year());
             yearPoints[year].append(QPointF(date.toJulianDay(), i.value()));
         }
     }
@@ -330,10 +330,8 @@ void GrowthChart::drawChart() {
 
     QMap<QDate, double> averageValues = aggregator->aggregateMeasurementsAveraged(
         valuesByYear,
-        minDate.month(),
-        minDate.day(),
-        maxDate.month(),
-        maxDate.day(),
+        minDate,
+        maxDate,
         includeCurrentYearCheckBox->isChecked()
     );
 
