@@ -112,12 +112,15 @@ CumulativeChart::CumulativeChart() {
     connect(fallButton, SIGNAL(clicked()), SLOT(applyFallPeriod()));
     winterButton = new QPushButton("Hiver");
     connect(winterButton, SIGNAL(clicked()), SLOT(applyWinterPeriod()));
+    fullYearButton = new QPushButton("Année complète");
+    connect(fullYearButton, SIGNAL(clicked()), SLOT(applyFullYearPeriod()));
 
     seasonsLayout = new QGridLayout();
     seasonsLayout->addWidget(springButton, 0, 0);
     seasonsLayout->addWidget(summerButton, 0, 1);
     seasonsLayout->addWidget(fallButton, 1, 0);
     seasonsLayout->addWidget(winterButton, 1, 1);
+    seasonsLayout->addWidget(fullYearButton, 2, 1, 1, 2);
 
 
     layout = new QGridLayout();
@@ -138,7 +141,7 @@ CumulativeChart::CumulativeChart() {
     layout->addWidget(thresholdLineEdit, 4, 3, 1, 3);
     layout->addWidget(unitLabel, 4, 6);
     layout->addWidget(includeCurrentYearCheckBox, 5, 1, 1, 3);
-    layout->addLayout(seasonsLayout, 3, 6, 2, 1);
+    layout->addLayout(seasonsLayout, 3, 6, 3, 1);
     setLayout(layout);
 
     // Set pens for all the year series and draw the chart
@@ -376,4 +379,9 @@ void CumulativeChart::applyFallPeriod() {
 void CumulativeChart::applyWinterPeriod() {
     startMonthBox->setCurrentIndex(11);
     endMonthBox->setCurrentIndex(1);
+}
+
+void CumulativeChart::applyFullYearPeriod() {
+    startMonthBox->setCurrentIndex(0);
+    endMonthBox->setCurrentIndex(11);
 }

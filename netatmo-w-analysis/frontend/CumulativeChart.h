@@ -30,6 +30,7 @@ private slots:
     void applySummerPeriod();
     void applyFallPeriod();
     void applyWinterPeriod();
+    void applyFullYearPeriod();
 
 private:    
     QChart *chart;
@@ -46,6 +47,7 @@ private:
     QPushButton *summerButton;
     QPushButton *fallButton;
     QPushButton *winterButton;
+    QPushButton *fullYearButton;
 
     QComboBox *measurementTypeBox;
     QComboBox *measurementOptionBox;
