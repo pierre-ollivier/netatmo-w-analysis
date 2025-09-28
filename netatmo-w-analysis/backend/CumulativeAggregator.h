@@ -14,26 +14,12 @@ public:
     QMap<QDate, int> countMeasurementsMeetingCriteria(
         QString measurementType,
         QString measurementOption,
-        int year,
-        std::function<bool(double)> criteria,
-        bool indoor
-    );
-    QMap<QDate, int> countMeasurementsMeetingCriteria(
-        QString measurementType,
-        QString measurementOption,
         QDate beginDate,
         QDate endDate,
         std::function<bool(double)> criteria,
         bool indoor,
         bool cumulative = true
         );
-    QMap<QDate, double> countMeasurementsMeetingCriteriaAveraged(
-        QString measurementType,
-        QString measurementOption,
-        std::function<bool(double)> criteria,
-        bool indoor,
-        bool excludeCurrentYear = false
-    );
     QMap<QDate, double> countMeasurementsMeetingCriteriaAveraged(
         QString measurementType,
         QString measurementOption,
