@@ -324,7 +324,7 @@ QMap<QDate, double> CumulativeAggregator::aggregateMeasurements(
         results[dates[i]] = aggregationFunction(truncatedMeasurements);
     }
 
-    if (recoverMissingConstantValues) {
+    if (recoverMissingConstantValues && measurementResults.size() >= 1) {
         for (unsigned int i = 0; i < measurementResults.size() - 1; i++) {
             if (dates[i].daysTo(dates[i + 1]) == 1 || abs(results[dates[i]] - results[dates[i + 1]]) > 1e-6) {
                 continue;
