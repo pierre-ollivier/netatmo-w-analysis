@@ -357,6 +357,8 @@ void GrowthChart::drawChart() {
         xAxis->append(label, d.toJulianDay() - 0.5);
     }
 
+    setSeriesNames();
+
     drawChart(yearPoints, averagePoints);
 }
 
@@ -429,4 +431,16 @@ void GrowthChart::applyWinterPeriod() {
 void GrowthChart::applyFullYearPeriod() {
     startMonthBox->setCurrentIndex(0);
     endMonthBox->setCurrentIndex(11);
+}
+
+void GrowthChart::setSeriesNames() {
+    int year = START_YEAR;
+    for (QAbstractSeries *series : chart->series()) {
+        QString name = startMonthBox->currentIndex() <= endMonthBox->currentIndex() ?
+                           QString::number(year) : QString::number(year) + "-" + QString::number(year + 1);
+        series->setName(name);
+        yearBox->setItemText(year - START_YEAR, name);
+        year++;
+    }
+    chart->series().last()->setName("Moyenne");
 }
