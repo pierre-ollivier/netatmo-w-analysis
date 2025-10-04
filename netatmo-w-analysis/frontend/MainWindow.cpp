@@ -6,6 +6,7 @@
 
 #include "../netatmo-w-analysis/backend/NormalComputer.h"
 #include "../netatmo-w-analysis/frontend/CumulativeChart.h"
+#include "../netatmo-w-analysis/frontend/GrowthChart.h"
 #include "../netatmo-w-analysis/frontend/DataExplorator.h"
 #include "../netatmo-w-analysis/frontend/MonthlyReport.h"
 #include "../netatmo-w-analysis/frontend/NormalsVisualizer.h"
@@ -218,6 +219,8 @@ void MainWindow::createActions() {
     connect(exploreDataAction, SIGNAL(triggered()), SLOT(exploreData()));
     displayCumulativeChartAction = new QAction("Diagramme cumulatif");
     connect(displayCumulativeChartAction, SIGNAL(triggered()), SLOT(displayCumulativeChart()));
+    displayGrowthChartAction = new QAction("Diagramme de croissance/décroissance");
+    connect(displayGrowthChartAction, SIGNAL(triggered()), SLOT(displayGrowthChart()));
 
     displayMonthlyReportAction = new QAction("Rapport mensuel");
     connect(displayMonthlyReportAction, SIGNAL(triggered()), SLOT(displayMonthlyReport()));
@@ -242,6 +245,7 @@ void MainWindow::createMenus() {
     QMenu *exploreDataMenu = menuBar->addMenu(tr("&Exploration des données"));
     exploreDataMenu->addAction(exploreDataAction);
     exploreDataMenu->addAction(displayCumulativeChartAction);
+    exploreDataMenu->addAction(displayGrowthChartAction);
     QMenu *climatologyMenu = menuBar->addMenu(tr("&Climatologie"));
     climatologyMenu->addAction(displayMonthlyReportAction);
     climatologyMenu->addAction(displayYearlyReportAction);
@@ -571,6 +575,11 @@ void MainWindow::exploreData() {
 void MainWindow::displayCumulativeChart() {
     CumulativeChart *cumulativeChart = new CumulativeChart();
     cumulativeChart->show();
+}
+
+void MainWindow::displayGrowthChart() {
+    GrowthChart *growthChart = new GrowthChart();
+    growthChart->show();
 }
 
 void MainWindow::postRecentDataRequests() {

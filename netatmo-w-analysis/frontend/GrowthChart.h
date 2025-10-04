@@ -1,23 +1,22 @@
-#ifndef CUMULATIVECHART_H
-#define CUMULATIVECHART_H
+#ifndef GROWTHCHART_H
+#define GROWTHCHART_H
 
 #include <QGridLayout>
 #include <QWidget>
 #include <QtCharts>
 #include "QValueAxis"
+#include <algorithm>
 
 #include "../netatmo-w-analysis/backend/CumulativeAggregator.h"
 
-class CumulativeChart : public QWidget
+class GrowthChart : public QWidget
 {
     Q_OBJECT
 public:
-    CumulativeChart();
+    GrowthChart();
 
-    void initYAxis();
-    void scaleYAxis(QMap<int, QList<QPointF>> points);
-    void addTicksToYAxis(int maxOfSeries, int intervalBetweenTicks);
-    void addTicksToYAxis(int maxOfSeries, double intervalBetweenTicks);
+    void setYAxisRange(double maxValue, double minValue);
+    void setYAxisTicks(double maxValue, double minValue);
 
 public slots:
     void drawChart();
@@ -33,12 +32,12 @@ private slots:
     void applyFullYearPeriod();
     void setSeriesNames();
 
-private:    
+private:
     QChart *chart;
     QChartView *chartView;
 
     QCategoryAxis *xAxis;
-    QCategoryAxis *yAxis;
+    QValueAxis *yAxis;
 
     QComboBox *yearBox;
     QComboBox *startMonthBox;
@@ -55,12 +54,8 @@ private:
     QComboBox *conditionBox;
     QComboBox *locationBox;
 
+    QCheckBox *includeMissingConstantValuesCheckBox;
     QCheckBox *includeCurrentYearCheckBox;
-    QCheckBox *isCumulativeCheckBox;
-
-    QLineEdit *thresholdLineEdit;
-
-    QLabel *unitLabel;
 
     QMap<int, QLineSeries *> *yearSeries;
     QLineSeries *averageSeries;
@@ -71,4 +66,4 @@ private:
     CumulativeAggregator *aggregator;
 };
 
-#endif // CUMULATIVECHART_H
+#endif // GROWTHCHART_H

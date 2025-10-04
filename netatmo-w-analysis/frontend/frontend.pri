@@ -10,6 +10,7 @@ HEADERS += \
     $$PWD/CustomItemDelegate.h \
     $$PWD/DataExplorator.h \
     $$PWD/EphemerisPanel.h \
+    $$PWD/GrowthChart.h \
     $$PWD/HomePageChart.h \
     $$PWD/MainWindow.h \
     $$PWD/MonthlyReport.h \
@@ -25,6 +26,7 @@ SOURCES += \
     $$PWD/CustomItemDelegate.cpp \
     $$PWD/DataExplorator.cpp \
     $$PWD/EphemerisPanel.cpp \
+    $$PWD/GrowthChart.cpp \
     $$PWD/HomePageChart.cpp \
     $$PWD/MainWindow.cpp \
     $$PWD/MonthlyReport.cpp \

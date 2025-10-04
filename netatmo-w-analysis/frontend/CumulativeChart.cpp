@@ -2,22 +2,20 @@
 
 extern QColor mainBackgroundColor;
 extern int START_YEAR;
+extern int BASE_BISSEXTILE_YEAR;
+extern QList<QString> frMonths;
 
 CumulativeChart::CumulativeChart() {
     aggregator = new CumulativeAggregator(this);
 
     chart = new QChart();
     chartView = new QChartView();
+    chartView->setMinimumWidth(960);
 
     xAxis = new QCategoryAxis();
     xAxis->setLineVisible(false);
-    xAxis->setMin(QDate(2024, 1, 1).toJulianDay() - 0.5);
-    xAxis->setMax(QDate(2025, 1, 1).toJulianDay() - 0.5);
-
-    for (QDate d = QDate(2024, 1, 1); d <= QDate(2024, 12, 1); d = d.addMonths(1)) {
-        xAxis->append(d.toString("dd/MM"), d.toJulianDay() - 0.5);
-    }
-    xAxis->append("‎01/01\0", QDate(2025, 1, 1).toJulianDay() - 0.5);
+    xAxis->setMin(QDate(BASE_BISSEXTILE_YEAR, 1, 1).toJulianDay() - 0.5);
+    xAxis->setMax(QDate(BASE_BISSEXTILE_YEAR + 1, 1, 1).toJulianDay() - 0.5);
     xAxis->setLabelsPosition(QCategoryAxis::AxisLabelsPositionOnValue);
 
     yAxis = new QCategoryAxis();
@@ -28,6 +26,18 @@ CumulativeChart::CumulativeChart() {
         yearBox->addItem(QString::number(year));
     }
     connect(yearBox, SIGNAL(currentIndexChanged(int)), SLOT(setSeriesPens(int)));
+
+    startMonthBox = new QComboBox();
+    endMonthBox = new QComboBox();
+
+    startMonthBox->addItems(frMonths);
+    endMonthBox->addItems(frMonths);
+
+    startMonthBox->setCurrentText("janvier");
+    endMonthBox->setCurrentText("décembre");
+
+    connect(startMonthBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
+    connect(endMonthBox, SIGNAL(currentIndexChanged(int)), SLOT(drawChart()));
 
     measurementTypeBox = new QComboBox();
     measurementTypeBox->addItems({"Température", "Humidité", "Point de rosée", "Humidex", "Pression", "CO2", "Bruit"});
@@ -50,6 +60,10 @@ CumulativeChart::CumulativeChart() {
     includeCurrentYearCheckBox = new QCheckBox("Inclure l'année actuelle dans le calcul de la moyenne");
     includeCurrentYearCheckBox->setChecked(true);
     connect(includeCurrentYearCheckBox, SIGNAL(clicked()), SLOT(drawChart()));
+
+    isCumulativeCheckBox = new QCheckBox("Cumulatif");
+    isCumulativeCheckBox->setChecked(true);
+    connect(isCumulativeCheckBox, SIGNAL(clicked()), SLOT(drawChart()));
 
     thresholdLineEdit = new QLineEdit("10");
     connect(thresholdLineEdit, SIGNAL(returnPressed()), SLOT(drawChart()));
@@ -76,10 +90,34 @@ CumulativeChart::CumulativeChart() {
     chartView->setChart(chart);
     chartView->setBackgroundBrush(QBrush(mainBackgroundColor));
 
+    springButton = new QPushButton("Printemps");
+    connect(springButton, SIGNAL(clicked()), SLOT(applySpringPeriod()));
+    summerButton = new QPushButton("Été");
+    connect(summerButton, SIGNAL(clicked()), SLOT(applySummerPeriod()));
+    fallButton = new QPushButton("Automne");
+    connect(fallButton, SIGNAL(clicked()), SLOT(applyFallPeriod()));
+    winterButton = new QPushButton("Hiver");
+    connect(winterButton, SIGNAL(clicked()), SLOT(applyWinterPeriod()));
+    fullYearButton = new QPushButton("Année complète");
+    connect(fullYearButton, SIGNAL(clicked()), SLOT(applyFullYearPeriod()));
+
+    seasonsLayout = new QGridLayout();
+    seasonsLayout->addWidget(springButton, 0, 0);
+    seasonsLayout->addWidget(summerButton, 0, 1);
+    seasonsLayout->addWidget(fallButton, 1, 0);
+    seasonsLayout->addWidget(winterButton, 1, 1);
+    seasonsLayout->addWidget(fullYearButton, 2, 0, 1, 2);
+
+
     layout = new QGridLayout();
-    layout->addWidget(chartView, 1, 1, 1, 6);
+    layout->addWidget(chartView, 1, 1, 1, 7);
     layout->addWidget(new QLabel("Année : ", this), 2, 1);
     layout->addWidget(yearBox, 2, 2);
+    layout->addWidget(new QLabel("Mois de début : ", this), 2, 3);
+    layout->addWidget(startMonthBox, 2, 4);
+    layout->addWidget(new QLabel("Mois de fin : ", this), 2, 5);
+    layout->addWidget(endMonthBox, 2, 6);
+    layout->addWidget(isCumulativeCheckBox, 2, 7);
     layout->addWidget(new QLabel("Grandeur : ", this), 3, 1);
     layout->addWidget(measurementTypeBox, 3, 2);
     layout->addWidget(measurementOptionBox, 3, 3);
@@ -89,6 +127,7 @@ CumulativeChart::CumulativeChart() {
     layout->addWidget(thresholdLineEdit, 4, 3, 1, 3);
     layout->addWidget(unitLabel, 4, 6);
     layout->addWidget(includeCurrentYearCheckBox, 5, 1, 1, 3);
+    layout->addLayout(seasonsLayout, 3, 6, 3, 1);
     setLayout(layout);
 
     // Set pens for all the year series and draw the chart
@@ -133,6 +172,13 @@ void CumulativeChart::initYAxis() {
 }
 
 void CumulativeChart::scaleYAxis(QMap<int, QList<QPointF>> points) {
+    if (!isCumulativeCheckBox->isChecked()) {
+        initYAxis();
+        yAxis->setMin(-0.05);
+        yAxis->setMax(1.05);
+        addTicksToYAxis(1.05, 0.1);
+        return;
+    }
     int maxOfSeries = 0;
     int intervalBetweenTicks = 1;
     for (int year: points.keys()) {
@@ -177,6 +223,12 @@ void CumulativeChart::addTicksToYAxis(int maxOfSeries, int intervalBetweenTicks)
     }
 }
 
+void CumulativeChart::addTicksToYAxis(int maxOfSeries, double intervalBetweenTicks) {
+    for (double i = 0; i <= maxOfSeries; i += intervalBetweenTicks) {
+        yAxis->append(QString::number(i, 'f', 1), i);
+    }
+}
+
 void CumulativeChart::drawChart() {
     double threshold = thresholdLineEdit->text().toDouble();
 
@@ -208,20 +260,26 @@ void CumulativeChart::drawChart() {
     QMap<int, QList<QPointF>> yearPoints = QMap<int, QList<QPointF>>();
     QList<QPointF> averagePoints = QList<QPointF>();
 
+    QDate minDate = QDate(BASE_BISSEXTILE_YEAR, 1, 1).addMonths(startMonthBox->currentIndex());
+    QDate maxDate = QDate(BASE_BISSEXTILE_YEAR, 1, 1).addMonths(endMonthBox->currentIndex() + 1);
+    if (endMonthBox->currentIndex() < startMonthBox->currentIndex()) maxDate = maxDate.addYears(1);
+
     for (int year = START_YEAR; year <= QDate::currentDate().year(); year++) {
         yearPoints[year] = QList<QPointF>();
 
         QMap<QDate, int> counts = aggregator->countMeasurementsMeetingCriteria(
             measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
             measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
-            year,
+            minDate.addYears(year - BASE_BISSEXTILE_YEAR),
+            maxDate.addYears(year - BASE_BISSEXTILE_YEAR).addDays(-1),
             conditionBoxToCondition[conditionBox->currentText()],
-            indoor
+            indoor,
+            isCumulativeCheckBox->isChecked()
         );
 
         for (auto i = counts.cbegin(), end = counts.cend(); i != end; ++i) {
             QDate date = i.key();
-            date.setDate(2024, date.month(), date.day());
+            date = date.addYears(BASE_BISSEXTILE_YEAR - year);
             yearPoints[year].append(QPointF(date.toJulianDay(), i.value()));
         }
     }
@@ -229,16 +287,39 @@ void CumulativeChart::drawChart() {
     QMap<QDate, double> counts = aggregator->countMeasurementsMeetingCriteriaAveraged(
         measurementTypeBoxToMeasurementType[measurementTypeBox->currentText()],
         measurementOptionBoxToMeasurementOption[measurementOptionBox->currentText()],
+        startMonthBox->currentIndex() + 1,
+        1,
+        QDate(BASE_BISSEXTILE_YEAR, 1, 1).addMonths(endMonthBox->currentIndex() + 1).addDays(-1).month(),
+        QDate(BASE_BISSEXTILE_YEAR, 1, 1).addMonths(endMonthBox->currentIndex() + 1).addDays(-1).day(),
         conditionBoxToCondition[conditionBox->currentText()],
         indoor,
-        !includeCurrentYearCheckBox->isChecked()
+        !includeCurrentYearCheckBox->isChecked(),
+        isCumulativeCheckBox->isChecked()
     );
 
     for (auto i = counts.cbegin(), end = counts.cend(); i != end; ++i) {
         QDate date = i.key();
-        date.setDate(2024, date.month(), date.day());
+
         averagePoints.append(QPointF(date.toJulianDay(), i.value()));
     }
+
+    xAxis->setMin(minDate.toJulianDay() - 0.5);
+    xAxis->setMax(maxDate.toJulianDay() - 0.5);
+
+    for (QString label : xAxis->categoriesLabels()) {
+        xAxis->remove(label);
+    }
+
+    for (
+        QDate d = minDate;
+        d <= maxDate;
+        d = d.addMonths(1)
+    ) {
+        QString label = d.year() == BASE_BISSEXTILE_YEAR ? d.toString("dd/MM") : " " + d.toString("dd/MM") + " ";
+        xAxis->append(label, d.toJulianDay() - 0.5);
+    }
+
+    setSeriesNames();
 
     drawChart(yearPoints, averagePoints);
 }
@@ -267,4 +348,41 @@ void CumulativeChart::drawChart(QMap<int, QList<QPointF>> yearPoints, QList<QPoi
         averageSeries->attachAxis(xAxis);
         averageSeries->attachAxis(yAxis);
     }
+}
+
+void CumulativeChart::applySpringPeriod() {
+    startMonthBox->setCurrentIndex(2);
+    endMonthBox->setCurrentIndex(4);
+}
+
+void CumulativeChart::applySummerPeriod() {
+    startMonthBox->setCurrentIndex(5);
+    endMonthBox->setCurrentIndex(7);
+}
+
+void CumulativeChart::applyFallPeriod() {
+    startMonthBox->setCurrentIndex(8);
+    endMonthBox->setCurrentIndex(10);
+}
+
+void CumulativeChart::applyWinterPeriod() {
+    startMonthBox->setCurrentIndex(11);
+    endMonthBox->setCurrentIndex(1);
+}
+
+void CumulativeChart::applyFullYearPeriod() {
+    startMonthBox->setCurrentIndex(0);
+    endMonthBox->setCurrentIndex(11);
+}
+
+void CumulativeChart::setSeriesNames() {
+    int year = START_YEAR;
+    for (QAbstractSeries *series : chart->series()) {
+        QString name = startMonthBox->currentIndex() <= endMonthBox->currentIndex() ?
+                           QString::number(year) : QString::number(year) + "-" + QString::number(year + 1);
+        series->setName(name);
+        yearBox->setItemText(year - START_YEAR, name);
+        year++;
+    }
+    chart->series().last()->setName("Moyenne");
 }
