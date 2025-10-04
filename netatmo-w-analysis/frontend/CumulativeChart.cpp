@@ -174,8 +174,9 @@ void CumulativeChart::initYAxis() {
 void CumulativeChart::scaleYAxis(QMap<int, QList<QPointF>> points) {
     if (!isCumulativeCheckBox->isChecked()) {
         initYAxis();
-        yAxis->setMax(1);
-        addTicksToYAxis(1, 0.1);
+        yAxis->setMin(-0.05);
+        yAxis->setMax(1.05);
+        addTicksToYAxis(1.05, 0.1);
         return;
     }
     int maxOfSeries = 0;
@@ -318,6 +319,8 @@ void CumulativeChart::drawChart() {
         xAxis->append(label, d.toJulianDay() - 0.5);
     }
 
+    setSeriesNames();
+
     drawChart(yearPoints, averagePoints);
 }
 
@@ -370,4 +373,16 @@ void CumulativeChart::applyWinterPeriod() {
 void CumulativeChart::applyFullYearPeriod() {
     startMonthBox->setCurrentIndex(0);
     endMonthBox->setCurrentIndex(11);
+}
+
+void CumulativeChart::setSeriesNames() {
+    int year = START_YEAR;
+    for (QAbstractSeries *series : chart->series()) {
+        QString name = startMonthBox->currentIndex() <= endMonthBox->currentIndex() ?
+                           QString::number(year) : QString::number(year) + "-" + QString::number(year + 1);
+        series->setName(name);
+        yearBox->setItemText(year - START_YEAR, name);
+        year++;
+    }
+    chart->series().last()->setName("Moyenne");
 }

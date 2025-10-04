@@ -31,6 +31,7 @@ private slots:
     void applyFallPeriod();
     void applyWinterPeriod();
     void applyFullYearPeriod();
+    void setSeriesNames();
 
 private:    
     QChart *chart;
