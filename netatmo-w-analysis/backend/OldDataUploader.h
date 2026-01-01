@@ -28,6 +28,7 @@ signals:
 public slots:
     void addDataFromCurrentMonths(QDate beginDate, QDate endDate, bool indoor = false);
     void addExtTimestampRecordsFromCurrentMonth();
+    void addAllExtTimestampRecordsFromCurrentMonth();
     void addIntTimestampRecordsFromCurrentMonth();
     void addExtTimestampRecordToCopyDatabase(ExtTimestampRecord);
     void addIntTimestampRecordToCopyDatabase(IntTimestampRecord);

@@ -214,6 +214,8 @@ void MainWindow::createActions() {
     connect(updateDailyIndoorDatabaseAction, SIGNAL(triggered()), SLOT(updateDailyIndoorDatabase()));
     updateDailyOutdoorDatabaseAction = new QAction("Mettre à jour la base de données quotidiennes extérieures");
     connect(updateDailyOutdoorDatabaseAction, SIGNAL(triggered()), SLOT(updateDailyOutdoorDatabase()));
+    backfillOutdoorDataAction = new QAction("Backfill complet des données extérieures...");
+    connect(backfillOutdoorDataAction, SIGNAL(triggered()), SLOT(backfillOutdoorData()));
 
     exploreDataAction = new QAction("Explorer les données");
     connect(exploreDataAction, SIGNAL(triggered()), SLOT(exploreData()));
@@ -242,6 +244,7 @@ void MainWindow::createMenus() {
     handleDataMenu->addAction(addMultipleMonthsDataAction);
     handleDataMenu->addAction(updateDailyIndoorDatabaseAction);
     handleDataMenu->addAction(updateDailyOutdoorDatabaseAction);
+    handleDataMenu->addAction(backfillOutdoorDataAction);
     QMenu *exploreDataMenu = menuBar->addMenu(tr("&Exploration des données"));
     exploreDataMenu->addAction(exploreDataAction);
     exploreDataMenu->addAction(displayCumulativeChartAction);
@@ -523,6 +526,10 @@ void MainWindow::updateDailyOutdoorDatabase() {
     }
 
     else if (response == QMessageBox::No) QMessageBox::warning(this, "Annulation", "Opération annulée.");
+}
+
+void MainWindow::backfillOutdoorData() {
+    oldDataUploader->addAllExtTimestampRecordsFromCurrentMonth();
 }
 
 void MainWindow::displayMonthlyReport() {

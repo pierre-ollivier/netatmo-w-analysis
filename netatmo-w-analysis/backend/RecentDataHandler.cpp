@@ -102,7 +102,7 @@ void RecentDataHandler::postRequests(int date_begin, QString scale, QString acce
         params.addQueryItem("real_time", "true");
         longOutdoorChartRequestManager->post(request, params.query().toUtf8());
         apiMonitor->addTimestamp();
-
+    /*
         url = QUrl("https://api.netatmo.com/api/getmeasure?");
         request = QNetworkRequest(url);
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
@@ -116,7 +116,7 @@ void RecentDataHandler::postRequests(int date_begin, QString scale, QString acce
         params.addQueryItem("optimize", "false");
         params.addQueryItem("real_time", "true");
         longOutdoorLastRequestManager->post(request, params.query().toUtf8());
-        apiMonitor->addTimestamp();
+        apiMonitor->addTimestamp();*/
 
         url = QUrl("https://api.netatmo.com/api/getmeasure?");
         request = QNetworkRequest(url);
