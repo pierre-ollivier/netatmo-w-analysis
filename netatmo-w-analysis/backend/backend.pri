@@ -5,6 +5,7 @@ HEADERS += \
     $$PWD/DailyStatisticsCalculator.h \
     $$PWD/DatabaseHandler.h \
     $$PWD/MetricsAnalyzer.h \
+    $$PWD/MultipleNetatmoAPIQueriesAggregator.h \
     $$PWD/NetatmoAPIHandler.h \
     $$PWD/NewDataUploader.h \
     $$PWD/NormalComputer.h \
@@ -20,6 +21,7 @@ SOURCES += \
     $$PWD/DailyStatisticsCalculator.cpp \
     $$PWD/DatabaseHandler.cpp \
     $$PWD/MetricsAnalyzer.cpp \
+    $$PWD/MultipleNetatmoAPIQueriesAggregator.cpp \
     $$PWD/NetatmoAPIHandler.cpp \
     $$PWD/NewDataUploader.cpp \
     $$PWD/NormalComputer.cpp \
