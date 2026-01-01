@@ -161,6 +161,7 @@ void RecentDataHandler::retrieveOutdoorChartRequest(QNetworkReply *reply) {
         qDebug() << "ERROR with chart request" << bytes;
     }
     else if (bytes.size() >= 1) {
+        long long latestTimestampFromDatabase = dbHandlerLastRecords->getLatestTimestampFromDatabaseInS("LastOutdoorTimestampRecords");
         foreach (const QString &key, tb.keys()) {
             long long timestamp = key.toLongLong();
             QJsonValue value = tb.value(key);
@@ -168,7 +169,7 @@ void RecentDataHandler::retrieveOutdoorChartRequest(QNetworkReply *reply) {
             int humidity = int(0.5 + value[1].toDouble());
 
             recordsList.append(ExtTimestampRecord(timestamp, temperature, humidity));
-            if (timestamp > dbHandlerLastRecords->getLatestTimestampFromDatabaseInS("LastOutdoorTimestampRecords")) {
+            if (timestamp > latestTimestampFromDatabase) {
                 lastRecordsList.append(ExtTimestampRecord(timestamp, temperature, humidity));
             }
         }
@@ -188,6 +189,7 @@ void RecentDataHandler::retrieveIndoorChartRequest(QNetworkReply *reply) {
         qDebug() << "ERROR with chart request" << bytes;
     }
     else if (bytes.size() >= 1) {
+        long long latestTimestampFromDatabase = dbHandlerLastRecords->getLatestTimestampFromDatabaseInS("LastIndoorTimestampRecords");
         foreach (const QString &key, tb.keys()) {
             long long timestamp = key.toLongLong();
             QJsonValue value = tb.value(key);
@@ -198,7 +200,7 @@ void RecentDataHandler::retrieveIndoorChartRequest(QNetworkReply *reply) {
             int noise = value[4].toDouble();
 
             recordsList.append(IntTimestampRecord(timestamp, temperature, humidity, pressure, co2, noise));
-            if (timestamp > dbHandlerLastRecords->getLatestTimestampFromDatabaseInS("LastIndoorTimestampRecords")) {
+            if (timestamp > latestTimestampFromDatabase) {
                 lastRecordsList.append(IntTimestampRecord(timestamp, temperature, humidity, pressure, co2, noise));
             }
         }
@@ -214,7 +216,7 @@ void RecentDataHandler::retrieveLongOutdoorChartRequest(QNetworkReply *reply) {
     QJsonDocument js = QJsonDocument::fromJson(bytes);
     QJsonObject tb = js["body"].toObject();
     if (bytes.contains("error")) {
-        qDebug() << "ERROR with chart request" << bytes;
+        qDebug() << "ERROR with long chart request" << bytes;
     }
     else if (bytes.size() >= 1) {
         foreach (const QString &key, tb.keys()) {
@@ -236,16 +238,17 @@ void RecentDataHandler::retrieveLongOutdoorLastRequest(QNetworkReply *reply) {
     QJsonDocument js = QJsonDocument::fromJson(bytes);
     QJsonObject tb = js["body"].toObject();
     if (bytes.contains("error")) {
-        qDebug() << "ERROR with chart request" << bytes;
+        qDebug() << "ERROR with long last request" << bytes;
     }
     else if (bytes.size() >= 1) {
+        long long latestTimestampFromDatabase = dbHandlerLastRecords->getLatestTimestampFromDatabaseInS("LastOutdoorTimestampRecords");
         foreach (const QString &key, tb.keys()) {
             long long timestamp = key.toLongLong();
             QJsonValue value = tb.value(key);
             double temperature = value[0].toDouble();
             int humidity = int(0.5 + value[1].toDouble());
 
-            if (timestamp > dbHandlerLastRecords->getLatestTimestampFromDatabaseInS("LastOutdoorTimestampRecords")) {
+            if (timestamp > latestTimestampFromDatabase) {
                 lastRecordsList.append(ExtTimestampRecord(timestamp, temperature, humidity));
             }
         }
@@ -260,7 +263,7 @@ void RecentDataHandler::retrieveLongIndoorChartRequest(QNetworkReply *reply) {
     QJsonDocument js = QJsonDocument::fromJson(bytes);
     QJsonObject tb = js["body"].toObject();
     if (bytes.contains("error")) {
-        qDebug() << "ERROR with chart request" << bytes;
+        qDebug() << "ERROR with long chart request" << bytes;
     }
     else if (bytes.size() >= 1) {
         foreach (const QString &key, tb.keys()) {
@@ -284,9 +287,10 @@ void RecentDataHandler::retrieveLongIndoorLastRequest(QNetworkReply *reply) {
     QJsonDocument js = QJsonDocument::fromJson(bytes);
     QJsonObject tb = js["body"].toObject();
     if (bytes.contains("error")) {
-        qDebug() << "ERROR with chart request" << bytes;
+        qDebug() << "ERROR with long last request" << bytes;
     }
     else if (bytes.size() >= 1) {
+        long long latestTimestampFromDatabase = dbHandlerLastRecords->getLatestTimestampFromDatabaseInS("LastIndoorTimestampRecords");
         foreach (const QString &key, tb.keys()) {
             long long timestamp = key.toLongLong();
             QJsonValue value = tb.value(key);
@@ -296,7 +300,7 @@ void RecentDataHandler::retrieveLongIndoorLastRequest(QNetworkReply *reply) {
             int co2 = value[3].toDouble();
             int noise = value[4].toDouble();
 
-            if (timestamp > dbHandlerLastRecords->getLatestTimestampFromDatabaseInS("LastIndoorTimestampRecords")) {
+            if (timestamp > latestTimestampFromDatabase) {
                 lastRecordsList.append(IntTimestampRecord(timestamp, temperature, humidity, pressure, co2, noise));
             }
         }
