@@ -67,13 +67,13 @@ void OldDataUploader::addExtTimestampRecordsFromCurrentMonth() {
                                                    _accessToken);
 }
 
-void OldDataUploader::addAllExtTimestampRecordsFromCurrentMonth() {
+void OldDataUploader::addAllExtTimestampRecordsFromPeriod(QDate beginDate, QDate endDate) {
     NetatmoAPIHandler *apiHandler = new NetatmoAPIHandler(this, _apiHandler->getAPIMonitor());
     connect(apiHandler,
             SIGNAL(outdoorRecordListRetrieved(QList<ExtTimestampRecord>)),
             SLOT(logOutdoorTimestampRecords(QList<ExtTimestampRecord>)));
 
-    apiHandler->postMultiDaysOutdoorTimestampRecordsRequest(QDate(2025, 12, 20), QDate(2025, 12, 23), _accessToken);
+    apiHandler->postMultiDaysOutdoorTimestampRecordsRequest(beginDate, endDate, _accessToken);
 }
 
 void OldDataUploader::addIntTimestampRecordsFromCurrentMonth() {

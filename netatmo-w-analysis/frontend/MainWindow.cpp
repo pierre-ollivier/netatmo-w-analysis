@@ -529,7 +529,48 @@ void MainWindow::updateDailyOutdoorDatabase() {
 }
 
 void MainWindow::backfillOutdoorData() {
-    oldDataUploader->addAllExtTimestampRecordsFromCurrentMonth();
+    QDate lastDateInDatabase = dbHandlerProd->getLatestDateTimeFromDatabase("OutdoorDailyRecords").date();
+    bool okBegin = false, okEnd = false;
+
+    QString beginDate = QInputDialog::getText(
+        this,
+        "Date de début",
+        "Dernière date en DB : " + lastDateInDatabase.toString("dd/MM/yyyy") + "\n"
+            + "Date de début (incluse, au format JJ/MM/AAAA) :",
+        QLineEdit::Normal,
+        lastDateInDatabase.addDays(1).toString("dd/MM/yyyy"),
+        &okBegin
+        );
+
+    if (!okBegin) return;
+
+    QString endDate = QInputDialog::getText(
+        this,
+        "Date de fin",
+        "Date de fin (incluse, au format JJ/MM/AAAA) :",
+        QLineEdit::Normal,
+        QDate::currentDate().addDays(-1).toString("dd/MM/yyyy"),
+        &okEnd
+        );
+
+    if (!okEnd) return;
+
+    QString q = "Confirmer la saisie ? \n\n";
+    q += "Date de début : " + beginDate + "\n";
+    q += "Date de fin : " + endDate + "\n";
+    q += "Dernière date dans la base de données extérieures : ";
+    q += lastDateInDatabase.toString("dd/MM/yyyy");
+
+    int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
+
+    if (response == QMessageBox::Yes) {
+        oldDataUploader->addAllExtTimestampRecordsFromPeriod(
+            QDate::fromString(beginDate, "dd/MM/yyyy"),
+            QDate::fromString(endDate, "dd/MM/yyyy")
+            );
+    }
+
+    else if (response == QMessageBox::No) QMessageBox::warning(this, "Annulation", "Opération annulée.");
 }
 
 void MainWindow::displayMonthlyReport() {
