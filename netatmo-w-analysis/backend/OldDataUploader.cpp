@@ -9,6 +9,7 @@ OldDataUploader::OldDataUploader(NetatmoAPIHandler* apiHandler, QString accessTo
     _accessToken = accessToken;
 
     dbHandler = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
+    _dailyCalculator = new DailyStatisticsCalculator(PATH_TO_COPY_DATABASE, dbHandler);
 
     connect(apiHandler, SIGNAL(extTimestampRecordRetrieved(ExtTimestampRecord)),
             SLOT(addExtTimestampRecordToCopyDatabase(ExtTimestampRecord)));
@@ -70,8 +71,9 @@ void OldDataUploader::addExtTimestampRecordsFromCurrentMonth() {
 void OldDataUploader::addAllExtTimestampRecordsFromPeriod(QDate beginDate, QDate endDate) {
     NetatmoAPIHandler *apiHandler = new NetatmoAPIHandler(this, _apiHandler->getAPIMonitor());
     connect(apiHandler,
-            SIGNAL(outdoorRecordListRetrieved(QList<ExtTimestampRecord>)),
-            SLOT(logOutdoorTimestampRecords(QList<ExtTimestampRecord>)));
+            SIGNAL(outdoorMultiDaysRecordListRetrieved(QDate, QDate, QList<ExtTimestampRecord>)),
+            SLOT(addBackfillRecords(QDate, QDate, QList<ExtTimestampRecord>))
+            );
 
     apiHandler->postMultiDaysOutdoorTimestampRecordsRequest(beginDate, endDate, _accessToken);
 }
@@ -95,6 +97,20 @@ void OldDataUploader::addExtTimestampRecordToCopyDatabase(ExtTimestampRecord rec
 
 void OldDataUploader::addIntTimestampRecordToCopyDatabase(IntTimestampRecord record) {
     dbHandler->postIndoorTimestampRecord(record, "IndoorTimestampRecords");
+}
+
+void OldDataUploader::addBackfillRecords(QDate beginDate, QDate endDate, QList<ExtTimestampRecord> records) {
+    // provisional
+    for (QDate d = beginDate; d <= endDate; d = d.addDays(1)) {
+        QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> recordsPair = qMakePair(
+            records, QList<IntTimestampRecord>()
+            );
+        double maxTemperature = _dailyCalculator->getMaxTemperatureFromDate(d, recordsPair);
+        double minTemperature = _dailyCalculator->getMinTemperatureFromDate(d, recordsPair);
+        int maxHumidity = _dailyCalculator->getMaxHumidityFromDate(d, recordsPair);
+        int minHumidity = _dailyCalculator->getMinHumidityFromDate(d, recordsPair);
+        qDebug() << d << ": Temperature[" << minTemperature << " " << maxTemperature << "], Humidity[" << minHumidity << " " << maxHumidity << "]";
+    }
 }
 
 void OldDataUploader::setAccessToken(QString accessToken) {

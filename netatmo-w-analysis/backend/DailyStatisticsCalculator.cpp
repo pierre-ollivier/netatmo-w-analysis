@@ -1,7 +1,10 @@
 #include "DailyStatisticsCalculator.h"
+#include "float.h"
 #include <QDateTime>
 #include <QTimeZone>
 #include <QDebug>
+#include "../types/ExtTimestampRecord.h"
+#include "../types/IntTimestampRecord.h"
 
 DailyStatisticsCalculator::DailyStatisticsCalculator(QString pathToDatabase, DatabaseHandler *dbHandler)
 {
@@ -45,6 +48,23 @@ long long DailyStatisticsCalculator::getMaxTemperatureTimestampFromDate(QDate da
     return getMaxTemperatureTimestampFromDate(date, maxTemperature, indoor);
 }
 
+double DailyStatisticsCalculator::getMaxTemperatureFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records) {
+    const long long firstTimestamp = getFirstTimestampFromDateWithUTCOffset(date, 6);
+    const long long lastTimestamp = firstTimestamp + 86400;
+    double currentMaxTemperature = -DBL_MAX;
+    for (ExtTimestampRecord record : records.first) {
+        if (record.timestamp() >= firstTimestamp && record.timestamp() <= lastTimestamp && record.temperature() > currentMaxTemperature) {
+            currentMaxTemperature = record.temperature();
+        }
+    }
+    for (IntTimestampRecord record : records.second) {
+        if (record.timestamp() >= firstTimestamp && record.timestamp() <= lastTimestamp && record.temperature() > currentMaxTemperature) {
+            currentMaxTemperature = record.temperature();
+        }
+    }
+    return currentMaxTemperature;
+}
+
 // min temperature
 
 double DailyStatisticsCalculator::getMinTemperatureFromDate(QDate date, bool indoor) {
@@ -69,6 +89,23 @@ long long DailyStatisticsCalculator::getMinTemperatureTimestampFromDate(QDate da
 long long DailyStatisticsCalculator::getMinTemperatureTimestampFromDate(QDate date, bool indoor) {
     double minTemperature = getMinTemperatureFromDate(date, indoor);
     return getMinTemperatureTimestampFromDate(date, minTemperature, indoor);
+}
+
+double DailyStatisticsCalculator::getMinTemperatureFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records) {
+    const long long firstTimestamp = getFirstTimestampFromDateWithUTCOffset(date, -6);
+    const long long lastTimestamp = firstTimestamp + 86400;
+    double currentMinTemperature = DBL_MAX;
+    for (ExtTimestampRecord record : records.first) {
+        if (record.timestamp() >= firstTimestamp && record.timestamp() <= lastTimestamp && record.temperature() < currentMinTemperature) {
+            currentMinTemperature = record.temperature();
+        }
+    }
+    for (IntTimestampRecord record : records.second) {
+        if (record.timestamp() >= firstTimestamp && record.timestamp() <= lastTimestamp && record.temperature() < currentMinTemperature) {
+            currentMinTemperature = record.temperature();
+        }
+    }
+    return currentMinTemperature;
 }
 
 // avg temperature
@@ -104,6 +141,23 @@ long long DailyStatisticsCalculator::getMaxHumidityTimestampFromDate(QDate date,
     return getMaxHumidityTimestampFromDate(date, maxHumidity, indoor);
 }
 
+int DailyStatisticsCalculator::getMaxHumidityFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records) {
+    const long long firstTimestamp = getFirstTimestampFromDate(date);
+    const long long lastTimestamp = firstTimestamp + 86400;
+    int currentMaxHumidity = -1;
+    for (ExtTimestampRecord record : records.first) {
+        if (record.timestamp() >= firstTimestamp && record.timestamp() <= lastTimestamp && record.humidity() > currentMaxHumidity) {
+            currentMaxHumidity = record.humidity();
+        }
+    }
+    for (IntTimestampRecord record : records.second) {
+        if (record.timestamp() >= firstTimestamp && record.timestamp() <= lastTimestamp && record.humidity() > currentMaxHumidity) {
+            currentMaxHumidity = record.humidity();
+        }
+    }
+    return currentMaxHumidity;
+}
+
 // min humidity
 
 int DailyStatisticsCalculator::getMinHumidityFromDate(QDate date, bool indoor) {
@@ -129,6 +183,24 @@ long long DailyStatisticsCalculator::getMinHumidityTimestampFromDate(QDate date,
     double minHumidity = getMinHumidityFromDate(date, indoor);
     return getMinHumidityTimestampFromDate(date, minHumidity, indoor);
 }
+
+int DailyStatisticsCalculator::getMinHumidityFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records) {
+    const long long firstTimestamp = getFirstTimestampFromDate(date);
+    const long long lastTimestamp = firstTimestamp + 86400;
+    int currentMinHumidity = 101;
+    for (ExtTimestampRecord record : records.first) {
+        if (record.timestamp() >= firstTimestamp && record.timestamp() <= lastTimestamp && record.humidity() < currentMinHumidity) {
+            currentMinHumidity = record.humidity();
+        }
+    }
+    for (IntTimestampRecord record : records.second) {
+        if (record.timestamp() >= firstTimestamp && record.timestamp() <= lastTimestamp && record.humidity() < currentMinHumidity) {
+            currentMinHumidity = record.humidity();
+        }
+    }
+    return currentMinHumidity;
+}
+
 
 // avg humidity
 

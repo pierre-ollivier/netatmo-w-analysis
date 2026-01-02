@@ -102,6 +102,7 @@ signals:
     void indoorHumidityListRetrieved(QList<QPointF>);
     void outdoorRecordListRetrieved(QList<ExtTimestampRecord>);
     void indoorRecordListRetrieved(QList<IntTimestampRecord>);
+    void outdoorMultiDaysRecordListRetrieved(QDate, QDate, QList<ExtTimestampRecord>);
 
     // OTHER
 

@@ -6,6 +6,7 @@
 #include <QDate>
 #include "../backend/DatabaseHandler.h"
 #include "../backend/NetatmoAPIHandler.h"
+#include "../backend/DailyStatisticsCalculator.h"
 #include "../types/ExtTimestampRecord.h"
 #include "../types/IntTimestampRecord.h"
 #include "../types/ExtDailyRecord.h"
@@ -32,6 +33,7 @@ public slots:
     void addIntTimestampRecordsFromCurrentMonth();
     void addExtTimestampRecordToCopyDatabase(ExtTimestampRecord);
     void addIntTimestampRecordToCopyDatabase(IntTimestampRecord);
+    void addBackfillRecords(QDate beginDate, QDate endDate, QList<ExtTimestampRecord> records);
 
     void logExtDailyRecord(ExtDailyRecord);
     void logIntDailyRecord(IntDailyRecord);
@@ -46,6 +48,7 @@ private:
     QDate _endDate = QDate();
     QMap<QDate, ExtendedExtDailyRecord *> extendedRecordsMap = QMap<QDate, ExtendedExtDailyRecord *>();
     DatabaseHandler *dbHandler;
+    DailyStatisticsCalculator *_dailyCalculator;
     int numberOfExtBatchesToRetrieve = 0;
     int numberOfIntBatchesToRetrieve = 0;
 };

@@ -24,7 +24,7 @@ public slots:
     void retrieveOutdoorTimestampRecords(QNetworkReply *reply);
 
 signals:
-    void outdoorRecordListRetrieved(QList<ExtTimestampRecord>);
+    void outdoorRecordListRetrieved(QDate, QDate, QList<ExtTimestampRecord>);
 
 private:
     QNetworkAccessManager *outdoorRequestManager;
@@ -34,6 +34,9 @@ private:
 
     int numberOfResponsesReceived = 0;
     int numberOfResponsesToReceive = 0;
+
+    QDate beginDate = QDate();
+    QDate endDate = QDate();
 };
 
 #endif // MULTIPLENETATMOAPIQUERIESAGGREGATOR_H

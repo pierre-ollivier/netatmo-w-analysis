@@ -28,6 +28,8 @@ void MultipleNetatmoAPIQueriesAggregator::postOutdoorTimestampRecordsRequest(
     extern const QString outdoorModuleId;
 
     numberOfResponsesToReceive = dateBegin.daysTo(dateEnd) + 1;
+    beginDate = dateBegin;
+    endDate = dateEnd;
 
     QUrl url("https://api.netatmo.com/api/getmeasure?");
     QNetworkRequest request(url);
@@ -145,7 +147,7 @@ void MultipleNetatmoAPIQueriesAggregator::retrieveOutdoorTimestampRecords(QNetwo
                 [](ExtTimestampRecord &x, ExtTimestampRecord &y){ return x.timestamp() < y.timestamp(); }
                 );
             qDebug() << "All data received!" << "\n" << savedRecords.first[0].toString() << "length:" << savedRecords.first.size();
-            // emit outdoorRecordListRetrieved(savedRecords.first.sort());
+            emit outdoorRecordListRetrieved(beginDate, endDate, savedRecords.first);
         }
     }
 }

@@ -280,8 +280,9 @@ void NetatmoAPIHandler::postMultiDaysOutdoorTimestampRecordsRequest(QDate dateBe
     MultipleNetatmoAPIQueriesAggregator *aggregator = new MultipleNetatmoAPIQueriesAggregator(this, apiMonitor);
     connect(
         aggregator,
-        SIGNAL(outdoorRecordListRetrieved(QList<ExtTimestampRecord>)),
-        SIGNAL(outdoorRecordListRetrieved(QList<ExtTimestampRecord>))
+        SIGNAL(outdoorRecordListRetrieved(QDate, QDate, QList<ExtTimestampRecord>)),
+        this,
+        SIGNAL(outdoorMultiDaysRecordListRetrieved(QDate, QDate, QList<ExtTimestampRecord>))
         );
     aggregator->postOutdoorTimestampRecordsRequest(dateBegin, dateEnd, accessToken);
 }
