@@ -22,7 +22,7 @@ public:
     double getMinTemperatureFromDate(QDate date, bool indoor = false);
     long long getMinTemperatureTimestampFromDate(QDate date, double minTemperature, bool indoor = false);
     long long getMinTemperatureTimestampFromDate(QDate date, bool indoor = false);
-    double getMinTemperatureFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records);
+    QPair<double, long long> getMinTemperatureInfoFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records);
 
     double getAvgTemperatureFromDate(QDate date, bool indoor = false);
 
@@ -31,12 +31,12 @@ public:
     int getMaxHumidityFromDate(QDate date, bool indoor = false);
     long long getMaxHumidityTimestampFromDate(QDate date, int maxHumidity, bool indoor = false);
     long long getMaxHumidityTimestampFromDate(QDate date, bool indoor = false);
-    int getMaxHumidityFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records);
+    QPair<int, long long> getMaxHumidityInfoFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records);
 
     int getMinHumidityFromDate(QDate date, bool indoor = false);
     long long getMinHumidityTimestampFromDate(QDate date, int minHumidity, bool indoor = false);
     long long getMinHumidityTimestampFromDate(QDate date, bool indoor = false);
-    int getMinHumidityFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records);
+    QPair<int, long long> getMinHumidityInfoFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records);
 
     double getAvgHumidityFromDate(QDate date, bool indoor = false);
 
@@ -45,6 +45,7 @@ public:
     double getMaxDewPointFromDate(QDate date, bool indoor = false);
     long long getMaxDewPointTimestampFromDate(QDate date, double maxDewPoint, bool indoor = false);
     long long getMaxDewPointTimestampFromDate(QDate date, bool indoor = false);
+    QPair<double, long long> getMaxDewPointInfoFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records);
 
     double getMinDewPointFromDate(QDate date, bool indoor = false);
     long long getMinDewPointTimestampFromDate(QDate date, double minDewPoint, bool indoor = false);
