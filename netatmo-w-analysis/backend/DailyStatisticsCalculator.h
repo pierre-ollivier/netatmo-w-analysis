@@ -17,7 +17,7 @@ public:
     double getMaxTemperatureFromDate(QDate date, bool indoor = false);
     long long getMaxTemperatureTimestampFromDate(QDate date, double maxTemperature, bool indoor = false);
     long long getMaxTemperatureTimestampFromDate(QDate date, bool indoor = false);
-    double getMaxTemperatureFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records);
+    QPair<double, long long> getMaxTemperatureInfoFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records);
 
     double getMinTemperatureFromDate(QDate date, bool indoor = false);
     long long getMinTemperatureTimestampFromDate(QDate date, double minTemperature, bool indoor = false);

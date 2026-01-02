@@ -48,21 +48,26 @@ long long DailyStatisticsCalculator::getMaxTemperatureTimestampFromDate(QDate da
     return getMaxTemperatureTimestampFromDate(date, maxTemperature, indoor);
 }
 
-double DailyStatisticsCalculator::getMaxTemperatureFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records) {
+QPair<double, long long> DailyStatisticsCalculator::getMaxTemperatureInfoFromDate(
+    QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records
+    ) {
     const long long firstTimestamp = getFirstTimestampFromDateWithUTCOffset(date, 6);
     const long long lastTimestamp = firstTimestamp + 86400;
     double currentMaxTemperature = -DBL_MAX;
+    long long currentMaxTimestamp = firstTimestamp;
     for (ExtTimestampRecord record : records.first) {
         if (record.timestamp() >= firstTimestamp && record.timestamp() <= lastTimestamp && record.temperature() > currentMaxTemperature) {
             currentMaxTemperature = record.temperature();
+            currentMaxTimestamp = record.timestamp();
         }
     }
     for (IntTimestampRecord record : records.second) {
         if (record.timestamp() >= firstTimestamp && record.timestamp() <= lastTimestamp && record.temperature() > currentMaxTemperature) {
             currentMaxTemperature = record.temperature();
+            currentMaxTimestamp = record.timestamp();
         }
     }
-    return currentMaxTemperature;
+    return qMakePair(currentMaxTemperature, currentMaxTimestamp);
 }
 
 // min temperature
