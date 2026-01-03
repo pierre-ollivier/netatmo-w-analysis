@@ -112,7 +112,7 @@ void OldDataUploader::addBackfillRecords(QDate beginDate, QDate endDate, QList<E
         QPair<double, long long> maxDewPoint = _dailyCalculator->getMaxDewPointInfoFromDate(d, recordsPair);
         qDebug() << d << ": Temperature[" << minTemperature.first << " " << maxTemperature.first
                  << "(" << maxTemperature.second << ")], Humidity[" << minHumidity.first << " " << maxHumidity.first
-                 << "], Dew Point max[" << maxDewPoint.first << "(" << maxDewPoint.second << ")]";
+                 << "], Dew Point[" << maxDewPoint.first << "(" << maxDewPoint.second << ")]";
     }
 }
 

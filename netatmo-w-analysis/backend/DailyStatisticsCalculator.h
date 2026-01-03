@@ -50,6 +50,7 @@ public:
     double getMinDewPointFromDate(QDate date, bool indoor = false);
     long long getMinDewPointTimestampFromDate(QDate date, double minDewPoint, bool indoor = false);
     long long getMinDewPointTimestampFromDate(QDate date, bool indoor = false);
+    QPair<double, long long> getMinDewPointInfoFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records);
 
     double getAvgDewPointFromDate(QDate date, bool indoor = false);
 
@@ -58,10 +59,12 @@ public:
     double getMaxHumidexFromDate(QDate date, bool indoor = false);
     long long getMaxHumidexTimestampFromDate(QDate date, double maxDewPoint, bool indoor = false);
     long long getMaxHumidexTimestampFromDate(QDate date, bool indoor = false);
+    QPair<double, long long> getMaxHumidexInfoFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records);
 
     double getMinHumidexFromDate(QDate date, bool indoor = false);
     long long getMinHumidexTimestampFromDate(QDate date, double minDewPoint, bool indoor = false);
     long long getMinHumidexTimestampFromDate(QDate date, bool indoor = false);
+    QPair<double, long long> getMinHumidexInfoFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records);
 
     double getAvgHumidexFromDate(QDate date, bool indoor = false);
 
@@ -70,10 +73,12 @@ public:
     double getMaxPressureFromDate(QDate date);
     long long getMaxPressureTimestampFromDate(QDate date, double maxPressure);
     long long getMaxPressureTimestampFromDate(QDate date);
+    QPair<double, long long> getMaxPressureInfoFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records);
 
     double getMinPressureFromDate(QDate date);
     long long getMinPressureTimestampFromDate(QDate date, double minPressure);
     long long getMinPressureTimestampFromDate(QDate date);
+    QPair<double, long long> getMinPressureInfoFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records);
 
     double getAvgPressureFromDate(QDate date);
 
@@ -82,10 +87,12 @@ public:
     int getMaxCO2FromDate(QDate date);
     long long getMaxCO2TimestampFromDate(QDate date, int maxCO2);
     long long getMaxCO2TimestampFromDate(QDate date);
+    QPair<int, long long> getMaxCO2InfoFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records);
 
     int getMinCO2FromDate(QDate date);
     long long getMinCO2TimestampFromDate(QDate date, int minCO2);
     long long getMinCO2TimestampFromDate(QDate date);
+    QPair<int, long long> getMinCO2InfoFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records);
 
     double getAvgCO2FromDate(QDate date);
 
@@ -94,12 +101,32 @@ public:
     int getMaxNoiseFromDate(QDate date);
     long long getMaxNoiseTimestampFromDate(QDate date, int maxNoise);
     long long getMaxNoiseTimestampFromDate(QDate date);
+    QPair<int, long long> getMaxNoiseInfoFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records);
 
     int getMinNoiseFromDate(QDate date);
     long long getMinNoiseTimestampFromDate(QDate date, int minNoise);
     long long getMinNoiseTimestampFromDate(QDate date);
+    QPair<int, long long> getMinNoiseInfoFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records);
 
     double getAvgNoiseFromDate(QDate date);
+
+    // measurement
+
+    QPair<QVariant, long long> getMaxMeasurementInfoFromDate(
+        QDate date,
+        QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records,
+        QPair<std::function<QVariant(ExtTimestampRecord)>, std::function<QVariant(IntTimestampRecord)>> measurementGetter,
+        bool localTime = true,
+        int utcOffsetH = 0
+        );
+
+    QPair<QVariant, long long> getMinMeasurementInfoFromDate(
+        QDate date,
+        QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records,
+        QPair<std::function<QVariant(ExtTimestampRecord)>, std::function<QVariant(IntTimestampRecord)>> measurementGetter,
+        bool localTime = true,
+        int utcOffsetH = 0
+        );
 
     // others
 
