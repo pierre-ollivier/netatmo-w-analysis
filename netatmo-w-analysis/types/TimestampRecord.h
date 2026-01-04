@@ -31,6 +31,8 @@ public:
 
     QString toString();
 
+    QVariant measurement(QString measurement);
+
 private:
     long long _timestamp;
     double _temperature;

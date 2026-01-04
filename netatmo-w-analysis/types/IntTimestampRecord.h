@@ -21,6 +21,8 @@ public:
     int co2();
     int noise();
 
+    QVariant measurement(QString measurement);
+
 private:
     double _pressure;
     int _co2;

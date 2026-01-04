@@ -11,6 +11,7 @@ public:
             double temperature,
             int humidity
             );
+    QVariant measurement(QString measurement);
 };
 
 #endif // EXTTIMESTAMPRECORD_H

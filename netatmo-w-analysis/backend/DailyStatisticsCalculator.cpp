@@ -107,9 +107,11 @@ QPair<double, long long> DailyStatisticsCalculator::getMinTemperatureInfoFromDat
 
 // avg temperature
 
-double DailyStatisticsCalculator::getAvgTemperatureFromDate(QDate date, bool indoor) {
+double DailyStatisticsCalculator::getAvgTemperatureFromDate(QDate date, QList<ExtTimestampRecord> records, bool indoor) {
     if (indoor) return indoorAverageCalculator->getAverageMeasurementFromDate(date, "temperature");
-    return outdoorAverageCalculator->getAverageMeasurementFromDate(date, "temperature");
+    qDebug() << _pathToDatabase;
+    DailyAverageCalculator calculator = DailyAverageCalculator(this, _pathToDatabase, false);
+    return calculator.getOutdoorAverageMeasurementFromDate(date, records, "temperature");
 }
 
 // max humidity

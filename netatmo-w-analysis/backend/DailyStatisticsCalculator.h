@@ -24,7 +24,7 @@ public:
     long long getMinTemperatureTimestampFromDate(QDate date, bool indoor = false);
     QPair<double, long long> getMinTemperatureInfoFromDate(QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records);
 
-    double getAvgTemperatureFromDate(QDate date, bool indoor = false);
+    double getAvgTemperatureFromDate(QDate date, QList<ExtTimestampRecord> records, bool indoor = false);
 
     // humidity
 
@@ -134,10 +134,10 @@ public:
     long long getFirstTimestampFromDateWithUTCOffset(QDate date, int offsetFromUTCInHours);
 
 private:
-    QString _pathToDatabase;
-    DatabaseHandler *_dbHandler;
-    DailyAverageCalculator *indoorAverageCalculator;
-    DailyAverageCalculator *outdoorAverageCalculator;
+    QString _pathToDatabase= "";
+    DatabaseHandler *_dbHandler = nullptr;
+    DailyAverageCalculator *indoorAverageCalculator = nullptr;
+    DailyAverageCalculator *outdoorAverageCalculator = nullptr;
 };
 
 #endif // DAILYSTATISTICSCALCULATOR_H

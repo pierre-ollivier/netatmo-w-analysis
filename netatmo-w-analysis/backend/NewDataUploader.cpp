@@ -19,6 +19,7 @@ void NewDataUploader::uploadOutdoorDailyRecords(QDate beginDate, QDate endDate, 
     progress.setWindowModality(Qt::WindowModal);
     progress.setValue(beginDate.toJulianDay());
     if (!verbose) progress.reset();
+    /*
     for (QDate date = beginDate; date <= endDate; date = date.addDays(1)) {
         ExtDailyRecord record(
             date,
@@ -46,7 +47,7 @@ void NewDataUploader::uploadOutdoorDailyRecords(QDate beginDate, QDate endDate, 
 
         _dbHandler->postOutdoorDailyRecord(record, "OutdoorDailyRecords");
         if (verbose) progress.setValue(date.toJulianDay());
-    }
+    }*/
 }
 
 void NewDataUploader::uploadIndoorDailyRecords(QDate beginDate, QDate endDate, bool verbose) {
@@ -54,6 +55,7 @@ void NewDataUploader::uploadIndoorDailyRecords(QDate beginDate, QDate endDate, b
     progress.setWindowModality(Qt::WindowModal);
     progress.setValue(beginDate.toJulianDay());
     if (!verbose) progress.reset();
+    /*
     for (QDate date = beginDate; date <= endDate; date = date.addDays(1)) {
         IntDailyRecord record(
             date,
@@ -92,5 +94,5 @@ void NewDataUploader::uploadIndoorDailyRecords(QDate beginDate, QDate endDate, b
 
         _dbHandler->postIndoorDailyRecord(record, "IndoorDailyRecords");
         if (verbose) progress.setValue(date.toJulianDay());
-    }
+    }*/
 }

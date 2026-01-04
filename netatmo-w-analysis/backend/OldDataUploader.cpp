@@ -9,7 +9,7 @@ OldDataUploader::OldDataUploader(NetatmoAPIHandler* apiHandler, QString accessTo
     _accessToken = accessToken;
 
     dbHandler = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
-    _dailyCalculator = new DailyStatisticsCalculator(PATH_TO_COPY_DATABASE, dbHandler);
+    _dailyCalculator = new DailyStatisticsCalculator(this, PATH_TO_COPY_DATABASE, dbHandler);
 
     connect(apiHandler, SIGNAL(extTimestampRecordRetrieved(ExtTimestampRecord)),
             SLOT(addExtTimestampRecordToCopyDatabase(ExtTimestampRecord)));
@@ -28,6 +28,7 @@ OldDataUploader::OldDataUploader(QObject *parent, NetatmoAPIHandler* apiHandler,
     _accessToken = accessToken;
 
     dbHandler = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
+    _dailyCalculator = new DailyStatisticsCalculator(this, PATH_TO_COPY_DATABASE, dbHandler);
 
     connect(apiHandler, SIGNAL(extTimestampRecordRetrieved(ExtTimestampRecord)),
             SLOT(addExtTimestampRecordToCopyDatabase(ExtTimestampRecord)));
@@ -113,6 +114,7 @@ void OldDataUploader::addBackfillRecords(QDate beginDate, QDate endDate, QList<E
         qDebug() << d << ": Temperature[" << minTemperature.first << " " << maxTemperature.first
                  << "(" << maxTemperature.second << ")], Humidity[" << minHumidity.first << " " << maxHumidity.first
                  << "], Dew Point[" << maxDewPoint.first << "(" << maxDewPoint.second << ")]";
+        qDebug() << "Average temperature:" << _dailyCalculator->getAvgTemperatureFromDate(d, recordsPair.first, false);
     }
 }
 
