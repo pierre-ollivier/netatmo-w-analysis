@@ -58,8 +58,8 @@ long long DailyAverageCalculator::getLastTimestampFromDate(QDate date) {
 QList<ExtTimestampRecord> DailyAverageCalculator::extTimestampRecordsForDateWithAdjacents(QDate date, QList<ExtTimestampRecord> records) {
     QList<ExtTimestampRecord> result = QList<ExtTimestampRecord>();
     if (records.size() == 0) return result;
-    ExtTimestampRecord lastRecordBeforeDate = records[0];
-    ExtTimestampRecord firstRecordAfterDate = records[0];
+    ExtTimestampRecord lastRecordBeforeDate = ExtTimestampRecord(LONG_LONG_MIN, 0, 0);
+    ExtTimestampRecord firstRecordAfterDate = ExtTimestampRecord(LONG_LONG_MAX, 0, 0);
 
     for (ExtTimestampRecord record : records) {
         if (record.date() == date) result.append(record);
