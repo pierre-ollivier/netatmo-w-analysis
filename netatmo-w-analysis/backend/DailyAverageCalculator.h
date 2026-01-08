@@ -7,6 +7,7 @@
 
 #include "../netatmo-w-analysis/backend/DatabaseHandler.h"
 #include "../netatmo-w-analysis/types/ExtTimestampRecord.h"
+#include "../netatmo-w-analysis/types/IntDailyRecord.h"
 
 class DailyAverageCalculator : public QObject
 {
@@ -14,6 +15,7 @@ public:
     DailyAverageCalculator(QString pathToDatabase, bool indoor);
     DailyAverageCalculator(QObject *parent, QString pathToDatabase, bool indoor);
     double getAverageMeasurementFromDate(QDate date, QString measurementType);
+    double getIndoorAverageMeasurementFromDate(QDate date, QList<IntTimestampRecord> records, QString measurementType);
     double getOutdoorAverageMeasurementFromDate(QDate date, QList<ExtTimestampRecord> records, QString measurementType);
 
     double getFirstMeasurementFromDate(QDate date, QString measurementType);
@@ -24,6 +26,7 @@ public:
     QString indoorOrOutdoor();
 
     QList<ExtTimestampRecord> extTimestampRecordsForDateWithAdjacents(QDate date, QList<ExtTimestampRecord> records);
+    QList<IntTimestampRecord> intTimestampRecordsForDateWithAdjacents(QDate date, QList<IntTimestampRecord> records);
 
 private:
     DatabaseHandler *dbHandler = nullptr;
