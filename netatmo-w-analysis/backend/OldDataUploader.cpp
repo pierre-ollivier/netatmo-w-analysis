@@ -73,7 +73,7 @@ void OldDataUploader::addAllExtTimestampRecordsFromPeriod(QDate beginDate, QDate
     NetatmoAPIHandler *apiHandler = new NetatmoAPIHandler(this, _apiHandler->getAPIMonitor());
     connect(apiHandler,
             SIGNAL(outdoorMultiDaysRecordListRetrieved(QDate, QDate, QList<ExtTimestampRecord>)),
-            SLOT(addBackfillRecords(QDate, QDate, QList<ExtTimestampRecord>))
+            SLOT(addBackfillExtRecords(QDate, QDate, QList<ExtTimestampRecord>))
             );
 
     apiHandler->postMultiDaysOutdoorTimestampRecordsRequest(beginDate, endDate, _accessToken);
@@ -100,21 +100,80 @@ void OldDataUploader::addIntTimestampRecordToCopyDatabase(IntTimestampRecord rec
     dbHandler->postIndoorTimestampRecord(record, "IndoorTimestampRecords");
 }
 
-void OldDataUploader::addBackfillRecords(QDate beginDate, QDate endDate, QList<ExtTimestampRecord> records) {
-    // provisional
+void OldDataUploader::addBackfillExtRecords(QDate beginDate, QDate endDate, QList<ExtTimestampRecord> records) {
     for (QDate d = beginDate; d <= endDate; d = d.addDays(1)) {
         QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> recordsPair = qMakePair(
             records, QList<IntTimestampRecord>()
             );
-        QPair<double, long long> maxTemperature = _dailyCalculator->getMaxTemperatureInfoFromDate(d, recordsPair);
-        QPair<double, long long> minTemperature = _dailyCalculator->getMinTemperatureInfoFromDate(d, recordsPair);
-        QPair<int, long long> maxHumidity = _dailyCalculator->getMaxHumidityInfoFromDate(d, recordsPair);
-        QPair<int, long long> minHumidity = _dailyCalculator->getMinHumidityInfoFromDate(d, recordsPair);
-        QPair<double, long long> maxDewPoint = _dailyCalculator->getMaxDewPointInfoFromDate(d, recordsPair);
-        qDebug() << d << ": Temperature[" << minTemperature.first << " " << maxTemperature.first
-                 << "(" << maxTemperature.second << ")], Humidity[" << minHumidity.first << " " << maxHumidity.first
-                 << "], Dew Point[" << maxDewPoint.first << "(" << maxDewPoint.second << ")]";
-        qDebug() << "Average temperature:" << _dailyCalculator->getAvgTemperatureFromDate(d, recordsPair.first, false);
+        QPair<QVariant, long long> maxTemperature = _dailyCalculator->getMaxMeasurementInfoFromDate(
+            d, recordsPair, qMakePair(
+                [](ExtTimestampRecord record) {return record.temperature();},
+                [](IntTimestampRecord record) {return record.temperature();}
+                ), false, 6);
+        QPair<QVariant, long long> minTemperature = _dailyCalculator->getMinMeasurementInfoFromDate(
+            d, recordsPair, qMakePair(
+                                [](ExtTimestampRecord record) {return record.temperature();},
+                                [](IntTimestampRecord record) {return record.temperature();}
+                                ), false, -6);
+        QPair<QVariant, long long> maxHumidity = _dailyCalculator->getMaxMeasurementInfoFromDate(
+            d, recordsPair, qMakePair(
+                [](ExtTimestampRecord record) {return record.humidity();},
+                [](IntTimestampRecord record) {return record.humidity();}
+                ));
+        QPair<QVariant, long long> minHumidity = _dailyCalculator->getMinMeasurementInfoFromDate(
+            d, recordsPair, qMakePair(
+                [](ExtTimestampRecord record) {return record.humidity();},
+                [](IntTimestampRecord record) {return record.humidity();}
+                ));
+        QPair<QVariant, long long> maxDewPoint = _dailyCalculator->getMaxMeasurementInfoFromDate(
+            d, recordsPair, qMakePair(
+                [](ExtTimestampRecord record) {return record.dewPoint();},
+                [](IntTimestampRecord record) {return record.dewPoint();}
+                ));
+        QPair<QVariant, long long> minDewPoint = _dailyCalculator->getMinMeasurementInfoFromDate(
+            d, recordsPair, qMakePair(
+                [](ExtTimestampRecord record) {return record.dewPoint();},
+                [](IntTimestampRecord record) {return record.dewPoint();}
+                ));
+        QPair<QVariant, long long> maxHumidex = _dailyCalculator->getMaxMeasurementInfoFromDate(
+            d, recordsPair, qMakePair(
+                [](ExtTimestampRecord record) {return record.humidex();},
+                [](IntTimestampRecord record) {return record.humidex();}
+                ));
+        QPair<QVariant, long long> minHumidex = _dailyCalculator->getMinMeasurementInfoFromDate(
+            d, recordsPair, qMakePair(
+                [](ExtTimestampRecord record) {return record.humidex();},
+                [](IntTimestampRecord record) {return record.humidex();}
+                ));
+        double avgTemperature = _dailyCalculator->getAvgMeasurementFromDate(d, recordsPair, "temperature", false);
+        double avgHumidity = _dailyCalculator->getAvgMeasurementFromDate(d, recordsPair, "humidity", false);
+        double avgDewPoint = _dailyCalculator->getAvgMeasurementFromDate(d, recordsPair, "dewPoint", false);
+        double avgHumidex = _dailyCalculator->getAvgMeasurementFromDate(d, recordsPair, "humidex", false);
+
+        ExtDailyRecord record = ExtDailyRecord(
+            d,
+            maxTemperature.first.toDouble(),
+            minTemperature.first.toDouble(),
+            avgTemperature,
+            maxHumidity.first.toInt(),
+            minHumidity.first.toInt(),
+            avgHumidity,
+            maxDewPoint.first.toDouble(),
+            minDewPoint.first.toDouble(),
+            avgDewPoint,
+            maxHumidex.first.toDouble(),
+            minHumidex.first.toDouble(),
+            avgHumidex,
+            maxTemperature.second,
+            minTemperature.second,
+            maxHumidity.second,
+            minHumidity.second,
+            maxDewPoint.second,
+            minDewPoint.second,
+            maxHumidex.second,
+            minHumidex.second
+            );
+        dbHandler->postOutdoorDailyRecord(record, "OutdoorDailyRecords");
     }
 }
 

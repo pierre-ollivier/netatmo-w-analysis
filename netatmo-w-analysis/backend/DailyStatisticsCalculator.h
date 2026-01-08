@@ -128,6 +128,10 @@ public:
         int utcOffsetH = 0
         );
 
+    double getAvgMeasurementFromDate(
+        QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records, QString measurement, bool indoor
+        );
+
     // others
 
     long long getFirstTimestampFromDate(QDate date);

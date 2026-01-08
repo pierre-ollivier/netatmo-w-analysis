@@ -33,7 +33,7 @@ public slots:
     void addIntTimestampRecordsFromCurrentMonth();
     void addExtTimestampRecordToCopyDatabase(ExtTimestampRecord);
     void addIntTimestampRecordToCopyDatabase(IntTimestampRecord);
-    void addBackfillRecords(QDate beginDate, QDate endDate, QList<ExtTimestampRecord> records);
+    void addBackfillExtRecords(QDate beginDate, QDate endDate, QList<ExtTimestampRecord> records);
 
     void logExtDailyRecord(ExtDailyRecord);
     void logIntDailyRecord(IntDailyRecord);

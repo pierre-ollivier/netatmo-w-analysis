@@ -109,7 +109,6 @@ QPair<double, long long> DailyStatisticsCalculator::getMinTemperatureInfoFromDat
 
 double DailyStatisticsCalculator::getAvgTemperatureFromDate(QDate date, QList<ExtTimestampRecord> records, bool indoor) {
     if (indoor) return indoorAverageCalculator->getAverageMeasurementFromDate(date, "temperature");
-    qDebug() << _pathToDatabase;
     DailyAverageCalculator calculator = DailyAverageCalculator(this, _pathToDatabase, false);
     return calculator.getOutdoorAverageMeasurementFromDate(date, records, "temperature");
 }
@@ -691,6 +690,13 @@ QPair<QVariant, long long> DailyStatisticsCalculator::getMinMeasurementInfoFromD
         }
     }
     return qMakePair(currentMinMeasurement, currentMinTimestamp);
+}
+
+double DailyStatisticsCalculator::getAvgMeasurementFromDate(
+    QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records, QString measurement, bool indoor
+    ) {
+    if (indoor) return indoorAverageCalculator->getIndoorAverageMeasurementFromDate(date, records.second, measurement);
+    return outdoorAverageCalculator->getOutdoorAverageMeasurementFromDate(date, records.first, measurement);
 }
 
 // others
