@@ -8,7 +8,7 @@ double interpolateMeasurementBetweenTimestamps(
         double measurement1,
         double measurement2)
 {
-    double k = (targetTimestamp - timestamp1) / (timestamp2 - timestamp1);
+    double k = double(targetTimestamp - timestamp1) / double(timestamp2 - timestamp1);
     return measurement1 + k * (measurement2 - measurement1);
 }
 
