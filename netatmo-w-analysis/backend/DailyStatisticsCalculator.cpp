@@ -49,21 +49,6 @@ long long DailyStatisticsCalculator::getMaxTemperatureTimestampFromDate(QDate da
     return getMaxTemperatureTimestampFromDate(date, maxTemperature, indoor);
 }
 
-QPair<double, long long> DailyStatisticsCalculator::getMaxTemperatureInfoFromDate(
-    QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records
-    ) {
-    QPair<QVariant, long long> maxTemperatureInfo = getMaxMeasurementInfoFromDate(
-        date,
-        records,
-        qMakePair(
-            [](ExtTimestampRecord record){ return record.temperature(); },
-            [](IntTimestampRecord record){ return record.temperature(); }),
-        false,
-        6
-        );
-    return qMakePair(maxTemperatureInfo.first.toDouble(), maxTemperatureInfo.second);
-}
-
 // min temperature
 
 double DailyStatisticsCalculator::getMinTemperatureFromDate(QDate date, bool indoor) {
@@ -88,21 +73,6 @@ long long DailyStatisticsCalculator::getMinTemperatureTimestampFromDate(QDate da
 long long DailyStatisticsCalculator::getMinTemperatureTimestampFromDate(QDate date, bool indoor) {
     double minTemperature = getMinTemperatureFromDate(date, indoor);
     return getMinTemperatureTimestampFromDate(date, minTemperature, indoor);
-}
-
-QPair<double, long long> DailyStatisticsCalculator::getMinTemperatureInfoFromDate(
-    QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records
-    ) {
-    QPair<QVariant, long long> minTemperatureInfo = getMinMeasurementInfoFromDate(
-        date,
-        records,
-        qMakePair(
-            [](ExtTimestampRecord record){ return record.temperature(); },
-            [](IntTimestampRecord record){ return record.temperature(); }),
-        false,
-        -6
-        );
-    return qMakePair(minTemperatureInfo.first.toDouble(), minTemperatureInfo.second);
 }
 
 // avg temperature
@@ -139,19 +109,6 @@ long long DailyStatisticsCalculator::getMaxHumidityTimestampFromDate(QDate date,
     return getMaxHumidityTimestampFromDate(date, maxHumidity, indoor);
 }
 
-QPair<int, long long> DailyStatisticsCalculator::getMaxHumidityInfoFromDate(
-    QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records
-    ) {
-    QPair<QVariant, long long> maxHumidityInfo = getMaxMeasurementInfoFromDate(
-        date,
-        records,
-        qMakePair(
-            [](ExtTimestampRecord record){ return record.humidity(); },
-            [](IntTimestampRecord record){ return record.humidity(); })
-        );
-    return qMakePair(maxHumidityInfo.first.toInt(), maxHumidityInfo.second);
-}
-
 // min humidity
 
 int DailyStatisticsCalculator::getMinHumidityFromDate(QDate date, bool indoor) {
@@ -177,20 +134,6 @@ long long DailyStatisticsCalculator::getMinHumidityTimestampFromDate(QDate date,
     double minHumidity = getMinHumidityFromDate(date, indoor);
     return getMinHumidityTimestampFromDate(date, minHumidity, indoor);
 }
-
-QPair<int, long long> DailyStatisticsCalculator::getMinHumidityInfoFromDate(
-    QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records
-    ) {
-    QPair<QVariant, long long> minHumidityInfo = getMinMeasurementInfoFromDate(
-        date,
-        records,
-        qMakePair(
-            [](ExtTimestampRecord record){ return record.humidity(); },
-            [](IntTimestampRecord record){ return record.humidity(); })
-        );
-    return qMakePair(minHumidityInfo.first.toInt(), minHumidityInfo.second);
-}
-
 
 // avg humidity
 
@@ -225,19 +168,6 @@ long long DailyStatisticsCalculator::getMaxDewPointTimestampFromDate(QDate date,
     return getMaxDewPointTimestampFromDate(date, maxDewPoint, indoor);
 }
 
-QPair<double, long long> DailyStatisticsCalculator::getMaxDewPointInfoFromDate(
-    QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records
-    ) {
-    QPair<QVariant, long long> maxDewPointInfo = getMaxMeasurementInfoFromDate(
-        date,
-        records,
-        qMakePair(
-            [](ExtTimestampRecord record){ return record.dewPoint(); },
-            [](IntTimestampRecord record){ return record.dewPoint(); })
-        );
-    return qMakePair(maxDewPointInfo.first.toDouble(), maxDewPointInfo.second);
-}
-
 // min dew point
 
 double DailyStatisticsCalculator::getMinDewPointFromDate(QDate date, bool indoor) {
@@ -262,19 +192,6 @@ long long DailyStatisticsCalculator::getMinDewPointTimestampFromDate(QDate date,
 long long DailyStatisticsCalculator::getMinDewPointTimestampFromDate(QDate date, bool indoor) {
     double minDewPoint = getMinDewPointFromDate(date, indoor);
     return getMinDewPointTimestampFromDate(date, minDewPoint, indoor);
-}
-
-QPair<double, long long> DailyStatisticsCalculator::getMinDewPointInfoFromDate(
-    QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records
-    ) {
-    QPair<QVariant, long long> minDewPointInfo = getMinMeasurementInfoFromDate(
-        date,
-        records,
-        qMakePair(
-            [](ExtTimestampRecord record){ return record.dewPoint(); },
-            [](IntTimestampRecord record){ return record.dewPoint(); })
-        );
-    return qMakePair(minDewPointInfo.first.toDouble(), minDewPointInfo.second);
 }
 
 // avg dew point
@@ -312,19 +229,6 @@ long long DailyStatisticsCalculator::getMaxHumidexTimestampFromDate(QDate date, 
     return getMaxHumidexTimestampFromDate(date, maxHumidex, indoor);
 }
 
-QPair<double, long long> DailyStatisticsCalculator::getMaxHumidexInfoFromDate(
-    QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records
-    ) {
-    QPair<QVariant, long long> maxHumidexInfo = getMaxMeasurementInfoFromDate(
-        date,
-        records,
-        qMakePair(
-            [](ExtTimestampRecord record){ return record.humidex(); },
-            [](IntTimestampRecord record){ return record.humidex(); })
-        );
-    return qMakePair(maxHumidexInfo.first.toDouble(), maxHumidexInfo.second);
-}
-
 // min humidex
 
 double DailyStatisticsCalculator::getMinHumidexFromDate(QDate date, bool indoor) {
@@ -349,19 +253,6 @@ long long DailyStatisticsCalculator::getMinHumidexTimestampFromDate(QDate date, 
 long long DailyStatisticsCalculator::getMinHumidexTimestampFromDate(QDate date, bool indoor) {
     double minHumidex = getMinHumidexFromDate(date, indoor);
     return getMinHumidexTimestampFromDate(date, minHumidex, indoor);
-}
-
-QPair<double, long long> DailyStatisticsCalculator::getMinHumidexInfoFromDate(
-    QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records
-    ) {
-    QPair<QVariant, long long> minHumidexInfo = getMinMeasurementInfoFromDate(
-        date,
-        records,
-        qMakePair(
-            [](ExtTimestampRecord record){ return record.humidex(); },
-            [](IntTimestampRecord record){ return record.humidex(); })
-        );
-    return qMakePair(minHumidexInfo.first.toDouble(), minHumidexInfo.second);
 }
 
 // avg humidex
@@ -397,19 +288,6 @@ long long DailyStatisticsCalculator::getMaxPressureTimestampFromDate(QDate date)
     return getMaxPressureTimestampFromDate(date, maxPressure);
 }
 
-QPair<double, long long> DailyStatisticsCalculator::getMaxPressureInfoFromDate(
-    QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records
-    ) {
-    QPair<QVariant, long long> maxPressureInfo = getMaxMeasurementInfoFromDate(
-        date,
-        records,
-        qMakePair(
-            [](ExtTimestampRecord record){ return 0; },
-            [](IntTimestampRecord record){ return record.pressure(); })
-        );
-    return qMakePair(maxPressureInfo.first.toDouble(), maxPressureInfo.second);
-}
-
 // min pressure
 
 double DailyStatisticsCalculator::getMinPressureFromDate(QDate date) {
@@ -434,19 +312,6 @@ long long DailyStatisticsCalculator::getMinPressureTimestampFromDate(QDate date,
 long long DailyStatisticsCalculator::getMinPressureTimestampFromDate(QDate date) {
     double minPressure = getMinPressureFromDate(date);
     return getMinPressureTimestampFromDate(date, minPressure);
-}
-
-QPair<double, long long> DailyStatisticsCalculator::getMinPressureInfoFromDate(
-    QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records
-    ) {
-    QPair<QVariant, long long> minPressureInfo = getMinMeasurementInfoFromDate(
-        date,
-        records,
-        qMakePair(
-            [](ExtTimestampRecord record){ return 0; },
-            [](IntTimestampRecord record){ return record.pressure(); })
-        );
-    return qMakePair(minPressureInfo.first.toDouble(), minPressureInfo.second);
 }
 
 // avg pressure
@@ -481,19 +346,6 @@ long long DailyStatisticsCalculator::getMaxCO2TimestampFromDate(QDate date) {
     return getMaxCO2TimestampFromDate(date, maxCO2);
 }
 
-QPair<int, long long> DailyStatisticsCalculator::getMaxCO2InfoFromDate(
-    QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records
-    ) {
-    QPair<QVariant, long long> maxCO2Info = getMaxMeasurementInfoFromDate(
-        date,
-        records,
-        qMakePair(
-            [](ExtTimestampRecord record){ return 0; },
-            [](IntTimestampRecord record){ return record.co2(); })
-        );
-    return qMakePair(maxCO2Info.first.toInt(), maxCO2Info.second);
-}
-
 // min CO2
 
 int DailyStatisticsCalculator::getMinCO2FromDate(QDate date) {
@@ -519,19 +371,6 @@ long long DailyStatisticsCalculator::getMinCO2TimestampFromDate(QDate date, int 
 long long DailyStatisticsCalculator::getMinCO2TimestampFromDate(QDate date) {
     int minCO2 = getMinCO2FromDate(date);
     return getMinCO2TimestampFromDate(date, minCO2);
-}
-
-QPair<int, long long> DailyStatisticsCalculator::getMinCO2InfoFromDate(
-    QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records
-    ) {
-    QPair<QVariant, long long> minCO2Info = getMinMeasurementInfoFromDate(
-        date,
-        records,
-        qMakePair(
-            [](ExtTimestampRecord record){ return 0; },
-            [](IntTimestampRecord record){ return record.co2(); })
-        );
-    return qMakePair(minCO2Info.first.toInt(), minCO2Info.second);
 }
 
 // avg CO2
@@ -567,19 +406,6 @@ long long DailyStatisticsCalculator::getMaxNoiseTimestampFromDate(QDate date) {
 
 }
 
-QPair<int, long long> DailyStatisticsCalculator::getMaxNoiseInfoFromDate(
-    QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records
-    ) {
-    QPair<QVariant, long long> maxNoiseInfo = getMaxMeasurementInfoFromDate(
-        date,
-        records,
-        qMakePair(
-            [](ExtTimestampRecord record){ return 0; },
-            [](IntTimestampRecord record){ return record.noise(); })
-        );
-    return qMakePair(maxNoiseInfo.first.toInt(), maxNoiseInfo.second);
-}
-
 // min noise
 
 int DailyStatisticsCalculator::getMinNoiseFromDate(QDate date) {
@@ -607,31 +433,18 @@ long long DailyStatisticsCalculator::getMinNoiseTimestampFromDate(QDate date) {
     return getMinNoiseTimestampFromDate(date, minNoise);
 }
 
-QPair<int, long long> DailyStatisticsCalculator::getMinNoiseInfoFromDate(
-    QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records
-    ) {
-    QPair<QVariant, long long> minNoiseInfo = getMinMeasurementInfoFromDate(
-        date,
-        records,
-        qMakePair(
-            [](ExtTimestampRecord record){ return 0; },
-            [](IntTimestampRecord record){ return record.noise(); })
-        );
-    return qMakePair(minNoiseInfo.first.toInt(), minNoiseInfo.second);
-}
-
 // avg noise
 
 double DailyStatisticsCalculator::getAvgNoiseFromDate(QDate date) {
     return indoorAverageCalculator->getAverageMeasurementFromDate(date, "noise");
 }
 
-// measurement
+// indoor measurement
 
-QPair<QVariant, long long> DailyStatisticsCalculator::getMaxMeasurementInfoFromDate(
+QPair<QVariant, long long> DailyStatisticsCalculator::getMaxIndoorMeasurementInfoFromDate(
     QDate date,
-    QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records,
-    QPair<std::function<QVariant(ExtTimestampRecord)>, std::function<QVariant(IntTimestampRecord)>> measurementGetter,
+    QList<IntTimestampRecord> records,
+    std::function<QVariant(IntTimestampRecord)> measurementGetter,
     bool localTime,
     int utcOffsetH
     ) {
@@ -643,27 +456,20 @@ QPair<QVariant, long long> DailyStatisticsCalculator::getMaxMeasurementInfoFromD
     QVariant currentMaxMeasurement = QVariant(-DBL_MAX);
     long long currentMaxTimestamp = firstTimestamp;
 
-    for (ExtTimestampRecord record : records.first) {
+    for (IntTimestampRecord record : records) {
         if (record.timestamp() >= firstTimestamp && record.timestamp() <= lastTimestamp
-            && measurementGetter.first(record).toDouble() > currentMaxMeasurement.toDouble()) {
-            currentMaxMeasurement = measurementGetter.first(record);
-            currentMaxTimestamp = record.timestamp();
-        }
-    }
-    for (IntTimestampRecord record : records.second) {
-        if (record.timestamp() >= firstTimestamp && record.timestamp() <= lastTimestamp
-            && measurementGetter.second(record).toDouble() > currentMaxMeasurement.toDouble()) {
-            currentMaxMeasurement = measurementGetter.second(record);
+            && measurementGetter(record).toDouble() > currentMaxMeasurement.toDouble()) {
+            currentMaxMeasurement = measurementGetter(record);
             currentMaxTimestamp = record.timestamp();
         }
     }
     return qMakePair(currentMaxMeasurement, currentMaxTimestamp);
 }
 
-QPair<QVariant, long long> DailyStatisticsCalculator::getMinMeasurementInfoFromDate(
+QPair<QVariant, long long> DailyStatisticsCalculator::getMinIndoorMeasurementInfoFromDate(
     QDate date,
-    QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records,
-    QPair<std::function<QVariant(ExtTimestampRecord)>, std::function<QVariant(IntTimestampRecord)>> measurementGetter,
+    QList<IntTimestampRecord> records,
+    std::function<QVariant(IntTimestampRecord)> measurementGetter,
     bool localTime,
     int utcOffsetH
     ) {
@@ -675,28 +481,74 @@ QPair<QVariant, long long> DailyStatisticsCalculator::getMinMeasurementInfoFromD
     QVariant currentMinMeasurement = QVariant(DBL_MAX);
     long long currentMinTimestamp = firstTimestamp;
 
-    for (ExtTimestampRecord record : records.first) {
+    for (IntTimestampRecord record : records) {
         if (record.timestamp() >= firstTimestamp && record.timestamp() <= lastTimestamp
-            && measurementGetter.first(record).toDouble() < currentMinMeasurement.toDouble()) {
-            currentMinMeasurement = measurementGetter.first(record);
-            currentMinTimestamp = record.timestamp();
-        }
-    }
-    for (IntTimestampRecord record : records.second) {
-        if (record.timestamp() >= firstTimestamp && record.timestamp() <= lastTimestamp
-            && measurementGetter.second(record).toDouble() < currentMinMeasurement.toDouble()) {
-            currentMinMeasurement = measurementGetter.second(record);
+            && measurementGetter(record).toDouble() < currentMinMeasurement.toDouble()) {
+            currentMinMeasurement = measurementGetter(record);
             currentMinTimestamp = record.timestamp();
         }
     }
     return qMakePair(currentMinMeasurement, currentMinTimestamp);
 }
 
-double DailyStatisticsCalculator::getAvgMeasurementFromDate(
-    QDate date, QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> records, QString measurement, bool indoor
+// outdoor measurement
+
+QPair<QVariant, long long> DailyStatisticsCalculator::getMaxOutdoorMeasurementInfoFromDate(
+    QDate date,
+    QList<ExtTimestampRecord> records,
+    std::function<QVariant(ExtTimestampRecord)> measurementGetter,
+    bool localTime,
+    int utcOffsetH
     ) {
-    if (indoor) return indoorAverageCalculator->getIndoorAverageMeasurementFromDate(date, records.second, measurement);
-    return outdoorAverageCalculator->getOutdoorAverageMeasurementFromDate(date, records.first, measurement);
+    const long long firstTimestamp = localTime ? getFirstTimestampFromDate(date) :
+                                         getFirstTimestampFromDateWithUTCOffset(date, utcOffsetH);
+    const long long lastTimestamp = localTime ? getFirstTimestampFromDate(date.addDays(1)) :
+                                        getFirstTimestampFromDateWithUTCOffset(date.addDays(1), utcOffsetH);
+
+    QVariant currentMaxMeasurement = QVariant(-DBL_MAX);
+    long long currentMaxTimestamp = firstTimestamp;
+
+    for (ExtTimestampRecord record : records) {
+        if (record.timestamp() >= firstTimestamp && record.timestamp() <= lastTimestamp
+            && measurementGetter(record).toDouble() > currentMaxMeasurement.toDouble()) {
+            currentMaxMeasurement = measurementGetter(record);
+            currentMaxTimestamp = record.timestamp();
+        }
+    }
+    return qMakePair(currentMaxMeasurement, currentMaxTimestamp);
+}
+
+QPair<QVariant, long long> DailyStatisticsCalculator::getMinOutdoorMeasurementInfoFromDate(
+    QDate date,
+    QList<ExtTimestampRecord> records,
+    std::function<QVariant(ExtTimestampRecord)> measurementGetter,
+    bool localTime,
+    int utcOffsetH
+    ) {
+    const long long firstTimestamp = localTime ? getFirstTimestampFromDate(date) :
+                                         getFirstTimestampFromDateWithUTCOffset(date, utcOffsetH);
+    const long long lastTimestamp = localTime ? getFirstTimestampFromDate(date.addDays(1)) :
+                                        getFirstTimestampFromDateWithUTCOffset(date.addDays(1), utcOffsetH);
+
+    QVariant currentMinMeasurement = QVariant(DBL_MAX);
+    long long currentMinTimestamp = firstTimestamp;
+
+    for (ExtTimestampRecord record : records) {
+        if (record.timestamp() >= firstTimestamp && record.timestamp() <= lastTimestamp
+            && measurementGetter(record).toDouble() < currentMinMeasurement.toDouble()) {
+            currentMinMeasurement = measurementGetter(record);
+            currentMinTimestamp = record.timestamp();
+        }
+    }
+    return qMakePair(currentMinMeasurement, currentMinTimestamp);
+}
+
+double DailyStatisticsCalculator::getAvgOutdoorMeasurementFromDate(QDate date, QList<ExtTimestampRecord> records, QString measurement) {
+    return outdoorAverageCalculator->getOutdoorAverageMeasurementFromDate(date, records, measurement);
+}
+
+double DailyStatisticsCalculator::getAvgIndoorMeasurementFromDate(QDate date, QList<IntTimestampRecord> records, QString measurement) {
+    return indoorAverageCalculator->getIndoorAverageMeasurementFromDate(date, records, measurement);
 }
 
 // others

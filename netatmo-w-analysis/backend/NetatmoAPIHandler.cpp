@@ -287,6 +287,17 @@ void NetatmoAPIHandler::postMultiDaysOutdoorTimestampRecordsRequest(QDate dateBe
     aggregator->postOutdoorTimestampRecordsRequest(dateBegin, dateEnd, accessToken);
 }
 
+void NetatmoAPIHandler::postMultiDaysIndoorTimestampRecordsRequest(QDate dateBegin, QDate dateEnd, QString accessToken) {
+    MultipleNetatmoAPIQueriesAggregator *aggregator = new MultipleNetatmoAPIQueriesAggregator(this, apiMonitor);
+    connect(
+        aggregator,
+        SIGNAL(indoorRecordListRetrieved(QDate, QDate, QList<IntTimestampRecord>)),
+        this,
+        SIGNAL(indoorMultiDaysRecordListRetrieved(QDate, QDate, QList<IntTimestampRecord>))
+        );
+    aggregator->postIndoorTimestampRecordsRequest(dateBegin, dateEnd, accessToken);
+}
+
 
 void NetatmoAPIHandler::retrieveTokens(QNetworkReply *reply) {
     QByteArray bytes = reply->readAll();

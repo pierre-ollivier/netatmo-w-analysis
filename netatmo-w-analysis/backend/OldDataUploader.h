@@ -28,12 +28,16 @@ signals:
 
 public slots:
     void addDataFromCurrentMonths(QDate beginDate, QDate endDate, bool indoor = false);
-    void addExtTimestampRecordsFromCurrentMonth();
+
     void addAllExtTimestampRecordsFromPeriod(QDate beginDate, QDate endDate);
+    void addAllIntTimestampRecordsFromPeriod(QDate beginDate, QDate endDate);
+
+    void addExtTimestampRecordsFromCurrentMonth();
     void addIntTimestampRecordsFromCurrentMonth();
     void addExtTimestampRecordToCopyDatabase(ExtTimestampRecord);
     void addIntTimestampRecordToCopyDatabase(IntTimestampRecord);
     void addBackfillExtRecords(QDate beginDate, QDate endDate, QList<ExtTimestampRecord> records);
+    void addBackfillIntRecords(QDate beginDate, QDate endDate, QList<IntTimestampRecord> records);
 
     void logExtDailyRecord(ExtDailyRecord);
     void logIntDailyRecord(IntDailyRecord);

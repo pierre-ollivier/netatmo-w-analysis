@@ -20,14 +20,22 @@ public:
         QDate dateEnd,
         QString accessToken
         );
+    void postIndoorTimestampRecordsRequest(
+        QDate dateBegin,
+        QDate dateEnd,
+        QString accessToken
+        );
 public slots:
     void retrieveOutdoorTimestampRecords(QNetworkReply *reply);
+    void retrieveIndoorTimestampRecords(QNetworkReply *reply);
 
 signals:
     void outdoorRecordListRetrieved(QDate, QDate, QList<ExtTimestampRecord>);
+    void indoorRecordListRetrieved(QDate, QDate, QList<IntTimestampRecord>);
 
 private:
     QNetworkAccessManager *outdoorRequestManager;
+    QNetworkAccessManager *indoorRequestManager;
     APIMonitor *apiMonitor;
 
     QPair<QList<ExtTimestampRecord>, QList<IntTimestampRecord>> savedRecords;

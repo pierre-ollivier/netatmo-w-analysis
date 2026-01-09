@@ -564,7 +564,7 @@ void MainWindow::backfillOutdoorData() {
     int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
 
     if (response == QMessageBox::Yes) {
-        oldDataUploader->addAllExtTimestampRecordsFromPeriod(
+        oldDataUploader->addAllIntTimestampRecordsFromPeriod(
             QDate::fromString(beginDate, "dd/MM/yyyy"),
             QDate::fromString(endDate, "dd/MM/yyyy")
             );
