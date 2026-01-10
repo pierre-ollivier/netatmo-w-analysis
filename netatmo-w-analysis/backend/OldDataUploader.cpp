@@ -86,7 +86,7 @@ void OldDataUploader::addAllIntTimestampRecordsFromPeriod(QDate beginDate, QDate
             SLOT(addBackfillIntRecords(QDate, QDate, QList<IntTimestampRecord>))
             );
 
-    apiHandler->postMultiDaysOutdoorTimestampRecordsRequest(beginDate, endDate, _accessToken);
+    apiHandler->postMultiDaysIndoorTimestampRecordsRequest(beginDate, endDate, _accessToken);
 }
 
 void OldDataUploader::addIntTimestampRecordsFromCurrentMonth() {

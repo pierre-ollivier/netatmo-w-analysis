@@ -73,6 +73,7 @@ public slots:
 
     void updateDailyIndoorDatabase();
     void updateDailyOutdoorDatabase();
+    void backfillIndoorData();
     void backfillOutdoorData();
 
     void exploreData();
@@ -150,6 +151,7 @@ private:
     QAction *addMultipleMonthsDataAction;
     QAction *updateDailyIndoorDatabaseAction;
     QAction *updateDailyOutdoorDatabaseAction;
+    QAction *backfillIndoorDataAction;
     QAction *backfillOutdoorDataAction;
     QAction *exploreDataAction;
     QAction *displayCumulativeChartAction;
