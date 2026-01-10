@@ -264,7 +264,7 @@ void MainWindow::setAccessToken(QString newAccessToken) {
     QTimer::singleShot(170 * 60 * 1000, apiHandler, SLOT(postRefreshTokenRequest()));
     accessToken = newAccessToken;
     oldDataUploader->setAccessToken(accessToken);
-    if (!dataFromCurrentMonthsWasAdded) addDataFromCurrentMonths();
+    // if (!dataFromCurrentMonthsWasAdded) addDataFromCurrentMonths();
     if (!dataFromLastDaysWasAdded) addDataFromLastDays();
 }
 
