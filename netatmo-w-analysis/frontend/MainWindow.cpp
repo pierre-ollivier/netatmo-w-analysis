@@ -214,7 +214,7 @@ void MainWindow::createActions() {
     connect(updateDailyIndoorDatabaseAction, SIGNAL(triggered()), SLOT(updateDailyIndoorDatabase()));
     updateDailyOutdoorDatabaseAction = new QAction("Mettre à jour la base de données quotidiennes extérieures");
     connect(updateDailyOutdoorDatabaseAction, SIGNAL(triggered()), SLOT(updateDailyOutdoorDatabase()));
-    backfillIndoorDataAction = new QAction("Backfill complet des données extérieures...");
+    backfillIndoorDataAction = new QAction("Backfill complet des données intérieures...");
     connect(backfillIndoorDataAction, SIGNAL(triggered()), SLOT(backfillIndoorData()));
     backfillOutdoorDataAction = new QAction("Backfill complet des données extérieures...");
     connect(backfillOutdoorDataAction, SIGNAL(triggered()), SLOT(backfillOutdoorData()));
