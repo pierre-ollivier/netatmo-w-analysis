@@ -178,42 +178,44 @@ void DatabaseHandler::postOutdoorTimestampRecord(ExtTimestampRecord record, QStr
 
 void DatabaseHandler::postOutdoorTimestampRecords(QList<ExtTimestampRecord> records, QString tableName) {
     QString connectionName = _pathToDatabase + "_" + QString::number(instance_id);
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-    db.setDatabaseName(_pathToDatabase);
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName(_pathToDatabase);
 
-    for (ExtTimestampRecord record : records) {
-        QSqlQuery query(db);
+        for (ExtTimestampRecord record : records) {
+            QSqlQuery query(db);
 
-        if (!db.open()) {
-            qDebug() << "Database open error. Path:" << _pathToDatabase;
-        }
-        if (!db.isOpen() ) {
-            qDebug() << "Database is not open. Path:" << _pathToDatabase;
-        }
+            if (!db.open()) {
+                qDebug() << "Database open error. Path:" << _pathToDatabase;
+            }
+            if (!db.isOpen() ) {
+                qDebug() << "Database is not open. Path:" << _pathToDatabase;
+            }
 
-        prepareQuery(&query, tableName, outdoorTimestampsParams);
+            prepareQuery(&query, tableName, outdoorTimestampsParams);
 
-        query.addBindValue(record.timestamp());
+            query.addBindValue(record.timestamp());
 
-        query.addBindValue(record.year());
-        query.addBindValue(record.month());
-        query.addBindValue(record.day());
-        query.addBindValue(record.date().toString("dd/MM/yyyy"));
-        query.addBindValue(record.decade());
-        query.addBindValue(record.weekNumber());
+            query.addBindValue(record.year());
+            query.addBindValue(record.month());
+            query.addBindValue(record.day());
+            query.addBindValue(record.date().toString("dd/MM/yyyy"));
+            query.addBindValue(record.decade());
+            query.addBindValue(record.weekNumber());
 
-        query.addBindValue(record.hour());
-        query.addBindValue(record.minute());
-        query.addBindValue(record.second());
-        query.addBindValue(record.time().toString("hh:mm:ss"));
+            query.addBindValue(record.hour());
+            query.addBindValue(record.minute());
+            query.addBindValue(record.second());
+            query.addBindValue(record.time().toString("hh:mm:ss"));
 
-        query.addBindValue(record.temperature());
-        query.addBindValue(record.humidity());
-        query.addBindValue(record.dewPoint());
-        query.addBindValue(record.humidex());
+            query.addBindValue(record.temperature());
+            query.addBindValue(record.humidity());
+            query.addBindValue(record.dewPoint());
+            query.addBindValue(record.humidex());
 
-        if (!query.exec()) {
-            qDebug() << "ERROR:" << query.lastError().text();
+            if (!query.exec()) {
+                qDebug() << "ERROR:" << query.lastError().text();
+            }
         }
     }
 
@@ -377,52 +379,54 @@ void DatabaseHandler::postIndoorTimestampRecord(IntTimestampRecord record, QStri
 
 void DatabaseHandler::postIndoorTimestampRecords(QList<IntTimestampRecord> records, QString tableName) {
     QString connectionName = _pathToDatabase + "_" + QString::number(instance_id);
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-    db.setDatabaseName(_pathToDatabase);
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName(_pathToDatabase);
 
-    for (IntTimestampRecord record : records) {
-        QSqlQuery query(db);
+        for (IntTimestampRecord record : records) {
+            QSqlQuery query(db);
 
-        if (!db.open()) {
-            qDebug() << "Database open error. Path:" << _pathToDatabase;
-        }
-        if (!db.isOpen() ) {
-            qDebug() << "Database is not open. Path:" << _pathToDatabase;
-        }
+            if (!db.open()) {
+                qDebug() << "Database open error. Path:" << _pathToDatabase;
+            }
+            if (!db.isOpen() ) {
+                qDebug() << "Database is not open. Path:" << _pathToDatabase;
+            }
 
-        prepareQuery(&query, tableName, indoorTimestampsParams);
+            prepareQuery(&query, tableName, indoorTimestampsParams);
 
-        query.addBindValue(record.timestamp());
+            query.addBindValue(record.timestamp());
 
-        query.addBindValue(record.year());
-        query.addBindValue(record.month());
-        query.addBindValue(record.day());
-        query.addBindValue(record.date().toString("dd/MM/yyyy"));
-        query.addBindValue(record.decade());
-        query.addBindValue(record.weekNumber());
+            query.addBindValue(record.year());
+            query.addBindValue(record.month());
+            query.addBindValue(record.day());
+            query.addBindValue(record.date().toString("dd/MM/yyyy"));
+            query.addBindValue(record.decade());
+            query.addBindValue(record.weekNumber());
 
-        query.addBindValue(record.hour());
-        query.addBindValue(record.minute());
-        query.addBindValue(record.second());
-        query.addBindValue(record.time().toString("hh:mm:ss"));
+            query.addBindValue(record.hour());
+            query.addBindValue(record.minute());
+            query.addBindValue(record.second());
+            query.addBindValue(record.time().toString("hh:mm:ss"));
 
-        query.addBindValue(record.temperature());
-        query.addBindValue(record.humidity());
-        query.addBindValue(record.dewPoint());
-        query.addBindValue(record.humidex());
-        query.addBindValue(record.pressure());
-        query.addBindValue(record.co2());
-        query.addBindValue(record.noise());
+            query.addBindValue(record.temperature());
+            query.addBindValue(record.humidity());
+            query.addBindValue(record.dewPoint());
+            query.addBindValue(record.humidex());
+            query.addBindValue(record.pressure());
+            query.addBindValue(record.co2());
+            query.addBindValue(record.noise());
 
-        if (!query.exec()) {
-            qDebug() << "ERROR:" << query.lastError().text();
+            if (!query.exec()) {
+                qDebug() << "ERROR:" << query.lastError().text();
+            }
         }
     }
 
     QSqlDatabase::removeDatabase(connectionName);
 }
 
-QList<ExtTimestampRecord> DatabaseHandler::retrieveRecordsFromOutdoorCsv(QString pathToCsv, QDate beginDate, QDate endDate) {
+QList<ExtTimestampRecord> DatabaseHandler::retrieveRecordsFromOutdoorCsv(QString pathToCsv) {
     QList<ExtTimestampRecord> records = QList<ExtTimestampRecord>();
     QFile file(pathToCsv);
 
@@ -452,7 +456,7 @@ QList<ExtTimestampRecord> DatabaseHandler::retrieveRecordsFromOutdoorCsv(QString
     return records;
 }
 
-QList<IntTimestampRecord> DatabaseHandler::retrieveRecordsFromIndoorCsv(QString pathToCsv, QDate beginDate, QDate endDate) {
+QList<IntTimestampRecord> DatabaseHandler::retrieveRecordsFromIndoorCsv(QString pathToCsv) {
     QList<IntTimestampRecord> records = QList<IntTimestampRecord>();
     QFile file(pathToCsv);
 

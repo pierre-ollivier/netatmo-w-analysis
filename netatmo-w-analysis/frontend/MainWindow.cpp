@@ -434,11 +434,11 @@ void MainWindow::addMonthData() {
 
     if (response == QMessageBox::Yes) {
         if (isIndoorData) {
-            QList<IntTimestampRecord> records = dbHandlerProd->retrieveRecordsFromIndoorCsv(fileName, beginDate, endDate);
+            QList<IntTimestampRecord> records = dbHandlerProd->retrieveRecordsFromIndoorCsv(fileName);
             oldDataUploader->addBackfillIntRecords(beginDate, endDate, records);
         }
         else {
-            QList<ExtTimestampRecord> records = dbHandlerProd->retrieveRecordsFromOutdoorCsv(fileName, beginDate, endDate);
+            QList<ExtTimestampRecord> records = dbHandlerProd->retrieveRecordsFromOutdoorCsv(fileName);
             oldDataUploader->addBackfillExtRecords(beginDate, endDate, records);
         }
     }
@@ -594,7 +594,7 @@ void MainWindow::displayGrowthChart() {
 }
 
 void MainWindow::postRecentDataRequests() {
-    int dateBegin = QDateTime::currentDateTime().toSecsSinceEpoch() - _durationInHours * 3600 - 600;
+    int dateBegin = QDateTime::currentSecsSinceEpoch() - _durationInHours * 3600 - 600;
     QString scale = "max";
 
     if (_durationInHours > 48) {

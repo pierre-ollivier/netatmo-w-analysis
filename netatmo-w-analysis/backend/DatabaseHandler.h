@@ -28,8 +28,8 @@ public:
     void postOutdoorTimestampRecords(QList<ExtTimestampRecord> records, QString tableName);
     void postIndoorTimestampRecords(QList<IntTimestampRecord> records, QString tableName);
 
-    QList<ExtTimestampRecord> retrieveRecordsFromOutdoorCsv(QString pathToCsv, QDate beginDate, QDate endDate);
-    QList<IntTimestampRecord> retrieveRecordsFromIndoorCsv(QString pathToCsv, QDate beginDate, QDate endDate);
+    QList<ExtTimestampRecord> retrieveRecordsFromOutdoorCsv(QString pathToCsv);
+    QList<IntTimestampRecord> retrieveRecordsFromIndoorCsv(QString pathToCsv);
 
     std::vector<IntTimestampRecord> getIntTimestampRecordsFromDatabase(QString query, int N = 1);
     std::vector<ExtTimestampRecord> getExtTimestampRecordsFromDatabase(QString query, int N = 1);
