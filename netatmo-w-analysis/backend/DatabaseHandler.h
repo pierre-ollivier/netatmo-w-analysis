@@ -25,6 +25,8 @@ public:
     void postIndoorDailyRecord(IntDailyRecord record, QString tableName);
     void postOutdoorTimestampRecord(ExtTimestampRecord record, QString tableName);
     void postIndoorTimestampRecord(IntTimestampRecord record, QString tableName);
+    void postOutdoorTimestampRecords(QList<ExtTimestampRecord> records, QString tableName);
+    void postIndoorTimestampRecords(QList<IntTimestampRecord> records, QString tableName);
 
     void postFromOutdoorCsv(QString pathToCsv, QString tableName, QDate beginDate = QDate(), QDate endDate = QDate());
     void postFromIndoorCsv(QString pathToCsv, QString tableName, QDate beginDate = QDate(), QDate endDate = QDate());

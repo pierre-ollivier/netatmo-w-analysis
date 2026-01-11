@@ -114,12 +114,15 @@ void OldDataUploader::addIntTimestampRecordToCopyDatabase(IntTimestampRecord rec
 }
 
 void OldDataUploader::addBackfillExtRecords(QDate beginDate, QDate endDate, QList<ExtTimestampRecord> records) {
+    QList<ExtTimestampRecord> timestampRecordsToAddToDatabase = QList<ExtTimestampRecord>();
     for (ExtTimestampRecord record : records) {
         if (record.date() >= beginDate && record.date() <= endDate) {
-            dbHandlerProd->postOutdoorTimestampRecord(record, "OutdoorTimestampRecords");
-            dbHandlerCopy->postOutdoorTimestampRecord(record, "OutdoorTimestampRecords");
+            timestampRecordsToAddToDatabase.append(record);
         }
     }
+    dbHandlerProd->postOutdoorTimestampRecords(timestampRecordsToAddToDatabase, "OutdoorTimestampRecords");
+    dbHandlerCopy->postOutdoorTimestampRecords(timestampRecordsToAddToDatabase, "OutdoorTimestampRecords");
+
     for (QDate d = beginDate; d <= endDate; d = d.addDays(1)) {
 
         QPair<QVariant, long long> maxTemperature = _dailyCalculator->getMaxOutdoorMeasurementInfoFromDate(
@@ -173,12 +176,15 @@ void OldDataUploader::addBackfillExtRecords(QDate beginDate, QDate endDate, QLis
 }
 
 void OldDataUploader::addBackfillIntRecords(QDate beginDate, QDate endDate, QList<IntTimestampRecord> records) {
+    QList<IntTimestampRecord> timestampRecordsToAddToDatabase = QList<IntTimestampRecord>();
     for (IntTimestampRecord record : records) {
         if (record.date() >= beginDate && record.date() <= endDate) {
-            dbHandlerProd->postIndoorTimestampRecord(record, "IndoorTimestampRecords");
-            dbHandlerCopy->postIndoorTimestampRecord(record, "IndoorTimestampRecords");
+            timestampRecordsToAddToDatabase.append(record);
         }
     }
+    dbHandlerProd->postIndoorTimestampRecords(timestampRecordsToAddToDatabase, "IndoorTimestampRecords");
+    dbHandlerCopy->postIndoorTimestampRecords(timestampRecordsToAddToDatabase, "IndoorTimestampRecords");
+
     for (QDate d = beginDate; d <= endDate; d = d.addDays(1)) {
 
         QPair<QVariant, long long> maxTemperature = _dailyCalculator->getMaxIndoorMeasurementInfoFromDate(
