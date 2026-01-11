@@ -15,6 +15,7 @@ NewDataUploader::NewDataUploader(QObject *parent, DatabaseHandler *dbHandler, Da
 }
 
 void NewDataUploader::uploadOutdoorDailyRecords(QDate beginDate, QDate endDate, bool verbose) {
+    // to rework
     QProgressDialog progress("Ajout des nouvelles données...", "Annuler", beginDate.toJulianDay(), endDate.toJulianDay());
     progress.setWindowModality(Qt::WindowModal);
     progress.setValue(beginDate.toJulianDay());

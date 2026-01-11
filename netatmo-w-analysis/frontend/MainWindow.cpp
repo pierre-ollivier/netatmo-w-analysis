@@ -39,7 +39,6 @@ MainWindow::MainWindow() : QMainWindow()
     dailyCalculator = new DailyStatisticsCalculator(this, PATH_TO_PROD_DATABASE, dbHandlerProd);
 
     oldDataUploader = new OldDataUploader(this, apiHandler);
-    newDataUploader = new NewDataUploader(this, dbHandlerProd, dailyCalculator);
     connect(this, SIGNAL(recentDataShouldBeUpdated()), SLOT(postRecentDataRequests()));
     buildWindow();
 
@@ -210,10 +209,6 @@ void MainWindow::createActions() {
     connect(addMonthDataAction, SIGNAL(triggered()), SLOT(addMonthData()));
     addMultipleMonthsDataAction = new QAction("Ajouter des données mensuelles sur plusieurs mois...");
     connect(addMultipleMonthsDataAction, SIGNAL(triggered()), SLOT(addMultipleMonthsData()));
-    updateDailyIndoorDatabaseAction = new QAction("Mettre à jour la base de données quotidiennes intérieures");
-    connect(updateDailyIndoorDatabaseAction, SIGNAL(triggered()), SLOT(updateDailyIndoorDatabase()));
-    updateDailyOutdoorDatabaseAction = new QAction("Mettre à jour la base de données quotidiennes extérieures");
-    connect(updateDailyOutdoorDatabaseAction, SIGNAL(triggered()), SLOT(updateDailyOutdoorDatabase()));
     backfillIndoorDataAction = new QAction("Backfill complet des données intérieures...");
     connect(backfillIndoorDataAction, SIGNAL(triggered()), SLOT(backfillIndoorData()));
     backfillOutdoorDataAction = new QAction("Backfill complet des données extérieures...");
@@ -244,8 +239,6 @@ void MainWindow::createMenus() {
     QMenu *handleDataMenu = menuBar->addMenu(tr("&Gestion des données"));
     handleDataMenu->addAction(addMonthDataAction);
     handleDataMenu->addAction(addMultipleMonthsDataAction);
-    handleDataMenu->addAction(updateDailyIndoorDatabaseAction);
-    handleDataMenu->addAction(updateDailyOutdoorDatabaseAction);
     handleDataMenu->addAction(backfillIndoorDataAction);
     handleDataMenu->addAction(backfillOutdoorDataAction);
     QMenu *exploreDataMenu = menuBar->addMenu(tr("&Exploration des données"));
@@ -264,7 +257,6 @@ void MainWindow::setAccessToken(QString newAccessToken) {
     QTimer::singleShot(170 * 60 * 1000, apiHandler, SLOT(postRefreshTokenRequest()));
     accessToken = newAccessToken;
     oldDataUploader->setAccessToken(accessToken);
-    // if (!dataFromCurrentMonthsWasAdded) addDataFromCurrentMonths();
     if (!dataFromLastDaysWasAdded) addDataFromLastDays();
 }
 
@@ -477,58 +469,6 @@ void MainWindow::addMultipleMonthsData() {
     }
     else if (response == QMessageBox::No) QMessageBox::warning(this, "Annulation", "Opération annulée.");
 
-}
-
-void MainWindow::updateDailyIndoorDatabase() {
-    bool okBegin = false, okEnd = false;
-    QString beginDate = QInputDialog::getText(
-                this, "Date de début", "Date de début (au format JJ/MM/AAAA) :", QLineEdit::Normal, QString(), &okBegin);
-    if (!okBegin) return;
-    QString endDate = QInputDialog::getText(
-                this, "Date de fin", "Date de fin (au format JJ/MM/AAAA) :", QLineEdit::Normal, QString(), &okEnd);
-    if (!okEnd) return;
-
-    QString q = "Confirmer la saisie ? \n\n";
-    q += "Date de début : " + beginDate + "\n";
-    q += "Date de fin : " + endDate + "\n";
-    q += "Dernière date dans la base de données intérieures : ";
-    q += dbHandlerProd->getLatestDateTimeFromDatabase("IndoorDailyRecords").date().toString("dd/MM/yyyy");
-
-    int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
-
-    if (response == QMessageBox::Yes) {
-        newDataUploader->uploadIndoorDailyRecords(
-                    QDate::fromString(beginDate, "dd/MM/yyyy"),
-                    QDate::fromString(endDate, "dd/MM/yyyy"));
-    }
-
-    else if (response == QMessageBox::No) QMessageBox::warning(this, "Annulation", "Opération annulée.");
-}
-
-void MainWindow::updateDailyOutdoorDatabase() {
-    bool okBegin = false, okEnd = false;
-    QString beginDate = QInputDialog::getText(
-                this, "Date de début", "Date de début (au format JJ/MM/AAAA) :", QLineEdit::Normal, QString(), &okBegin);
-    if (!okBegin) return;
-    QString endDate = QInputDialog::getText(
-                this, "Date de fin", "Date de fin (au format JJ/MM/AAAA) :", QLineEdit::Normal, QString(), &okEnd);
-    if (!okEnd) return;
-
-    QString q = "Confirmer la saisie ? \n\n";
-    q += "Date de début : " + beginDate + "\n";
-    q += "Date de fin : " + endDate + "\n";
-    q += "Dernière date dans la base de données extérieures : ";
-    q += dbHandlerProd->getLatestDateTimeFromDatabase("OutdoorDailyRecords").date().toString("dd/MM/yyyy");
-
-    int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
-
-    if (response == QMessageBox::Yes) {
-        newDataUploader->uploadOutdoorDailyRecords(
-                    QDate::fromString(beginDate, "dd/MM/yyyy"),
-                    QDate::fromString(endDate, "dd/MM/yyyy"));
-    }
-
-    else if (response == QMessageBox::No) QMessageBox::warning(this, "Annulation", "Opération annulée.");
 }
 
 void MainWindow::backfillIndoorData() {

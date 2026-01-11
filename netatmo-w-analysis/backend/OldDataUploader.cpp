@@ -2,14 +2,16 @@
 #include <QDateTime>
 
 extern const QString PATH_TO_COPY_DATABASE;
+extern const QString PATH_TO_PROD_DATABASE;
 
 OldDataUploader::OldDataUploader(NetatmoAPIHandler* apiHandler, QString accessToken)
 {
     _apiHandler = apiHandler;
     _accessToken = accessToken;
 
-    dbHandler = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
-    _dailyCalculator = new DailyStatisticsCalculator(this, PATH_TO_COPY_DATABASE, dbHandler);
+    dbHandlerProd = new DatabaseHandler(this, PATH_TO_PROD_DATABASE);
+    dbHandlerCopy = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
+    _dailyCalculator = new DailyStatisticsCalculator(this, PATH_TO_COPY_DATABASE, dbHandlerCopy);
 
     connect(apiHandler, SIGNAL(extTimestampRecordRetrieved(ExtTimestampRecord)),
             SLOT(addExtTimestampRecordToCopyDatabase(ExtTimestampRecord)));
@@ -27,8 +29,9 @@ OldDataUploader::OldDataUploader(QObject *parent, NetatmoAPIHandler* apiHandler,
     _apiHandler = apiHandler;
     _accessToken = accessToken;
 
-    dbHandler = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
-    _dailyCalculator = new DailyStatisticsCalculator(this, PATH_TO_COPY_DATABASE, dbHandler);
+    dbHandlerProd = new DatabaseHandler(this, PATH_TO_PROD_DATABASE);
+    dbHandlerCopy = new DatabaseHandler(this, PATH_TO_COPY_DATABASE);
+    _dailyCalculator = new DailyStatisticsCalculator(this, PATH_TO_COPY_DATABASE, dbHandlerCopy);
 
     connect(apiHandler, SIGNAL(extTimestampRecordRetrieved(ExtTimestampRecord)),
             SLOT(addExtTimestampRecordToCopyDatabase(ExtTimestampRecord)));
@@ -102,15 +105,21 @@ void OldDataUploader::addIntTimestampRecordsFromCurrentMonth() {
 
 
 void OldDataUploader::addExtTimestampRecordToCopyDatabase(ExtTimestampRecord record) {
-    dbHandler->postOutdoorTimestampRecord(record, "OutdoorTimestampRecords");
+    dbHandlerCopy->postOutdoorTimestampRecord(record, "OutdoorTimestampRecords");
 }
 
 
 void OldDataUploader::addIntTimestampRecordToCopyDatabase(IntTimestampRecord record) {
-    dbHandler->postIndoorTimestampRecord(record, "IndoorTimestampRecords");
+    dbHandlerCopy->postIndoorTimestampRecord(record, "IndoorTimestampRecords");
 }
 
 void OldDataUploader::addBackfillExtRecords(QDate beginDate, QDate endDate, QList<ExtTimestampRecord> records) {
+    for (ExtTimestampRecord record : records) {
+        if (record.date() >= beginDate && record.date() <= endDate) {
+            dbHandlerProd->postOutdoorTimestampRecord(record, "OutdoorTimestampRecords");
+            dbHandlerCopy->postOutdoorTimestampRecord(record, "OutdoorTimestampRecords");
+        }
+    }
     for (QDate d = beginDate; d <= endDate; d = d.addDays(1)) {
 
         QPair<QVariant, long long> maxTemperature = _dailyCalculator->getMaxOutdoorMeasurementInfoFromDate(
@@ -158,11 +167,18 @@ void OldDataUploader::addBackfillExtRecords(QDate beginDate, QDate endDate, QLis
             maxHumidex.second,
             minHumidex.second
             );
-        dbHandler->postOutdoorDailyRecord(record, "OutdoorDailyRecords");
+        dbHandlerProd->postOutdoorDailyRecord(record, "OutdoorDailyRecords");
+        dbHandlerCopy->postOutdoorDailyRecord(record, "OutdoorDailyRecords");
     }
 }
 
 void OldDataUploader::addBackfillIntRecords(QDate beginDate, QDate endDate, QList<IntTimestampRecord> records) {
+    for (IntTimestampRecord record : records) {
+        if (record.date() >= beginDate && record.date() <= endDate) {
+            dbHandlerProd->postIndoorTimestampRecord(record, "IndoorTimestampRecords");
+            dbHandlerCopy->postIndoorTimestampRecord(record, "IndoorTimestampRecords");
+        }
+    }
     for (QDate d = beginDate; d <= endDate; d = d.addDays(1)) {
 
         QPair<QVariant, long long> maxTemperature = _dailyCalculator->getMaxIndoorMeasurementInfoFromDate(
@@ -236,7 +252,8 @@ void OldDataUploader::addBackfillIntRecords(QDate beginDate, QDate endDate, QLis
             maxPressure.second,
             minPressure.second
             );
-        dbHandler->postIndoorDailyRecord(record, "IndoorDailyRecords");
+        dbHandlerProd->postIndoorDailyRecord(record, "IndoorDailyRecords");
+        dbHandlerCopy->postIndoorDailyRecord(record, "IndoorDailyRecords");
     }
 }
 
@@ -250,7 +267,7 @@ void OldDataUploader::logExtDailyRecord(ExtDailyRecord record) {
     QDate date = record.date();
     if (extendedRecordsMap.contains(date)) {
         extendedRecordsMap[date]->setExtDailyRecord(recordCopy);
-        dbHandler->postOutdoorDailyRecord(extendedRecordsMap[date]->wrap(), tableName);
+        dbHandlerCopy->postOutdoorDailyRecord(extendedRecordsMap[date]->wrap(), tableName);
     }
     else {
         extendedRecordsMap.insert(date, new ExtendedExtDailyRecord());
@@ -260,7 +277,7 @@ void OldDataUploader::logExtDailyRecord(ExtDailyRecord record) {
 
 void OldDataUploader::logIntDailyRecord(IntDailyRecord record) {
     QString tableName = "IndoorDailyRecords";
-    dbHandler->postIndoorDailyRecord(record, tableName);
+    dbHandlerCopy->postIndoorDailyRecord(record, tableName);
 }
 
 void OldDataUploader::log3hRecords(QMap<QDate, std::tuple<double, double>> records) {
@@ -269,7 +286,7 @@ void OldDataUploader::log3hRecords(QMap<QDate, std::tuple<double, double>> recor
         if (extendedRecordsMap.contains(date)) {
             extendedRecordsMap[date]->setMinTemperature(std::get<0>(records[date]));
             extendedRecordsMap[date]->setMaxTemperature(std::get<1>(records[date]));
-            dbHandler->postOutdoorDailyRecord(extendedRecordsMap[date]->wrap(), tableName);
+            dbHandlerCopy->postOutdoorDailyRecord(extendedRecordsMap[date]->wrap(), tableName);
         }
         else {
             extendedRecordsMap.insert(date, new ExtendedExtDailyRecord());
@@ -281,14 +298,14 @@ void OldDataUploader::log3hRecords(QMap<QDate, std::tuple<double, double>> recor
 
 void OldDataUploader::logOutdoorTimestampRecords(QList<ExtTimestampRecord> records) {
     for (ExtTimestampRecord record : records) {
-        dbHandler->postOutdoorTimestampRecord(record, "LastOutdoorTimestampRecords");
+        dbHandlerCopy->postOutdoorTimestampRecord(record, "LastOutdoorTimestampRecords");
     }
     emit outdoorTimestampRecordsLogged();
 }
 
 void OldDataUploader::logIndoorTimestampRecords(QList<IntTimestampRecord> records) {
     for (IntTimestampRecord record : records) {
-        dbHandler->postIndoorTimestampRecord(record, "LastIndoorTimestampRecords");
+        dbHandlerCopy->postIndoorTimestampRecord(record, "LastIndoorTimestampRecords");
     }
     emit indoorTimestampRecordsLogged();
 }

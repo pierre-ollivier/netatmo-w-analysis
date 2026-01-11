@@ -7,7 +7,6 @@ HEADERS += \
     $$PWD/MetricsAnalyzer.h \
     $$PWD/MultipleNetatmoAPIQueriesAggregator.h \
     $$PWD/NetatmoAPIHandler.h \
-    $$PWD/NewDataUploader.h \
     $$PWD/NormalComputer.h \
     $$PWD/OldDataUploader.h \
     $$PWD/QueryAnalyzer.h \
@@ -23,7 +22,6 @@ SOURCES += \
     $$PWD/MetricsAnalyzer.cpp \
     $$PWD/MultipleNetatmoAPIQueriesAggregator.cpp \
     $$PWD/NetatmoAPIHandler.cpp \
-    $$PWD/NewDataUploader.cpp \
     $$PWD/NormalComputer.cpp \
     $$PWD/OldDataUploader.cpp \
     $$PWD/QueryAnalyzer.cpp \

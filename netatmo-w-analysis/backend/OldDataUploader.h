@@ -51,7 +51,8 @@ private:
     QDate _beginDate = QDate();
     QDate _endDate = QDate();
     QMap<QDate, ExtendedExtDailyRecord *> extendedRecordsMap = QMap<QDate, ExtendedExtDailyRecord *>();
-    DatabaseHandler *dbHandler;
+    DatabaseHandler *dbHandlerProd;
+    DatabaseHandler *dbHandlerCopy;
     DailyStatisticsCalculator *_dailyCalculator;
     int numberOfExtBatchesToRetrieve = 0;
     int numberOfIntBatchesToRetrieve = 0;
