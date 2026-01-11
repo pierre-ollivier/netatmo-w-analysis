@@ -27,8 +27,6 @@ signals:
     void indoorTimestampRecordsLogged();
 
 public slots:
-    void addDataFromCurrentMonths(QDate beginDate, QDate endDate, bool indoor = false);
-
     void addAllExtTimestampRecordsFromPeriod(QDate beginDate, QDate endDate);
     void addAllIntTimestampRecordsFromPeriod(QDate beginDate, QDate endDate);
 

@@ -11,6 +11,7 @@ extern const QString PATH_TO_PROD_DATABASE = APP_PATH + "/" + "netatmo-w-analysi
 extern const QString PATH_TO_COPY_DATABASE = APP_PATH + "/" + "netatmo-w-analysis/netatmo_analysis_copy.db";
 extern const QString PATH_TO_REFRESH_TOKEN_FILE = APP_PATH + "/" + "netatmo-w-analysis/refresh_token.txt";
 extern const QString PATH_TO_IMAGES_FOLDER = APP_PATH + "/" + "netatmo-w-analysis/images/";
+extern const QString PATH_TO_DATA_FOLDER = APP_PATH + "/" + "Données Netatmo";
 
 extern const QColor mainBackgroundColor = QColor(231, 216, 243);
 

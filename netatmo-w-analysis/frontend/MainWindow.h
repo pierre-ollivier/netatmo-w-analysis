@@ -68,7 +68,6 @@ public slots:
     void updatePredictionWidgets(WeatherPrediction prediction);
 
     void addMonthData();
-    void addMultipleMonthsData();
 
     void backfillIndoorData();
     void backfillOutdoorData();
@@ -80,7 +79,6 @@ public slots:
     void displayMonthlyReport();
     void displayYearlyReport();
 
-    void addDataFromCurrentMonths();
     void addDataFromLastDays();
     void changeChartsOptions();
 
@@ -144,7 +142,6 @@ private:
     // actions
     QAction *requestCountsAction;
     QAction *addMonthDataAction;
-    QAction *addMultipleMonthsDataAction;
     QAction *backfillIndoorDataAction;
     QAction *backfillOutdoorDataAction;
     QAction *exploreDataAction;

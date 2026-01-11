@@ -44,23 +44,6 @@ OldDataUploader::OldDataUploader(QObject *parent, NetatmoAPIHandler* apiHandler,
             SLOT(log3hRecords(QMap<QDate,std::tuple<double,double> >)));
 }
 
-void OldDataUploader::addDataFromCurrentMonths(QDate beginDate, QDate endDate, bool indoor) {
-    if (_accessToken == "") qDebug() << "Warning: undefined access token in OldDataUploader";
-    _beginDate = beginDate; _endDate = endDate;
-
-    long long beginTimestamp = QDateTime(beginDate, QTime(0, 0)).toSecsSinceEpoch();
-    long long endTimestamp = QDateTime(endDate, QTime(0, 0)).toSecsSinceEpoch();
-    if (indoor) {
-        _apiHandler->postFullIndoorDailyRequest(beginTimestamp, endTimestamp, "1day", _accessToken);
-    }
-    else {
-        beginTimestamp = QDateTime(beginDate.addDays(-1), QTime(18, 0), Qt::UTC).toSecsSinceEpoch();
-        endTimestamp = QDateTime(endDate.addDays(0), QTime(6, 0), Qt::UTC).toSecsSinceEpoch();
-        _apiHandler->postFullOutdoorDailyRequest(beginTimestamp, endTimestamp, "1day", _accessToken);
-        _apiHandler->post3hDailyRequest(beginTimestamp, endTimestamp, _accessToken);
-    }
-}
-
 void OldDataUploader::addExtTimestampRecordsFromCurrentMonth() {
     NetatmoAPIHandler *apiHandler = new NetatmoAPIHandler(this, _apiHandler->getAPIMonitor());
     connect(apiHandler,
@@ -114,6 +97,10 @@ void OldDataUploader::addIntTimestampRecordToCopyDatabase(IntTimestampRecord rec
 }
 
 void OldDataUploader::addBackfillExtRecords(QDate beginDate, QDate endDate, QList<ExtTimestampRecord> records) {
+    if (records.size() == 0) {
+        qDebug() << "WARNING: backfilling 0 records between" << beginDate.toString() << "and" << endDate.toString() << ". Exiting.";
+        return;
+    }
     QList<ExtTimestampRecord> timestampRecordsToAddToDatabase = QList<ExtTimestampRecord>();
     for (ExtTimestampRecord record : records) {
         if (record.date() >= beginDate && record.date() <= endDate) {
@@ -176,6 +163,10 @@ void OldDataUploader::addBackfillExtRecords(QDate beginDate, QDate endDate, QLis
 }
 
 void OldDataUploader::addBackfillIntRecords(QDate beginDate, QDate endDate, QList<IntTimestampRecord> records) {
+    if (records.size() == 0) {
+        qDebug() << "WARNING: backfilling 0 records between" << beginDate.toString() << "and" << endDate.toString() << ". Exiting.";
+        return;
+    }
     QList<IntTimestampRecord> timestampRecordsToAddToDatabase = QList<IntTimestampRecord>();
     for (IntTimestampRecord record : records) {
         if (record.date() >= beginDate && record.date() <= endDate) {
