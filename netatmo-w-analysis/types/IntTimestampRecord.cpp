@@ -1,4 +1,5 @@
 #include "IntTimestampRecord.h"
+#include "TimestampRecord.h"
 
 IntTimestampRecord::IntTimestampRecord(
         long long timestamp,
@@ -26,4 +27,11 @@ int IntTimestampRecord::co2() {
 }
 int IntTimestampRecord::noise() {
     return _noise;
+}
+
+QVariant IntTimestampRecord::measurement(QString measurement) {
+    if (measurement == "pressure") return pressure();
+    if (measurement == "co2") return co2();
+    if (measurement == "noise") return noise();
+    else return TimestampRecord::measurement(measurement);
 }

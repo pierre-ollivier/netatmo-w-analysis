@@ -1,5 +1,6 @@
 #include "TimestampRecord.h"
 #include <math.h>
+#include <stdexcept>
 #include <QDateTime>
 
 TimestampRecord::TimestampRecord(
@@ -69,4 +70,12 @@ QString TimestampRecord::toString() {
             + "Température : " + QString::number(_temperature) + " °C" + "\n"
             + "Humidité : " + QString::number(_humidity) + " %" + "\n"
             );
+}
+
+QVariant TimestampRecord::measurement(QString measurement) {
+    if (measurement == "temperature") return temperature();
+    if (measurement == "humidity") return humidity();
+    if (measurement == "dewPoint") return dewPoint();
+    if (measurement == "humidex") return humidex();
+    else throw std::invalid_argument("Unsupported measurement:");
 }

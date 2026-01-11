@@ -1,7 +1,11 @@
 #include "DailyStatisticsCalculator.h"
+#include "float.h"
 #include <QDateTime>
 #include <QTimeZone>
 #include <QDebug>
+#include <functional>
+#include "../types/ExtTimestampRecord.h"
+#include "../types/IntTimestampRecord.h"
 
 DailyStatisticsCalculator::DailyStatisticsCalculator(QString pathToDatabase, DatabaseHandler *dbHandler)
 {
@@ -73,9 +77,10 @@ long long DailyStatisticsCalculator::getMinTemperatureTimestampFromDate(QDate da
 
 // avg temperature
 
-double DailyStatisticsCalculator::getAvgTemperatureFromDate(QDate date, bool indoor) {
+double DailyStatisticsCalculator::getAvgTemperatureFromDate(QDate date, QList<ExtTimestampRecord> records, bool indoor) {
     if (indoor) return indoorAverageCalculator->getAverageMeasurementFromDate(date, "temperature");
-    return outdoorAverageCalculator->getAverageMeasurementFromDate(date, "temperature");
+    DailyAverageCalculator calculator = DailyAverageCalculator(this, _pathToDatabase, false);
+    return calculator.getOutdoorAverageMeasurementFromDate(date, records, "temperature");
 }
 
 // max humidity
@@ -432,6 +437,118 @@ long long DailyStatisticsCalculator::getMinNoiseTimestampFromDate(QDate date) {
 
 double DailyStatisticsCalculator::getAvgNoiseFromDate(QDate date) {
     return indoorAverageCalculator->getAverageMeasurementFromDate(date, "noise");
+}
+
+// indoor measurement
+
+QPair<QVariant, long long> DailyStatisticsCalculator::getMaxIndoorMeasurementInfoFromDate(
+    QDate date,
+    QList<IntTimestampRecord> records,
+    std::function<QVariant(IntTimestampRecord)> measurementGetter,
+    bool localTime,
+    int utcOffsetH
+    ) {
+    const long long firstTimestamp = localTime ? getFirstTimestampFromDate(date) :
+                                         getFirstTimestampFromDateWithUTCOffset(date, utcOffsetH);
+    const long long lastTimestamp = localTime ? getFirstTimestampFromDate(date.addDays(1)) :
+                                        getFirstTimestampFromDateWithUTCOffset(date.addDays(1), utcOffsetH);
+
+    QVariant currentMaxMeasurement = QVariant(-DBL_MAX);
+    long long currentMaxTimestamp = firstTimestamp;
+
+    for (IntTimestampRecord record : records) {
+        if (record.timestamp() >= firstTimestamp && record.timestamp() <= lastTimestamp
+            && measurementGetter(record).toDouble() > currentMaxMeasurement.toDouble()) {
+            currentMaxMeasurement = measurementGetter(record);
+            currentMaxTimestamp = record.timestamp();
+        }
+    }
+    return qMakePair(currentMaxMeasurement, currentMaxTimestamp);
+}
+
+QPair<QVariant, long long> DailyStatisticsCalculator::getMinIndoorMeasurementInfoFromDate(
+    QDate date,
+    QList<IntTimestampRecord> records,
+    std::function<QVariant(IntTimestampRecord)> measurementGetter,
+    bool localTime,
+    int utcOffsetH
+    ) {
+    const long long firstTimestamp = localTime ? getFirstTimestampFromDate(date) :
+                                         getFirstTimestampFromDateWithUTCOffset(date, utcOffsetH);
+    const long long lastTimestamp = localTime ? getFirstTimestampFromDate(date.addDays(1)) :
+                                        getFirstTimestampFromDateWithUTCOffset(date.addDays(1), utcOffsetH);
+
+    QVariant currentMinMeasurement = QVariant(DBL_MAX);
+    long long currentMinTimestamp = firstTimestamp;
+
+    for (IntTimestampRecord record : records) {
+        if (record.timestamp() >= firstTimestamp && record.timestamp() <= lastTimestamp
+            && measurementGetter(record).toDouble() < currentMinMeasurement.toDouble()) {
+            currentMinMeasurement = measurementGetter(record);
+            currentMinTimestamp = record.timestamp();
+        }
+    }
+    return qMakePair(currentMinMeasurement, currentMinTimestamp);
+}
+
+// outdoor measurement
+
+QPair<QVariant, long long> DailyStatisticsCalculator::getMaxOutdoorMeasurementInfoFromDate(
+    QDate date,
+    QList<ExtTimestampRecord> records,
+    std::function<QVariant(ExtTimestampRecord)> measurementGetter,
+    bool localTime,
+    int utcOffsetH
+    ) {
+    const long long firstTimestamp = localTime ? getFirstTimestampFromDate(date) :
+                                         getFirstTimestampFromDateWithUTCOffset(date, utcOffsetH);
+    const long long lastTimestamp = localTime ? getFirstTimestampFromDate(date.addDays(1)) :
+                                        getFirstTimestampFromDateWithUTCOffset(date.addDays(1), utcOffsetH);
+
+    QVariant currentMaxMeasurement = QVariant(-DBL_MAX);
+    long long currentMaxTimestamp = firstTimestamp;
+
+    for (ExtTimestampRecord record : records) {
+        if (record.timestamp() >= firstTimestamp && record.timestamp() <= lastTimestamp
+            && measurementGetter(record).toDouble() > currentMaxMeasurement.toDouble()) {
+            currentMaxMeasurement = measurementGetter(record);
+            currentMaxTimestamp = record.timestamp();
+        }
+    }
+    return qMakePair(currentMaxMeasurement, currentMaxTimestamp);
+}
+
+QPair<QVariant, long long> DailyStatisticsCalculator::getMinOutdoorMeasurementInfoFromDate(
+    QDate date,
+    QList<ExtTimestampRecord> records,
+    std::function<QVariant(ExtTimestampRecord)> measurementGetter,
+    bool localTime,
+    int utcOffsetH
+    ) {
+    const long long firstTimestamp = localTime ? getFirstTimestampFromDate(date) :
+                                         getFirstTimestampFromDateWithUTCOffset(date, utcOffsetH);
+    const long long lastTimestamp = localTime ? getFirstTimestampFromDate(date.addDays(1)) :
+                                        getFirstTimestampFromDateWithUTCOffset(date.addDays(1), utcOffsetH);
+
+    QVariant currentMinMeasurement = QVariant(DBL_MAX);
+    long long currentMinTimestamp = firstTimestamp;
+
+    for (ExtTimestampRecord record : records) {
+        if (record.timestamp() >= firstTimestamp && record.timestamp() <= lastTimestamp
+            && measurementGetter(record).toDouble() < currentMinMeasurement.toDouble()) {
+            currentMinMeasurement = measurementGetter(record);
+            currentMinTimestamp = record.timestamp();
+        }
+    }
+    return qMakePair(currentMinMeasurement, currentMinTimestamp);
+}
+
+double DailyStatisticsCalculator::getAvgOutdoorMeasurementFromDate(QDate date, QList<ExtTimestampRecord> records, QString measurement) {
+    return outdoorAverageCalculator->getOutdoorAverageMeasurementFromDate(date, records, measurement);
+}
+
+double DailyStatisticsCalculator::getAvgIndoorMeasurementFromDate(QDate date, QList<IntTimestampRecord> records, QString measurement) {
+    return indoorAverageCalculator->getIndoorAverageMeasurementFromDate(date, records, measurement);
 }
 
 // others

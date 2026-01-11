@@ -18,6 +18,7 @@ extern const QLocale LOCALE;
 extern QString PATH_TO_PROD_DATABASE;
 extern QString PATH_TO_COPY_DATABASE;
 extern QString PATH_TO_IMAGES_FOLDER;
+extern QString PATH_TO_DATA_FOLDER;
 extern QColor mainBackgroundColor;
 
 MainWindow::MainWindow() : QMainWindow()
@@ -39,7 +40,6 @@ MainWindow::MainWindow() : QMainWindow()
     dailyCalculator = new DailyStatisticsCalculator(this, PATH_TO_PROD_DATABASE, dbHandlerProd);
 
     oldDataUploader = new OldDataUploader(this, apiHandler);
-    newDataUploader = new NewDataUploader(this, dbHandlerProd, dailyCalculator);
     connect(this, SIGNAL(recentDataShouldBeUpdated()), SLOT(postRecentDataRequests()));
     buildWindow();
 
@@ -208,12 +208,10 @@ void MainWindow::createActions() {
 
     addMonthDataAction = new QAction("Ajouter des données mensuelles...");
     connect(addMonthDataAction, SIGNAL(triggered()), SLOT(addMonthData()));
-    addMultipleMonthsDataAction = new QAction("Ajouter des données mensuelles sur plusieurs mois...");
-    connect(addMultipleMonthsDataAction, SIGNAL(triggered()), SLOT(addMultipleMonthsData()));
-    updateDailyIndoorDatabaseAction = new QAction("Mettre à jour la base de données quotidiennes intérieures");
-    connect(updateDailyIndoorDatabaseAction, SIGNAL(triggered()), SLOT(updateDailyIndoorDatabase()));
-    updateDailyOutdoorDatabaseAction = new QAction("Mettre à jour la base de données quotidiennes extérieures");
-    connect(updateDailyOutdoorDatabaseAction, SIGNAL(triggered()), SLOT(updateDailyOutdoorDatabase()));
+    backfillIndoorDataAction = new QAction("Backfill complet des données intérieures...");
+    connect(backfillIndoorDataAction, SIGNAL(triggered()), SLOT(backfillIndoorData()));
+    backfillOutdoorDataAction = new QAction("Backfill complet des données extérieures...");
+    connect(backfillOutdoorDataAction, SIGNAL(triggered()), SLOT(backfillOutdoorData()));
 
     exploreDataAction = new QAction("Explorer les données");
     connect(exploreDataAction, SIGNAL(triggered()), SLOT(exploreData()));
@@ -239,9 +237,8 @@ void MainWindow::createMenus() {
     networkMenu->addAction(requestCountsAction);
     QMenu *handleDataMenu = menuBar->addMenu(tr("&Gestion des données"));
     handleDataMenu->addAction(addMonthDataAction);
-    handleDataMenu->addAction(addMultipleMonthsDataAction);
-    handleDataMenu->addAction(updateDailyIndoorDatabaseAction);
-    handleDataMenu->addAction(updateDailyOutdoorDatabaseAction);
+    handleDataMenu->addAction(backfillIndoorDataAction);
+    handleDataMenu->addAction(backfillOutdoorDataAction);
     QMenu *exploreDataMenu = menuBar->addMenu(tr("&Exploration des données"));
     exploreDataMenu->addAction(exploreDataAction);
     exploreDataMenu->addAction(displayCumulativeChartAction);
@@ -258,19 +255,7 @@ void MainWindow::setAccessToken(QString newAccessToken) {
     QTimer::singleShot(170 * 60 * 1000, apiHandler, SLOT(postRefreshTokenRequest()));
     accessToken = newAccessToken;
     oldDataUploader->setAccessToken(accessToken);
-    if (!dataFromCurrentMonthsWasAdded) addDataFromCurrentMonths();
     if (!dataFromLastDaysWasAdded) addDataFromLastDays();
-}
-
-void MainWindow::addDataFromCurrentMonths() {
-    QDate lastAddedOutdoorDate = dbHandlerProd->getLatestDateTimeFromDatabase("OutdoorDailyRecords").date();
-    QDate lastAddedIndoorDate = dbHandlerProd->getLatestDateTimeFromDatabase("IndoorDailyRecords").date();
-
-    oldDataUploader->addDataFromCurrentMonths(lastAddedOutdoorDate.addDays(1),
-                                              QDate::currentDate(), false);
-    oldDataUploader->addDataFromCurrentMonths(lastAddedIndoorDate.addDays(1),
-                                              QDate::currentDate(), true);
-    dataFromCurrentMonthsWasAdded = true;
 }
 
 void MainWindow::addDataFromLastDays() {
@@ -402,9 +387,37 @@ void MainWindow::updatePredictionWidgets(WeatherPrediction prediction) {
 }
 
 void MainWindow::addMonthData() {
-    QString fileName = QFileDialog::getOpenFileName(this, "Ouvrir un fichier", "D:/Mes programmes/RegressionTemperature/Données Netatmo", "*.csv");
+    bool okBegin, okEnd;
+    QString fileName = QFileDialog::getOpenFileName(this, "Ouvrir un fichier", PATH_TO_DATA_FOLDER, "*.csv");
+    QDate beginDate = QDate::fromString(
+        QInputDialog::getText(
+            this,
+            "Date de début",
+            "Date de début (incluse, au format JJ/MM/AAAA) :",
+            QLineEdit::Normal,
+            QDate::currentDate().addMonths(-1).toString("dd/MM/yyyy"),
+            &okBegin
+            ),
+        "dd/MM/yyyy");
+
+    if (!okBegin) return;
+
+    QDate endDate = QDate::fromString(
+        QInputDialog::getText(
+            this,
+            "Date de fin",
+            "Date de fin (incluse, au format JJ/MM/AAAA) :",
+            QLineEdit::Normal,
+            QDate::currentDate().addDays(-1).toString("dd/MM/yyyy"),
+            &okEnd
+            ),
+        "dd/MM/yyyy");
+    if (!okEnd) return;
+
     QString q = "Confirmer la saisie ? \n\n";
-    q += "Nom du fichier : " + fileName.mid(56) + "\n";
+    q += "Nom du fichier : " + fileName.mid(1 + PATH_TO_DATA_FOLDER.size()) + "\n";
+    q += "Date de début : " + beginDate.toString("dd/MM/yyyy") + "\n";
+    q += "Date de fin : " + endDate.toString("dd/MM/yyyy") + "\n";
 
     bool isIndoorData = (fileName.size() > 7 && fileName[fileName.size() - 12] == 'C');
 
@@ -421,105 +434,103 @@ void MainWindow::addMonthData() {
 
     if (response == QMessageBox::Yes) {
         if (isIndoorData) {
-            dbHandlerProd->postFromIndoorCsv(fileName, "IndoorTimestampRecords");
+            QList<IntTimestampRecord> records = dbHandlerProd->retrieveRecordsFromIndoorCsv(fileName);
+            oldDataUploader->addBackfillIntRecords(beginDate, endDate, records);
         }
         else {
-            dbHandlerProd->postFromOutdoorCsv(fileName, "OutdoorTimestampRecords");
+            QList<ExtTimestampRecord> records = dbHandlerProd->retrieveRecordsFromOutdoorCsv(fileName);
+            oldDataUploader->addBackfillExtRecords(beginDate, endDate, records);
         }
     }
     else if (response == QMessageBox::No) QMessageBox::warning(this, "Annulation", "Opération annulée.");
 
 }
 
-void MainWindow::addMultipleMonthsData() {
+void MainWindow::backfillIndoorData() {
+    QDate lastDateInDatabase = dbHandlerProd->getLatestDateTimeFromDatabase("IndoorDailyRecords").date();
     bool okBegin = false, okEnd = false;
+
     QString beginDate = QInputDialog::getText(
-                this, "Mois de début", "Mois de début (au format MM/AAAA) :", QLineEdit::Normal, QString(), &okBegin);
+        this,
+        "Date de début",
+        "Dernière date en DB : " + lastDateInDatabase.toString("dd/MM/yyyy") + "\n"
+            + "Date de début (incluse, au format JJ/MM/AAAA) :",
+        QLineEdit::Normal,
+        lastDateInDatabase.addDays(1).toString("dd/MM/yyyy"),
+        &okBegin
+        );
+
     if (!okBegin) return;
+
     QString endDate = QInputDialog::getText(
-                this, "Mois de fin", "Mois de fin (au format MM/AAAA) :", QLineEdit::Normal, QString(), &okEnd);
-    if (!okEnd) return;
+        this,
+        "Date de fin",
+        "Date de fin (incluse, au format JJ/MM/AAAA) :",
+        QLineEdit::Normal,
+        QDate::currentDate().addDays(-1).toString("dd/MM/yyyy"),
+        &okEnd
+        );
 
-    int indoorOrOutdoor = QMessageBox::question(this, "Lieu", "Considérer les données <b> intérieures </b> ?",
-                                                QMessageBox::Yes, QMessageBox::No);
-
-    bool isIndoorData = indoorOrOutdoor == QMessageBox::Yes;
-
-    QString q = "Confirmer la saisie ? \n\n";
-    q += "Mois de début : " + beginDate + "\n";
-    q += "Mois de fin : " + endDate + "\n";
-    q += "Données : ";
-    q += (isIndoorData ? "intérieures" : "extérieures");
-
-    int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
-
-    if (response == QMessageBox::Yes) {
-        if (isIndoorData) {
-            dbHandlerProd->postFromMultipleIndoorCsv(
-                        "D:/Mes programmes/RegressionTemperature/Données Netatmo/Intérieur",
-                        "IndoorTimestampRecords",
-                        beginDate,
-                        endDate);
-        }
-        else {
-            dbHandlerProd->postFromMultipleOutdoorCsv(
-                        "D:/Mes programmes/RegressionTemperature/Données Netatmo",
-                        "OutdoorTimestampRecords",
-                        beginDate,
-                        endDate);
-        }
-    }
-    else if (response == QMessageBox::No) QMessageBox::warning(this, "Annulation", "Opération annulée.");
-
-}
-
-void MainWindow::updateDailyIndoorDatabase() {
-    bool okBegin = false, okEnd = false;
-    QString beginDate = QInputDialog::getText(
-                this, "Date de début", "Date de début (au format JJ/MM/AAAA) :", QLineEdit::Normal, QString(), &okBegin);
-    if (!okBegin) return;
-    QString endDate = QInputDialog::getText(
-                this, "Date de fin", "Date de fin (au format JJ/MM/AAAA) :", QLineEdit::Normal, QString(), &okEnd);
-    if (!okEnd) return;
-
-    QString q = "Confirmer la saisie ? \n\n";
-    q += "Date de début : " + beginDate + "\n";
-    q += "Date de fin : " + endDate + "\n";
-    q += "Dernière date dans la base de données intérieures : ";
-    q += dbHandlerProd->getLatestDateTimeFromDatabase("IndoorDailyRecords").date().toString("dd/MM/yyyy");
-
-    int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
-
-    if (response == QMessageBox::Yes) {
-        newDataUploader->uploadIndoorDailyRecords(
-                    QDate::fromString(beginDate, "dd/MM/yyyy"),
-                    QDate::fromString(endDate, "dd/MM/yyyy"));
-    }
-
-    else if (response == QMessageBox::No) QMessageBox::warning(this, "Annulation", "Opération annulée.");
-}
-
-void MainWindow::updateDailyOutdoorDatabase() {
-    bool okBegin = false, okEnd = false;
-    QString beginDate = QInputDialog::getText(
-                this, "Date de début", "Date de début (au format JJ/MM/AAAA) :", QLineEdit::Normal, QString(), &okBegin);
-    if (!okBegin) return;
-    QString endDate = QInputDialog::getText(
-                this, "Date de fin", "Date de fin (au format JJ/MM/AAAA) :", QLineEdit::Normal, QString(), &okEnd);
     if (!okEnd) return;
 
     QString q = "Confirmer la saisie ? \n\n";
     q += "Date de début : " + beginDate + "\n";
     q += "Date de fin : " + endDate + "\n";
     q += "Dernière date dans la base de données extérieures : ";
-    q += dbHandlerProd->getLatestDateTimeFromDatabase("OutdoorDailyRecords").date().toString("dd/MM/yyyy");
+    q += lastDateInDatabase.toString("dd/MM/yyyy");
 
     int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
 
     if (response == QMessageBox::Yes) {
-        newDataUploader->uploadOutdoorDailyRecords(
-                    QDate::fromString(beginDate, "dd/MM/yyyy"),
-                    QDate::fromString(endDate, "dd/MM/yyyy"));
+        oldDataUploader->addAllIntTimestampRecordsFromPeriod(
+            QDate::fromString(beginDate, "dd/MM/yyyy"),
+            QDate::fromString(endDate, "dd/MM/yyyy")
+            );
+    }
+
+    else if (response == QMessageBox::No) QMessageBox::warning(this, "Annulation", "Opération annulée.");
+}
+
+void MainWindow::backfillOutdoorData() {
+    QDate lastDateInDatabase = dbHandlerProd->getLatestDateTimeFromDatabase("OutdoorDailyRecords").date();
+    bool okBegin = false, okEnd = false;
+
+    QString beginDate = QInputDialog::getText(
+        this,
+        "Date de début",
+        "Dernière date en DB : " + lastDateInDatabase.toString("dd/MM/yyyy") + "\n"
+            + "Date de début (incluse, au format JJ/MM/AAAA) :",
+        QLineEdit::Normal,
+        lastDateInDatabase.addDays(1).toString("dd/MM/yyyy"),
+        &okBegin
+        );
+
+    if (!okBegin) return;
+
+    QString endDate = QInputDialog::getText(
+        this,
+        "Date de fin",
+        "Date de fin (incluse, au format JJ/MM/AAAA) :",
+        QLineEdit::Normal,
+        QDate::currentDate().addDays(-1).toString("dd/MM/yyyy"),
+        &okEnd
+        );
+
+    if (!okEnd) return;
+
+    QString q = "Confirmer la saisie ? \n\n";
+    q += "Date de début : " + beginDate + "\n";
+    q += "Date de fin : " + endDate + "\n";
+    q += "Dernière date dans la base de données extérieures : ";
+    q += lastDateInDatabase.toString("dd/MM/yyyy");
+
+    int response = QMessageBox::question(this, "Confirmation", q, QMessageBox ::Yes | QMessageBox::No);
+
+    if (response == QMessageBox::Yes) {
+        oldDataUploader->addAllExtTimestampRecordsFromPeriod(
+            QDate::fromString(beginDate, "dd/MM/yyyy"),
+            QDate::fromString(endDate, "dd/MM/yyyy")
+            );
     }
 
     else if (response == QMessageBox::No) QMessageBox::warning(this, "Annulation", "Opération annulée.");
@@ -583,7 +594,7 @@ void MainWindow::displayGrowthChart() {
 }
 
 void MainWindow::postRecentDataRequests() {
-    int dateBegin = QDateTime::currentDateTime().toSecsSinceEpoch() - _durationInHours * 3600 - 600;
+    int dateBegin = QDateTime::currentSecsSinceEpoch() - _durationInHours * 3600 - 600;
     QString scale = "max";
 
     if (_durationInHours > 48) {

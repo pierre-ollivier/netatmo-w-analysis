@@ -1,4 +1,5 @@
 #include "NetatmoAPIHandler.h"
+#include "MultipleNetatmoAPIQueriesAggregator.h"
 #include <QByteArray>
 #include <QFile>
 #include <QInputDialog>
@@ -273,6 +274,28 @@ void NetatmoAPIHandler::postIndoorTimestampRecordsRequest(long long dateBegin, l
     params.addQueryItem("real_time", "true");
     indoorTimestampRecordsRequestManager->post(request, params.query().toUtf8());
     apiMonitor->addTimestamp();
+}
+
+void NetatmoAPIHandler::postMultiDaysOutdoorTimestampRecordsRequest(QDate dateBegin, QDate dateEnd, QString accessToken) {
+    MultipleNetatmoAPIQueriesAggregator *aggregator = new MultipleNetatmoAPIQueriesAggregator(this, apiMonitor);
+    connect(
+        aggregator,
+        SIGNAL(outdoorRecordListRetrieved(QDate, QDate, QList<ExtTimestampRecord>)),
+        this,
+        SIGNAL(outdoorMultiDaysRecordListRetrieved(QDate, QDate, QList<ExtTimestampRecord>))
+        );
+    aggregator->postOutdoorTimestampRecordsRequest(dateBegin, dateEnd, accessToken);
+}
+
+void NetatmoAPIHandler::postMultiDaysIndoorTimestampRecordsRequest(QDate dateBegin, QDate dateEnd, QString accessToken) {
+    MultipleNetatmoAPIQueriesAggregator *aggregator = new MultipleNetatmoAPIQueriesAggregator(this, apiMonitor);
+    connect(
+        aggregator,
+        SIGNAL(indoorRecordListRetrieved(QDate, QDate, QList<IntTimestampRecord>)),
+        this,
+        SIGNAL(indoorMultiDaysRecordListRetrieved(QDate, QDate, QList<IntTimestampRecord>))
+        );
+    aggregator->postIndoorTimestampRecordsRequest(dateBegin, dateEnd, accessToken);
 }
 
 

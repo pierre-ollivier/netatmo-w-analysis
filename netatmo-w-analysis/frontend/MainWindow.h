@@ -14,7 +14,6 @@
 #include "../netatmo-w-analysis/backend/DailyStatisticsCalculator.h"
 #include "../netatmo-w-analysis/backend/MetricsAnalyzer.h"
 #include "../netatmo-w-analysis/backend/NetatmoAPIHandler.h"
-#include "../netatmo-w-analysis/backend/NewDataUploader.h"
 #include "../netatmo-w-analysis/backend/OldDataUploader.h"
 #include "../netatmo-w-analysis/backend/RecentDataHandler.h"
 #include "../netatmo-w-analysis/backend/WeatherAPIHandler.h"
@@ -69,10 +68,9 @@ public slots:
     void updatePredictionWidgets(WeatherPrediction prediction);
 
     void addMonthData();
-    void addMultipleMonthsData();
 
-    void updateDailyIndoorDatabase();
-    void updateDailyOutdoorDatabase();
+    void backfillIndoorData();
+    void backfillOutdoorData();
 
     void exploreData();
     void displayCumulativeChart();
@@ -81,7 +79,6 @@ public slots:
     void displayMonthlyReport();
     void displayYearlyReport();
 
-    void addDataFromCurrentMonths();
     void addDataFromLastDays();
     void changeChartsOptions();
 
@@ -138,7 +135,6 @@ private:
 
     // data uploaders
     OldDataUploader *oldDataUploader;
-    NewDataUploader *newDataUploader;
 
     // calculator
     DailyStatisticsCalculator *dailyCalculator;
@@ -146,9 +142,8 @@ private:
     // actions
     QAction *requestCountsAction;
     QAction *addMonthDataAction;
-    QAction *addMultipleMonthsDataAction;
-    QAction *updateDailyIndoorDatabaseAction;
-    QAction *updateDailyOutdoorDatabaseAction;
+    QAction *backfillIndoorDataAction;
+    QAction *backfillOutdoorDataAction;
     QAction *exploreDataAction;
     QAction *displayCumulativeChartAction;
     QAction *displayGrowthChartAction;

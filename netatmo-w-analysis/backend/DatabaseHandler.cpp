@@ -176,6 +176,52 @@ void DatabaseHandler::postOutdoorTimestampRecord(ExtTimestampRecord record, QStr
     QSqlDatabase::removeDatabase(connectionName);
 }
 
+void DatabaseHandler::postOutdoorTimestampRecords(QList<ExtTimestampRecord> records, QString tableName) {
+    QString connectionName = _pathToDatabase + "_" + QString::number(instance_id);
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName(_pathToDatabase);
+
+        for (ExtTimestampRecord record : records) {
+            QSqlQuery query(db);
+
+            if (!db.open()) {
+                qDebug() << "Database open error. Path:" << _pathToDatabase;
+            }
+            if (!db.isOpen() ) {
+                qDebug() << "Database is not open. Path:" << _pathToDatabase;
+            }
+
+            prepareQuery(&query, tableName, outdoorTimestampsParams);
+
+            query.addBindValue(record.timestamp());
+
+            query.addBindValue(record.year());
+            query.addBindValue(record.month());
+            query.addBindValue(record.day());
+            query.addBindValue(record.date().toString("dd/MM/yyyy"));
+            query.addBindValue(record.decade());
+            query.addBindValue(record.weekNumber());
+
+            query.addBindValue(record.hour());
+            query.addBindValue(record.minute());
+            query.addBindValue(record.second());
+            query.addBindValue(record.time().toString("hh:mm:ss"));
+
+            query.addBindValue(record.temperature());
+            query.addBindValue(record.humidity());
+            query.addBindValue(record.dewPoint());
+            query.addBindValue(record.humidex());
+
+            if (!query.exec()) {
+                qDebug() << "ERROR:" << query.lastError().text();
+            }
+        }
+    }
+
+    QSqlDatabase::removeDatabase(connectionName);
+}
+
 void DatabaseHandler::postIndoorDailyRecord(IntDailyRecord record, QString tableName) {
     QString connectionName = _pathToDatabase + "_" + QString::number(instance_id);
     {
@@ -331,36 +377,68 @@ void DatabaseHandler::postIndoorTimestampRecord(IntTimestampRecord record, QStri
     QSqlDatabase::removeDatabase(connectionName);
 }
 
-void DatabaseHandler::postFromOutdoorCsv(QString pathToCsv, QString tableName, QDate beginDate, QDate endDate) {
+void DatabaseHandler::postIndoorTimestampRecords(QList<IntTimestampRecord> records, QString tableName) {
+    QString connectionName = _pathToDatabase + "_" + QString::number(instance_id);
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName(_pathToDatabase);
 
-    // Set default values of beginDate and endDate according to the file name
-    if (beginDate.isNull()) {
-        const int lenOfPathToCsv = pathToCsv.size() - 4;  // don't take into account .csv at the end
-        int month = pathToCsv.mid(lenOfPathToCsv - 2, 2).toInt();
-        int year = pathToCsv.mid(lenOfPathToCsv - 7, 4).toInt();
-        beginDate.setDate(year, month, 1);  // first day of the month
-        endDate.setDate(year, month, 1);
-        endDate.setDate(year, month, endDate.daysInMonth());  // last day of the month
+        for (IntTimestampRecord record : records) {
+            QSqlQuery query(db);
+
+            if (!db.open()) {
+                qDebug() << "Database open error. Path:" << _pathToDatabase;
+            }
+            if (!db.isOpen() ) {
+                qDebug() << "Database is not open. Path:" << _pathToDatabase;
+            }
+
+            prepareQuery(&query, tableName, indoorTimestampsParams);
+
+            query.addBindValue(record.timestamp());
+
+            query.addBindValue(record.year());
+            query.addBindValue(record.month());
+            query.addBindValue(record.day());
+            query.addBindValue(record.date().toString("dd/MM/yyyy"));
+            query.addBindValue(record.decade());
+            query.addBindValue(record.weekNumber());
+
+            query.addBindValue(record.hour());
+            query.addBindValue(record.minute());
+            query.addBindValue(record.second());
+            query.addBindValue(record.time().toString("hh:mm:ss"));
+
+            query.addBindValue(record.temperature());
+            query.addBindValue(record.humidity());
+            query.addBindValue(record.dewPoint());
+            query.addBindValue(record.humidex());
+            query.addBindValue(record.pressure());
+            query.addBindValue(record.co2());
+            query.addBindValue(record.noise());
+
+            if (!query.exec()) {
+                qDebug() << "ERROR:" << query.lastError().text();
+            }
+        }
     }
 
+    QSqlDatabase::removeDatabase(connectionName);
+}
+
+QList<ExtTimestampRecord> DatabaseHandler::retrieveRecordsFromOutdoorCsv(QString pathToCsv) {
+    QList<ExtTimestampRecord> records = QList<ExtTimestampRecord>();
     QFile file(pathToCsv);
+
     if (file.open(QIODevice::ReadOnly)) {
         QTextStream textStream(&file);
-        const int minTimestamp = beginDate.startOfDay().toSecsSinceEpoch();
-        const int maxTimestamp = endDate.endOfDay().toSecsSinceEpoch();
-        QProgressDialog progress("Ajout des nouvelles données...", "Annuler", minTimestamp, maxTimestamp);
-        progress.setWindowModality(Qt::WindowModal);
-        progress.setValue(minTimestamp);
 
         while(!textStream.atEnd()) {
-            if (progress.wasCanceled()) {
-                break;
-            }
             QString s = textStream.readLine();
             if (QDate::currentDate().year() >= 2030) {
                 qDebug() << "WARNING: the function postFromOutdoorCsv will stop working on May 18th, 2033 due to a timestamp issue";
             }
-            if (s[0] != '1') {  // if s doesn't start with '1', it is not a timestamp (until 2033) and we ignore it
+            if (s.size() == 0 || s[0] != '1') {  // if s doesn't start with '1', it is not a timestamp (until 2033) and we ignore it
                 continue;
             }
             QStringList l = s.split(';');
@@ -372,41 +450,20 @@ void DatabaseHandler::postFromOutdoorCsv(QString pathToCsv, QString tableName, Q
             QDateTime dateAssociatedToTimestamp = QDateTime();
             dateAssociatedToTimestamp.setSecsSinceEpoch(timestamp);
 
-            if (beginDate <= dateAssociatedToTimestamp.date() && dateAssociatedToTimestamp.date() <= endDate) {
-                ExtTimestampRecord record(timestamp, t, rh);
-                postOutdoorTimestampRecord(record, tableName);
-                progress.setValue(timestamp);
-            }
+            records.append(ExtTimestampRecord(timestamp, t, rh));
         }
-        progress.setValue(maxTimestamp);
     }
+    return records;
 }
 
-void DatabaseHandler::postFromIndoorCsv(QString pathToCsv, QString tableName, QDate beginDate, QDate endDate) {
-
-    // Set default values of beginDate and endDate according to the file name
-    if (beginDate.isNull()) {
-        const int lenOfPathToCsv = pathToCsv.size() - 4;  // don't take into account .csv at the end
-        int month = pathToCsv.mid(lenOfPathToCsv - 2, 2).toInt();
-        int year = pathToCsv.mid(lenOfPathToCsv - 7, 4).toInt();
-        beginDate.setDate(year, month, 1);  // first day of the month
-        endDate.setDate(year, month, 1);
-        endDate.setDate(year, month, endDate.daysInMonth());  // last day of the month
-    }
-
+QList<IntTimestampRecord> DatabaseHandler::retrieveRecordsFromIndoorCsv(QString pathToCsv) {
+    QList<IntTimestampRecord> records = QList<IntTimestampRecord>();
     QFile file(pathToCsv);
+
     if (file.open(QIODevice::ReadOnly)) {
         QTextStream textStream(&file);
-        const int minTimestamp = beginDate.startOfDay().toSecsSinceEpoch();
-        const int maxTimestamp = endDate.endOfDay().toSecsSinceEpoch();
-        QProgressDialog progress("Ajout des nouvelles données...", "Annuler", minTimestamp, maxTimestamp);
-        progress.setWindowModality(Qt::WindowModal);
-        progress.setValue(minTimestamp);
 
         while(!textStream.atEnd()) {
-            if (progress.wasCanceled()) {
-                break;
-            }
             QString s = textStream.readLine();
             if (QDate::currentDate().year() >= 2030) {
                 qDebug() << "WARNING: the function postFromOutdoorCsv will stop working on May 18th, 2033 due to a timestamp issue";
@@ -426,36 +483,10 @@ void DatabaseHandler::postFromIndoorCsv(QString pathToCsv, QString tableName, QD
             QDateTime dateAssociatedToTimestamp = QDateTime();
             dateAssociatedToTimestamp.setSecsSinceEpoch(timestamp);
 
-            if (beginDate <= dateAssociatedToTimestamp.date() && dateAssociatedToTimestamp.date() <= endDate) {
-                IntTimestampRecord record(timestamp, t, rh, pressure, co2, noise);
-                postIndoorTimestampRecord(record, tableName);
-                progress.setValue(timestamp);
-            }
+            records.append(IntTimestampRecord(timestamp, t, rh, pressure, co2, noise));
         }
-        progress.setValue(maxTimestamp);
     }
-}
-
-void DatabaseHandler::postFromMultipleOutdoorCsv(QString path, QString tableName, QString beginMonth, QString endMonth) {
-    if (path[path.size() - 1] != '/') {
-        path += "/";
-    }
-    QDate beginDate = QDate::fromString("01/" + beginMonth, "dd/MM/yyyy");
-    QDate endDate = QDate::fromString("01/" + endMonth, "dd/MM/yyyy");
-    for (QDate date = beginDate; date <= endDate; date = date.addMonths(1)) {
-        postFromOutdoorCsv(path + date.toString("yyyy-MM") + ".csv", tableName);
-    }
-}
-
-void DatabaseHandler::postFromMultipleIndoorCsv(QString path, QString tableName, QString beginMonth, QString endMonth) {
-    if (path[path.size() - 1] != '/') {
-        path += "/";
-    }
-    QDate beginDate = QDate::fromString("01/" + beginMonth, "dd/MM/yyyy");
-    QDate endDate = QDate::fromString("01/" + endMonth, "dd/MM/yyyy");
-    for (QDate date = beginDate; date <= endDate; date = date.addMonths(1)) {
-        postFromIndoorCsv(path + "C" + date.toString("yyyy-MM") + ".csv", tableName);
-    }
+    return records;
 }
 
 std::vector<IntTimestampRecord> DatabaseHandler::getIntTimestampRecordsFromDatabase(QString query, int N) {

@@ -39,6 +39,8 @@ public slots:
     void postFullIndoorDailyRequest(int dateBegin, int dateEnd, QString scale, QString accessToken);
     void postOutdoorTimestampRecordsRequest(long long dateBegin, long long dateEnd, QString accessToken);
     void postIndoorTimestampRecordsRequest(long long dateBegin, long long dateEnd, QString accessToken);
+    void postMultiDaysOutdoorTimestampRecordsRequest(QDate dateBegin, QDate dateEnd, QString accessToken);
+    void postMultiDaysIndoorTimestampRecordsRequest(QDate dateBegin, QDate dateEnd, QString accessToken);
 
     void retrieveTokens(QNetworkReply*);
     void retrieveCurrentConditions(QNetworkReply*);
@@ -101,6 +103,8 @@ signals:
     void indoorHumidityListRetrieved(QList<QPointF>);
     void outdoorRecordListRetrieved(QList<ExtTimestampRecord>);
     void indoorRecordListRetrieved(QList<IntTimestampRecord>);
+    void outdoorMultiDaysRecordListRetrieved(QDate, QDate, QList<ExtTimestampRecord>);
+    void indoorMultiDaysRecordListRetrieved(QDate, QDate, QList<IntTimestampRecord>);
 
     // OTHER
 

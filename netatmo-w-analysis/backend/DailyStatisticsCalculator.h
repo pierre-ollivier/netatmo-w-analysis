@@ -22,7 +22,7 @@ public:
     long long getMinTemperatureTimestampFromDate(QDate date, double minTemperature, bool indoor = false);
     long long getMinTemperatureTimestampFromDate(QDate date, bool indoor = false);
 
-    double getAvgTemperatureFromDate(QDate date, bool indoor = false);
+    double getAvgTemperatureFromDate(QDate date, QList<ExtTimestampRecord> records, bool indoor = false);
 
     // humidity
 
@@ -96,16 +96,53 @@ public:
 
     double getAvgNoiseFromDate(QDate date);
 
+    // measurement
+
+    QPair<QVariant, long long> getMaxIndoorMeasurementInfoFromDate(
+        QDate date,
+        QList<IntTimestampRecord> records,
+        std::function<QVariant(IntTimestampRecord)> measurementGetter,
+        bool localTime = true,
+        int utcOffsetH = 0
+        );
+
+    QPair<QVariant, long long> getMinIndoorMeasurementInfoFromDate(
+        QDate date,
+        QList<IntTimestampRecord> records,
+        std::function<QVariant(IntTimestampRecord)> measurementGetter,
+        bool localTime = true,
+        int utcOffsetH = 0
+        );
+
+    QPair<QVariant, long long> getMaxOutdoorMeasurementInfoFromDate(
+        QDate date,
+        QList<ExtTimestampRecord> records,
+        std::function<QVariant(ExtTimestampRecord)> measurementGetter,
+        bool localTime = true,
+        int utcOffsetH = 0
+        );
+
+    QPair<QVariant, long long> getMinOutdoorMeasurementInfoFromDate(
+        QDate date,
+        QList<ExtTimestampRecord> records,
+        std::function<QVariant(ExtTimestampRecord)> measurementGetter,
+        bool localTime = true,
+        int utcOffsetH = 0
+        );
+
+    double getAvgOutdoorMeasurementFromDate(QDate date, QList<ExtTimestampRecord> records, QString measurement);
+    double getAvgIndoorMeasurementFromDate(QDate date, QList<IntTimestampRecord> records, QString measurement);
+
     // others
 
     long long getFirstTimestampFromDate(QDate date);
     long long getFirstTimestampFromDateWithUTCOffset(QDate date, int offsetFromUTCInHours);
 
 private:
-    QString _pathToDatabase;
-    DatabaseHandler *_dbHandler;
-    DailyAverageCalculator *indoorAverageCalculator;
-    DailyAverageCalculator *outdoorAverageCalculator;
+    QString _pathToDatabase = "";
+    DatabaseHandler *_dbHandler = nullptr;
+    DailyAverageCalculator *indoorAverageCalculator = nullptr;
+    DailyAverageCalculator *outdoorAverageCalculator = nullptr;
 };
 
 #endif // DAILYSTATISTICSCALCULATOR_H
